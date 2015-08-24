@@ -343,10 +343,10 @@ struct MapVolumeBox { // sizeof = 24
   unsigned char visible;
   unsigned char color;
   unsigned char field_2;
-  long field_3;
-  long field_7;
-  long field_B;
-  long field_F;
+  long beg_x;
+  long beg_y;
+  long end_x;
+  long end_y;
   long field_13;
   unsigned char field_17;
 };
