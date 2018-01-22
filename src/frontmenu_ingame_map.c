@@ -352,7 +352,60 @@ int draw_overlay_spells_and_boxes(struct PlayerInfo *player, long units_per_px, 
     return n;
 }
 
-int draw_overlay_creatures(struct PlayerInfo *player, long units_per_px, long zoom)
+void pannel_map_draw_creature_dot(long mapos_x, long mapos_y, RealScreenCoord basepos, TbPixel col, long basic_zoom)
+{
+    // actual position single pixel
+    pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos, col);
+    // altered to be only for LESS than 512, meaning only for zooms 1 or 2
+    // to apply to zoom 512 as well, change to <=, although this causes
+    // creature dots too big for clear distinction (3 imps at one tile edge overlap)
+    if (basic_zoom <= 512)
+    {
+        // one pixel below, making it a vertical line
+        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos+1, col);
+        // pixels to the right and lower right
+        //pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos, col);
+        //pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+1, col);
+    }
+    if (basic_zoom <= 256)
+    {
+        // (3x3)
+        // pixels to the right and lower right
+        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos, col);
+        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+1, col);
+        // pixels to the left and above
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos, col);
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos+1, col);
+    }
+    if (basic_zoom == 128)
+    {
+        // add a perimeter-layer of pixels for a really zoomed-in map
+        //above
+        pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos-2, col);
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos-2, col);
+        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos-2, col);
+        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos-2, col);
+        pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos-2, col);
+        //sides
+        pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos, col);
+        pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos, col);
+        pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos+1, col);
+        pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos+1, col);
+        //below
+        pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos+2, col);
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos+2, col);
+        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos+2, col);
+        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+2, col);
+        pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos+2, col);
+    }
+}
+
+int draw_overlay_creatures(struct PlayerInfo *player, long units_per_px, long zoom, long basic_zoom)
 {
     unsigned long k;
     int i,n;
@@ -405,24 +458,15 @@ int draw_overlay_creatures(struct PlayerInfo *player, long units_per_px, long zo
                 {
                     if ((thing->model == gui_creature_type_highlighted) && (game.play_gameturn & 1))
                     {
-                        // cross of the highlight color
                         pannel_map_draw_pixel(mapos_x+basepos,   mapos_y+basepos,   31);
-                        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos+1, 31);
-                        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos-1, 31);
-                        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos, 31);
-                        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos, 31);
-                        //corners filled in
-                        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos-1, col2);
-                        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos-1, col2);
-                        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+1, col2);
-                        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos+1, col2);
+                        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos,   col2);
+                        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos,   col2);
+                        pannel_map_draw_pixel(mapos_x+basepos,   mapos_y+basepos,   col2);
+                        pannel_map_draw_pixel(mapos_x+basepos,   mapos_y+basepos-1, col2);
 
                     } else
                     {
-                        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos, col2);
-                        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos+1, col2);
-                        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos, col2);
-                        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+1, col2);
+                        pannel_map_draw_creature_dot(mapos_x, mapos_y, basepos, col2, basic_zoom);
                     }
                 } else
                 {
@@ -431,10 +475,7 @@ int draw_overlay_creatures(struct PlayerInfo *player, long units_per_px, long zo
                     } else {
                         col = col1;
                     }
-                    pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos, col);
-                    pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos+1, col);
-                    pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos, col);
-                    pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+1, col);
+                    pannel_map_draw_creature_dot(mapos_x, mapos_y, basepos, col, basic_zoom);
                 }
             }
             // Hero tunnelers may be visible even on unrevealed terrain
@@ -468,10 +509,7 @@ int draw_overlay_creatures(struct PlayerInfo *player, long units_per_px, long zo
                     } else {
                         col = col1;
                     }
-                    pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos, col);
-                    pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos+1, col);
-                    pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos, col);
-                    pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+1, col);
+                    pannel_map_draw_creature_dot(mapos_x, mapos_y, basepos, col, basic_zoom);
                 }
             }
         }
@@ -561,7 +599,7 @@ int draw_overlay_possessed_thing(struct PlayerInfo *player, long units_per_px, l
     return 1;
 }
 
-void pannel_map_draw_overlay_things(long units_per_px, long zoom)
+void pannel_map_draw_overlay_things(long units_per_px, long zoom, long basic_zoom)
 {
     SYNCDBG(7,"Starting");
     if (zoom < 1) {
@@ -571,7 +609,7 @@ void pannel_map_draw_overlay_things(long units_per_px, long zoom)
     player = get_my_player();
     draw_overlay_call_to_arms(player, units_per_px, zoom);
     draw_overlay_traps(player, units_per_px, zoom);
-    draw_overlay_creatures(player, units_per_px, zoom);
+    draw_overlay_creatures(player, units_per_px, zoom, basic_zoom);
     if ((game.play_gameturn & 3) == 1) {
         draw_overlay_spells_and_boxes(player, units_per_px, zoom);
     }
