@@ -356,51 +356,59 @@ void pannel_map_draw_creature_dot(long mapos_x, long mapos_y, RealScreenCoord ba
 {
     // actual position single pixel
     pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos, col);
-    // Can be altered to also include 512 (zoom 3) by changing to <= although this causes
-    // creature dots too big for clear distinction (3 imps at one tile edge overlap)
-    if (basic_zoom < 512)
+    // Can be altered to not include 512 (zoom 3) by changing from <= to < 
+    if (basic_zoom <= 512)
     {
         // (2x2) pixels to the right and below
         pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos+1, col);
         pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos, col);
         pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+1, col);
     }
+	    if (basic_zoom == 128)
+    {
+        // (3x3) pixels to the left and above
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos, col);
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos+1, col);
+    }
     // Option for bigger dots with closer zooms (zoom 1 and 2)
     // TODO: Make this functional for higher screen resolution if we can factor that in.
 
-    //if (basic_zoom <= 256)
-    //{
-        //// (3x3) pixels to the left and above
-        //pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos-1, col);
-        //pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos-1, col);
-        //pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos-1, col);
-        //pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos, col);
-        //pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos+1, col);
-    //}
-    //if (basic_zoom == 128)
-    //{
-        //// (5x5)
-        //// add a perimeter-layer of pixels for a really zoomed-in map
-        ////above
-        //pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos-2, col);
-        //pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos-2, col);
-        //pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos-2, col);
-        //pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos-2, col);
-        //pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos-2, col);
-        ////sides
-        //pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos-1, col);
-        //pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos-1, col);
-        //pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos, col);
-        //pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos, col);
-        //pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos+1, col);
-        //pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos+1, col);
-        ////below
-        //pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos+2, col);
-        //pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos+2, col);
-        //pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos+2, col);
-        //pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+2, col);
-        //pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos+2, col);
-    //}
+    /*if (basic_zoom <= 256)
+    {
+        // (3x3) pixels to the left and above
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos, col);
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos+1, col);
+    }
+    if (basic_zoom == 128)
+    {
+        // (5x5)
+        // add a perimeter-layer of pixels for a really zoomed-in map
+        //above
+        pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos-2, col);
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos-2, col);
+        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos-2, col);
+        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos-2, col);
+        pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos-2, col);
+        //sides
+        pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos-1, col);
+        pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos, col);
+        pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos, col);
+        pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos+1, col);
+        pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos+1, col);
+        //below
+        pannel_map_draw_pixel(mapos_x+basepos-2, mapos_y+basepos+2, col);
+        pannel_map_draw_pixel(mapos_x+basepos-1, mapos_y+basepos+2, col);
+        pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos+2, col);
+        pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+2, col);
+        pannel_map_draw_pixel(mapos_x+basepos+2, mapos_y+basepos+2, col);
+    }*/
 }
 
 int draw_overlay_creatures(struct PlayerInfo *player, long units_per_px, long zoom, long basic_zoom)
