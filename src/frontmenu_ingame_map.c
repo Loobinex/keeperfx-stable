@@ -356,7 +356,7 @@ void pannel_map_draw_creature_dot(long mapos_x, long mapos_y, RealScreenCoord ba
 {
     // actual position single pixel
     pannel_map_draw_pixel(mapos_x+basepos, mapos_y+basepos, col);
-    // cab be altered to be only for LESS than 512, meaning only for zooms 1 or 2.
+    // Can be altered to be only for LESS than 512, meaning only for zooms 1 or 2.
     // To not apply to 512 (zoom 3), change to <, although this causes
     // creature dots too big for clear distinction (3 imps at one tile edge overlap)
     if (basic_zoom <= 512)
@@ -366,7 +366,7 @@ void pannel_map_draw_creature_dot(long mapos_x, long mapos_y, RealScreenCoord ba
         pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos, col);
         pannel_map_draw_pixel(mapos_x+basepos+1, mapos_y+basepos+1, col);
     }
-    // Options for bigger dots with closer zooms (zoom 1 and 2)
+    // Option for bigger dots with closer zooms (zoom 1 and 2)
     // TODO: Make this functional for higher screen resolution if we can factor that in.
 
     //if (basic_zoom <= 256)
