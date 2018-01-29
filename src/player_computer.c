@@ -48,7 +48,7 @@
 extern "C" {
 #endif
 /******************************************************************************/
-ComputerType computer_assist_types[] = { 6, 7, 8, 9 };
+ComputerType computer_assist_types[] = { 13, 14, 15, 16 };
 
 char const event_pay_day_text[] = "EVENT PAY DAY";
 char const event_save_imps_text[] = "EVENT SAVE IMPS";
