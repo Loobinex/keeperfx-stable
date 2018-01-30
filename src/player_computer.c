@@ -48,10 +48,8 @@
 extern "C" {
 #endif
 /******************************************************************************/
-// IF YOU ALTER computer_assist_types[], UPDATE computer_assist_types_length (below)
-// to the number of possibilities
 ComputerType computer_assist_types[] = { 6, 7, 8, 9 };
-int computer_assist_types_length = 4;
+
 
 char const event_pay_day_text[] = "EVENT PAY DAY";
 char const event_save_imps_text[] = "EVENT SAVE IMPS";
@@ -1641,8 +1639,12 @@ void setup_computer_players2()
 #ifdef PETTER_AI
         SAI_init_for_player(i);
 #else
-        int autopilot_type = rand() % (computer_assist_types_length);
-        setup_a_computer_player(i, computer_assist_types[autopilot_type - 1]);
+        // edit these two according to skirmish AI types configured
+        int minSkirmishAI = 13;
+        int maxSkirmishAI = 16;
+
+        int skirmish_AI_type = rand() % (maxSkirmishAI + 1 - minSkirmishAI) + minSkirmishAI;
+        setup_a_computer_player(i, skirmish_AI_type);
 #endif
       }
     }
