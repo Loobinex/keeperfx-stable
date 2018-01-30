@@ -1644,6 +1644,7 @@ void setup_computer_players2()
         int maxSkirmishAI = 16;
 
         int skirmish_AI_type = rand() % (maxSkirmishAI + 1 - minSkirmishAI) + minSkirmishAI;
+        JUSTMSG("Computer Player %d given AI type %d", i, skirmish_AI_type);
         setup_a_computer_player(i, skirmish_AI_type);
 #endif
       }
