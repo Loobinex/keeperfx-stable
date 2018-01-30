@@ -48,7 +48,10 @@
 extern "C" {
 #endif
 /******************************************************************************/
-ComputerType computer_assist_types[] = { 13, 14, 15, 16 };
+// IF YOU ALTER computer_assist_types[], UPDATE computer_assist_types_length (below)
+// to the number of possibilities
+ComputerType computer_assist_types[] = { 6, 7, 8, 9 };
+int computer_assist_types_length = 4;
 
 char const event_pay_day_text[] = "EVENT PAY DAY";
 char const event_save_imps_text[] = "EVENT SAVE IMPS";
@@ -1615,7 +1618,7 @@ void process_computer_players2(void)
     }
 }
 
-void setup_computer_players2(void)
+void setup_computer_players2()
 {
   struct PlayerInfo *player;
   int i;
@@ -1638,7 +1641,8 @@ void setup_computer_players2(void)
 #ifdef PETTER_AI
         SAI_init_for_player(i);
 #else
-        setup_a_computer_player(i, 7);
+        int autopilot_type = rand() % (computer_assist_types_length);
+        setup_a_computer_player(i, computer_assist_types[autopilot_type - 1]);
 #endif
       }
     }
