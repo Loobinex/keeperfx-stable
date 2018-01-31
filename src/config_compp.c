@@ -83,7 +83,6 @@ const struct NamedCommand compp_computer_commands[] = {
 const char keeper_compplayer_file[]="keepcompp.cfg";
 
 /******************************************************************************/
-// What is this 14?
 DLLIMPORT struct ComputerProcessTypes _DK_ComputerProcessLists[14];
 //#define ComputerProcessLists _DK_ComputerProcessLists
 /******************************************************************************/
@@ -237,7 +236,9 @@ short init_computer_process_lists(void)
     LbMemorySet(cpt, 0, sizeof(struct ComputerProcessTypes));
     LbMemorySet(ComputerProcessListsNames[i], 0, LINEMSG_SIZE);
   }
-  for (i=0; i<COMPUTER_PROCESS_LISTS_COUNT-1; i++)
+  // Changing this to not subtract 1. This is possibly the bug for the highest computer model assignment
+  // not appropriately being applied.
+  for (i=0; i<COMPUTER_PROCESS_LISTS_COUNT; i++)
   {
     cpt = &ComputerProcessLists[i];
     cpt->name = ComputerProcessListsNames[i];
@@ -890,7 +891,16 @@ short parse_computer_player_computer_blocks(char *buf, long len, const char *con
     // Block name and parameter word store variable
     char block_buf[32];
     char word_buf[32];
-    const int arr_size = (int)(sizeof(ComputerProcessLists)/sizeof(ComputerProcessLists[0]))-1;
+    // The -1 was making the array size 1-too-small. It was originally
+    // const int arr_size = (int)(sizeof(ComputerProcessLists)/sizeof(ComputerProcessLists[0]))-1;
+    const int arr_size = (int)(sizeof(ComputerProcessLists)/sizeof(ComputerProcessLists[0]));
+    // debug
+    //int sizeWhole = (int)(sizeof(ComputerProcessLists));
+    //int sizeSingle = (int)(sizeof(ComputerProcessLists[0]));
+    //int quotient = sizeWhole/sizeSingle;
+    //JUSTMSG("computer16debug: size of ComputerProcessLists is %d", sizeWhole);
+    //JUSTMSG("and size of first item in ComputerProcessLists is %d", sizeSingle);
+    //JUSTMSG("ComputerProcessLists divided by first item in ComputerProcessLists is %d", quotient);
     for (i=0; i < arr_size; i++)
     {
       sprintf(block_buf,"computer%d",i);
@@ -1118,7 +1128,6 @@ TbBool load_computer_player_config(unsigned short flags)
     LbMemoryFree(buf);
     // Hack to synchronize local structure with the one inside DLL.
     // Remove when it's not needed anymore.
-    // Question from someone looking over this: Where does this 13 come from?
     LbMemoryCopy(_DK_ComputerProcessLists,ComputerProcessLists,13*sizeof(struct ComputerProcessTypes));
     return true;
 }
