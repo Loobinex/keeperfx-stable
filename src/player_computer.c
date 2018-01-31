@@ -1654,7 +1654,7 @@ void setup_computer_players2()
 		//TODO: Make log message only for non-human players
         JUSTMSG("Player %d given computer model %d.", i, skirmish_AI_type);
         JUSTMSG("* \(If player %d is human, this only applies if they leave the game.\)", i);
-        setup_a_computer_player(i, skirmish_AI_type);
+        setup_a_computer_player(i, skirmish_AI_type - 1);
 #endif
       }
     }
