@@ -83,6 +83,7 @@ const struct NamedCommand compp_computer_commands[] = {
 const char keeper_compplayer_file[]="keepcompp.cfg";
 
 /******************************************************************************/
+// What is this 14?
 DLLIMPORT struct ComputerProcessTypes _DK_ComputerProcessLists[14];
 //#define ComputerProcessLists _DK_ComputerProcessLists
 /******************************************************************************/
@@ -337,8 +338,8 @@ TbBool parse_computer_player_common_blocks(char *buf, long len, const char *conf
             if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
             {
               k = atoi(word_buf);
-			  //TODO: Undo this hard coding. But doesn't seem like it should count processes but computers instead.
-              if ((k > 0) && (k <= 18))//(k <= COMPUTER_PROCESS_LISTS_COUNT))
+			  // Doesn't seem like it should count processes but computers instead.
+              if ((k > 0) && (k <= COMPUTER_PROCESS_LISTS_COUNT))
               {
                   comp_player_conf.computers_count = k;
                 n++;
@@ -1117,6 +1118,7 @@ TbBool load_computer_player_config(unsigned short flags)
     LbMemoryFree(buf);
     // Hack to synchronize local structure with the one inside DLL.
     // Remove when it's not needed anymore.
+    // Question from someone looking over this: Where does this 13 come from?
     LbMemoryCopy(_DK_ComputerProcessLists,ComputerProcessLists,13*sizeof(struct ComputerProcessTypes));
     return true;
 }

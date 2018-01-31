@@ -1629,6 +1629,11 @@ void setup_computer_players2()
 #ifdef PETTER_AI
   SAI_init_for_map();
 #endif
+
+  // Using a seed for rand() based on the current time, so that the same
+  // random results aren't used in the same order every time.
+  srand((unsigned) time(NULL));
+
   for (i=0; i < PLAYERS_COUNT; i++)
   {
     player = get_player(i);
@@ -1639,13 +1644,16 @@ void setup_computer_players2()
 #ifdef PETTER_AI
         SAI_init_for_player(i);
 #else
-        // edit these two according to skirmish AI types configured
+        // edit these two according to skirmish AI types configured. The range from which
+        // the computer model is selected is between minSkirmishAI and maxSkirmishAI,
+        // inclusive of both.
         int minSkirmishAI = 13;
         int maxSkirmishAI = 16;
 
         int skirmish_AI_type = rand() % (maxSkirmishAI + 1 - minSkirmishAI) + minSkirmishAI;
-		//TODO: Make log message conditional on either Players>0, or just for multiplayer&1player
-        JUSTMSG("Player %d given computer model %d", i, skirmish_AI_type);
+		//TODO: Make log message only for non-human players
+        JUSTMSG("Player %d given computer model %d.", i, skirmish_AI_type);
+        JUSTMSG("* \(If player %d is human, this only applies if they leave the game.\)", i);
         setup_a_computer_player(i, skirmish_AI_type);
 #endif
       }
