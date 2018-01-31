@@ -43,7 +43,7 @@ extern "C" {
 #define COMPUTER_SPARK_POSITIONS_COUNT 64
 #define COMPUTER_SOE_GRID_SIZE        8
 
-/** How strong should be the preference to dig glod from treasure room and not other rooms. Originally was 22 subtiles. */
+/** How strong should be the preference to dig gold from treasure room and not other rooms. Originally was 22 subtiles. */
 #define TREASURE_ROOM_PREFERENCE_WHILE_DIGGING_GOLD 16
 
 /** How often to check for possible gold veins which could be digged by computer */
