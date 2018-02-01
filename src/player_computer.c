@@ -1651,13 +1651,11 @@ void setup_computer_players2()
         int maxSkirmishAI = 16;
 
         int skirmish_AI_type = rand() % (maxSkirmishAI + 1 - minSkirmishAI) + minSkirmishAI;
-		//TODO: Make log message only for non-human players
-        if (i == 0)
-        {
-            JUSTMSG("*For any human players below, this only applies if they leave the game.");
-        }
-        JUSTMSG("Player %d given computer model %d.", i, skirmish_AI_type);
-        setup_a_computer_player(i, skirmish_AI_type);
+		setup_a_computer_player(i, skirmish_AI_type);
+        if (i > 0)
+		{
+			JUSTMSG("No model defined for Player %d, assigned computer model %d", i, skirmish_AI_type);
+		}
 #endif
       }
     }
