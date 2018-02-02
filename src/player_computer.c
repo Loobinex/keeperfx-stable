@@ -1645,7 +1645,7 @@ void setup_computer_players2()
         SAI_init_for_player(i);
 #else
         // The range from which the computer model is selected
-        // is between minSkirmishAI and maxSkirmishAI, inclusive of both.
+        // is between minSkirmishAI and maxSkirmishAI, inclusive of both. User defined in keepcompp.cfg
         int minSkirmishAI = comp_player_conf.skirmish_first;
         int maxSkirmishAI = comp_player_conf.skirmish_last;
 

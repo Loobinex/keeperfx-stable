@@ -34,6 +34,8 @@ extern "C" {
 #define COMPUTER_PROCESSES_COUNT     20
 #define COMPUTER_CHECKS_COUNT        15
 #define COMPUTER_EVENTS_COUNT        12
+// To add additional computer players update the folowing number. Update ComputerCount in keepcompp.cfg to match.
+// Must match the actual number of consecutive computers listed in that file (don't forget to count computer0).
 #define COMPUTER_MODELS_COUNT        17 // renamed from COMPUTER_PROCESS_LISTS_COUNT, for clarity
 #define COMPUTER_TRAP_LOC_COUNT      20
 
