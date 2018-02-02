@@ -38,6 +38,8 @@ const struct NamedCommand compp_common_commands[] = {
   {"CHECKSCOUNT",     3},
   {"EVENTSCOUNT",     4},
   {"COMPUTERSCOUNT",  5},
+  {"SKIRMISHFIRST",   6}, /*new*/
+  {"SKIRMISHLAST",    7}, /*new*/
   {NULL,              0},
   };
 
@@ -97,7 +99,9 @@ struct ComputerEventMnemonic computer_event_config_list[COMPUTER_EVENTS_TYPES_CO
 ComputerName ComputerProcessListsNames[COMPUTER_PROCESS_LISTS_COUNT];
 struct ComputerProcessTypes ComputerProcessLists[COMPUTER_PROCESS_LISTS_COUNT];
 
-struct ComputerPlayerConfig comp_player_conf;
+// Moved to the header file so that it can be used in player_computer.c for .skirmish_first and .skirmish_last
+// which indicate the range for computer model AIs available for assignment
+//struct ComputerPlayerConfig comp_player_conf;
 
 /******************************************************************************/
 
@@ -350,6 +354,28 @@ TbBool parse_computer_player_common_blocks(char *buf, long len, const char *conf
             {
               CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
                   COMMAND_TEXT(cmd_num),block_buf,config_textname);
+            }
+            break;
+        case 6: // SKIRMISHFIRST
+            if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+            {
+              k = atoi(word_buf);
+              if ((k > 0) && (k <= COMPUTER_PROCESS_LISTS_COUNT))
+              {
+                  comp_player_conf.skirmish_first = k;
+                  n++;
+              }
+            }
+            break;
+        case 7: // SKIRMISHLAST
+            if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+            {
+              k = atoi(word_buf);
+              if ((k > 0) && (k <= COMPUTER_PROCESS_LISTS_COUNT))
+              {
+                  comp_player_conf.skirmish_last = k;
+                  n++;
+              }
             }
             break;
         case 0: // comment
@@ -891,16 +917,9 @@ short parse_computer_player_computer_blocks(char *buf, long len, const char *con
     // Block name and parameter word store variable
     char block_buf[32];
     char word_buf[32];
-    // The -1 was making the array size 1-too-small. It was originally
+    // The -1 was possibly making the array size 1-too-small. It was originally
     // const int arr_size = (int)(sizeof(ComputerProcessLists)/sizeof(ComputerProcessLists[0]))-1;
     const int arr_size = (int)(sizeof(ComputerProcessLists)/sizeof(ComputerProcessLists[0]));
-    // debug
-    //int sizeWhole = (int)(sizeof(ComputerProcessLists));
-    //int sizeSingle = (int)(sizeof(ComputerProcessLists[0]));
-    //int quotient = sizeWhole/sizeSingle;
-    //JUSTMSG("computer16debug: size of ComputerProcessLists is %d", sizeWhole);
-    //JUSTMSG("and size of first item in ComputerProcessLists is %d", sizeSingle);
-    //JUSTMSG("ComputerProcessLists divided by first item in ComputerProcessLists is %d", quotient);
     for (i=0; i < arr_size; i++)
     {
       sprintf(block_buf,"computer%d",i);

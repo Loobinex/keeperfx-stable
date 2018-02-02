@@ -46,6 +46,8 @@ struct ComputerProcessTypes { // sizeof = 1124
   long field_460;
 };
 
+struct ComputerPlayerConfig comp_player_conf;
+
 #pragma pack()
 /******************************************************************************/
 /******************************************************************************/

@@ -1644,18 +1644,17 @@ void setup_computer_players2()
 #ifdef PETTER_AI
         SAI_init_for_player(i);
 #else
-        // edit these two according to skirmish AI types configured. The range from which
-        // the computer model is selected is between minSkirmishAI and maxSkirmishAI,
-        // inclusive of both.
-        int minSkirmishAI = 13;
-        int maxSkirmishAI = 16;
+        // The range from which the computer model is selected
+        // is between minSkirmishAI and maxSkirmishAI, inclusive of both.
+        int minSkirmishAI = comp_player_conf.skirmish_first;
+        int maxSkirmishAI = comp_player_conf.skirmish_last;
 
         int skirmish_AI_type = rand() % (maxSkirmishAI + 1 - minSkirmishAI) + minSkirmishAI;
-		setup_a_computer_player(i, skirmish_AI_type);
+        setup_a_computer_player(i, skirmish_AI_type);
         if (i > 0)
-		{
-			JUSTMSG("No model defined for Player %d, assigned computer model %d", i, skirmish_AI_type);
-		}
+        {
+            JUSTMSG("No model defined for Player %d, assigned computer model %d", i, skirmish_AI_type);
+        }
 #endif
       }
     }

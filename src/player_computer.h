@@ -561,6 +561,8 @@ struct ComputerPlayerConfig {
     int checks_count;
     int events_count;
     int computers_count;
+    int skirmish_first; /*new*/
+    int skirmish_last; /*new*/
 };
 /******************************************************************************/
 extern unsigned short computer_types_tooltip_stridx[];
