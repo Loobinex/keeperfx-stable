@@ -101,7 +101,7 @@ struct ComputerProcessTypes ComputerProcessLists[COMPUTER_PROCESS_LISTS_COUNT];
 
 // Moved to the header file so that it can be used in player_computer.c for .skirmish_first and .skirmish_last
 // which indicate the range for computer model AIs available for assignment
-//struct ComputerPlayerConfig comp_player_conf;
+struct ComputerPlayerConfig comp_player_conf;
 
 /******************************************************************************/
 

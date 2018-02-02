@@ -46,8 +46,6 @@ struct ComputerProcessTypes { // sizeof = 1124
   long field_460;
 };
 
-struct ComputerPlayerConfig comp_player_conf;
-
 #pragma pack()
 /******************************************************************************/
 /******************************************************************************/
@@ -57,4 +55,7 @@ TbBool load_computer_player_config(unsigned short flags);
 #ifdef __cplusplus
 }
 #endif
+
+extern struct ComputerPlayerConfig comp_player_conf;
+
 #endif
