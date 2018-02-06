@@ -51,8 +51,8 @@ struct QuadrantOffset {
 };
 
 struct HugStart {
-    short field_0;
-    unsigned char field_2;
+    short wh_angle;
+    unsigned char wh_side;
 };
 
 #ifdef __cplusplus
@@ -456,7 +456,7 @@ long init_navigation(void)
     init_navigation_map();
     triangulate_map(IanMap);
     nav_rulesA2B = navigation_rule_normal;
-    game.map_passability_changed = 1;
+    game.field_14EA4B = 1;
     return 1;
 }
 
@@ -3346,7 +3346,7 @@ AriadneReturn creature_follow_route_to_using_gates(struct Thing *thing, struct C
 {
     SYNCDBG(18,"Starting");
     //return _DK_creature_follow_route_to_using_gates(thing, finalpos, nextpos, speed, flags);
-    if (game.map_passability_changed)
+    if (game.field_14EA4B)
     {
         struct CreatureControl *cctrl;
         cctrl = creature_control_get_from_thing(thing);
