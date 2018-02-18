@@ -70,6 +70,7 @@ const struct NamedCommand magic_shot_commands[] = {
   {"AREADAMAGE",      6},
   {"SPEED",           7},
   {"PROPERTIES",      8},
+  {"PUSHONHIT",       9},
   {NULL,              0},
   };
 
