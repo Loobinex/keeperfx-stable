@@ -829,6 +829,19 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
                 break;
             }
           }
+	  case 9: // PUSHONHIT
+		  if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+		  {
+			  k = atoi(word_buf);
+			  shotst->old->push_on_hit = k;
+			  n++;
+		  }
+		  if (n < 1)
+		  {
+			  CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
+				  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+		  }
+		  break;
           break;
       case 0: // comment
           break;
