@@ -837,7 +837,6 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
 			  k = atoi(word_buf);
 			  shotst->old->push_on_hit = k;
 			  n++;
-			  CONFWRNLOG("hnus read \"%s\" parameter in [%s] block of %s file. --->%d",
 				  COMMAND_TEXT(cmd_num), block_buf, config_textname, shotst->old->push_on_hit);
 		  }
 		  if (n < 1)
