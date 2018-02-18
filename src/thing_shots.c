@@ -876,9 +876,9 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
     struct ShotConfigStats *shotst;
     struct Coord3d pos2;
     long i,n,amp;
+    shotst = get_shot_model_stats(shotng->model);
 	//amp = shotng->field_20;
 	amp = shotst->old->push_on_hit;
-    shotst = get_shot_model_stats(shotng->model);
     shooter = INVALID_THING;
     if (shotng->parent_idx != shotng->index) {
         shooter = thing_get(shotng->parent_idx);
@@ -988,9 +988,9 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
     }
     if (shotst->old->push_on_hit != 0)
     {
-		amp * (long)shotng->velocity.x.val;
+		i = amp * (long)shotng->velocity.x.val;
 		trgtng->veloc_push_add.x.val += i / 16;
-		amp * (long)shotng->velocity.y.val;
+		i = amp * (long)shotng->velocity.y.val;
 		trgtng->veloc_push_add.y.val += i / 16;
 		trgtng->state_flags |= TF1_PushAdd;
     }

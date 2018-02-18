@@ -669,6 +669,7 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
           shotst->area_range = 0;
           shotst->area_damage = 0;
           shotst->area_blow = 0;
+		  shotst->old->push_on_hit = 0;
       }
   }
   // Load the file
@@ -836,6 +837,8 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
 			  k = atoi(word_buf);
 			  shotst->old->push_on_hit = k;
 			  n++;
+			  CONFWRNLOG("hnus read \"%s\" parameter in [%s] block of %s file. --->%d",
+				  COMMAND_TEXT(cmd_num), block_buf, config_textname, shotst->old->push_on_hit);
 		  }
 		  if (n < 1)
 		  {
