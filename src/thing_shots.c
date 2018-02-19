@@ -824,7 +824,8 @@ long melee_shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, stru
       if ( shotst->old->push_on_hit || creature_is_being_unconscious(trgtng))
       {
 		  if (creature_is_being_unconscious(trgtng)) {
-			  throw_strength++; throw_strength *= 10;
+			  throw_strength++;
+              throw_strength *= 10;
 		  }
           trgtng->veloc_push_add.x.val += (throw_strength * (long)shotng->velocity.x.val) / 16;
           trgtng->veloc_push_add.y.val += (throw_strength * (long)shotng->velocity.y.val) / 16;
@@ -992,7 +993,8 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
 	if (shotst->old->push_on_hit != 0 || creature_is_being_unconscious(trgtng))
     {
 		if (creature_is_being_unconscious(trgtng)) {
-			amp ++; amp *= 5;
+			amp ++;
+            amp *= 5;
 		}
 		i = amp * (long)shotng->velocity.x.val;
 		trgtng->veloc_push_add.x.val += i / 16;
