@@ -287,7 +287,7 @@ void process_dig_shot_hit_wall(struct Thing *thing, unsigned long blocked_flags)
     struct SlabMap *slb;
     slb = get_slabmap_for_subtile(stl_x, stl_y);
 
-    // You can only dig your own tiles or non-fortified neutral ground (dirt)
+    // You can only dig your own tiles or non-fortified neutral ground (dirt/gold)
     // If you're not the tile owner
     if (slabmap_owner(slb) != diggertng->owner)
     {
