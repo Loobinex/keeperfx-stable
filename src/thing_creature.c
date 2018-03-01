@@ -3023,22 +3023,19 @@ extern "C" {
         struct CreatureStats *crstat;
         crstat = creature_stats_get_from_thing(thing);
         long ritime;
-        int divider = 1;
         //return _DK_creature_instance_has_reset(thing, a2);
         cctrl = creature_control_get_from_thing(thing);
         inst_inf = creature_instance_info_get(inst_idx);
         long delta;
         delta = (long)game.play_gameturn - (long)cctrl->instance_use_turn[inst_idx];
-        if (crstat->special_spell == inst_idx && crstat->special_spell != 0)
-            divider = 2;
 
         if ((thing->alloc_flags & TAlF_IsControlled) != 0)
         {
-            ritime = inst_inf->fp_reset_time / divider;
+            ritime = inst_inf->fp_reset_time;
         }
         else
         {
-            ritime = inst_inf->reset_time / divider;
+            ritime = inst_inf->reset_time;
         }
         return (delta >= ritime);
     }
