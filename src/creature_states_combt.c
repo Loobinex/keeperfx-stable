@@ -93,6 +93,7 @@ const struct CombatWeapon ranged_offensive_weapon[] = {
 	{CrInst_CAST_SPELL_TIME_BOMB,	768, LONG_MAX},
     {CrInst_FIRE_BOMB,         768, LONG_MAX},
     {CrInst_LIGHTNING,         768, LONG_MAX},
+    {CrInst_GRENADE,           1000, LONG_MAX},
     {CrInst_HAILSTORM,         156, LONG_MAX},
     {CrInst_POISON_CLOUD,      156, LONG_MAX},
     {CrInst_DRAIN,             156, LONG_MAX},
