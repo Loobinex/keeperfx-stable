@@ -1334,7 +1334,7 @@ TngUpdateRet update_shot(struct Thing *thing)
             }
             else
             {
-                struct Coord3d target_pos;
+
                 target_pos.x.val = thing->price.number;
                 target_pos.y.val = thing->shot.byte_19 * 300;
                 target_pos.z.val = target->mappos.z.val;
