@@ -1069,6 +1069,7 @@ short get_map_action_inputs(void)
           if (toggle_main_cheat_menu())
             clear_key_pressed(KC_NUMPADENTER);
       }
+      // also use the main keyboard enter key for cheat menu
       if (is_key_pressed(KC_RETURN,KMod_NONE))
       {
           if (toggle_main_cheat_menu())
