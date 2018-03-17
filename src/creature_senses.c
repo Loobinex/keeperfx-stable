@@ -744,11 +744,19 @@ TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos
         if (point_in_map_is_solid(&nextpos)) {
             SYNCDBG(7, "Player cannot see through (%d,%d) due to linear path solid flags (downcount %d)",
                 (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
+
+            JUSTMSG("Player cannot see through (%d,%d) due to linear path solid flags (downcount %d)",
+                           (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
+
             return false;
         }
         if (!sibling_line_of_sight(&prevpos, &nextpos)) {
             SYNCDBG(7, "Player cannot see through (%d,%d) due to 3D line of sight (downcount %d)",
                 (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
+
+            JUSTMSG("Player cannot see through (%d,%d) due to 3D line of sight (downcount %d)",
+                (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
+
             return false;
         }
         // Go to next sibling subtile
