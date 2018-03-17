@@ -729,13 +729,27 @@ TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos
             maxdim2 = topos->x.stl.num;
         }
         distance = abs(maxdim2 - maxdim1) - 1;
+        //JUSTMSG("Distance: %d", distance);
     }
     // Go through the distance with given increases
     struct Coord3d prevpos;
     struct Coord3d nextpos;
-    prevpos.x.val = frpos->x.val + (increase_x / abs(increase_x));
-    prevpos.y.val = frpos->y.val + (increase_y / abs(increase_y));
-    prevpos.z.val = frpos->z.val + (increase_z / abs(increase_z));
+
+    prevpos.x.val = frpos->x.val;
+    if (increase_x != 0)
+    {
+        prevpos.x.val += (increase_x / abs(increase_x));
+    }
+    prevpos.y.val = frpos->y.val;
+    if (increase_y != 0)
+    {
+        prevpos.y.val += (increase_y / abs(increase_y));
+    }
+    prevpos.z.val = frpos->z.val;
+    if (increase_z != 0)
+    {
+        prevpos.z.val += (increase_z / abs(increase_z));
+    }
     nextpos.x.val = prevpos.x.val + increase_x;
     nextpos.y.val = prevpos.y.val + increase_y;
     nextpos.z.val = prevpos.z.val + increase_z;
