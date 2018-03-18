@@ -1265,6 +1265,19 @@ TbBool destroy_effect_thing(struct Thing *efftng)
     return true;
 }
 
+MapCoordDelta get_3d_distance(const struct Coord3d *pos1, const struct Coord3d *pos2)
+{
+    long dx;
+    long dy;
+    long dz;
+
+    dx = (long)pos1->x.val - (long)pos2->x.val;
+    dy = (long)pos1->y.val - (long)pos2->y.val;
+    dz = (long)pos1->z.val - (long)pos2->z.val;
+
+    return Lb3dDistance(abs(dx), abs(dy), abs(dz));
+}
+
 /**
  * Affects a thing with explosion effect.
  *
@@ -1293,11 +1306,22 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
             max_dist = max_dist * gameadd.friendly_fight_area_range_permil / 1000;
             max_damage = max_damage * gameadd.friendly_fight_area_damage_permil / 1000;
         }
-        distance = get_2d_distance(pos, &tngdst->mappos);
+
+        //distance = get_2d_distance(pos, &tngdst->mappos);
+        // This will decrease the distance compared to 2d,
+        // so explosion power might need to be adjusted (increased)
+        // accordingly to have the same desired effect.
+        distance = get_3d_distance(pos, &tngdst->mappos);
+
+        // If the thing is in range of the explosion blast radius
         if (distance < max_dist)
         {
-            long move_dist,move_angle;
-            move_angle = get_angle_xy_to(pos, &tngdst->mappos);
+            long move_dist;
+            long move_angle_xy;
+            move_angle_xy = get_angle_xy_to(pos, &tngdst->mappos);
+
+            MapCoordDelta dz = tngdst->mappos.z.val - (MapCoordDelta)pos->z.val;
+
             if (tngdst->class_id == TCls_Creature)
             {
                 HitPoints damage;
@@ -1312,8 +1336,9 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
                 move_dist = get_radially_decaying_value(blow_strength,max_dist/4,3*max_dist/4,distance);
                 if (move_dist > 0)
                 {
-                    tngdst->veloc_push_add.x.val += distance_with_angle_to_coord_x(move_dist, move_angle);
-                    tngdst->veloc_push_add.y.val += distance_with_angle_to_coord_y(move_dist, move_angle);
+                    tngdst->veloc_push_add.x.val += distance_with_angle_to_coord_x(move_dist, move_angle_xy);
+                    tngdst->veloc_push_add.y.val += distance_with_angle_to_coord_y(move_dist, move_angle_xy);
+                    tngdst->veloc_push_add.z.val += (dz / abs(dz)) * move_dist;
                     tngdst->state_flags |= TF1_PushAdd;
                     affected = true;
                 }
