@@ -1299,7 +1299,7 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
     TbBool affected;
     affected = false;
     SYNCDBG(17,"Starting for %s, max damage %d, max blow %d, owner %d",thing_model_name(tngdst),(int)max_damage,(int)blow_strength,(int)owner);
-    if (line_of_sight_3d(pos, &tngdst->mappos))
+    if (line_of_sight_3d_explosion(pos, &tngdst->mappos))
     {
         // Friendly fire usually causes less damage and at smaller distance
         if ((tngdst->class_id == TCls_Creature) && (tngdst->owner == owner)) {
@@ -1308,7 +1308,8 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
         }
 
         //distance = get_2d_distance(pos, &tngdst->mappos);
-        // This will decrease the distance compared to 2d,
+
+        // get_3d_distance will decrease the distance compared to 2d,
         // so explosion power might need to be adjusted (increased)
         // accordingly to have the same desired effect.
         distance = get_3d_distance(pos, &tngdst->mappos);
