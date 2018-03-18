@@ -728,28 +728,14 @@ TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos
             maxdim1 = frpos->x.stl.num;
             maxdim2 = topos->x.stl.num;
         }
-        distance = abs(maxdim2 - maxdim1) - 1;
-        //JUSTMSG("Distance: %d", distance);
+        distance = abs(maxdim2 - maxdim1);
     }
     // Go through the distance with given increases
     struct Coord3d prevpos;
     struct Coord3d nextpos;
-
     prevpos.x.val = frpos->x.val;
-    if (increase_x != 0)
-    {
-        prevpos.x.val += (increase_x / abs(increase_x));
-    }
     prevpos.y.val = frpos->y.val;
-    if (increase_y != 0)
-    {
-        prevpos.y.val += (increase_y / abs(increase_y));
-    }
     prevpos.z.val = frpos->z.val;
-    if (increase_z != 0)
-    {
-        prevpos.z.val += (increase_z / abs(increase_z));
-    }
     nextpos.x.val = prevpos.x.val + increase_x;
     nextpos.y.val = prevpos.y.val + increase_y;
     nextpos.z.val = prevpos.z.val + increase_z;
@@ -758,19 +744,11 @@ TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos
         if (point_in_map_is_solid(&nextpos)) {
             SYNCDBG(7, "Player cannot see through (%d,%d) due to linear path solid flags (downcount %d)",
                 (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
-
-            JUSTMSG("Player cannot see through (%d,%d) due to linear path solid flags (downcount %d)",
-                           (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
-
             return false;
         }
         if (!sibling_line_of_sight(&prevpos, &nextpos)) {
             SYNCDBG(7, "Player cannot see through (%d,%d) due to 3D line of sight (downcount %d)",
                 (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
-
-            JUSTMSG("Player cannot see through (%d,%d) due to 3D line of sight (downcount %d)",
-                (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
-
             return false;
         }
         // Go to next sibling subtile
