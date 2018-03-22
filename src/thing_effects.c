@@ -1299,7 +1299,24 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
     TbBool affected;
     affected = false;
     SYNCDBG(17,"Starting for %s, max damage %d, max blow %d, owner %d",thing_model_name(tngdst),(int)max_damage,(int)blow_strength,(int)owner);
-    if (line_of_sight_3d_explosion(pos, &tngdst->mappos))
+
+    // The blast hits them at their midsection, not their feet (z.val).
+    // Not entirely sure that the thing's clipbox_size_yz is, but it's the best I can find per thing (especially creature).
+    MapCoordDelta tngdestMidsection_z = tngdst->mappos.z.val + (tngdst->clipbox_size_yz / 2);
+
+    //In case we want their head to be the part of them affected (so that, usually, anything they can see will blast them)
+    MapCoordDelta tngdestHead_z = tngdst->mappos.z.val + (tngdst->clipbox_size_yz);
+
+    //*********
+    //Uncomment only one of these depending on the best target for the blast:
+
+    //Midsection:
+    //MapCoordDelta tngdestBlastTarget = tngdestMidsection_z;
+    //Head:
+    MapCoordDelta tngdestBlastTarget_z = tngdestHead_z;
+    //*********
+
+    if (line_of_sight_3d_explosion(pos, &tngdst->mappos, tngdestBlastTarget_z))
     {
         // Friendly fire usually causes less damage and at smaller distance
         if ((tngdst->class_id == TCls_Creature) && (tngdst->owner == owner)) {
@@ -1321,7 +1338,10 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
             long move_angle_xy;
             move_angle_xy = get_angle_xy_to(pos, &tngdst->mappos);
 
-            MapCoordDelta dz = tngdst->mappos.z.val - (MapCoordDelta)pos->z.val;
+            // This is for the vertical direction to be pushed by the blast (just up or down, not the angle).
+            // If the target position on the creature (midsection or head depending on the above assignment)
+            // is above the explosion, they'll move upward, and vice versa.
+            MapCoordDelta dz = tngdestHead_z - (MapCoordDelta)pos->z.val;
 
             if (tngdst->class_id == TCls_Creature)
             {

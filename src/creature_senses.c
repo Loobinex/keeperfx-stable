@@ -677,12 +677,16 @@ TbBool line_of_sight_2d(const struct Coord3d *pos1, const struct Coord3d *pos2)
 
 TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos)
 {
+
+
     MapCoordDelta dx,dy,dz;
     dx = topos->x.val - (MapCoordDelta)frpos->x.val;
     dy = topos->y.val - (MapCoordDelta)frpos->y.val;
     dz = topos->z.val - (MapCoordDelta)frpos->z.val;
+
     if ((topos->x.stl.num == frpos->x.stl.num) &&
         (topos->y.stl.num == frpos->y.stl.num)) {
+        //might consider including z in this conditional, but not for now.
         return true;
     }
 
@@ -707,6 +711,7 @@ TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos
         increase_z = -COORD_PER_STL;
     }
     { // Compute amount of steps for the loop
+        //Note: I didn't factor in the z coordinate, so it's possible the distance will not be as long as it should be.
         int maxdim1, maxdim2;
         if (dy == dx)
         {
@@ -782,12 +787,14 @@ TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos
     return true;
 }
 
-TbBool line_of_sight_3d_explosion(const struct Coord3d *frpos, const struct Coord3d *topos)
+TbBool line_of_sight_3d_explosion(const struct Coord3d *frpos, const struct Coord3d *topos, MapCoordDelta tngdestBlastTarget_z)
 {
     MapCoordDelta dx,dy,dz;
     dx = topos->x.val - (MapCoordDelta)frpos->x.val;
     dy = topos->y.val - (MapCoordDelta)frpos->y.val;
-    dz = topos->z.val - (MapCoordDelta)frpos->z.val;
+    //dz = topos->z.val - (MapCoordDelta)frpos->z.val;
+    dz = tngdestBlastTarget_z - (MapCoordDelta)frpos->z.val;
+
     if ((topos->x.stl.num == frpos->x.stl.num) &&
         (topos->y.stl.num == frpos->y.stl.num)) {
         return true;
