@@ -1369,30 +1369,16 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
                     tngdst->veloc_push_add.x.val += distance_with_angle_to_coord_x(move_dist, move_angle_xy);
                     tngdst->veloc_push_add.y.val += distance_with_angle_to_coord_y(move_dist, move_angle_xy);
 
-                    /*
-                    struct CreatureStats *crstat;
-                        crstat = creature_stats_get_from_thing(creatng);
-                        if (crstat->can_go_locked_doors)
-
-                            struct CreatureStats *crstat;
-                                        crstat = creature_stats_get_from_thing(thing);
-                                        dist = get_2d_box_distance(&shotng->mappos, &thing->mappos) + 1;
-                                        if ((dist < param->num1) && crstat->affected_by_wind)
-                    */
-
                     if (dz != 0)
                     {
                         // Only creatures, and those affected by wind (bile demons), get blasted upward
                         if ( (tngdst->class_id == TCls_Creature && creature_stats_get_from_thing(tngdst)->affected_by_wind) )
                         {
-                            tngdst->veloc_push_add.z.val += (dz / abs(dz)) * move_dist;
+                            // decrease/increase verticalFactor (for example to .5 or 2)
+                            // to change vertical push amount of explosions
+                            long double verticalFactor = 1;
+                            tngdst->veloc_push_add.z.val += ((dz / abs(dz)) * move_dist) * verticalFactor;
                         }
-                        /* in case we want non-creature things to get blasted upward (if they can be)
-                        else
-                        {
-                            tngdst->veloc_push_add.z.val += (dz / abs(dz)) * move_dist;
-                        }
-                        */
                     }
                     tngdst->state_flags |= TF1_PushAdd;
                     affected = true;
