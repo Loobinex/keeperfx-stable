@@ -1308,15 +1308,24 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
     MapCoordDelta tngdestHead_z = tngdst->mappos.z.val + (tngdst->clipbox_size_yz);
 
     //*********
-    //Uncomment only one of these depending on the best target for the blast:
+    //Uncomment only one of these depending on the best target for the blast line of sight:
 
     //Midsection:
-    //MapCoordDelta tngdestBlastTarget = tngdestMidsection_z;
+    //MapCoordDelta tngdestLineOfSightTarget = tngdestMidsection_z;
     //Head:
-    MapCoordDelta tngdestBlastTarget_z = tngdestHead_z;
+    MapCoordDelta tngdestLineOfSightTarget_z = tngdestHead_z;
     //*********
 
-    if (line_of_sight_3d_explosion(pos, &tngdst->mappos, tngdestBlastTarget_z))
+    //*********
+    //Uncomment only one of these depending on the best target for the blast angle force itself:
+
+    //Midsection:
+    //MapCoordDelta tngdestBlastForceTarget = tngdestMidsection_z;
+    //Head:
+    MapCoordDelta tngdestBlastForceTarget_z = tngdestHead_z;
+    //*********
+
+    if (line_of_sight_3d_explosion(pos, &tngdst->mappos, tngdestLineOfSightTarget_z))
     {
         // Friendly fire usually causes less damage and at smaller distance
         if ((tngdst->class_id == TCls_Creature) && (tngdst->owner == owner)) {
@@ -1341,7 +1350,7 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
             // This is for the vertical direction to be pushed by the blast (just up or down, not the angle).
             // If the target position on the creature (midsection or head depending on the above assignment)
             // is above the explosion, they'll move upward, and vice versa.
-            MapCoordDelta dz = tngdestHead_z - (MapCoordDelta)pos->z.val;
+            MapCoordDelta dz = tngdestBlastForceTarget_z - (MapCoordDelta)pos->z.val;
 
             if (tngdst->class_id == TCls_Creature)
             {
@@ -1351,7 +1360,7 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
                 apply_damage_to_thing_and_display_health(tngdst, damage, damage_type, owner);
                 affected = true;
             }
-            // If the thing isn't dying, move it
+            // If the thing isn't a creature or isn't dying, move it
             if ((tngdst->class_id != TCls_Creature) || (tngdst->health >= 0))
             {
                 move_dist = get_radially_decaying_value(blow_strength,max_dist/4,3*max_dist/4,distance);
@@ -1359,9 +1368,31 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
                 {
                     tngdst->veloc_push_add.x.val += distance_with_angle_to_coord_x(move_dist, move_angle_xy);
                     tngdst->veloc_push_add.y.val += distance_with_angle_to_coord_y(move_dist, move_angle_xy);
+
+                    /*
+                    struct CreatureStats *crstat;
+                        crstat = creature_stats_get_from_thing(creatng);
+                        if (crstat->can_go_locked_doors)
+
+                            struct CreatureStats *crstat;
+                                        crstat = creature_stats_get_from_thing(thing);
+                                        dist = get_2d_box_distance(&shotng->mappos, &thing->mappos) + 1;
+                                        if ((dist < param->num1) && crstat->affected_by_wind)
+                    */
+
                     if (dz != 0)
                     {
-                        tngdst->veloc_push_add.z.val += (dz / abs(dz)) * move_dist;
+                        // Only creatures, and those affected by wind (bile demons), get blasted upward
+                        if ( (tngdst->class_id == TCls_Creature && creature_stats_get_from_thing(tngdst)->affected_by_wind) )
+                        {
+                            tngdst->veloc_push_add.z.val += (dz / abs(dz)) * move_dist;
+                        }
+                        /* in case we want non-creature things to get blasted upward (if they can be)
+                        else
+                        {
+                            tngdst->veloc_push_add.z.val += (dz / abs(dz)) * move_dist;
+                        }
+                        */
                     }
                     tngdst->state_flags |= TF1_PushAdd;
                     affected = true;
