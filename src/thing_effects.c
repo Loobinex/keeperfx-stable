@@ -1309,7 +1309,6 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
 
     //*********
     //Uncomment only one of these depending on the best target for the blast line of sight:
-
     //Midsection:
     //MapCoordDelta tngdestLineOfSightTarget = tngdestMidsection_z;
     //Head:
@@ -1320,9 +1319,9 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
     //Uncomment only one of these depending on the best target for the blast angle force itself:
 
     //Midsection:
-    //MapCoordDelta tngdestBlastForceTarget = tngdestMidsection_z;
+    MapCoordDelta tngdestBlastForceTarget_z = tngdestMidsection_z;
     //Head:
-    MapCoordDelta tngdestBlastForceTarget_z = tngdestHead_z;
+    //MapCoordDelta tngdestBlastForceTarget_z = tngdestHead_z;
     //*********
 
     if (line_of_sight_3d_explosion(pos, &tngdst->mappos, tngdestLineOfSightTarget_z))
@@ -1349,7 +1348,10 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
 
             // This is for the vertical direction to be pushed by the blast (just up or down, not the angle).
             // If the target position on the creature (midsection or head depending on the above assignment)
-            // is above the explosion, they'll move upward, and vice versa.
+            // is above the explosion, they'll move upward.
+            // If this turns out to be zero or negative
+            // (the creature's vertical target position is below the explosion vertical position),
+            // vertical push will not be performed, until related bugs from downward movement are removed.
             MapCoordDelta dz = tngdestBlastForceTarget_z - (MapCoordDelta)pos->z.val;
 
             if (tngdst->class_id == TCls_Creature)
@@ -1369,15 +1371,15 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
                     tngdst->veloc_push_add.x.val += distance_with_angle_to_coord_x(move_dist, move_angle_xy);
                     tngdst->veloc_push_add.y.val += distance_with_angle_to_coord_y(move_dist, move_angle_xy);
 
-                    if (dz != 0)
+                    //if (dz != 0)
+                    // Avoid getting stuck in the floor by only allowing upward explosion push.
+                    // No downward push until bugs are fixed (briefly disappearing in water, getting stuck in things).
+                    if (dz > 0)
                     {
-                        // Only creatures, and those affected by wind (bile demons), get blasted upward
+                        // Only creatures, and those affected by wind (bile demons), get blasted
                         if ( (tngdst->class_id == TCls_Creature && creature_stats_get_from_thing(tngdst)->affected_by_wind) )
                         {
-                            // decrease/increase verticalFactor (for example to .5 or 2)
-                            // to change vertical push amount of explosions
-                            long double verticalFactor = 1;
-                            tngdst->veloc_push_add.z.val += ((dz / abs(dz)) * move_dist) * verticalFactor;
+                            tngdst->veloc_push_add.z.val += move_dist * (gameadd.explosions_vertical_push_percent / 100);
                         }
                     }
                     tngdst->state_flags |= TF1_PushAdd;
