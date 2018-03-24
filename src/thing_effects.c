@@ -1371,15 +1371,14 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
                     tngdst->veloc_push_add.x.val += distance_with_angle_to_coord_x(move_dist, move_angle_xy);
                     tngdst->veloc_push_add.y.val += distance_with_angle_to_coord_y(move_dist, move_angle_xy);
 
-                    //if (dz != 0)
-                    // Avoid getting stuck in the floor by only allowing upward explosion push.
-                    // No downward push until bugs are fixed (briefly disappearing in water, getting stuck in things).
-                    if (dz > 0)
+                    // Use dz > 0 instead to avoid the bug where creatures in water disappear briefly when being pushed by the explosion,
+                    // and flying creatures getting stuck in things.
+                    if (dz != 0)
                     {
                         // Only creatures, and those affected by wind (bile demons), get blasted
                         if ( (tngdst->class_id == TCls_Creature && creature_stats_get_from_thing(tngdst)->affected_by_wind) )
                         {
-                            tngdst->veloc_push_add.z.val += move_dist * (gameadd.explosions_vertical_push_percent / 100);
+                            tngdst->veloc_push_add.z.val += (dz / abs(dz)) * move_dist * (gameadd.explosions_vertical_push_percent / 100);
                         }
                     }
                     tngdst->state_flags |= TF1_PushAdd;
