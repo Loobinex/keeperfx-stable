@@ -1348,10 +1348,7 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
 
             // This is for the vertical direction to be pushed by the blast (just up or down, not the angle).
             // If the target position on the creature (midsection or head depending on the above assignment)
-            // is above the explosion, they'll move upward.
-            // If this turns out to be zero or negative
-            // (the creature's vertical target position is below the explosion vertical position),
-            // vertical push will not be performed, until related bugs from downward movement are removed.
+            // is above the explosion, they'll move upward. If below, downward.
             MapCoordDelta dz = tngdestBlastForceTarget_z - (MapCoordDelta)pos->z.val;
 
             if (tngdst->class_id == TCls_Creature)

@@ -677,8 +677,6 @@ TbBool line_of_sight_2d(const struct Coord3d *pos1, const struct Coord3d *pos2)
 
 TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos)
 {
-
-
     MapCoordDelta dx,dy,dz;
     dx = topos->x.val - (MapCoordDelta)frpos->x.val;
     dy = topos->y.val - (MapCoordDelta)frpos->y.val;
@@ -711,7 +709,6 @@ TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos
         increase_z = -COORD_PER_STL;
     }
     { // Compute amount of steps for the loop
-        //Note: I didn't factor in the z coordinate, so it's possible the distance will not be as long as it should be.
         int maxdim1, maxdim2;
         if (dy == dx)
         {
@@ -792,7 +789,6 @@ TbBool line_of_sight_3d_explosion(const struct Coord3d *frpos, const struct Coor
     MapCoordDelta dx,dy,dz;
     dx = topos->x.val - (MapCoordDelta)frpos->x.val;
     dy = topos->y.val - (MapCoordDelta)frpos->y.val;
-    //dz = topos->z.val - (MapCoordDelta)frpos->z.val;
     dz = tngdestBlastTarget_z - (MapCoordDelta)frpos->z.val;
 
     if ((topos->x.stl.num == frpos->x.stl.num) &&
@@ -843,8 +839,8 @@ TbBool line_of_sight_3d_explosion(const struct Coord3d *frpos, const struct Coor
             maxdim2 = topos->x.stl.num;
         }
         distance = abs(maxdim2 - maxdim1) - 1;
-        //JUSTMSG("Distance: %d", distance);
     }
+
     // Go through the distance with given increases
     struct Coord3d prevpos;
     struct Coord3d nextpos;
@@ -872,19 +868,11 @@ TbBool line_of_sight_3d_explosion(const struct Coord3d *frpos, const struct Coor
         if (point_in_map_is_solid(&nextpos)) {
             SYNCDBG(7, "Player cannot see through (%d,%d) due to linear path solid flags (downcount %d)",
                 (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
-
-            JUSTMSG("Player cannot see through (%d,%d) due to linear path solid flags (downcount %d)",
-                           (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
-
             return false;
         }
         if (!sibling_line_of_sight(&prevpos, &nextpos)) {
             SYNCDBG(7, "Player cannot see through (%d,%d) due to 3D line of sight (downcount %d)",
                 (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
-
-            JUSTMSG("Player cannot see through (%d,%d) due to 3D line of sight (downcount %d)",
-                (int)nextpos.x.stl.num,(int)nextpos.y.stl.num,(int)distance);
-
             return false;
         }
         // Go to next sibling subtile
