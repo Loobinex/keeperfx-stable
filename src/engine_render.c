@@ -5095,38 +5095,6 @@ void draw_element(struct Map *map, long lightness, long stl_x, long stl_y, long 
 
 }
 
-unsigned short get_thing_shade(struct Thing *thing)
-{
-    MapSubtlCoord stl_x,stl_y;
-    long lgh[2][2]; // the dimensions are lgh[y][x]
-    long shval;
-    long fract_x,fract_y;
-    stl_x = thing->mappos.x.stl.num;
-    stl_y = thing->mappos.y.stl.num;
-    fract_x = thing->mappos.x.stl.pos;
-    fract_y = thing->mappos.y.stl.pos;
-    lgh[0][0] = get_subtile_lightness(&game.lish,stl_x,  stl_y);
-    lgh[0][1] = get_subtile_lightness(&game.lish,stl_x+1,stl_y);
-    lgh[1][0] = get_subtile_lightness(&game.lish,stl_x,  stl_y+1);
-    lgh[1][1] = get_subtile_lightness(&game.lish,stl_x+1,stl_y+1);
-    shval = (fract_x
-        * (lgh[0][1] + (fract_y * (lgh[1][1] - lgh[0][1]) >> 8)
-        - (lgh[0][0] + (fract_y * (lgh[1][0] - lgh[0][0]) >> 8))) >> 8)
-        + (lgh[0][0] + (fract_y * (lgh[1][0] - lgh[0][0]) >> 8));
-    if (shval < MINIMUM_LIGHTNESS)
-    {
-        shval += (MINIMUM_LIGHTNESS>>2);
-        if (shval > MINIMUM_LIGHTNESS)
-            shval = MINIMUM_LIGHTNESS;
-    } else
-    {
-        // Max lightness value - make sure it won't exceed our limits
-        if (shval > 64*256+255)
-            shval = 64*256+255;
-    }
-    return shval;
-}
-
 void lock_keepersprite(unsigned short kspr_idx)
 {
     int frame_num,frame_count;
