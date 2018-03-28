@@ -3627,6 +3627,14 @@ TbBool create_random_hero_creature(MapCoord x, MapCoord y, PlayerNumber owner, C
       if ((crconf->model_flags & CMF_IsSpectator) != 0) {
           continue;
       }
+
+      // Good hellhounds cannot move/die when created via cheat. Do not include as option
+      struct CreatureStats *thisCreatureModel;
+      thisCreatureModel = creature_stats_get(crmodel);
+      if ((thisCreatureModel->piss_on_dead) == true) {
+          continue;
+      }
+
       if ((crconf->model_flags & CMF_IsEvil) == 0) {
           break;
       }
