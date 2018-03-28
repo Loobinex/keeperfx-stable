@@ -445,6 +445,7 @@ int draw_overhead_creatures(const struct TbRect *map_area, long block_size, Play
                     LbDrawPixel(pos_x, pos_y, col2);
 
                     // These only draw if screen resolution is high (not the 640x480)
+                    // TODO: scale appropriately for windowed mode
                     if (!isLowRes)
                     {
                         LbDrawPixel(pos_x+1, pos_y, col2);
@@ -455,6 +456,7 @@ int draw_overhead_creatures(const struct TbRect *map_area, long block_size, Play
                 {
                     LbDrawPixel(pos_x, pos_y, col1);
                     // These only draw if screen resolution is high (not the 640x480)
+                    // TODO: scale appropriately for windowed mode
                     if (!isLowRes)
                     {
                         LbDrawPixel(pos_x+1, pos_y, col1);
@@ -481,6 +483,7 @@ int draw_overhead_creatures(const struct TbRect *map_area, long block_size, Play
                     pos_y = map_area->top  + block_size * stl_num_decode_y(memberpos) / STL_PER_SLB;
                     LbDrawPixel(pos_x, pos_y, col1);
                     // These only draw if screen resolution is high (not the 640x480)
+                    // TODO: scale appropriately for windowed mode
                     if (!isLowRes)
                     {
                         LbDrawPixel(pos_x+1, pos_y, col1);
