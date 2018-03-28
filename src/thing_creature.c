@@ -3628,14 +3628,20 @@ TbBool create_random_hero_creature(MapCoord x, MapCoord y, PlayerNumber owner, C
           continue;
       }
 
-      // Good hellhounds cannot move/die when created via cheat. Do not include as option
-      struct CreatureStats *thisCreatureModel;
-      thisCreatureModel = creature_stats_get(crmodel);
-      if ((thisCreatureModel->piss_on_dead) == true) {
+      // Good hellhounds appcannot move/die when created via cheat. Do not include as option, i.e. logs such as:
+      // Error: get_creature_model_graphics: Invalid model 32 graphics sequence 0
+      // Error: process_creature_state: The creature INVALID index 392 has illegal state[1], S=0, TCS=0, reset
+      // Error: get_creature_model_graphics: Invalid model 32 graphics sequence 0
+      // Warning: get_creature_state_type_f: get_self_spell_casting: The creature INVALID index 392 active state 0 is out of range
+
+      // So don't create them until we fix that.
+      if (crmodel == 32) {
+          // Try again instead of cruelly creating this clearly conflicted Good Hound from Hell
           continue;
       }
 
       if ((crconf->model_flags & CMF_IsEvil) == 0) {
+          //JUSTMSG("*** CREATURE MODEL NUMBER %d", (unsigned char)crmodel);
           break;
       }
   }
