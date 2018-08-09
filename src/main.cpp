@@ -4146,12 +4146,15 @@ void startup_network_game(TbBool local)
     unsigned int flgmem;
     struct PlayerInfo *player;
     setup_count_players();
-    if (campaign.human_player >= 0)
-    {
-        my_player_number = campaign.human_player;
-    }
     player = get_my_player();
     flgmem = player->field_2C;
+    if (campaign.human_player >= 0)
+    {
+        default_loc_player = campaign.human_player;
+        game.local_plyr_idx = default_loc_player;
+        my_player_number = default_loc_player;
+        player->field_2C = 1;
+    }
     init_level();
     player = get_my_player();
     player->field_2C = flgmem;
