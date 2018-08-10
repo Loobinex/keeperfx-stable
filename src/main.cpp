@@ -135,6 +135,7 @@ unsigned short bf_argc;
 char *bf_argv[CMDLN_MAXLEN+1];
 
 short default_loc_player = 0;
+TbBool force_player_num = false;
 struct StartupParameters start_params;
 
 struct Room *droom = &_DK_game.rooms[25];
@@ -4148,7 +4149,7 @@ void startup_network_game(TbBool local)
     setup_count_players();
     player = get_my_player();
     flgmem = player->field_2C;
-    if (campaign.human_player >= 0)
+    if ((campaign.human_player >= 0) && (!force_player_num))
     {
         default_loc_player = campaign.human_player;
         game.local_plyr_idx = default_loc_player;
@@ -4517,6 +4518,7 @@ short process_command_line(unsigned short argc, char *argv[])
       {
           narg++;
           default_loc_player = atoi(pr2str);
+          force_player_num = true;
       } else
       if (strcasecmp(parstr, "usersfont") == 0)
       {
