@@ -2701,7 +2701,7 @@ TbBool init_creature_state(struct Thing *creatng)
     if (is_neutral_thing(creatng))
     {
         SYNCDBG(3,"Not assigning initial job at (%d,%d) for neutral %s index %d owner %d",(int)stl_x,(int)stl_y,thing_model_name(creatng),(int)creatng->index,(int)creatng->owner);
-        return false;
+      //  return false;
     }
     CreatureJob new_job;
     new_job = get_job_for_subtile(creatng, stl_x, stl_y, JoKF_AssignCeatureInit);
