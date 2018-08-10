@@ -38,6 +38,7 @@ extern "C" {
 #define HISCORE_NAME_LENGTH          64
 #define CAMPAIGNS_LIST_GROW_DELTA     8
 #define CAMPAIGN_CREDITS_COUNT      360
+#define CAMPAIGN_VAR_COUNT           32
 /** Strings length */
 #define CAMPAIGN_FNAME_LEN           64
 
@@ -112,6 +113,8 @@ struct GameCampaign {
   char hiscore_fname[DISKPATH_SIZE];
   struct HighScore *hiscore_table;
   unsigned long hiscore_count;
+  // Campaign variables
+  long cmpvars[CAMPAIGN_VAR_COUNT];
 };
 
 struct HighScore {
@@ -171,6 +174,9 @@ TbBool free_campaigns_list_entries(struct CampaignsList *clist);
 TbBool load_campaigns_list(void);
 TbBool change_campaign(const char *cmpgn_fname);
 TbBool is_campaign_loaded(void);
+// Support for campaign variables
+void set_cmpvar(long cmpvar_idx, long new_val);
+long get_cmpvar(long cmpvar_idx);
 /******************************************************************************/
 #ifdef __cplusplus
 }

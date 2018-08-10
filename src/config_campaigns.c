@@ -1231,6 +1231,16 @@ TbBool load_campaigns_list(void)
     return (campaigns_list.items_num > 0);
 }
 
+void set_cmpvar(long cmpvar_idx, long new_val)
+{
+    campaign.cmpvars[cmpvar_idx] = new_val;
+}
+
+long get_cmpvar(long cmpvar_idx)
+{
+    return campaign.cmpvars[cmpvar_idx];
+}
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

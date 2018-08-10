@@ -132,6 +132,9 @@ const struct CommandDesc command_desc[] = {
   {"REVEAL_MAP_LOCATION",          "PNN     ", Cmd_REVEAL_MAP_LOCATION},
   {"LEVEL_VERSION",                "N       ", Cmd_LEVEL_VERSION},
   {"KILL_CREATURE",                "PCAN    ", Cmd_KILL_CREATURE},
+  {"SET_CMPVAR",                   "NN      ", Cmd_SET_CMPVAR},
+  {"ADD_TO_CMPVAR",                "NN      ", Cmd_ADD_TO_CMPVAR},
+  {"ADD_TO_FLAG",                  "PAN     ", Cmd_ADD_TO_FLAG},
   {NULL,                           "        ", Cmd_NONE},
 };
 
@@ -195,6 +198,7 @@ const struct CommandDesc dk1_command_desc[] = {
 const struct CommandDesc subfunction_desc[] = {
     {"RANDOM",                     "Aaaaaaaa", Cmd_RANDOM},
     {"DRAWFROM",                   "Aaaaaaaa", Cmd_DRAWFROM},
+    {"GET_CMPVAR",                 "N       ", Cmd_GET_CMPVAR},
     {NULL,                         "        ", Cmd_NONE},
   };
 
@@ -244,6 +248,38 @@ const struct NamedCommand variable_desc[] = {
     //{"DOOR",                      SVar_DOOR_NUM},
     {"GOOD_CREATURES",              SVar_GOOD_CREATURES},
     {"EVIL_CREATURES",              SVar_EVIL_CREATURES},
+    {"CMPVAR0",                     SVar_CMPVAR0},
+    {"CMPVAR1",                     SVar_CMPVAR1},
+    {"CMPVAR2",                     SVar_CMPVAR2},
+    {"CMPVAR3",                     SVar_CMPVAR3},
+    {"CMPVAR4",                     SVar_CMPVAR4},
+    {"CMPVAR5",                     SVar_CMPVAR5},
+    {"CMPVAR6",                     SVar_CMPVAR6},
+    {"CMPVAR7",                     SVar_CMPVAR7},
+    {"CMPVAR8",                     SVar_CMPVAR8},
+    {"CMPVAR9",                     SVar_CMPVAR9},
+    {"CMPVAR10",                    SVar_CMPVAR10},
+    {"CMPVAR11",                    SVar_CMPVAR11},
+    {"CMPVAR12",                    SVar_CMPVAR12},
+    {"CMPVAR13",                    SVar_CMPVAR13},
+    {"CMPVAR14",                    SVar_CMPVAR14},
+    {"CMPVAR15",                    SVar_CMPVAR15},
+    {"CMPVAR16",                    SVar_CMPVAR16},
+    {"CMPVAR17",                    SVar_CMPVAR17},
+    {"CMPVAR18",                    SVar_CMPVAR18},
+    {"CMPVAR19",                    SVar_CMPVAR19},
+    {"CMPVAR20",                    SVar_CMPVAR20},
+    {"CMPVAR21",                    SVar_CMPVAR21},
+    {"CMPVAR22",                    SVar_CMPVAR22},
+    {"CMPVAR23",                    SVar_CMPVAR23},
+    {"CMPVAR24",                    SVar_CMPVAR24},
+    {"CMPVAR25",                    SVar_CMPVAR25},
+    {"CMPVAR26",                    SVar_CMPVAR26},
+    {"CMPVAR27",                    SVar_CMPVAR27},
+    {"CMPVAR28",                    SVar_CMPVAR28},
+    {"CMPVAR29",                    SVar_CMPVAR29},
+    {"CMPVAR30",                    SVar_CMPVAR30},
+    {"CMPVAR31",                    SVar_CMPVAR31},
     {NULL,                           0},
 };
 
@@ -1503,6 +1539,19 @@ void command_set_flag(long plr_range_id, const char *flgname, long val)
   command_add_value(Cmd_SET_FLAG, plr_range_id, flg_id, val, 0);
 }
 
+void command_add_to_flag(long plr_range_id, const char *flgname, long val)
+{
+  long flg_id;
+  flg_id = get_rid(flag_desc, flgname);
+  if (flg_id == -1)
+  {
+    SCRPTERRLOG("Unknown flag, '%s'", flgname);
+    return;
+  }
+  struct Dungeon *dungeon = get_dungeon(plr_range_id);
+  command_add_value(Cmd_SET_FLAG, plr_range_id, flg_id, dungeon->script_flags[flg_id] + val, 0);
+}
+
 void command_max_creatures(long plr_range_id, long val)
 {
     command_add_value(Cmd_MAX_CREATURES, plr_range_id, val, 0, 0);
@@ -2243,6 +2292,11 @@ void command_kill_creature(long plr_range_id, const char *crtr_name, const char 
   command_add_value(Cmd_KILL_CREATURE, plr_range_id, crtr_id, select_id, count);
 }
 
+void command_set_cmpvar(long cmpvar_idx, long new_val)
+{
+  command_add_value(Cmd_SET_CMPVAR, ALL_PLAYERS, cmpvar_idx, new_val, 0);
+}
+
 /** Adds a script command to in-game structures.
  *
  * @param cmd_desc
@@ -2457,6 +2511,15 @@ void script_add_command(const struct CommandDesc *cmd_desc, const struct ScriptL
     case Cmd_LEVEL_VERSION:
         level_file_version = scline->np[0];
         SCRPTLOG("Level files version %d.",level_file_version);
+        break;
+    case Cmd_SET_CMPVAR:
+        command_set_cmpvar(scline->np[0], scline->np[1]);
+        break;
+    case Cmd_ADD_TO_CMPVAR:
+        command_set_cmpvar(scline->np[0], get_cmpvar(scline->np[0]) + scline->np[1]);
+        break;
+    case Cmd_ADD_TO_FLAG:
+        command_add_to_flag(scline->np[0], scline->tp[1], scline->np[2]);
         break;
     default:
         SCRPTERRLOG("Unhandled SCRIPT command '%s'", scline->tcmnd);
@@ -2726,6 +2789,13 @@ int script_recognize_params(char **line, const struct CommandDesc *cmd_desc, str
                 }
                 SCRPTLOG("Function \"%s\" returned value \"%s\"", funcmd_desc->textptr, scline->tp[i]);
                 };break;
+                case Cmd_GET_CMPVAR:
+                {
+                    long value = get_cmpvar(funscline->np[0]);
+                    itoa(value, scline->tp[i], 10);
+                    SCRPTLOG("Function \"%s\" returned value \"%ld\"", funcmd_desc->textptr, value);
+                    break;
+                }
             default:
                 SCRPTWRNLOG("Parameter value \"%s\" is a command which isn't supported as function", scline->tp[i]);
                 break;
@@ -3695,6 +3765,103 @@ long get_condition_value(PlayerNumber plyr_idx, unsigned char valtype, unsigned 
     case SVar_CONTROLS_EVIL_CREATURES:
         dungeon = get_dungeon(plyr_idx);
         return count_creatures_in_dungeon_controlled_and_of_model_flags(dungeon, CMF_IsEvil, CMF_IsSpectator|CMF_IsSpecDigger);
+    case SVar_CMPVAR0:
+        return get_cmpvar(0);
+        break;
+    case SVar_CMPVAR1:
+        return get_cmpvar(1);
+        break;
+    case SVar_CMPVAR2:
+        return get_cmpvar(2);
+        break;
+    case SVar_CMPVAR3:
+        return get_cmpvar(3);
+        break;
+    case SVar_CMPVAR4:
+        return get_cmpvar(4);
+        break;
+    case SVar_CMPVAR5:
+        return get_cmpvar(5);
+        break;
+    case SVar_CMPVAR6:
+        return get_cmpvar(6);
+        break;
+    case SVar_CMPVAR7:
+        return get_cmpvar(7);
+        break;
+    case SVar_CMPVAR8:
+        return get_cmpvar(8);
+        break;
+    case SVar_CMPVAR9:
+        return get_cmpvar(9);
+        break;
+    case SVar_CMPVAR10:
+        return get_cmpvar(10);
+        break;
+    case SVar_CMPVAR11:
+        return get_cmpvar(11);
+        break;
+    case SVar_CMPVAR12:
+        return get_cmpvar(12);
+        break;
+    case SVar_CMPVAR13:
+        return get_cmpvar(13);
+        break;
+    case SVar_CMPVAR14:
+        return get_cmpvar(14);
+        break;
+    case SVar_CMPVAR15:
+        return get_cmpvar(15);
+        break;
+    case SVar_CMPVAR16:
+        return get_cmpvar(16);
+        break;
+    case SVar_CMPVAR17:
+        return get_cmpvar(17);
+        break;
+    case SVar_CMPVAR18:
+        return get_cmpvar(18);
+        break;
+    case SVar_CMPVAR19:
+        return get_cmpvar(19);
+        break;
+    case SVar_CMPVAR20:
+        return get_cmpvar(0);
+        break;
+    case SVar_CMPVAR21:
+        return get_cmpvar(21);
+        break;
+    case SVar_CMPVAR22:
+        return get_cmpvar(22);
+        break;
+    case SVar_CMPVAR23:
+        return get_cmpvar(23);
+        break;
+    case SVar_CMPVAR24:
+        return get_cmpvar(24);
+        break;
+    case SVar_CMPVAR25:
+        return get_cmpvar(25);
+        break;
+    case SVar_CMPVAR26:
+        return get_cmpvar(26);
+        break;
+    case SVar_CMPVAR27:
+        return get_cmpvar(27);
+        break;
+    case SVar_CMPVAR28:
+        return get_cmpvar(28);
+        break;
+    case SVar_CMPVAR29:
+        return get_cmpvar(29);
+        break;
+    case SVar_CMPVAR30:
+        return get_cmpvar(30);
+        break;
+    case SVar_CMPVAR31:
+        return get_cmpvar(31);
+        break;
+    break;
     default:
         break;
     };
@@ -4151,6 +4318,9 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
       {
           script_kill_creatures(i, val2, val3, val4);
       }
+      break;
+  case Cmd_SET_CMPVAR:
+      set_cmpvar(val2, val3);
       break;
   default:
       WARNMSG("Unsupported Game VALUE, command %d.",var_index);
