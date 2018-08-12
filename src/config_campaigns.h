@@ -116,7 +116,7 @@ struct GameCampaign {
   // Human player color
   short human_player;
   // Campaign variables
-  long cmpvars[CAMPAIGN_VAR_COUNT];
+  long campaign_variables[CAMPAIGN_VAR_COUNT];
 };
 
 struct HighScore {
@@ -177,8 +177,8 @@ TbBool load_campaigns_list(void);
 TbBool change_campaign(const char *cmpgn_fname);
 TbBool is_campaign_loaded(void);
 // Support for campaign variables
-void set_cmpvar(long cmpvar_idx, long new_val);
-long get_cmpvar(long cmpvar_idx);
+void set_campaign_variable(long cmpvar_idx, long new_val);
+long get_campaign_variable(long cmpvar_idx);
 /******************************************************************************/
 #ifdef __cplusplus
 }

@@ -1252,14 +1252,14 @@ TbBool load_campaigns_list(void)
     return (campaigns_list.items_num > 0);
 }
 
-void set_cmpvar(long cmpvar_idx, long new_val)
+void set_campaign_variable(long cmpvar_idx, long new_val)
 {
-    campaign.cmpvars[cmpvar_idx] = new_val;
+    campaign.campaign_variables[cmpvar_idx] = new_val;
 }
 
-long get_cmpvar(long cmpvar_idx)
+long get_campaign_variable(long cmpvar_idx)
 {
-    return campaign.cmpvars[cmpvar_idx];
+    return campaign.campaign_variables[cmpvar_idx];
 }
 
 /******************************************************************************/

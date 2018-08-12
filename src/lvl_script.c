@@ -68,75 +68,75 @@ extern "C" {
  * Lower case letters are optional arguments.
  */
 const struct CommandDesc command_desc[] = {
-  {"CREATE_PARTY",                 "A       ", Cmd_CREATE_PARTY},
-  {"ADD_TO_PARTY",                 "ACNNAN  ", Cmd_ADD_TO_PARTY},
-  {"ADD_PARTY_TO_LEVEL",           "PAAN    ", Cmd_ADD_PARTY_TO_LEVEL},
-  {"ADD_CREATURE_TO_LEVEL",        "PCANNN  ", Cmd_ADD_CREATURE_TO_LEVEL},
-  {"IF",                           "PAON    ", Cmd_IF},
-  {"IF_ACTION_POINT",              "NP      ", Cmd_IF_ACTION_POINT},
-  {"ENDIF",                        "        ", Cmd_ENDIF},
-  {"SET_HATE",                     "PPN     ", Cmd_SET_HATE},
-  {"SET_GENERATE_SPEED",           "N       ", Cmd_SET_GENERATE_SPEED},
-  {"REM",                          "        ", Cmd_REM},
-  {"START_MONEY",                  "PN      ", Cmd_START_MONEY},
-  {"ROOM_AVAILABLE",               "PRNN    ", Cmd_ROOM_AVAILABLE},
-  {"CREATURE_AVAILABLE",           "PCNN    ", Cmd_CREATURE_AVAILABLE},
-  {"MAGIC_AVAILABLE",              "PANN    ", Cmd_MAGIC_AVAILABLE},
-  {"TRAP_AVAILABLE",               "PANN    ", Cmd_TRAP_AVAILABLE},
-  {"RESEARCH",                     "PAAN    ", Cmd_RESEARCH},
-  {"RESEARCH_ORDER",               "PAAN    ", Cmd_RESEARCH_ORDER},
-  {"COMPUTER_PLAYER",              "PN      ", Cmd_COMPUTER_PLAYER},
-  {"SET_TIMER",                    "PA      ", Cmd_SET_TIMER},
-  {"ADD_TUNNELLER_TO_LEVEL",       "PAANNN  ", Cmd_ADD_TUNNELLER_TO_LEVEL},
-  {"WIN_GAME",                     "        ", Cmd_WIN_GAME},
-  {"LOSE_GAME",                    "        ", Cmd_LOSE_GAME},
-  {"SET_FLAG",                     "PAN     ", Cmd_SET_FLAG},
-  {"MAX_CREATURES",                "PN      ", Cmd_MAX_CREATURES},
-  {"NEXT_COMMAND_REUSABLE",        "        ", Cmd_NEXT_COMMAND_REUSABLE},
-  {"DOOR_AVAILABLE",               "PANN    ", Cmd_DOOR_AVAILABLE},
-  {"DISPLAY_OBJECTIVE",            "NL      ", Cmd_DISPLAY_OBJECTIVE},
-  {"DISPLAY_OBJECTIVE_WITH_POS",   "NNN     ", Cmd_DISPLAY_OBJECTIVE_WITH_POS},
-  {"DISPLAY_INFORMATION",          "NL      ", Cmd_DISPLAY_INFORMATION},
-  {"DISPLAY_INFORMATION_WITH_POS", "NNN     ", Cmd_DISPLAY_INFORMATION_WITH_POS},
-  {"ADD_TUNNELLER_PARTY_TO_LEVEL", "PAAANNN ", Cmd_ADD_TUNNELLER_PARTY_TO_LEVEL},
-  {"ADD_CREATURE_TO_POOL",         "CN      ", Cmd_ADD_CREATURE_TO_POOL},
-  {"RESET_ACTION_POINT",           "N       ", Cmd_RESET_ACTION_POINT},
-  {"SET_CREATURE_MAX_LEVEL",       "PCN     ", Cmd_SET_CREATURE_MAX_LEVEL},
-  {"SET_MUSIC",                    "N       ", Cmd_SET_MUSIC},
-  {"TUTORIAL_FLASH_BUTTON",        "NN      ", Cmd_TUTORIAL_FLASH_BUTTON},
-  {"SET_CREATURE_STRENGTH",        "CN      ", Cmd_SET_CREATURE_STRENGTH},
-  {"SET_CREATURE_HEALTH",          "CN      ", Cmd_SET_CREATURE_HEALTH},
-  {"SET_CREATURE_ARMOUR",          "CN      ", Cmd_SET_CREATURE_ARMOUR},
-  {"SET_CREATURE_FEAR_WOUNDED",    "CN      ", Cmd_SET_CREATURE_FEAR_WOUNDED},
-  {"SET_CREATURE_FEAR_STRONGER",   "CN      ", Cmd_SET_CREATURE_FEAR_STRONGER},
-  {"IF_AVAILABLE",                 "PAON    ", Cmd_IF_AVAILABLE},
-  {"IF_CONTROLS",                  "PAON    ", Cmd_IF_CONTROLS},
-  {"SET_COMPUTER_GLOBALS",         "PNNNNNN ", Cmd_SET_COMPUTER_GLOBALS},
-  {"SET_COMPUTER_CHECKS",          "PANNNNN ", Cmd_SET_COMPUTER_CHECKS},
-  {"SET_COMPUTER_EVENT",           "PANN    ", Cmd_SET_COMPUTER_EVENT},
-  {"SET_COMPUTER_PROCESS",         "PANNNNN ", Cmd_SET_COMPUTER_PROCESS},
-  {"ALLY_PLAYERS",                 "PPN     ", Cmd_ALLY_PLAYERS},
-  {"DEAD_CREATURES_RETURN_TO_POOL","N       ", Cmd_DEAD_CREATURES_RETURN_TO_POOL},
-  {"BONUS_LEVEL_TIME",             "N       ", Cmd_BONUS_LEVEL_TIME},
-  {"QUICK_OBJECTIVE",              "NAL     ", Cmd_QUICK_OBJECTIVE},
-  {"QUICK_INFORMATION",            "NAL     ", Cmd_QUICK_INFORMATION},
-  {"QUICK_OBJECTIVE_WITH_POS",     "NANN    ", Cmd_QUICK_OBJECTIVE_WITH_POS},
-  {"QUICK_INFORMATION_WITH_POS",   "NANN    ", Cmd_QUICK_INFORMATION_WITH_POS},
-  {"SWAP_CREATURE",                "AC      ", Cmd_SWAP_CREATURE},
-  {"PRINT",                        "A       ", Cmd_PRINT},
-  {"MESSAGE",                      "A       ", Cmd_MESSAGE},
-  {"PLAY_MESSAGE",                 "PAN     ", Cmd_PLAY_MESSAGE},
-  {"ADD_GOLD_TO_PLAYER",           "PN      ", Cmd_ADD_GOLD_TO_PLAYER},
-  {"SET_CREATURE_TENDENCIES",      "PAN     ", Cmd_SET_CREATURE_TENDENCIES},
-  {"REVEAL_MAP_RECT",              "PNNNN   ", Cmd_REVEAL_MAP_RECT},
-  {"REVEAL_MAP_LOCATION",          "PNN     ", Cmd_REVEAL_MAP_LOCATION},
-  {"LEVEL_VERSION",                "N       ", Cmd_LEVEL_VERSION},
-  {"KILL_CREATURE",                "PCAN    ", Cmd_KILL_CREATURE},
-  {"SET_CMPVAR",                   "NN      ", Cmd_SET_CMPVAR},
-  {"SET_CMPVAR_TO_VAR",            "NPA     ", Cmd_SET_CMPVAR_TO_VAR},
-  {"ADD_TO_CMPVAR",                "NN      ", Cmd_ADD_TO_CMPVAR},
-  {"ADD_TO_FLAG",                  "PAN     ", Cmd_ADD_TO_FLAG},
-  {NULL,                           "        ", Cmd_NONE},
+  {"CREATE_PARTY",                      "A       ", Cmd_CREATE_PARTY},
+  {"ADD_TO_PARTY",                      "ACNNAN  ", Cmd_ADD_TO_PARTY},
+  {"ADD_PARTY_TO_LEVEL",                "PAAN    ", Cmd_ADD_PARTY_TO_LEVEL},
+  {"ADD_CREATURE_TO_LEVEL",             "PCANNN  ", Cmd_ADD_CREATURE_TO_LEVEL},
+  {"IF",                                "PAON    ", Cmd_IF},
+  {"IF_ACTION_POINT",                   "NP      ", Cmd_IF_ACTION_POINT},
+  {"ENDIF",                             "        ", Cmd_ENDIF},
+  {"SET_HATE",                          "PPN     ", Cmd_SET_HATE},
+  {"SET_GENERATE_SPEED",                "N       ", Cmd_SET_GENERATE_SPEED},
+  {"REM",                               "        ", Cmd_REM},
+  {"START_MONEY",                       "PN      ", Cmd_START_MONEY},
+  {"ROOM_AVAILABLE",                    "PRNN    ", Cmd_ROOM_AVAILABLE},
+  {"CREATURE_AVAILABLE",                "PCNN    ", Cmd_CREATURE_AVAILABLE},
+  {"MAGIC_AVAILABLE",                   "PANN    ", Cmd_MAGIC_AVAILABLE},
+  {"TRAP_AVAILABLE",                    "PANN    ", Cmd_TRAP_AVAILABLE},
+  {"RESEARCH",                          "PAAN    ", Cmd_RESEARCH},
+  {"RESEARCH_ORDER",                    "PAAN    ", Cmd_RESEARCH_ORDER},
+  {"COMPUTER_PLAYER",                   "PN      ", Cmd_COMPUTER_PLAYER},
+  {"SET_TIMER",                         "PA      ", Cmd_SET_TIMER},
+  {"ADD_TUNNELLER_TO_LEVEL",            "PAANNN  ", Cmd_ADD_TUNNELLER_TO_LEVEL},
+  {"WIN_GAME",                          "        ", Cmd_WIN_GAME},
+  {"LOSE_GAME",                         "        ", Cmd_LOSE_GAME},
+  {"SET_FLAG",                          "PAN     ", Cmd_SET_FLAG},
+  {"MAX_CREATURES",                     "PN      ", Cmd_MAX_CREATURES},
+  {"NEXT_COMMAND_REUSABLE",             "        ", Cmd_NEXT_COMMAND_REUSABLE},
+  {"DOOR_AVAILABLE",                    "PANN    ", Cmd_DOOR_AVAILABLE},
+  {"DISPLAY_OBJECTIVE",                 "NL      ", Cmd_DISPLAY_OBJECTIVE},
+  {"DISPLAY_OBJECTIVE_WITH_POS",        "NNN     ", Cmd_DISPLAY_OBJECTIVE_WITH_POS},
+  {"DISPLAY_INFORMATION",               "NL      ", Cmd_DISPLAY_INFORMATION},
+  {"DISPLAY_INFORMATION_WITH_POS",      "NNN     ", Cmd_DISPLAY_INFORMATION_WITH_POS},
+  {"ADD_TUNNELLER_PARTY_TO_LEVEL",      "PAAANNN ", Cmd_ADD_TUNNELLER_PARTY_TO_LEVEL},
+  {"ADD_CREATURE_TO_POOL",              "CN      ", Cmd_ADD_CREATURE_TO_POOL},
+  {"RESET_ACTION_POINT",                "N       ", Cmd_RESET_ACTION_POINT},
+  {"SET_CREATURE_MAX_LEVEL",            "PCN     ", Cmd_SET_CREATURE_MAX_LEVEL},
+  {"SET_MUSIC",                         "N       ", Cmd_SET_MUSIC},
+  {"TUTORIAL_FLASH_BUTTON",             "NN      ", Cmd_TUTORIAL_FLASH_BUTTON},
+  {"SET_CREATURE_STRENGTH",             "CN      ", Cmd_SET_CREATURE_STRENGTH},
+  {"SET_CREATURE_HEALTH",               "CN      ", Cmd_SET_CREATURE_HEALTH},
+  {"SET_CREATURE_ARMOUR",               "CN      ", Cmd_SET_CREATURE_ARMOUR},
+  {"SET_CREATURE_FEAR_WOUNDED",         "CN      ", Cmd_SET_CREATURE_FEAR_WOUNDED},
+  {"SET_CREATURE_FEAR_STRONGER",        "CN      ", Cmd_SET_CREATURE_FEAR_STRONGER},
+  {"IF_AVAILABLE",                      "PAON    ", Cmd_IF_AVAILABLE},
+  {"IF_CONTROLS",                       "PAON    ", Cmd_IF_CONTROLS},
+  {"SET_COMPUTER_GLOBALS",              "PNNNNNN ", Cmd_SET_COMPUTER_GLOBALS},
+  {"SET_COMPUTER_CHECKS",               "PANNNNN ", Cmd_SET_COMPUTER_CHECKS},
+  {"SET_COMPUTER_EVENT",                "PANN    ", Cmd_SET_COMPUTER_EVENT},
+  {"SET_COMPUTER_PROCESS",              "PANNNNN ", Cmd_SET_COMPUTER_PROCESS},
+  {"ALLY_PLAYERS",                      "PPN     ", Cmd_ALLY_PLAYERS},
+  {"DEAD_CREATURES_RETURN_TO_POOL",     "N       ", Cmd_DEAD_CREATURES_RETURN_TO_POOL},
+  {"BONUS_LEVEL_TIME",                  "N       ", Cmd_BONUS_LEVEL_TIME},
+  {"QUICK_OBJECTIVE",                   "NAL     ", Cmd_QUICK_OBJECTIVE},
+  {"QUICK_INFORMATION",                 "NAL     ", Cmd_QUICK_INFORMATION},
+  {"QUICK_OBJECTIVE_WITH_POS",          "NANN    ", Cmd_QUICK_OBJECTIVE_WITH_POS},
+  {"QUICK_INFORMATION_WITH_POS",        "NANN    ", Cmd_QUICK_INFORMATION_WITH_POS},
+  {"SWAP_CREATURE",                     "AC      ", Cmd_SWAP_CREATURE},
+  {"PRINT",                             "A       ", Cmd_PRINT},
+  {"MESSAGE",                           "A       ", Cmd_MESSAGE},
+  {"PLAY_MESSAGE",                      "PAN     ", Cmd_PLAY_MESSAGE},
+  {"ADD_GOLD_TO_PLAYER",                "PN      ", Cmd_ADD_GOLD_TO_PLAYER},
+  {"SET_CREATURE_TENDENCIES",           "PAN     ", Cmd_SET_CREATURE_TENDENCIES},
+  {"REVEAL_MAP_RECT",                   "PNNNN   ", Cmd_REVEAL_MAP_RECT},
+  {"REVEAL_MAP_LOCATION",               "PNN     ", Cmd_REVEAL_MAP_LOCATION},
+  {"LEVEL_VERSION",                     "N       ", Cmd_LEVEL_VERSION},
+  {"KILL_CREATURE",                     "PCAN    ", Cmd_KILL_CREATURE},
+  {"SET_CAMPAIGN_VARIABLE",             "NN      ", Cmd_SET_CAMPAIGN_VARIABLE},
+  {"SET_CAMPAIGN_VARIABLE_TO_VARIABLE", "NPA     ", Cmd_SET_CAMPAIGN_VARIABLE_TO_VARIABLE},
+  {"ADD_TO_CAMPAIGN_VARIABLE",          "NN      ", Cmd_ADD_TO_CAMPAIGN_VARIABLE},
+  {"ADD_TO_FLAG",                       "PAN     ", Cmd_ADD_TO_FLAG},
+  {NULL,                                "        ", Cmd_NONE},
 };
 
 const struct CommandDesc dk1_command_desc[] = {
@@ -199,7 +199,7 @@ const struct CommandDesc dk1_command_desc[] = {
 const struct CommandDesc subfunction_desc[] = {
     {"RANDOM",                     "Aaaaaaaa", Cmd_RANDOM},
     {"DRAWFROM",                   "Aaaaaaaa", Cmd_DRAWFROM},
-    {"GET_CMPVAR",                 "N       ", Cmd_GET_CMPVAR},
+    {"GET_CAMPAIGN_VARIABLE",      "N       ", Cmd_GET_CAMPAIGN_VARIABLE},
     {NULL,                         "        ", Cmd_NONE},
   };
 
@@ -249,7 +249,7 @@ const struct NamedCommand variable_desc[] = {
     //{"DOOR",                      SVar_DOOR_NUM},
     {"GOOD_CREATURES",              SVar_GOOD_CREATURES},
     {"EVIL_CREATURES",              SVar_EVIL_CREATURES},
-    {"CMPVAR",                      SVar_CMPVAR},
+    {"CAMPAIGN_VARIABLE",           SVar_CAMPAIGN_VARIABLE},
     {NULL,                           0},
 };
 
@@ -393,38 +393,38 @@ const struct NamedCommand gui_button_group_desc[] = {
  * Text names of campaign variables.
  */
 const struct NamedCommand cmpvars_desc[] = {
-    {"CMPVAR0",       0},
-    {"CMPVAR1",       1},
-    {"CMPVAR2",       2},
-    {"CMPVAR3",       3},
-    {"CMPVAR4",       4},
-    {"CMPVAR5",       5},
-    {"CMPVAR6",       6},
-    {"CMPVAR7",       7},
-    {"CMPVAR8",       8},
-    {"CMPVAR9",       9},
-    {"CMPVAR10",      10},
-    {"CMPVAR11",      11},
-    {"CMPVAR12",      12},
-    {"CMPVAR13",      13},
-    {"CMPVAR14",      14},
-    {"CMPVAR15",      15},
-    {"CMPVAR16",      16},
-    {"CMPVAR17",      17},
-    {"CMPVAR18",      18},
-    {"CMPVAR19",      19},
-    {"CMPVAR20",      20},
-    {"CMPVAR21",      21},
-    {"CMPVAR22",      22},
-    {"CMPVAR23",      23},
-    {"CMPVAR24",      24},
-    {"CMPVAR25",      25},
-    {"CMPVAR26",      26},
-    {"CMPVAR27",      27},
-    {"CMPVAR28",      28},
-    {"CMPVAR29",      29},
-    {"CMPVAR30",      30},
-    {"CMPVAR31",      31},
+    {"CAMPAIGN_VARIABLE0",  0},
+    {"CAMPAIGN_VARIABLE1",  1},
+    {"CAMPAIGN_VARIABLE2",  2},
+    {"CAMPAIGN_VARIABLE3",  3},
+    {"CAMPAIGN_VARIABLE4",  4},
+    {"CAMPAIGN_VARIABLE5",  5},
+    {"CAMPAIGN_VARIABLE6",  6},
+    {"CAMPAIGN_VARIABLE7",  7},
+    {"CAMPAIGN_VARIABLE8",  8},
+    {"CAMPAIGN_VARIABLE9",  9},
+    {"CAMPAIGN_VARIABLE10", 10},
+    {"CAMPAIGN_VARIABLE11", 11},
+    {"CAMPAIGN_VARIABLE12", 12},
+    {"CAMPAIGN_VARIABLE13", 13},
+    {"CAMPAIGN_VARIABLE14", 14},
+    {"CAMPAIGN_VARIABLE15", 15},
+    {"CAMPAIGN_VARIABLE16", 16},
+    {"CAMPAIGN_VARIABLE17", 17},
+    {"CAMPAIGN_VARIABLE18", 18},
+    {"CAMPAIGN_VARIABLE19", 19},
+    {"CAMPAIGN_VARIABLE20", 20},
+    {"CAMPAIGN_VARIABLE21", 21},
+    {"CAMPAIGN_VARIABLE22", 22},
+    {"CAMPAIGN_VARIABLE23", 23},
+    {"CAMPAIGN_VARIABLE24", 24},
+    {"CAMPAIGN_VARIABLE25", 25},
+    {"CAMPAIGN_VARIABLE26", 26},
+    {"CAMPAIGN_VARIABLE27", 27},
+    {"CAMPAIGN_VARIABLE28", 28},
+    {"CAMPAIGN_VARIABLE29", 29},
+    {"CAMPAIGN_VARIABLE30", 30},
+    {"CAMPAIGN_VARIABLE31", 31},
 };
 
 /******************************************************************************/
@@ -1223,7 +1223,7 @@ void command_if(long plr_range_id, const char *varib_name, const char *operatr, 
     if (varib_id == -1)
     {
       varib_id = get_id(cmpvars_desc, varib_name);
-      varib_type = SVar_CMPVAR;
+      varib_type = SVar_CAMPAIGN_VARIABLE;
     }
     if (varib_id == -1)
     {
@@ -2305,14 +2305,14 @@ void command_kill_creature(long plr_range_id, const char *crtr_name, const char 
   command_add_value(Cmd_KILL_CREATURE, plr_range_id, crtr_id, select_id, count);
 }
 
-void command_set_cmpvar(long cmpvar_idx, long new_val)
+void command_set_campaign_variable(long cmpvar_idx, long new_val)
 {
    if ((cmpvar_idx < 0) || (cmpvar_idx > CAMPAIGN_VAR_COUNT))
    {
      SCRPTERRLOG("Campaign variable out of range:, '%ld'", cmpvar_idx);
      return;
    }
-  command_add_value(Cmd_SET_CMPVAR, ALL_PLAYERS, cmpvar_idx, new_val, 0);
+  command_add_value(Cmd_SET_CAMPAIGN_VARIABLE, ALL_PLAYERS, cmpvar_idx, new_val, 0);
 }
 
 /** Adds a script command to in-game structures.
@@ -2530,15 +2530,16 @@ void script_add_command(const struct CommandDesc *cmd_desc, const struct ScriptL
         level_file_version = scline->np[0];
         SCRPTLOG("Level files version %d.",level_file_version);
         break;
-    case Cmd_SET_CMPVAR:
-        command_set_cmpvar(scline->np[0], scline->np[1]);
+    case Cmd_SET_CAMPAIGN_VARIABLE:
+        command_set_campaign_variable(scline->np[0], scline->np[1]);
         break;
-    case Cmd_SET_CMPVAR_TO_VAR:
-        LbWarnLog("--> Setting CMPVAR%ld to %s=%ld, id=%ld at turn %ld\n", scline->np[0], scline->tp[2], get_condition_value(scline->np[1], get_id(variable_desc, scline->tp[2]), 0), get_id(variable_desc, scline->tp[1]), game.play_gameturn);
-        command_set_cmpvar(scline->np[0], get_condition_value(scline->np[1], get_id(variable_desc, scline->tp[2]), 0));
+    case Cmd_SET_CAMPAIGN_VARIABLE_TO_VARIABLE:
+        SCRPTLOG("Setting CAMPAIGN_VARIABLE%ld to %s=%ld, id=%ld at turn %ld", scline->np[0], scline->tp[2],
+            get_condition_value(scline->np[1], get_id(variable_desc, scline->tp[2]), 0), get_id(variable_desc, scline->tp[1]), game.play_gameturn);
+        command_set_campaign_variable(scline->np[0], get_condition_value(scline->np[1], get_id(variable_desc, scline->tp[2]), 0));
         break;
-    case Cmd_ADD_TO_CMPVAR:
-        command_set_cmpvar(scline->np[0], get_cmpvar(scline->np[0]) + scline->np[1]);
+    case Cmd_ADD_TO_CAMPAIGN_VARIABLE:
+        command_set_campaign_variable(scline->np[0], get_campaign_variable(scline->np[0]) + scline->np[1]);
         break;
     case Cmd_ADD_TO_FLAG:
         command_add_to_flag(scline->np[0], scline->tp[1], scline->np[2]);
@@ -2811,9 +2812,9 @@ int script_recognize_params(char **line, const struct CommandDesc *cmd_desc, str
                 }
                 SCRPTLOG("Function \"%s\" returned value \"%s\"", funcmd_desc->textptr, scline->tp[i]);
                 };break;
-                case Cmd_GET_CMPVAR:
+                case Cmd_GET_CAMPAIGN_VARIABLE:
                 {
-                    long value = get_cmpvar(funscline->np[0]);
+                    long value = get_campaign_variable(funscline->np[0]);
                     itoa(value, scline->tp[i], 10);
                     SCRPTLOG("Function \"%s\" returned value \"%ld\"", funcmd_desc->textptr, value);
                     break;
@@ -3787,8 +3788,8 @@ long get_condition_value(PlayerNumber plyr_idx, unsigned char valtype, unsigned 
     case SVar_CONTROLS_EVIL_CREATURES:
         dungeon = get_dungeon(plyr_idx);
         return count_creatures_in_dungeon_controlled_and_of_model_flags(dungeon, CMF_IsEvil, CMF_IsSpectator|CMF_IsSpecDigger);
-    case SVar_CMPVAR:
-        return get_cmpvar(validx);
+    case SVar_CAMPAIGN_VARIABLE:
+        return get_campaign_variable(validx);
         break;
     break;
     default:
@@ -4248,8 +4249,8 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
           script_kill_creatures(i, val2, val3, val4);
       }
       break;
-  case Cmd_SET_CMPVAR:
-      set_cmpvar(val2, val3);
+  case Cmd_SET_CAMPAIGN_VARIABLE:
+      set_campaign_variable(val2, val3);
       break;
   default:
       WARNMSG("Unsupported Game VALUE, command %d.",var_index);
