@@ -132,10 +132,9 @@ const struct CommandDesc command_desc[] = {
   {"REVEAL_MAP_LOCATION",               "PNN     ", Cmd_REVEAL_MAP_LOCATION},
   {"LEVEL_VERSION",                     "N       ", Cmd_LEVEL_VERSION},
   {"KILL_CREATURE",                     "PCAN    ", Cmd_KILL_CREATURE},
-  {"SET_CAMPAIGN_VARIABLE",             "NN      ", Cmd_SET_CAMPAIGN_VARIABLE},
-  {"SET_CAMPAIGN_VARIABLE_TO_VARIABLE", "NPA     ", Cmd_SET_CAMPAIGN_VARIABLE_TO_VARIABLE},
-  {"ADD_TO_CAMPAIGN_VARIABLE",          "NN      ", Cmd_ADD_TO_CAMPAIGN_VARIABLE},
   {"ADD_TO_FLAG",                       "PAN     ", Cmd_ADD_TO_FLAG},
+  {"SET_CAMPAIGN_FLAG",                 "PAN     ", Cmd_SET_CAMPAIGN_FLAG},
+  {"ADD_TO_CAMPAIGN_FLAG",              "PAN     ", Cmd_ADD_TO_CAMPAIGN_FLAG},
   {NULL,                                "        ", Cmd_NONE},
 };
 
@@ -199,7 +198,6 @@ const struct CommandDesc dk1_command_desc[] = {
 const struct CommandDesc subfunction_desc[] = {
     {"RANDOM",                     "Aaaaaaaa", Cmd_RANDOM},
     {"DRAWFROM",                   "Aaaaaaaa", Cmd_DRAWFROM},
-    {"GET_CAMPAIGN_VARIABLE",      "N       ", Cmd_GET_CAMPAIGN_VARIABLE},
     {NULL,                         "        ", Cmd_NONE},
   };
 
@@ -249,7 +247,7 @@ const struct NamedCommand variable_desc[] = {
     //{"DOOR",                      SVar_DOOR_NUM},
     {"GOOD_CREATURES",              SVar_GOOD_CREATURES},
     {"EVIL_CREATURES",              SVar_EVIL_CREATURES},
-    {"CAMPAIGN_VARIABLE",           SVar_CAMPAIGN_VARIABLE},
+    {"CAMPAIGN_VARIABLE",           SVar_CAMPAIGN_FLAG},
     {NULL,                           0},
 };
 
@@ -390,41 +388,18 @@ const struct NamedCommand gui_button_group_desc[] = {
 };
 
 /**
- * Text names of campaign variables.
+ * Text names of campaign flags.
  */
-const struct NamedCommand cmpvars_desc[] = {
-    {"CAMPAIGN_VARIABLE0",  0},
-    {"CAMPAIGN_VARIABLE1",  1},
-    {"CAMPAIGN_VARIABLE2",  2},
-    {"CAMPAIGN_VARIABLE3",  3},
-    {"CAMPAIGN_VARIABLE4",  4},
-    {"CAMPAIGN_VARIABLE5",  5},
-    {"CAMPAIGN_VARIABLE6",  6},
-    {"CAMPAIGN_VARIABLE7",  7},
-    {"CAMPAIGN_VARIABLE8",  8},
-    {"CAMPAIGN_VARIABLE9",  9},
-    {"CAMPAIGN_VARIABLE10", 10},
-    {"CAMPAIGN_VARIABLE11", 11},
-    {"CAMPAIGN_VARIABLE12", 12},
-    {"CAMPAIGN_VARIABLE13", 13},
-    {"CAMPAIGN_VARIABLE14", 14},
-    {"CAMPAIGN_VARIABLE15", 15},
-    {"CAMPAIGN_VARIABLE16", 16},
-    {"CAMPAIGN_VARIABLE17", 17},
-    {"CAMPAIGN_VARIABLE18", 18},
-    {"CAMPAIGN_VARIABLE19", 19},
-    {"CAMPAIGN_VARIABLE20", 20},
-    {"CAMPAIGN_VARIABLE21", 21},
-    {"CAMPAIGN_VARIABLE22", 22},
-    {"CAMPAIGN_VARIABLE23", 23},
-    {"CAMPAIGN_VARIABLE24", 24},
-    {"CAMPAIGN_VARIABLE25", 25},
-    {"CAMPAIGN_VARIABLE26", 26},
-    {"CAMPAIGN_VARIABLE27", 27},
-    {"CAMPAIGN_VARIABLE28", 28},
-    {"CAMPAIGN_VARIABLE29", 29},
-    {"CAMPAIGN_VARIABLE30", 30},
-    {"CAMPAIGN_VARIABLE31", 31},
+const struct NamedCommand campaign_flag_desc[] = {
+  {"CAMPAIGN_FLAG0",  0},
+  {"CAMPAIGN_FLAG1",  1},
+  {"CAMPAIGN_FLAG2",  2},
+  {"CAMPAIGN_FLAG3",  3},
+  {"CAMPAIGN_FLAG4",  4},
+  {"CAMPAIGN_FLAG5",  5},
+  {"CAMPAIGN_FLAG6",  6},
+  {"CAMPAIGN_FLAG7",  7},
+  {NULL,     0},
 };
 
 /******************************************************************************/
@@ -1222,8 +1197,8 @@ void command_if(long plr_range_id, const char *varib_name, const char *operatr, 
     }
     if (varib_id == -1)
     {
-      varib_id = get_id(cmpvars_desc, varib_name);
-      varib_type = SVar_CAMPAIGN_VARIABLE;
+      varib_id = get_id(campaign_flag_desc, varib_name);
+      varib_type = SVar_CAMPAIGN_FLAG;
     }
     if (varib_id == -1)
     {
@@ -1550,18 +1525,6 @@ void command_set_flag(long plr_range_id, const char *flgname, long val)
     return;
   }
   command_add_value(Cmd_SET_FLAG, plr_range_id, flg_id, val, 0);
-}
-
-void command_add_to_flag(long plr_range_id, const char *flgname, long val)
-{
-  long flg_id;
-  flg_id = get_rid(flag_desc, flgname);
-  if (flg_id == -1)
-  {
-    SCRPTERRLOG("Unknown flag, '%s'", flgname);
-    return;
-  }
-  command_add_value(Cmd_ADD_TO_FLAG, plr_range_id, flg_id, val, 0);
 }
 
 void command_max_creatures(long plr_range_id, long val)
@@ -2304,14 +2267,40 @@ void command_kill_creature(long plr_range_id, const char *crtr_name, const char 
   command_add_value(Cmd_KILL_CREATURE, plr_range_id, crtr_id, select_id, count);
 }
 
-void command_set_campaign_variable(long cmpvar_idx, long new_val)
+void command_add_to_flag(long plr_range_id, const char *flgname, long val)
 {
-   if ((cmpvar_idx < 0) || (cmpvar_idx > CAMPAIGN_VAR_COUNT))
-   {
-     SCRPTERRLOG("Campaign variable out of range:, '%ld'", cmpvar_idx);
-     return;
-   }
-  command_add_value(Cmd_SET_CAMPAIGN_VARIABLE, ALL_PLAYERS, cmpvar_idx, new_val, 0);
+  long flg_id;
+  flg_id = get_rid(flag_desc, flgname);
+  if (flg_id == -1)
+  {
+    SCRPTERRLOG("Unknown flag, '%s'", flgname);
+    return;
+  }
+  command_add_value(Cmd_ADD_TO_FLAG, plr_range_id, flg_id, val, 0);
+}
+
+void command_set_campaign_flag(long plr_range_id, const char *cmpflgname, long val)
+{
+  long flg_id;
+  flg_id = get_rid(campaign_flag_desc, cmpflgname);
+  if (flg_id == -1)
+  {
+    SCRPTERRLOG("Unknown campaign flag, '%s'", cmpflgname);
+    return;
+  }
+  command_add_value(Cmd_SET_CAMPAIGN_FLAG, plr_range_id, flg_id, val, 0);
+}
+
+void command_add_to_campaign_flag(long plr_range_id, const char *cmpflgname, long val)
+{
+  long flg_id;
+  flg_id = get_rid(campaign_flag_desc, cmpflgname);
+  if (flg_id == -1)
+  {
+    SCRPTERRLOG("Unknown campaign flag, '%s'", cmpflgname);
+    return;
+  }
+  command_add_value(Cmd_ADD_TO_CAMPAIGN_FLAG, plr_range_id, flg_id, val, 0);
 }
 
 /** Adds a script command to in-game structures.
@@ -2529,20 +2518,16 @@ void script_add_command(const struct CommandDesc *cmd_desc, const struct ScriptL
         level_file_version = scline->np[0];
         SCRPTLOG("Level files version %d.",level_file_version);
         break;
-    case Cmd_SET_CAMPAIGN_VARIABLE:
-        command_set_campaign_variable(scline->np[0], scline->np[1]);
-        break;
-    case Cmd_SET_CAMPAIGN_VARIABLE_TO_VARIABLE:
-        SCRPTLOG("Setting CAMPAIGN_VARIABLE%ld to %s=%ld, id=%ld at turn %ld", scline->np[0], scline->tp[2],
-            get_condition_value(scline->np[1], get_id(variable_desc, scline->tp[2]), 0), get_id(variable_desc, scline->tp[1]), game.play_gameturn);
-        command_set_campaign_variable(scline->np[0], get_condition_value(scline->np[1], get_id(variable_desc, scline->tp[2]), 0));
-        break;
-    case Cmd_ADD_TO_CAMPAIGN_VARIABLE:
-        command_set_campaign_variable(scline->np[0], get_campaign_variable(scline->np[0]) + scline->np[1]);
-        break;
     case Cmd_ADD_TO_FLAG:
         command_add_to_flag(scline->np[0], scline->tp[1], scline->np[2]);
         break;
+    case Cmd_SET_CAMPAIGN_FLAG:
+        command_set_campaign_flag(scline->np[0], scline->tp[1], scline->np[2]);
+        break;
+    case Cmd_ADD_TO_CAMPAIGN_FLAG:
+        command_add_to_campaign_flag(scline->np[0], scline->tp[1], scline->np[2]);
+        break;
+
     default:
         SCRPTERRLOG("Unhandled SCRIPT command '%s'", scline->tcmnd);
         break;
@@ -2811,13 +2796,6 @@ int script_recognize_params(char **line, const struct CommandDesc *cmd_desc, str
                 }
                 SCRPTLOG("Function \"%s\" returned value \"%s\"", funcmd_desc->textptr, scline->tp[i]);
                 };break;
-                case Cmd_GET_CAMPAIGN_VARIABLE:
-                {
-                    long value = get_campaign_variable(funscline->np[0]);
-                    itoa(value, scline->tp[i], 10);
-                    SCRPTLOG("Function \"%s\" returned value \"%ld\"", funcmd_desc->textptr, value);
-                    break;
-                }
             default:
                 SCRPTWRNLOG("Parameter value \"%s\" is a command which isn't supported as function", scline->tp[i]);
                 break;
@@ -3787,8 +3765,9 @@ long get_condition_value(PlayerNumber plyr_idx, unsigned char valtype, unsigned 
     case SVar_CONTROLS_EVIL_CREATURES:
         dungeon = get_dungeon(plyr_idx);
         return count_creatures_in_dungeon_controlled_and_of_model_flags(dungeon, CMF_IsEvil, CMF_IsSpectator|CMF_IsSpecDigger);
-    case SVar_CAMPAIGN_VARIABLE:
-        return get_campaign_variable(validx);
+    case SVar_CAMPAIGN_FLAG:
+        dungeon = get_dungeon(plyr_idx);
+        return campaign.campaign_flags[plyr_idx * 8 + validx];
         break;
     break;
     default:
@@ -4093,7 +4072,7 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
   case Cmd_SET_FLAG:
       for (i=plr_start; i < plr_end; i++)
       {
-          set_script_flag(i,val2,val3);
+          set_script_flag(i,val2,saturate_set_unsigned(val3, 8));
       }
       break;
   case Cmd_MAX_CREATURES:
@@ -4255,8 +4234,19 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
           set_script_flag(i, val2, dungeon->script_flags[val2] + val3);
       }
       break;
-  case Cmd_SET_CAMPAIGN_VARIABLE:
-      set_campaign_variable(val2, val3);
+  case Cmd_SET_CAMPAIGN_FLAG:
+      for (i=plr_start; i < plr_end; i++)
+      {
+          campaign.campaign_flags[i * 8 + val2] = saturate_set_signed(val3, 32);
+      }
+      break;
+  case Cmd_ADD_TO_CAMPAIGN_FLAG:
+
+      for (i=plr_start; i < plr_end; i++)
+      {
+          campaign.campaign_flags[i * 8 + val2] = saturate_set_signed(campaign.campaign_flags[i * 8 + val2] + val3, 32);
+          JUSTMSG("PLR=%d old_val=%ld new_val=%ld", i, campaign.campaign_flags[i * 8 + val2], saturate_set_signed(campaign.campaign_flags[i * 8 + val2] + val3, 32));
+      }
       break;
   default:
       WARNMSG("Unsupported Game VALUE, command %d.",var_index);

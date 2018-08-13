@@ -112,11 +112,9 @@ enum TbScriptCommands {
     Cmd_KILL_CREATURE                     = 92,
     Cmd_SET_CREATURE_FEAR_STRONGER        = 93,
     Cmd_IF_CONTROLS                       = 94,
-    Cmd_SET_CAMPAIGN_VARIABLE             = 95,
-    Cmd_SET_CAMPAIGN_VARIABLE_TO_VARIABLE = 96,
-    Cmd_GET_CAMPAIGN_VARIABLE             = 97,
-    Cmd_ADD_TO_CAMPAIGN_VARIABLE          = 98,
-    Cmd_ADD_TO_FLAG                       = 99,
+    Cmd_ADD_TO_FLAG                       = 95,
+    Cmd_SET_CAMPAIGN_FLAG                 = 96,
+    Cmd_ADD_TO_CAMPAIGN_FLAG              = 97,
 };
 
 enum ScriptVariables {
@@ -161,7 +159,7 @@ enum ScriptVariables {
   SVar_EVIL_CREATURES                  = 42,
   SVar_CONTROLS_GOOD_CREATURES         = 43,
   SVar_CONTROLS_EVIL_CREATURES         = 44,
-  SVar_CAMPAIGN_VARIABLE               = 45,
+  SVar_CAMPAIGN_FLAG                   = 45,
 };
 
 enum MapLocationTypes {

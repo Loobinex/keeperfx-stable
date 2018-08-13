@@ -202,6 +202,7 @@ TbBool clear_campaign(struct GameCampaign *campgn)
   campgn->credits_data = NULL;
   reset_credits(campgn->credits);
   campgn->human_player = -1;
+  memset(campgn->campaign_flags,0,sizeof(campgn->campaign_flags));
   return true;
 }
 
@@ -1250,16 +1251,6 @@ TbBool load_campaigns_list(void)
     SYNCDBG(0,"Found %d campaign files, properly loaded %d.",cnum_all,cnum_ok);
     sort_campaigns(&campaigns_list,keeper_campaign_file);
     return (campaigns_list.items_num > 0);
-}
-
-void set_campaign_variable(long cmpvar_idx, long new_val)
-{
-    campaign.campaign_variables[cmpvar_idx] = new_val;
-}
-
-long get_campaign_variable(long cmpvar_idx)
-{
-    return campaign.campaign_variables[cmpvar_idx];
 }
 
 /******************************************************************************/
