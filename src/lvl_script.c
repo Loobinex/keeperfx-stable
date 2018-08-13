@@ -1561,8 +1561,7 @@ void command_add_to_flag(long plr_range_id, const char *flgname, long val)
     SCRPTERRLOG("Unknown flag, '%s'", flgname);
     return;
   }
-  struct Dungeon *dungeon = get_dungeon(plr_range_id);
-  command_add_value(Cmd_SET_FLAG, plr_range_id, flg_id, dungeon->script_flags[flg_id] + val, 0);
+  command_add_value(Cmd_ADD_TO_FLAG, plr_range_id, flg_id, val, 0);
 }
 
 void command_max_creatures(long plr_range_id, long val)
@@ -4247,6 +4246,13 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
       for (i=plr_start; i < plr_end; i++)
       {
           script_kill_creatures(i, val2, val3, val4);
+      }
+      break;
+  case Cmd_ADD_TO_FLAG:
+      for (i=plr_start; i < plr_end; i++)
+      {
+          dungeon = get_dungeon(i);
+          set_script_flag(i, val2, dungeon->script_flags[val2] + val3);
       }
       break;
   case Cmd_SET_CAMPAIGN_VARIABLE:
