@@ -247,7 +247,7 @@ const struct NamedCommand variable_desc[] = {
     //{"DOOR",                      SVar_DOOR_NUM},
     {"GOOD_CREATURES",              SVar_GOOD_CREATURES},
     {"EVIL_CREATURES",              SVar_EVIL_CREATURES},
-    {"CAMPAIGN_VARIABLE",           SVar_CAMPAIGN_FLAG},
+    {"CAMPAIGN_FLAG",               SVar_CAMPAIGN_FLAG},
     {NULL,                           0},
 };
 

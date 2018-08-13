@@ -202,7 +202,7 @@ TbBool clear_campaign(struct GameCampaign *campgn)
   campgn->credits_data = NULL;
   reset_credits(campgn->credits);
   campgn->human_player = -1;
-  memset(campgn->campaign_flags,0,sizeof(campgn->campaign_flags));
+  LbMemorySet(campgn->campaign_flags,0,CAMPAIGN_FLAG_COUNT);
   return true;
 }
 
