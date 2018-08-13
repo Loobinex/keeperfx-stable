@@ -247,7 +247,6 @@ const struct NamedCommand variable_desc[] = {
     //{"DOOR",                      SVar_DOOR_NUM},
     {"GOOD_CREATURES",              SVar_GOOD_CREATURES},
     {"EVIL_CREATURES",              SVar_EVIL_CREATURES},
-    {"CAMPAIGN_FLAG",               SVar_CAMPAIGN_FLAG},
     {NULL,                           0},
 };
 
@@ -3767,7 +3766,7 @@ long get_condition_value(PlayerNumber plyr_idx, unsigned char valtype, unsigned 
         return count_creatures_in_dungeon_controlled_and_of_model_flags(dungeon, CMF_IsEvil, CMF_IsSpectator|CMF_IsSpecDigger);
     case SVar_CAMPAIGN_FLAG:
         dungeon = get_dungeon(plyr_idx);
-        return campaign.campaign_flags[plyr_idx * 8 + validx];
+        return campaign.campaign_flags[plyr_idx][validx];
         break;
     break;
     default:
@@ -4237,15 +4236,14 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
   case Cmd_SET_CAMPAIGN_FLAG:
       for (i=plr_start; i < plr_end; i++)
       {
-          campaign.campaign_flags[i * 8 + val2] = saturate_set_signed(val3, 32);
+          campaign.campaign_flags[i][val2] = saturate_set_signed(val3, 32);
       }
       break;
   case Cmd_ADD_TO_CAMPAIGN_FLAG:
 
       for (i=plr_start; i < plr_end; i++)
       {
-          campaign.campaign_flags[i * 8 + val2] = saturate_set_signed(campaign.campaign_flags[i * 8 + val2] + val3, 32);
-          JUSTMSG("PLR=%d old_val=%ld new_val=%ld", i, campaign.campaign_flags[i * 8 + val2], saturate_set_signed(campaign.campaign_flags[i * 8 + val2] + val3, 32));
+          campaign.campaign_flags[i][val2] = saturate_set_signed(campaign.campaign_flags[i][val2] + val3, 32);
       }
       break;
   default:

@@ -38,7 +38,6 @@ extern "C" {
 #define HISCORE_NAME_LENGTH          64
 #define CAMPAIGNS_LIST_GROW_DELTA     8
 #define CAMPAIGN_CREDITS_COUNT      360
-#define CAMPAIGN_FLAG_COUNT          40
 /** Strings length */
 #define CAMPAIGN_FNAME_LEN           64
 
@@ -116,7 +115,7 @@ struct GameCampaign {
   // Human player color
   short human_player;
   // Campaign variables
-  long campaign_flags[CAMPAIGN_FLAG_COUNT];
+  long campaign_flags[5][8];
 };
 
 struct HighScore {
