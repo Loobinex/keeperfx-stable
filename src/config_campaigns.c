@@ -1065,6 +1065,7 @@ TbBool change_campaign(const char *cmpgn_fname)
     SYNCDBG(8,"Starting");
     if ((campaign.fname[0] != '\0') && (strcasecmp(campaign.fname,cmpgn_fname) == 0))
         return true;
+    clear_campaign(&campaign);
     free_campaign(&campaign);
     if ((cmpgn_fname != NULL) && (cmpgn_fname[0] != '\0'))
         result = load_campaign(cmpgn_fname,&campaign,CnfLd_Standard);
