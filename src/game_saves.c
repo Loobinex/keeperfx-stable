@@ -647,7 +647,9 @@ short load_continue_game(void)
     set_continue_level_number(lvnum);
     // Restoring intralevel data
     i = (char *)&game.intralvl - (char *)&game;
+
     read_continue_game_part((unsigned char *)&game.intralvl,i,sizeof(struct IntralevelData));
+    unsigned char *temp = (unsigned char *)&game.intralvl;
     LbStringCopy(game.campaign_fname,campaign.fname,sizeof(game.campaign_fname));
     update_extra_levels_visibility();
     return true;

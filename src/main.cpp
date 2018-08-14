@@ -4195,7 +4195,7 @@ void faststartup_network_game(void)
     game.game_kind = GKind_LocalGame;
     if (!is_campaign_loaded())
     {
-      if (!change_campaign(""))
+        if (!change_campaign(""))
         ERRORLOG("Unable to load campaign");
     }
     player = get_my_player();

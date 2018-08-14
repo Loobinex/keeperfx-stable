@@ -216,6 +216,11 @@ void update_extra_levels_visibility(void)
 {
 }
 
+void clear_intralevel_data(void)
+{
+    LbMemorySet(&game.intralvl, 0, sizeof(game.intralvl));
+}
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
