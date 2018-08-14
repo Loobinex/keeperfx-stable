@@ -1672,6 +1672,7 @@ void clear_complete_game(void)
 {
     memset(&game, 0, sizeof(struct Game));
     memset(&gameadd, 0, sizeof(struct GameAdd));
+    memset(&intralvl, 0, sizeof(struct IntralevelData));
     game.turns_packetoff = -1;
     game.local_plyr_idx = default_loc_player;
     game.packet_checksum_verify = start_params.packet_checksum_verify;
@@ -3989,7 +3990,7 @@ void init_level(void)
     struct IntralevelData transfer_mem;
     //_DK_init_level(); return;
     //LbMemoryCopy(&transfer_mem,&game.intralvl.transferred_creature,sizeof(struct CreatureStorage));
-    LbMemoryCopy(&transfer_mem,&game.intralvl,sizeof(struct IntralevelData));
+    LbMemoryCopy(&transfer_mem,&intralvl,sizeof(struct IntralevelData));
     game.flags_gui = 0;
     game.action_rand_seed = 1;
     free_swipe_graphic();
@@ -4036,7 +4037,7 @@ void init_level(void)
     }
     game.numfield_D |= GNFldD_Unkn04;
     //LbMemoryCopy(&game.intralvl.transferred_creature,&transfer_mem,sizeof(struct CreatureStorage));
-    LbMemoryCopy(&game.intralvl,&transfer_mem,sizeof(struct IntralevelData));
+    LbMemoryCopy(&intralvl,&transfer_mem,sizeof(struct IntralevelData));
     event_initialise_all();
     battle_initialise();
     ambient_sound_prepare();

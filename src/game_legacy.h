@@ -341,9 +341,11 @@ long field_1516FB;
     long boulder_reduce_health_room;
     struct GuiMessage messages[GUI_MESSAGES_COUNT];
     unsigned char active_messages_count;
-    // Moved the intralevel data to the end of Game to prevent address clashes
+    // Moved bonuses_foudn to IntralevelData
     unsigned char ex_intralvl_plug[6];
     long bonus_time;
+    // Moved transfered_creauture to IntralevelData
+    unsigned char ex_transfered_creature_plug[2];
     struct Armageddon armageddon;
     char active_panel_mnu_idx; /**< The MenuID of currently active panel menu, or 0 if none. */
     char comp_player_aggressive;
@@ -365,7 +367,6 @@ long field_1516FB;
     int manufactr_element;
     int manufactr_spridx;
     int manufactr_tooltip;
-    struct IntralevelData intralvl;
 };
 
 #pragma pack()

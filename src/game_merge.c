@@ -28,6 +28,7 @@ extern "C" {
 #endif
 /******************************************************************************/
 struct GameAdd gameadd;
+struct IntralevelData intralvl;
 /******************************************************************************/
 /******************************************************************************/
 /**
@@ -117,7 +118,7 @@ TbBool is_bonus_level_visible(struct PlayerInfo *player, LevelNumber bn_lvnum)
     WARNLOG("Bonus level %d has invalid store position.",(int)bn_lvnum);
     return false;
   }
-  return ((game.intralvl.bonuses_found[n] & k) != 0);
+  return ((intralvl.bonuses_found[n] & k) != 0);
 }
 
 /**
@@ -139,7 +140,7 @@ TbBool set_bonus_level_visibility(LevelNumber bn_lvnum, TbBool visible)
     WARNLOG("Bonus level %d has invalid store position.",(int)bn_lvnum);
     return false;
   }
-  set_flag_byte(&game.intralvl.bonuses_found[n], k, visible);
+  set_flag_byte(&intralvl.bonuses_found[n], k, visible);
   return true;
 }
 
@@ -165,7 +166,7 @@ void hide_all_bonus_levels(struct PlayerInfo *player)
 {
   int i;
   for(i=0; i < BONUS_LEVEL_STORAGE_COUNT; i++)
-    game.intralvl.bonuses_found[i] = 0;
+    intralvl.bonuses_found[i] = 0;
 }
 
 /**
@@ -214,11 +215,6 @@ short is_extra_level_visible(struct PlayerInfo *player, long ex_lvnum)
 
 void update_extra_levels_visibility(void)
 {
-}
-
-void clear_intralevel_data(void)
-{
-    LbMemorySet(&game.intralvl, 0, sizeof(game.intralvl));
 }
 
 /******************************************************************************/
