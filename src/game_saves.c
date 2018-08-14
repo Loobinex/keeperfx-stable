@@ -37,6 +37,7 @@
 #include "lens_api.h"
 #include "gui_soundmsgs.h"
 #include "game_legacy.h"
+#include "game_merge.h"
 #include "frontmenu_ingame_map.h"
 #include "keeperfx.hpp"
 
@@ -620,7 +621,8 @@ TbBool continue_game_available(void)
 short load_continue_game(void)
 {
     unsigned char buf[14];
-    unsigned char bonus[20];
+    //JUSTMSG("-> intralevel[%ld]", sizeof(struct IntralevelData));
+    unsigned char intralevel[sizeof(struct IntralevelData)];
     char cmpgn_fname[CAMPAIGN_FNAME_LEN];
     long lvnum;
     long i;
@@ -645,16 +647,29 @@ short load_continue_game(void)
       return false;
     }
     set_continue_level_number(lvnum);
-    LbMemorySet(bonus, 0, sizeof(bonus));
+    LbMemorySet(intralevel, 0, sizeof(intralevel));
     i = (char *)&game.intralvl.bonuses_found[0] - (char *)&game;
-    read_continue_game_part(bonus,i,16);
-    for (i=0; i < BONUS_LEVEL_STORAGE_COUNT; i++)
-      game.intralvl.bonuses_found[i] = bonus[i];
+    //JUSTMSG("-> &i=%ld", &i);
+    read_continue_game_part(intralevel,i,sizeof(intralevel));
+
+    LbMemoryCopy(&game.intralvl, &intralevel, 168);
+
+    // Restore bonus levels. TODO: is there a better way?
+    for (i=0; i < BONUS_LEVEL_STORAGE_COUNT; i++){
+        game.intralvl.bonuses_found[i] = intralevel[i];
+        //JUSTMSG("--> intralevel[i] = %u", intralevel[i]);
+    }
     LbStringCopy(game.campaign_fname,campaign.fname,sizeof(game.campaign_fname));
     update_extra_levels_visibility();
-    i = (char *)&game.intralvl_transfered_creature - (char *)&game.intralvl.bonuses_found[0];
-    game.intralvl_transfered_creature.model = bonus[i];
-    game.intralvl_transfered_creature.explevel = bonus[i+1];
+    // Restore transferred creature
+    i = (char *)&game.intralvl.transferred_creature - (char *)&game.intralvl.bonuses_found[0];
+    game.intralvl.transferred_creature.model = intralevel[i];
+    game.intralvl.transferred_creature.explevel = intralevel[i+1];
+    //JUSTMSG("-> restored model:    %u", game.intralvl.transferred_creature.model);
+    //JUSTMSG("-> restored explevel: %u", game.intralvl.transferred_creature.explevel);
+    // Restoring campaign flags
+    i = (long *)&game.intralvl.campaign_flags - (long *)&game.intralvl.transferred_creature;
+    //JUSTMSG("-> restored flag    : %ld", game.intralvl.campaign_flags[4][7]);
     return true;
 }
 
@@ -662,8 +677,8 @@ TbBool set_transfered_creature(PlayerNumber plyr_idx, ThingModel model, long exp
 {
     if (is_my_player_number(plyr_idx))
     {
-        game.intralvl_transfered_creature.model = model;
-        game.intralvl_transfered_creature.explevel = explevel;
+        game.intralvl.transferred_creature.model = model;
+        game.intralvl.transferred_creature.explevel = explevel;
         return true;
     }
     return false;
@@ -671,8 +686,8 @@ TbBool set_transfered_creature(PlayerNumber plyr_idx, ThingModel model, long exp
 
 void clear_transfered_creature(void)
 {
-    game.intralvl_transfered_creature.model = 0;
-    game.intralvl_transfered_creature.explevel = 0;
+    game.intralvl.transferred_creature.model = 0;
+    game.intralvl.transferred_creature.explevel = 0;
 }
 
 LevelNumber move_campaign_to_next_level(void)

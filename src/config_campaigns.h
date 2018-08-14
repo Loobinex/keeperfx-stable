@@ -114,8 +114,6 @@ struct GameCampaign {
   unsigned long hiscore_count;
   // Human player color
   short human_player;
-  // Campaign variables
-  long campaign_flags[5][8];
 };
 
 struct HighScore {

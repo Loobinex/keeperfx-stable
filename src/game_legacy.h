@@ -343,7 +343,6 @@ long field_1516FB;
     unsigned char active_messages_count;
     struct IntralevelData intralvl;
     long bonus_time;
-    struct CreatureStorage intralvl_transfered_creature; //TODO [structs] When possible, add it to IntralevelData struct
     struct Armageddon armageddon;
     char active_panel_mnu_idx; /**< The MenuID of currently active panel menu, or 0 if none. */
     char comp_player_aggressive;

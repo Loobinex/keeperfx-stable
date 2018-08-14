@@ -202,7 +202,6 @@ TbBool clear_campaign(struct GameCampaign *campgn)
   campgn->credits_data = NULL;
   reset_credits(campgn->credits);
   campgn->human_player = -1;
-  LbMemorySet(campgn->campaign_flags,0,5 * 8);
   return true;
 }
 
@@ -1065,7 +1064,6 @@ TbBool change_campaign(const char *cmpgn_fname)
     SYNCDBG(8,"Starting");
     if ((campaign.fname[0] != '\0') && (strcasecmp(campaign.fname,cmpgn_fname) == 0))
         return true;
-    clear_campaign(&campaign);
     free_campaign(&campaign);
     if ((cmpgn_fname != NULL) && (cmpgn_fname[0] != '\0'))
         result = load_campaign(cmpgn_fname,&campaign,CnfLd_Standard);

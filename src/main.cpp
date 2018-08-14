@@ -3986,9 +3986,10 @@ TbBool swap_creature(long ncrt_id, long crtr_id)
 void init_level(void)
 {
     SYNCDBG(6,"Starting");
-    struct CreatureStorage transfer_mem;
+    struct IntralevelData transfer_mem;
     //_DK_init_level(); return;
-    LbMemoryCopy(&transfer_mem,&game.intralvl_transfered_creature,sizeof(struct CreatureStorage));
+    //LbMemoryCopy(&transfer_mem,&game.intralvl.transferred_creature,sizeof(struct CreatureStorage));
+    LbMemoryCopy(&transfer_mem,&game.intralvl,sizeof(struct IntralevelData));
     game.flags_gui = 0;
     game.action_rand_seed = 1;
     free_swipe_graphic();
@@ -4034,7 +4035,8 @@ void init_level(void)
         init_player_start(player, false);
     }
     game.numfield_D |= GNFldD_Unkn04;
-    LbMemoryCopy(&game.intralvl_transfered_creature,&transfer_mem,sizeof(struct CreatureStorage));
+    //LbMemoryCopy(&game.intralvl.transferred_creature,&transfer_mem,sizeof(struct CreatureStorage));
+    LbMemoryCopy(&game.intralvl,&transfer_mem,sizeof(struct IntralevelData));
     event_initialise_all();
     battle_initialise();
     ambient_sound_prepare();

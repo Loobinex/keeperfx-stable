@@ -86,6 +86,8 @@ struct TextScrollWindow {
  */
 struct IntralevelData {
     unsigned char bonuses_found[BONUS_LEVEL_STORAGE_COUNT];
+    struct CreatureStorage transferred_creature;
+    long campaign_flags[5][8];
 };
 
 /**

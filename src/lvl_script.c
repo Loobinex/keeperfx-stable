@@ -3766,7 +3766,7 @@ long get_condition_value(PlayerNumber plyr_idx, unsigned char valtype, unsigned 
         return count_creatures_in_dungeon_controlled_and_of_model_flags(dungeon, CMF_IsEvil, CMF_IsSpectator|CMF_IsSpecDigger);
     case SVar_CAMPAIGN_FLAG:
         dungeon = get_dungeon(plyr_idx);
-        return campaign.campaign_flags[plyr_idx][validx];
+        return game.intralvl.campaign_flags[plyr_idx][validx];
         break;
     break;
     default:
@@ -4236,14 +4236,14 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
   case Cmd_SET_CAMPAIGN_FLAG:
       for (i=plr_start; i < plr_end; i++)
       {
-          campaign.campaign_flags[i][val2] = saturate_set_signed(val3, 32);
+          game.intralvl.campaign_flags[i][val2] = saturate_set_signed(val3, 32);
       }
       break;
   case Cmd_ADD_TO_CAMPAIGN_FLAG:
 
       for (i=plr_start; i < plr_end; i++)
       {
-          campaign.campaign_flags[i][val2] = saturate_set_signed(campaign.campaign_flags[i][val2] + val3, 32);
+          game.intralvl.campaign_flags[i][val2] = saturate_set_signed(game.intralvl.campaign_flags[i][val2] + val3, 32);
       }
       break;
   default:
