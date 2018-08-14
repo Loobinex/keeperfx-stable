@@ -37,6 +37,8 @@ extern "C" {
 #define MESSAGE_TEXT_LEN           1024
 #define QUICK_MESSAGES_COUNT         50
 #define BONUS_LEVEL_STORAGE_COUNT     6
+#define PLAYERS_FOR_CAMPAIGN_FLAGS    5
+#define CAMPAIGN_FLAGS_PER_PLAYER     8
 
 #define SOUND_RANDOM(range) LbRandomSeries(range, &sound_seed, __func__, __LINE__)
 #define UNSYNC_RANDOM(range) LbRandomSeries(range, &game.unsync_rand_seed, __func__, __LINE__)
@@ -87,7 +89,7 @@ struct TextScrollWindow {
 struct IntralevelData {
     unsigned char bonuses_found[BONUS_LEVEL_STORAGE_COUNT];
     struct CreatureStorage transferred_creature;
-    long campaign_flags[5][8];
+    long campaign_flags[PLAYERS_FOR_CAMPAIGN_FLAGS][CAMPAIGN_FLAGS_PER_PLAYER];
 };
 
 /**
