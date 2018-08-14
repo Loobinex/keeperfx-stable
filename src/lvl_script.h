@@ -115,8 +115,6 @@ enum TbScriptCommands {
     Cmd_ADD_TO_FLAG                       = 95,
     Cmd_SET_CAMPAIGN_FLAG                 = 96,
     Cmd_ADD_TO_CAMPAIGN_FLAG              = 97,
-    Cmd_EXPORT_VAR                        = 98,
-    Cmd_VALUE                             = 99,
 };
 
 enum ScriptVariables {
