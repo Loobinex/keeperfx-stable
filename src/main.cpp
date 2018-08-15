@@ -2535,12 +2535,14 @@ void process_dungeons(void)
 void process_level_script(void)
 {
   SYNCDBG(6,"Starting");
+  /* Do NOT stop executing scripts after winning or losing
   struct PlayerInfo *player;
   player = get_my_player();
   // Do NOT stop executing scripts after a win or a loss
   if ((game.system_flags & GSF_NetworkActive) == 0)
   //    && (player->victory_state != VicS_Undecided))
     return;
+  */
   process_conditions();
   process_check_new_creature_partys();
 //script_process_messages(); is not here, but it is in beta - check why
