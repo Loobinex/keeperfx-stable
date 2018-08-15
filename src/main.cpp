@@ -2537,8 +2537,9 @@ void process_level_script(void)
   SYNCDBG(6,"Starting");
   struct PlayerInfo *player;
   player = get_my_player();
-  if (((game.system_flags & GSF_NetworkActive) == 0)
-      && (player->victory_state != VicS_Undecided))
+  // Do NOT stop executing scripts after a win or a loss
+  if ((game.system_flags & GSF_NetworkActive) == 0)
+  //    && (player->victory_state != VicS_Undecided))
     return;
   process_conditions();
   process_check_new_creature_partys();
