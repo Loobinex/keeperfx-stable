@@ -3370,7 +3370,6 @@ struct Thing *script_create_creature_at_location(PlayerNumber plyr_idx, ThingMod
             thing->field_4F |= TF4F_Unknown01;
             cctrl->countdown_282 = 24;
         }
-        break;
     default:
         break;
     }
