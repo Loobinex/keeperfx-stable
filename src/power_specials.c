@@ -580,7 +580,9 @@ TbBool create_transferred_creature_on_level(void)
         pos = &(thing->mappos);
         thing = create_creature(pos, intralvl.transferred_creature.model, 5);
         if (thing_is_invalid(thing))
+        {
           return false;
+        }
         init_creature_level(thing, intralvl.transferred_creature.explevel);
         clear_transfered_creature();
         return true;
