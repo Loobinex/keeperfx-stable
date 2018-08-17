@@ -135,6 +135,7 @@ const struct CommandDesc command_desc[] = {
   {"ADD_TO_FLAG",                       "PAN     ", Cmd_ADD_TO_FLAG},
   {"SET_CAMPAIGN_FLAG",                 "PAN     ", Cmd_SET_CAMPAIGN_FLAG},
   {"ADD_TO_CAMPAIGN_FLAG",              "PAN     ", Cmd_ADD_TO_CAMPAIGN_FLAG},
+  {"RUN_AFTER_VICTORY",                 "N       ", Cmd_RUN_AFTER_VICTORY},
   {NULL,                                "        ", Cmd_NONE},
 };
 
@@ -2526,7 +2527,12 @@ void script_add_command(const struct CommandDesc *cmd_desc, const struct ScriptL
     case Cmd_ADD_TO_CAMPAIGN_FLAG:
         command_add_to_campaign_flag(scline->np[0], scline->tp[1], scline->np[2]);
         break;
-
+    case Cmd_RUN_AFTER_VICTORY:
+        if (scline->np[0] == 1)
+        {
+            game.system_flags |= GSF_RunAfterVictory;
+        }
+        break;
     default:
         SCRPTERRLOG("Unhandled SCRIPT command '%s'", scline->tcmnd);
         break;
