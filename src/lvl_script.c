@@ -199,7 +199,7 @@ const struct CommandDesc dk1_command_desc[] = {
 const struct CommandDesc subfunction_desc[] = {
     {"RANDOM",                     "Aaaaaaaa", Cmd_RANDOM},
     {"DRAWFROM",                   "Aaaaaaaa", Cmd_DRAWFROM},
-    {"VALUE",                      "PA      ", Cmd_VALUE},
+    {"IMPORT",                     "PA      ", Cmd_IMPORT},
     {NULL,                         "        ", Cmd_NONE},
   };
 
@@ -2304,7 +2304,7 @@ void command_add_to_campaign_flag(long plr_range_id, const char *cmpflgname, lon
   command_add_value(Cmd_ADD_TO_CAMPAIGN_FLAG, plr_range_id, flg_id, val, 0);
 }
 
-void command_export_variable(long plr_range_id, const char *cmpflgname, const char *varib_name)
+void command_export_variable(long plr_range_id, const char *varib_name, const char *cmpflgname)
 {
     long flg_id;
     flg_id = get_rid(campaign_flag_desc, cmpflgname);
@@ -2813,7 +2813,7 @@ int script_recognize_params(char **line, const struct CommandDesc *cmd_desc, str
                 }
                 SCRPTLOG("Function \"%s\" returned value \"%s\"", funcmd_desc->textptr, scline->tp[i]);
                 };break;
-            case Cmd_VALUE:
+            case Cmd_IMPORT:
                 player_id = get_id(player_desc, funscline->tp[0]);
                 if (player_id >= PLAYERS_FOR_CAMPAIGN_FLAGS)
                 {
@@ -4285,7 +4285,7 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
   case Cmd_EXPORT_VARIABLE:
       for (i=plr_start; i < plr_end; i++)
       {
-          SCRPTLOG("Setting campaign flag %ld to %ld.",i,val3);
+          SYNCDBG(8, "Setting campaign flag %ld to %ld.",i,val3);
           intralvl.campaign_flags[i][val2] = get_condition_value(i, val3, 0);
       }
       break;
