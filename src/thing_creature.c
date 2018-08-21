@@ -3477,7 +3477,9 @@ struct Thing *create_creature(struct Coord3d *pos, ThingModel model, PlayerNumbe
     crtng->class_id = TCls_Creature;
     crtng->model = model;
     crtng->parent_idx = crtng->index;
-    crtng->mappos = *pos;
+    crtng->mappos.x.val = pos->x.val;
+    crtng->mappos.y.val = pos->y.val;
+    crtng->mappos.z.val = pos->z.val;
     crtng->clipbox_size_xy = crstat->size_xy;
     crtng->clipbox_size_yz = crstat->size_yz;
     crtng->solid_size_xy = crstat->thing_size_xy;
@@ -3500,7 +3502,9 @@ struct Thing *create_creature(struct Coord3d *pos, ThingModel model, PlayerNumbe
     crtng->health = crstat->health;
     cctrl->max_health = compute_creature_max_health(crstat->health,cctrl->explevel);
     crtng->owner = owner;
-    crtng->mappos = *pos;
+    crtng->mappos.x.val = pos->x.val;
+    crtng->mappos.y.val = pos->y.val;
+    crtng->mappos.z.val = pos->z.val;
     crtng->creation_turn = game.play_gameturn;
     cctrl->joining_age = 17+ACTION_RANDOM(13);
     cctrl->blood_type = ACTION_RANDOM(BLOOD_TYPES_COUNT);
@@ -3509,7 +3513,9 @@ struct Thing *create_creature(struct Coord3d *pos, ThingModel model, PlayerNumbe
       cctrl->party.target_plyr_idx = -1;
       cctrl->byte_8C = 1;
     }
-    cctrl->flee_pos = crtng->mappos;
+    cctrl->flee_pos.x.val = crtng->mappos.x.val;
+    cctrl->flee_pos.y.val = crtng->mappos.y.val;
+    cctrl->flee_pos.z.val = crtng->mappos.z.val;
     cctrl->flee_pos.z.val = get_thing_height_at(crtng, pos);
     cctrl->fighting_player_idx = -1;
     if (crstat->flying) {
@@ -3657,7 +3663,9 @@ TbBool create_random_hero_creature(MapCoord x, MapCoord y, PlayerNumber owner, C
       ERRORLOG("Hero %s at (%ld,%ld) deleted because is in wall",creature_code_name(crmodel),x,y);
       return false;
   }
-  thing->mappos = pos;
+  thing->mappos.x.val = pos.x.val;
+  thing->mappos.y.val = pos.y.val;
+  thing->mappos.z.val = pos.z.val;
   remove_first_creature(thing);
   set_first_creature(thing);
 //  set_start_state(thing); - simplified to the following two commands
@@ -3698,7 +3706,9 @@ TbBool create_owned_special_digger(MapCoord x, MapCoord y, PlayerNumber owner)
         ERRORLOG("Creature %s at (%ld,%ld) deleted because is in wall",creature_code_name(crmodel),x,y);
         return false;
     }
-    thing->mappos = pos;
+    thing->mappos.x.val = pos.x.val;
+    thing->mappos.y.val = pos.y.val;
+    thing->mappos.z.val = pos.z.val;
     remove_first_creature(thing);
     set_first_creature(thing);
     return true;
@@ -5258,12 +5268,12 @@ int claim_neutral_creatures_in_sight(struct Thing *creatng, struct Coord3d *pos,
         {
             if (is_neutral_thing(thing) && line_of_sight_3d(&thing->mappos, pos))
             {
-				if ((!creature_is_kept_in_custody(thing)) && (!creature_is_kept_in_custody(creatng)))
-				{
-				change_creature_owner(thing, creatng->owner);
+                if ((!creature_is_kept_in_custody(thing)) && (!creature_is_kept_in_custody(creatng)))
+                {
+                change_creature_owner(thing, creatng->owner);
                 mark_creature_joined_dungeon(thing);
                 n++;
-				}
+                }
             }
         }
         // Per thing code ends

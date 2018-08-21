@@ -37,6 +37,8 @@ extern "C" {
 #define MESSAGE_TEXT_LEN           1024
 #define QUICK_MESSAGES_COUNT         50
 #define BONUS_LEVEL_STORAGE_COUNT     6
+#define PLAYERS_FOR_CAMPAIGN_FLAGS    5
+#define CAMPAIGN_FLAGS_PER_PLAYER     8
 
 #define SOUND_RANDOM(range) LbRandomSeries(range, &sound_seed, __func__, __LINE__)
 #define UNSYNC_RANDOM(range) LbRandomSeries(range, &game.unsync_rand_seed, __func__, __LINE__)
@@ -49,6 +51,7 @@ enum GameSystemFlags {
     GSF_CaptureMovie     = 0x0008,
     GSF_CaptureSShot     = 0x0010,
     GSF_AllowOnePlayer   = 0x0040,
+    GSF_RunAfterVictory  = 0x0080,
 };
 
 enum GameGUIFlags {
@@ -86,6 +89,8 @@ struct TextScrollWindow {
  */
 struct IntralevelData {
     unsigned char bonuses_found[BONUS_LEVEL_STORAGE_COUNT];
+    struct CreatureStorage transferred_creature;
+    long campaign_flags[PLAYERS_FOR_CAMPAIGN_FLAGS][CAMPAIGN_FLAGS_PER_PLAYER];
 };
 
 /**
@@ -119,6 +124,7 @@ struct GameAdd {
 #pragma pack()
 /******************************************************************************/
 extern struct GameAdd gameadd;
+extern struct IntralevelData intralvl;
 /******************************************************************************/
 LevelNumber get_loaded_level_number(void);
 LevelNumber set_loaded_level_number(LevelNumber lvnum);
