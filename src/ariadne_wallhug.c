@@ -460,7 +460,6 @@ long creature_cannot_move_directly_to_with_collide(struct Thing *creatng, struct
             cannot_mv = 1;
             break;
         case 4:
-            // mappos unchanged - no need to restore
             return 4;
         }
 
@@ -495,10 +494,12 @@ long creature_cannot_move_directly_to_with_collide(struct Thing *creatng, struct
         switch (creature_cannot_move_directly_to_with_collide_sub(creatng, next_pos, a3, a4))
         {
         case 0:
-            creatng->mappos = orig_pos; // restore mappos
+            creatng->mappos = next_pos;
+            creatng->mappos.z.val = get_thing_height_at(creatng, &next_pos);
             break;
         case 1:
-            creatng->mappos = orig_pos; // restore mappos
+            creatng->mappos = next_pos;
+            creatng->mappos.z.val = 0;
             cannot_mv = 1;
             break;
         case 4:
@@ -529,7 +530,6 @@ long creature_cannot_move_directly_to_with_collide(struct Thing *creatng, struct
             cannot_mv = 1;
             break;
         case 4:
-            // mappos unchanged - no need to restore
             return 4;
         }
         prev_pos = creatng->mappos;
@@ -562,10 +562,10 @@ long creature_cannot_move_directly_to_with_collide(struct Thing *creatng, struct
         switch (creature_cannot_move_directly_to_with_collide_sub(creatng, *pos, a3, a4))
         {
         default:
-            creatng->mappos = orig_pos; // restore mappos
+            creatng->mappos = orig_pos;
             break;
         case 1:
-            creatng->mappos = orig_pos; // restore mappos
+            creatng->mappos = orig_pos;
             cannot_mv = 1;
             break;
         case 4:
@@ -579,10 +579,10 @@ long creature_cannot_move_directly_to_with_collide(struct Thing *creatng, struct
     switch (creature_cannot_move_directly_to_with_collide_sub(creatng, *pos, a3, a4))
     {
     default:
-        creatng->mappos = orig_pos; // restore mappos
+        creatng->mappos = orig_pos;
         break;
     case 1:
-        creatng->mappos = orig_pos; // restore mappos
+        creatng->mappos = orig_pos;
         cannot_mv = 1;
         break;
     case 4:
