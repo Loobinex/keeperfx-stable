@@ -1095,6 +1095,15 @@ int global_frameskipTurn = 0;
 
 void get_isometric_or_front_view_mouse_inputs(struct Packet *pckt,int rotate_pressed,int speed_pressed)
 {
+    // mouse scroll zoom unaffected by frameskip
+    if ((pckt->control_flags & PCtr_MapCoordsValid) != 0)
+    {
+        if (wheel_scrolled_up)
+            set_packet_control(pckt, PCtr_ViewZoomIn);
+        if (wheel_scrolled_down)
+            set_packet_control(pckt, PCtr_ViewZoomOut);
+    }
+
     // Only pan the camera as often as normal despite frameskip
     if (game.frame_skip > 0)
     {
@@ -1107,23 +1116,21 @@ void get_isometric_or_front_view_mouse_inputs(struct Packet *pckt,int rotate_pre
         {
             frameskipMax = 3;
         }
-        /**
-        if (game.frame_skip == 1)
+        else if (game.frame_skip > 20 && game.frame_skip < 50)
         {
-            frameskipMax = 1;
+            frameskipMax = (game.frame_skip) / ( log(game.frame_skip) / log(17) );
         }
-        else if (game.frame_skip == 2)
+        else if (game.frame_skip < 200)
         {
-            frameskipMax = 2;
+            frameskipMax = game.frame_skip / ( log(game.frame_skip) / log(10) );
         }
-        else if (game.frame_skip == 4)
+        else if (game.frame_skip == 512) // max frameskip
         {
-            frameskipMax = 4;
+            frameskipMax = 60;
         }
-        */
-        else
+        else // more than 200 but less than 512
         {
-            frameskipMax = game.frame_skip / log10(game.frame_skip);
+            frameskipMax = game.frame_skip / ( log(game.frame_skip) / log(4) );
         }
         TbBool moveTheCamera = (global_frameskipTurn == 0);
         //Checking for evenly distributed camera movement for the various frameskip amounts
@@ -1171,13 +1178,6 @@ void get_isometric_or_front_view_mouse_inputs(struct Packet *pckt,int rotate_pre
             pckt->field_10 |= PCAdV_SpeedupPressed;
         }
         set_packet_control(pckt, PCtr_MoveDown);
-    }
-    if ((pckt->control_flags & PCtr_MapCoordsValid) != 0)
-    {
-        if (wheel_scrolled_up)
-            set_packet_control(pckt, PCtr_ViewZoomIn);
-        if (wheel_scrolled_down)
-            set_packet_control(pckt, PCtr_ViewZoomOut);
     }
 }
 
