@@ -207,10 +207,9 @@ long creature_cannot_move_directly_to(struct Thing *thing, struct Coord3d *pos)
     int delta_x, delta_y;
     delta_x = pos->x.val - (long)realpos.x.val;
     delta_y = pos->y.val - (long)realpos.y.val;
-    struct Coord3d newpos;
-    newpos.x.val = thing->mappos.x.val;
-    newpos.y.val = thing->mappos.y.val;
-    newpos.z.val = thing->mappos.z.val;
+    // Backup original position - we will have to restore it before each return
+    struct Coord3d origpos;
+    origpos = thing->mappos;
 
     if ((pos->x.stl.num != realpos.x.stl.num) && (pos->y.stl.num != realpos.y.stl.num))
     {
@@ -225,9 +224,10 @@ long creature_cannot_move_directly_to(struct Thing *thing, struct Coord3d *pos)
             else
               i = (realpos.x.val + 256) & 0xFF00;
             modpos.x.val = i;
-            modpos.y.val = delta_y * (i - newpos.x.val) / delta_x + newpos.y.val;
+            modpos.y.val = delta_y * (i - origpos.x.val) / delta_x + origpos.y.val;
             modpos.z.val = realpos.z.val;
             if (position_over_floor_level(thing, &modpos)) {
+                // No need to restore mappos - it was not modified yet
                 return 1;
             }
             thing->mappos.x.val = modpos.x.val;
@@ -244,12 +244,10 @@ long creature_cannot_move_directly_to(struct Thing *thing, struct Coord3d *pos)
             else
               i = (realpos.y.val + 256) & 0xFF00;
             modpos.y.val = i;
-            modpos.x.val = delta_x * (i - newpos.y.val) / delta_y + newpos.x.val;
+            modpos.x.val = delta_x * (i - origpos.y.val) / delta_y + origpos.x.val;
             modpos.z.val = realpos.z.val;
             if (position_over_floor_level(thing, &modpos)) {
-                thing->mappos.x.val = newpos.x.val;
-                thing->mappos.y.val = newpos.y.val;
-                thing->mappos.z.val = newpos.z.val;
+                thing->mappos = origpos;
                 return 1;
             }
             thing->mappos.x.val = modpos.x.val;
@@ -265,14 +263,10 @@ long creature_cannot_move_directly_to(struct Thing *thing, struct Coord3d *pos)
             modpos.y.val = pos->y.val;
             modpos.z.val = realpos.z.val;
             if (position_over_floor_level(thing, &modpos)) {
-                thing->mappos.x.val = newpos.x.val;
-                thing->mappos.y.val = newpos.y.val;
-                thing->mappos.z.val = newpos.z.val;
+                thing->mappos = origpos;
                 return 1;
             }
-            thing->mappos.x.val = newpos.x.val;
-            thing->mappos.y.val = newpos.y.val;
-            thing->mappos.z.val = newpos.z.val;
+            thing->mappos = origpos;
             return 0;
         }
 
@@ -285,9 +279,10 @@ long creature_cannot_move_directly_to(struct Thing *thing, struct Coord3d *pos)
             else
               i = (realpos.y.val + 256) & 0xFF00;
             modpos.y.val = i;
-            modpos.x.val = delta_x * (i - newpos.y.val) / delta_y + newpos.x.val;
+            modpos.x.val = delta_x * (i - origpos.y.val) / delta_y + origpos.x.val;
             modpos.z.val = realpos.z.val;
             if (position_over_floor_level(thing, &modpos)) {
+                // No need to restore mappos - it was not modified yet
                 return 1;
             }
             thing->mappos.x.val = modpos.x.val;
@@ -304,12 +299,10 @@ long creature_cannot_move_directly_to(struct Thing *thing, struct Coord3d *pos)
             else
               i = (realpos.x.val + 256) & 0xFF00;
             modpos.x.val = i;
-            modpos.y.val = delta_y * (modpos.x.val - newpos.x.val) / delta_x + newpos.y.val;
+            modpos.y.val = delta_y * (modpos.x.val - origpos.x.val) / delta_x + origpos.y.val;
             modpos.z.val = realpos.z.val;
             if (position_over_floor_level(thing, &modpos)) {
-                thing->mappos.x.val = newpos.x.val;
-                thing->mappos.y.val = newpos.y.val;
-                thing->mappos.z.val = newpos.z.val;
+                thing->mappos = origpos;
                 return 1;
             }
             thing->mappos.x.val = modpos.x.val;
@@ -325,26 +318,18 @@ long creature_cannot_move_directly_to(struct Thing *thing, struct Coord3d *pos)
             modpos.y.val = pos->y.val;
             modpos.z.val = realpos.z.val;
             if (position_over_floor_level(thing, &modpos)) {
-                thing->mappos.x.val = newpos.x.val;
-                thing->mappos.y.val = newpos.y.val;
-                thing->mappos.z.val = newpos.z.val;
+                thing->mappos = origpos;
                 return 1;
             }
-            thing->mappos.x.val = newpos.x.val;
-            thing->mappos.y.val = newpos.y.val;
-            thing->mappos.z.val = newpos.z.val;
+            thing->mappos = origpos;
             return 0;
         }
 
         if (position_over_floor_level(thing, pos)) {
-            thing->mappos.x.val = newpos.x.val;
-            thing->mappos.y.val = newpos.y.val;
-            thing->mappos.z.val = newpos.z.val;
+            thing->mappos = origpos;
             return 1;
         }
-        thing->mappos.x.val = newpos.x.val;
-        thing->mappos.y.val = newpos.y.val;
-        thing->mappos.z.val = newpos.z.val;
+        thing->mappos = origpos;
         return 0;
     }
 
