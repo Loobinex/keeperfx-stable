@@ -60,6 +60,9 @@
 #include "keeperfx.hpp"
 #include "KeeperSpeech.h"
 
+#include <math.h>
+
+
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -1086,8 +1089,50 @@ short get_map_action_inputs(void)
     }
 }
 
+// Might want to initiate this in main() and pass a reference to it
+// rather than using this global variable. But this works.
+int global_frameskipTurn = 0;
+
 void get_isometric_or_front_view_mouse_inputs(struct Packet *pckt,int rotate_pressed,int speed_pressed)
 {
+    // Only pan the camera as often as normal despite frameskip
+    if (game.frame_skip > 0)
+    {
+        int frameskipMax = 1;
+        if (game.frame_skip < 4)
+        {
+            frameskipMax = game.frame_skip;
+        }
+        else if (game.frame_skip == 4)
+        {
+            frameskipMax = 3;
+        }
+        /**
+        if (game.frame_skip == 1)
+        {
+            frameskipMax = 1;
+        }
+        else if (game.frame_skip == 2)
+        {
+            frameskipMax = 2;
+        }
+        else if (game.frame_skip == 4)
+        {
+            frameskipMax = 4;
+        }
+        */
+        else
+        {
+            frameskipMax = game.frame_skip / log10(game.frame_skip);
+        }
+        TbBool moveTheCamera = (global_frameskipTurn == 0);
+        //Checking for evenly distributed camera movement for the various frameskip amounts
+        //JUSTMSG("moveTheCamera: %d", moveTheCamera);
+        global_frameskipTurn++;
+        if (global_frameskipTurn > frameskipMax) global_frameskipTurn = 0;
+        if (!moveTheCamera) return;
+    }
+
     long mx,my;
     mx = my_mouse_x;
     my = my_mouse_y;
