@@ -2700,12 +2700,12 @@ TbBool init_creature_state(struct Thing *creatng)
     // Check job which we can do after dropping at these coordinates
     if (is_neutral_thing(creatng))
     {
-		if ((gameadd.classic_bugs_flags & ClscBug_PassiveNeutrals)) 
-		{
-				SYNCDBG(3,"Trying to assign initial job at (%d,%d) for neutral %s index %d owner %d",(int)stl_x,(int)stl_y,thing_model_name(creatng),(int)creatng->index,(int)creatng->owner);
-		return false;
-		}
-		JUSTMSG("Classic bug neutralwander disabled");
+        if ((gameadd.classic_bugs_flags & ClscBug_PassiveNeutrals)) 
+        {
+            SYNCDBG(3,"Trying to assign initial job at (%d,%d) for neutral %s index %d owner %d",(int)stl_x,(int)stl_y,thing_model_name(creatng),(int)creatng->index,(int)creatng->owner);
+            return false;
+        }
+        SYNCDBG(3,"Assigning initial job at (%d,%d) for neutral %s index %d owner %d",(int)stl_x,(int)stl_y,thing_model_name(creatng),(int)creatng->index,(int)creatng->owner);
     }
     CreatureJob new_job;
     new_job = get_job_for_subtile(creatng, stl_x, stl_y, JoKF_AssignCeatureInit);
