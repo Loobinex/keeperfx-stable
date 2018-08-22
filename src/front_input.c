@@ -62,7 +62,6 @@
 
 #include <math.h>
 
-
 #ifdef __cplusplus
 extern "C" {
 #endif
@@ -1089,7 +1088,7 @@ short get_map_action_inputs(void)
     }
 }
 
-// Might want to initiate this in main() and pass a reference to it
+// TODO: Might want to initiate this in main() and pass a reference to it
 // rather than using this global variable. But this works.
 int global_frameskipTurn = 0;
 
