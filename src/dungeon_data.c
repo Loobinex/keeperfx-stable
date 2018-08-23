@@ -67,6 +67,7 @@ struct Dungeon *get_dungeon_f(PlayerNumber plyr_num,const char *func_name)
     {
         ERRORLOG("%s: Tried to get non-existing dungeon %ld!",func_name,(long)plyr_num);
     }
+    SYNCDBG(3, "%s: Tried to get neutral dungeon!",func_name);
     return INVALID_DUNGEON;
 }
 

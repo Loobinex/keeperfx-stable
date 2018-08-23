@@ -56,6 +56,7 @@ struct PlayerInfo *get_player_f(long plyr_idx,const char *func_name)
     {
         ERRORMSG("%s: Tried to get non-existing player %d!",func_name,(int)plyr_idx);
     }
+    SYNCDBG(3, "%s: Tried to get neutral player!",func_name);
     return INVALID_PLAYER;
 }
 
