@@ -52,11 +52,14 @@ struct PlayerInfo *get_player_f(long plyr_idx,const char *func_name)
     {
         return &game.players[plyr_idx];
     }
-    if (plyr_idx != NEUTRAL_PLAYER) // Suppress error for never existing but valid neutral 'player'
+    if (plyr_idx == NEUTRAL_PLAYER) // Suppress error for never existing but valid neutral 'player'
+    {
+        SYNCDBG(3, "%s: Tried to get neutral player!",func_name);
+    }
+    else
     {
         ERRORMSG("%s: Tried to get non-existing player %d!",func_name,(int)plyr_idx);
     }
-    SYNCDBG(3, "%s: Tried to get neutral player!",func_name);
     return INVALID_PLAYER;
 }
 
