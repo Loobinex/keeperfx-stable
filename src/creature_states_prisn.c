@@ -49,12 +49,14 @@ DLLIMPORT long _DK_process_prison_food(struct Thing *creatng, struct Room *room)
 }
 #endif
 /******************************************************************************/
-TbBool jailbreak_possible(struct Room *room, long plyr_idx)
+TbBool jailbreak_possible(struct Room *room, struct Thing *creatng)
 {
     unsigned long i;
     unsigned long k;
     struct SlabMap *slb;
-    if (room->owner == plyr_idx) {
+    JUSTMSG("room owner: %d", room->owner); // debug
+    if (room->owner == 5 || room->owner == creatng->owner) {
+        JUSTMSG("neutral room owner: %d", room->owner); // debug
         return false;
     }
     k = 0;
@@ -67,7 +69,7 @@ TbBool jailbreak_possible(struct Room *room, long plyr_idx)
             ERRORLOG("Jump to invalid room slab detected");
             break;
         }
-        if (slab_by_players_land(plyr_idx, slb_num_decode_x(i), slb_num_decode_y(i)))
+        if (slab_by_players_land(creatng->owner, slb_num_decode_x(i), slb_num_decode_y(i)))
             return true;
         i = get_next_slab_number_in_room(i);
         k++;
@@ -388,11 +390,13 @@ CrCheckRet process_prison_function(struct Thing *creatng)
     return CrCkRet_Continue;
   // Breaking from jail is only possible once per some amount of turns,
   // and only if creature sits in jail for long enough
+  JUSTMSG("game.play_gameturn: %d", game.play_gameturn);
+  JUSTMSG("game.play_gameturn: %d", game.play_gameturn);
   if (((game.play_gameturn % gameadd.time_between_prison_break) == 0) &&
       (game.play_gameturn > cctrl->imprison.start_gameturn + gameadd.time_in_prison_without_break))
   {
       // Check the base jail break condition - whether prison touches enemy land
-      if (jailbreak_possible(room, creatng->owner) && (ACTION_RANDOM(100) < gameadd.prison_break_chance))
+      if (jailbreak_possible(room, creatng) && (ACTION_RANDOM(100) < gameadd.prison_break_chance))
       {
           if (is_my_player_number(room->owner))
               output_message(SMsg_PrisonersEscaping, 40, true);
