@@ -49,12 +49,15 @@ DLLIMPORT long _DK_process_prison_food(struct Thing *creatng, struct Room *room)
 }
 #endif
 /******************************************************************************/
-TbBool jailbreak_possible(struct Room *room, struct Thing *creatng)
+TbBool jailbreak_possible(struct Room *room, long creature_owner)
 {
     unsigned long i;
     unsigned long k;
     struct SlabMap *slb;
-    if (creatng->owner == NEUTRAL_PLAYER || room->owner == creatng->owner) {
+    // Neutral creatures (in any player's prison)
+    // and creatures in the prisons of their owner can't jailbreak
+    if (creature_owner == NEUTRAL_PLAYER || room->owner == creature_owner)
+    {
         return false;
     }
     k = 0;
@@ -67,8 +70,10 @@ TbBool jailbreak_possible(struct Room *room, struct Thing *creatng)
             ERRORLOG("Jump to invalid room slab detected");
             break;
         }
-        if (slab_by_players_land(creatng->owner, slb_num_decode_x(i), slb_num_decode_y(i)))
+        if (slab_by_players_land(creature_owner, slb_num_decode_x(i), slb_num_decode_y(i)))
+        {
             return true;
+        }
         i = get_next_slab_number_in_room(i);
         k++;
         if (k > map_tiles_x * map_tiles_y)
@@ -392,7 +397,7 @@ CrCheckRet process_prison_function(struct Thing *creatng)
       (game.play_gameturn > cctrl->imprison.start_gameturn + gameadd.time_in_prison_without_break))
   {
       // Check the base jail break condition - whether prison touches enemy land
-      if (jailbreak_possible(room, creatng) && (ACTION_RANDOM(100) < gameadd.prison_break_chance))
+      if (jailbreak_possible(room, creatng->owner) && (ACTION_RANDOM(100) < gameadd.prison_break_chance))
       {
           if (is_my_player_number(room->owner))
               output_message(SMsg_PrisonersEscaping, 40, true);
