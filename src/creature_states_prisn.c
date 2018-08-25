@@ -54,7 +54,7 @@ TbBool jailbreak_possible(struct Room *room, struct Thing *creatng)
     unsigned long i;
     unsigned long k;
     struct SlabMap *slb;
-    if (creatng->owner == 5 || room->owner == creatng->owner) {
+    if (creatng->owner == NEUTRAL_PLAYER || room->owner == creatng->owner) {
         return false;
     }
     k = 0;
