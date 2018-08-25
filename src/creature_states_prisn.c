@@ -54,9 +54,7 @@ TbBool jailbreak_possible(struct Room *room, struct Thing *creatng)
     unsigned long i;
     unsigned long k;
     struct SlabMap *slb;
-    JUSTMSG("room owner: %d", room->owner); // debug
-    if (room->owner == 5 || room->owner == creatng->owner) {
-        JUSTMSG("neutral room owner: %d", room->owner); // debug
+    if (creatng->owner == 5 || room->owner == creatng->owner) {
         return false;
     }
     k = 0;
@@ -390,8 +388,6 @@ CrCheckRet process_prison_function(struct Thing *creatng)
     return CrCkRet_Continue;
   // Breaking from jail is only possible once per some amount of turns,
   // and only if creature sits in jail for long enough
-  JUSTMSG("game.play_gameturn: %d", game.play_gameturn);
-  JUSTMSG("game.play_gameturn: %d", game.play_gameturn);
   if (((game.play_gameturn % gameadd.time_between_prison_break) == 0) &&
       (game.play_gameturn > cctrl->imprison.start_gameturn + gameadd.time_in_prison_without_break))
   {
