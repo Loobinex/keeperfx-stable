@@ -5268,11 +5268,14 @@ int claim_neutral_creatures_in_sight(struct Thing *creatng, struct Coord3d *pos,
         {
             if (is_neutral_thing(thing) && line_of_sight_3d(&thing->mappos, pos))
             {
-                // Unless the relevant classic bug is enabled,
-                // imprisoned creatures cannot claim neutral creatures,
-                // nor can imprisoned neutral creatures be claimed.
-                if (!( creature_is_kept_in_custody(thing) || creature_is_kept_in_custody(creatng) )
-                    ||(gameadd.classic_bugs_flags & ClscBug_PassiveNeutrals))
+                // Unless the relevant classic bug is enabled
+                // or the neutral creature is currently 'working' (captive) in
+                // a room owned by the claiming creature's owner,
+                // creatures in custody cannot claim neutral creatures,
+                // nor can neutral creatures in custody be claimed.
+                if ((gameadd.classic_bugs_flags & ClscBug_PassiveNeutrals)
+                    || get_room_creature_works_in(thing)->owner == creatng->owner
+                    || !( creature_is_kept_in_custody(thing) || creature_is_kept_in_custody(creatng) ))
                 {
                     change_creature_owner(thing, creatng->owner);
                     mark_creature_joined_dungeon(thing);
