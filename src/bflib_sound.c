@@ -31,6 +31,8 @@
 #include "bflib_planar.h"
 #include "globals.h"
 
+#include "game_legacy.h"
+
 #define INVALID_SOUND_EMITTER (&emitter[0])
 
 #ifdef __cplusplus
@@ -727,6 +729,32 @@ void play_non_3d_sample_no_overlap(long smpl_idx)
     if (!S3DEmitterIsPlayingSample(Non3DEmitter, smpl_idx, 0))
     {
         S3DAddSampleToEmitterPri(Non3DEmitter, smpl_idx, 0, 100, 256, 0, 3, 8, 0x7FFFFFFE);
+    }
+}
+
+void play_atmos_sound(long smpl_idx)
+{
+	int ATMOS_SOUND_PITCH = (70 + (UNSYNC_RANDOM(9) * 4));
+	int ATMOS_SOUND_VOLUME = 256;
+    if (SoundDisabled)
+        return;
+    if (GetCurrentSoundMasterVolume() <= 0)
+        return;
+    if (Non3DEmitter != 0)
+    {
+        if (!sound_emitter_in_use(Non3DEmitter))
+        {
+            ERRORLOG("Non 3d Emitter has been deleted!");
+            Non3DEmitter = 0;
+        }
+    }
+    if (Non3DEmitter == 0)
+    {
+        Non3DEmitter = S3DCreateSoundEmitterPri(0, 0, 0, smpl_idx, 0, ATMOS_SOUND_PITCH, ATMOS_SOUND_VOLUME, 0, 8, 0x7FFFFFFE);
+    } else
+    if (!S3DEmitterIsPlayingSample(Non3DEmitter, smpl_idx, 0))
+    {
+        S3DAddSampleToEmitterPri(Non3DEmitter, smpl_idx, 0, ATMOS_SOUND_PITCH, ATMOS_SOUND_VOLUME, 0, 3, 8, 0x7FFFFFFE);
     }
 }
 
