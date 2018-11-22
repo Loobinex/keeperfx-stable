@@ -312,36 +312,35 @@ void update_player_sounds(void)
               {
                 output_message(SMsg_FunnyMessages+k, 0, true);
               } 
-			}
-		// Atmospheric background sound, replaces AWE soundfont
+            }
+        // Atmospheric background sound, replaces AWE soundfont
         } else
-		{
-		    if ( atmos_sounds_enabled() )
-			{
-				//Plays the drops, sound 1013, with a small chance of a random other sound.
-				k = UNSYNC_RANDOM(400);
-				//JUSTMSG("Play random sound %d",(int)k);
-				if (k == 1)
-				{
-					// No atmos sounds the first 2 minutes
-					if (game.play_gameturn > 2400)
-					{
-						play_atmos_sound(1014 + UNSYNC_RANDOM(21));
-					}
-				} else
-				{
-					// No atmos drops the first 30 seconds
-					if (game.play_gameturn > 600)
-					{
-						// Roughly every 2 seconds drops sound
-						if ((k % 40) == 0)
-						{
-						play_atmos_sound(1013);
-						}
-					}
-				}
-			}
-		}
+        {
+            if ( atmos_sounds_enabled() )
+            {
+                //Plays the drops, sound 1013, with a small chance of a random other sound.
+                k = UNSYNC_RANDOM(400);
+                if (k == 1)
+                {
+                    // No atmos sounds the first 2 minutes
+                    if (game.play_gameturn > 2400)
+                    {
+                        play_atmos_sound(1014 + UNSYNC_RANDOM(21));
+                    }
+                } else
+                {
+                    // No atmos drops the first 30 seconds
+                    if (game.play_gameturn > 600)
+                    {
+                        // Roughly every 2 seconds drops sound
+                        if ((k % 40) == 0)
+                        {
+                        play_atmos_sound(1013);
+                        }
+                    }
+                }
+            }
+        }
     }
     SYNCDBG(9,"Finished");
 }

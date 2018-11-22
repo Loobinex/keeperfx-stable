@@ -734,12 +734,17 @@ void play_non_3d_sample_no_overlap(long smpl_idx)
 
 void play_atmos_sound(long smpl_idx)
 {
-	int ATMOS_SOUND_PITCH = (70 + (UNSYNC_RANDOM(9) * 4));
-	int ATMOS_SOUND_VOLUME = 256;
     if (SoundDisabled)
         return;
     if (GetCurrentSoundMasterVolume() <= 0)
         return;
+    int ATMOS_SOUND_PITCH = (70 + (UNSYNC_RANDOM(12) * 4));
+    int ATMOS_SOUND_VOLUME = 256;
+    // ATMOS0 has bigger range in pitch than other atmos sounds.
+    if ((smpl_idx == 1013))
+    {
+        ATMOS_SOUND_PITCH = (54 + (UNSYNC_RANDOM(18) * 4));
+    }
     if (Non3DEmitter != 0)
     {
         if (!sound_emitter_in_use(Non3DEmitter))
@@ -755,6 +760,7 @@ void play_atmos_sound(long smpl_idx)
     if (!S3DEmitterIsPlayingSample(Non3DEmitter, smpl_idx, 0))
     {
         S3DAddSampleToEmitterPri(Non3DEmitter, smpl_idx, 0, ATMOS_SOUND_PITCH, ATMOS_SOUND_VOLUME, 0, 3, 8, 0x7FFFFFFE);
+		SYNCDBG(9,"Playing atmos sound %d with pitch %d",(int)smpl_idx,(int)ATMOS_SOUND_PITCH);
     }
 }
 
