@@ -298,9 +298,9 @@ void update_player_sounds(void)
     }
     if (game.play_gameturn != 0)
     {
-		// Rare message easter egg
+        // Rare message easter egg
         if ((game.play_gameturn % 20000) == 0)
-		{
+        {
             if (ACTION_RANDOM(2000) == 0)
             {
               k = UNSYNC_RANDOM(10);
@@ -322,8 +322,8 @@ void update_player_sounds(void)
                 k = UNSYNC_RANDOM(400);
                 if (k == 1)
                 {
-                    // No atmos sounds the first 2 minutes
-                    if (game.play_gameturn > 2400)
+                    // No atmos sounds the first 3 minutes
+                    if (game.play_gameturn > 3600)
                     {
                         play_atmos_sound(1014 + UNSYNC_RANDOM(21));
                     }
