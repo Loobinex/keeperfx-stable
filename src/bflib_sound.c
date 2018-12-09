@@ -759,8 +759,8 @@ void play_atmos_sound(long smpl_idx)
     } else
     if (!S3DEmitterIsPlayingSample(Non3DEmitter, smpl_idx, 0))
     {
-        S3DAddSampleToEmitterPri(Non3DEmitter, smpl_idx, 0, ATMOS_SOUND_PITCH, ATMOS_SOUND_VOLUME, 0, 3, 8, 0x7FFFFFFE);
-		SYNCDBG(9,"Playing atmos sound %d with pitch %d",(int)smpl_idx,(int)ATMOS_SOUND_PITCH);
+            S3DAddSampleToEmitterPri(Non3DEmitter, smpl_idx, 0, ATMOS_SOUND_PITCH, ATMOS_SOUND_VOLUME, 0, 3, 8, 0x7FFFFFFE);
+            SYNCDBG(9,"Playing atmos sound %d with pitch %d",(int)smpl_idx,(int)ATMOS_SOUND_PITCH);
     }
 }
 
