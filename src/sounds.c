@@ -335,7 +335,7 @@ void update_player_sounds(void)
                         // Roughly every 2 seconds drops sound
                         if ((k % 40) == 0)
                         {
-                        play_atmos_sound(1013);
+                            play_atmos_sound(1013);
                         }
                     }
                 }
