@@ -459,19 +459,17 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <NMakeBuildCommandLine>sh -c "mingw32-make heavylog"</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>%windir%\Sysnative\wsl.exe make DEBUG=1 -j`nproc` -k heavylog</NMakeBuildCommandLine>
     <NMakeOutput>bin\keeperfx_hvlog.exe</NMakeOutput>
-    <NMakeCleanCommandLine>sh -c "mingw32-make clean"</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>sh -c "mingw32-make clean" &amp;&amp; sh -c "mingw32-make heavylog"</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>%windir%\Sysnative\wsl.exe make clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>WIN32;_DEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath>src;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <IncludePath>$(ProjectDir)\sdl\include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <NMakeBuildCommandLine>sh -c "mingw32-make standard"</NMakeBuildCommandLine>
+    <NMakeBuildCommandLine>%windir%\Sysnative\wsl.exe make -j`nproc` -k standard</NMakeBuildCommandLine>
     <NMakeOutput>bin\keeperfx.exe</NMakeOutput>
-    <NMakeCleanCommandLine>sh -c "mingw32-make clean"</NMakeCleanCommandLine>
-    <NMakeReBuildCommandLine>sh -c "mingw32-make clean" &amp;&amp; sh -c "mingw32-make standard"</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>%windir%\Sysnative\wsl.exe make clean</NMakeCleanCommandLine>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeIncludeSearchPath>src;$(NMakeIncludeSearchPath)</NMakeIncludeSearchPath>
     <IncludePath>$(ProjectDir)\sdl\include;$(VCInstallDir)include;$(VCInstallDir)atlmfc\include;$(WindowsSdkDir)include;$(FrameworkSDKDir)\include;</IncludePath>
