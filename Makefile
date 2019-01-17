@@ -389,7 +389,9 @@ clean-build:
 	-$(RM) $(STDOBJS) $(filter %.d,$(STDOBJS:%.o=%.d))
 	-$(RM) $(HVLOGOBJS) $(filter %.d,$(HVLOGOBJS:%.o=%.d))
 	-$(RM) $(BIN) $(BIN:%.exe=%.map)
+	-$(RM) $(BIN) $(BIN:%.exe=%.pdb)
 	-$(RM) $(HVLOGBIN) $(HVLOGBIN:%.exe=%.map)
+	-$(RM) $(HVLOGBIN) $(HVLOGBIN:%.exe=%.pdb)
 	-$(RM) bin/keeperfx.dll
 	-$(RM) $(LIBS) $(GENSRC)
 	-$(RM) res/*.ico
