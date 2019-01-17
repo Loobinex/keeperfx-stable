@@ -764,6 +764,7 @@ static void unk_update_gpoly1_tri16b(long * vout0, long * vout1, long * vout2, l
 
 void draw_gpoly_sub1a()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _gploc_pt_bx,%%esi\n \
@@ -851,10 +852,12 @@ gpo_loc_05B8:         # 34\n \
 gpo_loc_05C8:         # 3C6\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub1b()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _factor_chk,%%esi\n \
@@ -1033,6 +1036,7 @@ gpo_loc_076A:         # 577\n \
 gpo_loc_07B0:         # 520\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub1c()
@@ -1060,6 +1064,7 @@ void draw_gpoly_sub1c()
 
 void draw_gpoly_sub2a()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _gploc_pt_bx,%%esi\n \
@@ -1167,10 +1172,12 @@ gpo_loc_0A66:         # 7C3\n \
 gpo_loc_0A7D:         # 87\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub2b()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _factor_chk,%%esi\n \
@@ -1382,6 +1389,7 @@ gpo_loc_0C6A:         # A77\n \
 gpo_loc_0CB0:         # A07\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub2c()
@@ -1412,6 +1420,7 @@ void draw_gpoly_sub2c()
 
 void draw_gpoly_sub3a()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _gploc_pt_bx,%%esi\n \
@@ -1479,10 +1488,12 @@ gpo_loc_1002:         # DC3\n \
 gpo_loc_100B:         # E10\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub3b()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _factor_chk,%%esi\n \
@@ -1580,10 +1591,12 @@ gpo_loc_10D9:         # EA7\n \
     movl    %%eax,_gploc_4C\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub4()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _gploc_pt_bx,%%esi\n \
@@ -1671,7 +1684,9 @@ gpo_loc_11BD:         # F4E\n \
 gpo_loc_11CD:         # FCB\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _factor_chk,%%esi\n \
@@ -1898,10 +1913,12 @@ gpo_loc_143B:         # 124\n \
 gpo_loc_1484:         # 120A\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub5()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _gploc_pt_bx,%%esi\n \
@@ -1989,7 +2006,9 @@ gpo_loc_154C:         # 12DD\n \
 gpo_loc_155C:         # 135A\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _factor_chk,%%esi\n \
@@ -2196,10 +2215,12 @@ gpo_loc_175F:         # 156C\n \
 gpo_loc_17A3:         # 155\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub6()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _gploc_pt_bx,%%esi\n \
@@ -2307,7 +2328,9 @@ gpo_loc_189F:         # 15FC\n \
 gpo_loc_18B6:         # 16AD\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _factor_chk,%%esi\n \
@@ -2630,11 +2653,13 @@ gpo_loc_1C46:         # 1A4C\n \
 gpo_loc_1CAA:\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub7()
 {
-        asm volatile (" \
+#if __GNUC__
+    asm volatile (" \
     pusha   \n \
     movl    _gploc_pt_bx,%%esi\n \
     movl    _factor_chk,%%edi\n \
@@ -2741,7 +2766,9 @@ gpo_loc_1DA6:         # 1B03\n \
 gpo_loc_1DBD:\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _factor_chk,%%esi\n \
@@ -3061,10 +3088,12 @@ gpo_loc_2119:         # 1F26\n \
 gpo_case69_break:\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub11()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     movl    _gploc_8C,%%ecx\n \
@@ -3533,11 +3562,13 @@ switch_vecmap:\n \
 locret5a:\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub12()
 {
-            asm volatile (" \
+#if __GNUC__
+    asm volatile (" \
     pusha   \n \
     movl    _LOC_vec_screen_width,%%ecx\n \
     movl    %%ecx,_gploc_104\n \
@@ -3959,10 +3990,12 @@ off_783FE0:\n \
 locret5b:\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub13()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     xorl    %%ecx,%%ecx\n \
@@ -4503,10 +4536,12 @@ off_7840A0:\n \
 locret69a:\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 void draw_gpoly_sub14()
 {
+#if __GNUC__
     asm volatile (" \
     pusha   \n \
     xorl    %%ecx,%%ecx\n \
@@ -4979,6 +5014,7 @@ off_784060:\n \
 locret69b:\n \
     popa    \n \
 " : : : "memory", "cc");
+#endif
 }
 
 /******************************************************************************/
