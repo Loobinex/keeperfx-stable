@@ -298,7 +298,7 @@ INCFLAGS =
 # code optimization and debugging flags
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
-  OPTFLAGS = -march=i686 -O0
+  OPTFLAGS = -march=i686 -Og -fno-omit-frame-pointer
   DBGFLAGS = -g -DDEBUG
 else
   # frame pointer is required for ASM code to work
