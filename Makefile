@@ -306,12 +306,13 @@ else
   DBGFLAGS = 
 endif
 # linker flags
-LINKFLAGS = -static-libgcc -static-libstdc++ -Wl,-Map,"$(@:%.exe=%.map)" -Wl,--enable-auto-import
+# useful for development only: -Wl,-Map,"$(@:%.exe=%.map)"
+LINKFLAGS = -static-libgcc -static-libstdc++ -Wl,--enable-auto-import
 # logging level flags
 STLOGFLAGS = -DBFDEBUG_LEVEL=0 
 HVLOGFLAGS = -DBFDEBUG_LEVEL=10
 # compiler warning generation flags
-WARNFLAGS = -Wall -Wno-sign-compare -Wno-unused-parameter -Wno-strict-aliasing -Wno-unknown-pragmas
+WARNFLAGS = -Wall -W -Wshadow -Werror=implicit-function-declaration -Wno-sign-compare -Wno-unused-parameter -Wno-strict-aliasing -Wno-unknown-pragmas
 # disabled warnings: -Wextra -Wtype-limits
 CXXFLAGS = $(CXXINCS) -c -fmessage-length=0 $(WARNFLAGS) $(DEPFLAGS) $(OPTFLAGS) $(DBGFLAGS) $(INCFLAGS)
 CFLAGS = $(INCS) -c -fmessage-length=0 $(WARNFLAGS) $(DEPFLAGS) $(OPTFLAGS) $(DBGFLAGS) $(INCFLAGS)
