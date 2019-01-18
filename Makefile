@@ -377,11 +377,10 @@ heavylog: CXXFLAGS += $(HVLOGFLAGS)
 heavylog: CFLAGS += $(HVLOGFLAGS)
 heavylog: hvlog-before $(HVLOGBIN) hvlog-after
 
+# not nice but necessary for make -j to work
+$(shell $(MKDIR) bin obj/std obj/hvlog)
 std-before: libexterns
-	$(MKDIR) obj/std bin
-
 hvlog-before: libexterns
-	$(MKDIR) obj/hvlog bin
 
 docs: docsdox
 
