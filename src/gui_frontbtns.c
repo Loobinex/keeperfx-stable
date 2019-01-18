@@ -32,7 +32,7 @@
 #include "front_input.h"
 
 // needed for timeGetTime() -- should be later removed
-#if defined(WIN32)
+#if defined(_WIN32)
 //instead of #include <windows.h>
 #include <stdarg.h>
 #define NOMINMAX
