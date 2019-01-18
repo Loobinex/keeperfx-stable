@@ -52,6 +52,7 @@ extern "C" {
 #define WINBASEAPI
 #endif
 #endif
+#define F_OK 0
 #define WINAPI __stdcall
 typedef char *PCHAR,*LPCH,*PCH,*NPSTR,*LPSTR,*PSTR;
 typedef const char *LPCCH,*PCSTR,*LPCSTR;
