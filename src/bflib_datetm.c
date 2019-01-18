@@ -27,7 +27,7 @@
 #include "bflib_basics.h"
 #include "globals.h"
 
-#if defined(WIN32)
+#if defined(_WIN32)
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
 #include <windows.h>
@@ -135,7 +135,7 @@ TbResult LbDateTimeDecode(const time_t *datetime,struct TbDate *curr_date,struct
 
 inline void LbDoMultitasking(void)
 {
-#if defined(WIN32)
+#if defined(_WIN32)
     Sleep(LARGE_DELAY_TIME>>1); // This switches to other tasks
 #endif
 }

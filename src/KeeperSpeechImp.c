@@ -21,7 +21,7 @@
 
 #include "KeeperSpeech.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include <stdarg.h>
 #define NOMINMAX
 #define WIN32_LEAN_AND_MEAN
@@ -40,7 +40,7 @@ struct
 
 static void clean_up()
 {
-#ifdef WIN32
+#ifdef _WIN32
     if (ks_lib) {
         FreeLibrary(ks_lib);
         ks_lib = NULL;
@@ -57,7 +57,7 @@ KEEPERSPEECH_REASON KeeperSpeechInit(void)
 
     init = NULL;
 
-#ifdef WIN32
+#ifdef _WIN32
     if (ks_lib) {
         return KSR_ALREADY_INIT;
     }
