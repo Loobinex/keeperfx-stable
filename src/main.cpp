@@ -126,6 +126,10 @@
 
 #include "music_player.h"
 
+#ifdef _MSC_VER
+#define strcasecmp _stricmp
+#endif
+
 int test_variable;
 
 // Max length of the command line
