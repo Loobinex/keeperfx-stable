@@ -2589,14 +2589,12 @@ long task_move_gold_to_treasury(struct Computer2 *comp, struct ComputerTask *cta
     }
     SYNCDBG(9,"Starting for player %d",(int)dungeon->owner);
     struct Thing *thing;
-    struct Room *room;
     struct Coord3d pos;
     long i;
-    room = INVALID_ROOM;
     thing = thing_get(comp->held_thing_idx);
     if (!thing_is_invalid(thing))
     {
-        room = room_get(ctask->move_gold.room_idx);
+        struct Room* room = room_get(ctask->move_gold.room_idx);
         if (object_is_gold(thing) && room_exists(room))
         {
             if (find_random_valid_position_for_thing_in_room(thing, room, &pos))
