@@ -267,9 +267,9 @@ struct BasicUnk14 { // sizeof = 24
     struct BasicQ b;
     unsigned char padding[3];
     struct Thing *thing;
-    long field_C;
-    long field_10;
-    long field_14;
+    long x;
+    long y;
+    long z;
 };
 
 #define SHADOW_SOURCES_MAX_COUNT 4
