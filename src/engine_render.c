@@ -2152,7 +2152,31 @@ void create_shadows(struct Thing *thing, struct EngineCoord *ecor, struct Coord3
 
 void create_status_box(struct Thing *thing, struct EngineCoord *ecor)
 {
-    _DK_create_status_box(thing, ecor); return;
+    //_DK_create_status_box(thing, ecor); return;
+    struct EngineCoord coord = *ecor;
+    coord.y += (uint16_t)thing->clipbox_size_yz + shield_offset[thing->model];
+    rotpers(&coord, &camera_matrix);
+    if (getpoly >= poly_pool_end)
+        return;
+    int bckt_idx = coord.z / 16;
+    if (!lens_mode)
+        bckt_idx = 1;
+    if (bckt_idx < 0)
+        bckt_idx = 0;
+    else if (bckt_idx > BUCKETS_COUNT-2)
+        bckt_idx = BUCKETS_COUNT-2;
+
+    struct BasicUnk14* poly = (struct BasicUnk14*)getpoly;
+    if (getpoly >= poly_pool_end)
+        return;
+    getpoly += sizeof(struct BasicUnk14);
+    poly->b.next = buckets[bckt_idx];
+    poly->b.kind = QK_StatusSprites;
+    buckets[bckt_idx] = (struct BasicQ *)poly;
+    poly->thing = thing;
+    poly->field_C = coord.view_width;
+    poly->field_10 = coord.view_height;
+    poly->field_14 = coord.z;
 }
 
 void do_a_plane_of_engine_columns_perspective(long stl_x, long stl_y, long plane_start, long plane_end)

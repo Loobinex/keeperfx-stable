@@ -265,7 +265,7 @@ struct BasicUnk13 {
 
 struct BasicUnk14 { // sizeof = 24
     struct BasicQ b;
-    unsigned char field_5[3];
+    unsigned char padding[3];
     struct Thing *thing;
     long field_C;
     long field_10;
