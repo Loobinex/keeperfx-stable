@@ -129,13 +129,18 @@ short error_dialog(const char *codefile,const int ecode,const char *message);
 short error_dialog_fatal(const char *codefile,const int ecode,const char *message);
 char *buf_sprintf(const char *format, ...);
 /******************************************************************************/
-int LbErrorLog(const char *format, ...);
-int LbWarnLog(const char *format, ...);
-int LbSyncLog(const char *format, ...);
-int LbNetLog(const char *format, ...);
-int LbJustLog(const char *format, ...);
-int LbAiLog(const char *format, ...);
-int LbNaviLog(const char *format, ...);
+#if __GNUC__
+#define ATTRIBUTE_FORMAT __attribute__((format(printf, 1, 2)))
+#else
+#define ATTRIBUTE_FORMAT
+#endif
+int LbErrorLog(const char *format, ...) ATTRIBUTE_FORMAT;
+int LbWarnLog(const char *format, ...) ATTRIBUTE_FORMAT;
+int LbSyncLog(const char *format, ...) ATTRIBUTE_FORMAT;
+int LbNetLog(const char *format, ...) ATTRIBUTE_FORMAT;
+int LbJustLog(const char *format, ...) ATTRIBUTE_FORMAT;
+int LbAiLog(const char *format, ...) ATTRIBUTE_FORMAT;
+int LbNaviLog(const char *format, ...) ATTRIBUTE_FORMAT;
 int LbScriptLog(unsigned long line,const char *format, ...);
 int LbConfigLog(unsigned long line,const char *format, ...);
 
