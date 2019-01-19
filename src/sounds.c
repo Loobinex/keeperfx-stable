@@ -54,12 +54,7 @@ const char foot_down_sound_sample_variant[] = {
 
 char sound_dir[64] = "SOUND";
 /******************************************************************************/
-DLLIMPORT TbFileHandle _DK_LbFileOpen(const char *fname, int mode);
-DLLIMPORT int _DK_LbFileClose(TbFileHandle handle);
-DLLIMPORT int _DK_LbFileSeek(TbFileHandle handle, long offset, int origin);
-DLLIMPORT int _DK_LbFileRead(TbFileHandle handle, void *buffer, unsigned long len);
-DLLIMPORT int _DK_LbFilePosition(TbFileHandle handle);
-/******************************************************************************/
+
 void thing_play_sample(struct Thing *thing, short smptbl_idx, unsigned short pitch, char a4, unsigned char a5, unsigned char a6, long a7, long loudness)
 {
     struct Coord3d rcpos;
@@ -461,14 +456,14 @@ long parse_sound_file(TbFileHandle fileh, unsigned char *buf, long *nsamples, lo
     default:
         return 0;
     }
-    _DK_LbFileSeek(fileh, 0, Lb_FILE_SEEK_END);
-    fsize = _DK_LbFilePosition(fileh);
-    _DK_LbFileSeek(fileh, fsize-4, Lb_FILE_SEEK_BEGINNING);
-    _DK_LbFileRead(fileh, &rbuf, 4);
+    LbFileSeek(fileh, 0, Lb_FILE_SEEK_END);
+    fsize = LbFilePosition(fileh);
+    LbFileSeek(fileh, fsize-4, Lb_FILE_SEEK_BEGINNING);
+    LbFileRead(fileh, &rbuf, 4);
     i = read_int32_le_buf(rbuf);
-    _DK_LbFileSeek(fileh, i, Lb_FILE_SEEK_BEGINNING);
-    _DK_LbFileRead(fileh, &bhead, sizeof(bhead));
-    _DK_LbFileRead(fileh, bentries, sizeof(bentries));
+    LbFileSeek(fileh, i, Lb_FILE_SEEK_BEGINNING);
+    LbFileRead(fileh, &bhead, sizeof(bhead));
+    LbFileRead(fileh, bentries, sizeof(bentries));
     bentry = &bentries[k];
     if (bentry->field_0 == 0) {
         return 0;
@@ -481,12 +476,12 @@ long parse_sound_file(TbFileHandle fileh, unsigned char *buf, long *nsamples, lo
     if (sizeof(struct SampleTable) * (*nsamples) >= buf_len) {
         return 0;
     }
-    _DK_LbFileSeek(fileh, bentry->field_0, Lb_FILE_SEEK_BEGINNING);
+    LbFileSeek(fileh, bentry->field_0, Lb_FILE_SEEK_BEGINNING);
     smpl = (struct SampleTable *)buf;
     k = bentry->field_4;
     for (i=0; i < *nsamples; i++)
     {
-        _DK_LbFileRead(fileh, &bsample, sizeof(struct SoundBankSample));
+        LbFileRead(fileh, &bsample, sizeof(struct SoundBankSample));
         smpl->file_pos = k + bsample.field_12;
         smpl->data_size = bsample.data_size;
         smpl->sfxid = bsample.sfxid;
@@ -552,7 +547,7 @@ TbBool init_sound_heap_two_banks(unsigned char *heap_mem, long heap_size, char *
     if (sound_file != -1)
         close_sound_bank(0);
     samples_in_bank = 0;
-    sound_file = _DK_LbFileOpen(snd_fname,Lb_FILE_MODE_READ_ONLY);
+    sound_file = LbFileOpen(snd_fname,Lb_FILE_MODE_READ_ONLY);
     if (sound_file == -1)
     {
         ERRORLOG("Couldn't open primary sound bank file \"%s\"",snd_fname);
@@ -580,7 +575,7 @@ TbBool init_sound_heap_two_banks(unsigned char *heap_mem, long heap_size, char *
     if (sound_file2 != -1)
         close_sound_bank(1);
     samples_in_bank2 = 0;
-    sound_file2 = _DK_LbFileOpen(spc_fname,Lb_FILE_MODE_READ_ONLY);
+    sound_file2 = LbFileOpen(spc_fname,Lb_FILE_MODE_READ_ONLY);
     if (sound_file2 == -1)
     {
         ERRORLOG("Couldn't open secondary sound bank file \"%s\"",spc_fname);
