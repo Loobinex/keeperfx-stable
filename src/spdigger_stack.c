@@ -2019,7 +2019,7 @@ long check_place_to_dig_and_get_position(struct Thing *thing, SubtlCodedCoords s
     place_y = stl_num_decode_y(stl_num);
     if (!block_has_diggable_side(thing->owner, subtile_slab_fast(place_x), subtile_slab_fast(place_y)))
         return 0;
-	nstart = get_nearest_small_around_side_of_slab(subtile_coord_center(place_x), subtile_coord_center(place_y), thing->mappos.x.val, thing->mappos.y.val);
+    nstart = get_nearest_small_around_side_of_slab(subtile_coord_center(place_x), subtile_coord_center(place_y), thing->mappos.x.val, thing->mappos.y.val);
     place_slb = get_slabmap_for_subtile(place_x,place_y);
     n = nstart;
 
