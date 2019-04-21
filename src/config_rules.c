@@ -620,6 +620,7 @@ TbBool parse_rules_game_blocks(char *buf, long len, const char *config_textname,
                   gameadd.classic_bugs_flags |= ClscBug_PassiveNeutrals;
                   n++;
                   break;
+
               case 8: // BREAK_NEUTRAL_WALLS
                   gameadd.classic_bugs_flags |= ClscBug_BreakNeutralWalls;
                   n++;
