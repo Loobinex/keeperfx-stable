@@ -927,7 +927,7 @@ short get_creature_control_action_inputs(void)
         turn_off_menu(GMnu_CREATURE_QUERY1);
         turn_on_menu(GMnu_CREATURE_QUERY2);
       }
-      if (is_game_key_pressed(Gkey_CrtrQueryMod, &keycode, false))
+      if (is_game_key_pressed(Gkey_CrtrQueryMod, &keycode, false) )//|| (wheel_scrolled_down))
       {
         turn_off_menu(GMnu_CREATURE_QUERY1);
         if (creature_instance_get_available_id_for_pos(thing,6) > 0)
@@ -937,6 +937,14 @@ short get_creature_control_action_inputs(void)
         {
             turn_on_menu(GMnu_CREATURE_QUERY3);
         }
+        clear_key_pressed(keycode);
+        fake_button_click(0);
+        //update_wheel_scrolled();
+      }
+        if (is_game_key_pressed(Gkey_CrtrContrlMod, &keycode, false))
+      {
+        turn_off_menu(GMnu_CREATURE_QUERY1);
+        turn_on_menu(GMnu_CREATURE_QUERY4);
         clear_key_pressed(keycode);
         fake_button_click(0);
       }
@@ -951,10 +959,17 @@ short get_creature_control_action_inputs(void)
         turn_off_menu(GMnu_CREATURE_QUERY2);
         turn_on_menu(GMnu_CREATURE_QUERY1);
       }
-      if (is_game_key_pressed(Gkey_CrtrQueryMod, &keycode, false))
+      if (is_game_key_pressed(Gkey_CrtrQueryMod, &keycode, false) )//|| (wheel_scrolled_down))
       {
         turn_off_menu(GMnu_CREATURE_QUERY2);
         turn_on_menu(GMnu_CREATURE_QUERY3);
+        clear_key_pressed(keycode);
+        fake_button_click(0);
+      }
+        if (is_game_key_pressed(Gkey_CrtrContrlMod, &keycode, false))
+      {
+        turn_off_menu(GMnu_CREATURE_QUERY2);
+        turn_on_menu(GMnu_CREATURE_QUERY1);
         clear_key_pressed(keycode);
         fake_button_click(0);
       }
@@ -977,10 +992,23 @@ short get_creature_control_action_inputs(void)
         turn_off_menu(GMnu_CREATURE_QUERY3);
         turn_on_menu(GMnu_CREATURE_QUERY2);
       }
-      if (is_game_key_pressed(Gkey_CrtrQueryMod, &keycode, false))
+      if (is_game_key_pressed(Gkey_CrtrQueryMod, &keycode, false) || (wheel_scrolled_down))
       {
         turn_off_menu(GMnu_CREATURE_QUERY3);
         turn_on_menu(GMnu_CREATURE_QUERY4);
+        clear_key_pressed(keycode);
+        fake_button_click(0);
+      }
+      if (is_game_key_pressed(Gkey_CrtrContrlMod, &keycode, false))
+      {
+        turn_off_menu(GMnu_CREATURE_QUERY3);
+        if (creature_instance_get_available_id_for_pos(thing,6) > 0)
+        {
+            turn_on_menu(GMnu_CREATURE_QUERY2);
+        } else
+        {
+            turn_on_menu(GMnu_CREATURE_QUERY1);
+        }
         clear_key_pressed(keycode);
         fake_button_click(0);
       }
@@ -1007,6 +1035,13 @@ short get_creature_control_action_inputs(void)
       {
         turn_off_menu(GMnu_CREATURE_QUERY4);
         turn_on_menu(GMnu_CREATURE_QUERY1);
+        clear_key_pressed(keycode);
+        fake_button_click(0);
+      }
+      if (is_game_key_pressed(Gkey_CrtrContrlMod, &keycode, false))
+      {
+        turn_off_menu(GMnu_CREATURE_QUERY4);
+        turn_on_menu(GMnu_CREATURE_QUERY3);
         clear_key_pressed(keycode);
         fake_button_click(0);
       }
