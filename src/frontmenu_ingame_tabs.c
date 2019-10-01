@@ -1672,7 +1672,7 @@ void gui_area_instance_button(struct GuiButton *gbtn)
     int curbtn_avail_pos;
     curbtn_avail_pos = (long)gbtn->content;
     if (!first_person_instance_top_half_selected)
-        curbtn_avail_pos += 4;
+        curbtn_avail_pos += 0;
     int curbtn_inst_id;
     curbtn_inst_id = creature_instance_get_available_id_for_pos(ctrltng, curbtn_avail_pos);
     if (!creature_instance_is_available(ctrltng, curbtn_inst_id))
@@ -1755,7 +1755,7 @@ void maintain_instance(struct GuiButton *gbtn)
     } else
     {
         first_person_instance_top_half_selected = false;
-        curbtn_avail_pos = ((long)gbtn->content) + 4;
+        curbtn_avail_pos = ((long)gbtn->content) + 0;
     }
     // Now handle instance for this button
     int curbtn_inst_id;
