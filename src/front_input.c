@@ -914,7 +914,7 @@ short get_creature_control_action_inputs(void)
             set_players_packet_action(player, PckA_Unknown033, player->controlled_thing_idx,0,0,0);
         }
     }
-    // Use the Query key to scroll through query pages
+    // Use the Query key to scroll through query pages and go to correct query page when selecting an instance.
     struct Thing *thing;
     thing = thing_get(player->controlled_thing_idx);
     if (menu_is_active(GMnu_CREATURE_QUERY1))
@@ -930,7 +930,13 @@ short get_creature_control_action_inputs(void)
       if (is_game_key_pressed(Gkey_CrtrQueryMod, &keycode, false))
       {
         turn_off_menu(GMnu_CREATURE_QUERY1);
-        turn_on_menu(GMnu_CREATURE_QUERY2);
+        if (creature_instance_get_available_id_for_pos(thing,6) > 0)
+        {
+            turn_on_menu(GMnu_CREATURE_QUERY2);
+        } else
+        {
+            turn_on_menu(GMnu_CREATURE_QUERY3);
+        }
         clear_key_pressed(keycode);
         fake_button_click(0);
       }
