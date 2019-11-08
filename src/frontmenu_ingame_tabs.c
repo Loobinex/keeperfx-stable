@@ -59,6 +59,7 @@
 #include "game_legacy.h"
 #include "keeperfx.hpp"
 #include "vidfade.h"
+#include "kjm_input.h"
 
 /******************************************************************************/
 DLLIMPORT void _DK_go_to_my_next_room_of_type(unsigned long rkind);
@@ -1004,8 +1005,8 @@ void gui_area_big_trap_button(struct GuiButton *gbtn)
     if (amount <= 0) {
         draw_gui_panel_sprite_left(gbtn->scr_pos_x - 4*units_per_px/16, gbtn->scr_pos_y - 32*units_per_px/16, ps_units_per_px, gbtn->sprite_idx + 1);
     } else
-    if ((((manufctr->tngclass == TCls_Trap) && (player->chosen_trap_kind == manufctr->tngmodel))
-      || ((manufctr->tngclass == TCls_Door) && (player->chosen_door_kind == manufctr->tngmodel)))
+    if ((((manufctr->tngclass == TCls_Trap) && (player->chosen_trap_kind == manufctr->tngmodel) && (player->work_state == PSt_PlaceTrap))
+      || ((manufctr->tngclass == TCls_Door) && (player->chosen_door_kind == manufctr->tngmodel) && (player->work_state == PSt_PlaceDoor)))
       && ((game.play_gameturn & 1) == 0) )
     {
         draw_gui_panel_sprite_rmleft(gbtn->scr_pos_x - 4*units_per_px/16, gbtn->scr_pos_y - 32*units_per_px/16, ps_units_per_px, gbtn->sprite_idx, 44);
@@ -1670,8 +1671,6 @@ void gui_area_instance_button(struct GuiButton *gbtn)
     }
     int curbtn_avail_pos;
     curbtn_avail_pos = (long)gbtn->content;
-    if (!first_person_instance_top_half_selected)
-        curbtn_avail_pos += 4;
     int curbtn_inst_id;
     curbtn_inst_id = creature_instance_get_available_id_for_pos(ctrltng, curbtn_avail_pos);
     if (!creature_instance_is_available(ctrltng, curbtn_inst_id))
@@ -1741,22 +1740,8 @@ void maintain_instance(struct GuiButton *gbtn)
         gbtn->tooltip_stridx = 0;
         return;
     }
-    struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(ctrltng);
-    // Switch to correct menu page based on selected instance position
-    int chosen_avail_pos;
-    chosen_avail_pos = creature_instance_get_available_pos_for_id(ctrltng, cctrl->active_instance_id);
     int curbtn_avail_pos;
-    if ((chosen_avail_pos < 6) && (first_person_instance_top_half_selected || chosen_avail_pos < 4))
-    {
-        first_person_instance_top_half_selected = true;
-        curbtn_avail_pos = (long)gbtn->content;
-    } else
-    {
-        first_person_instance_top_half_selected = false;
-        curbtn_avail_pos = ((long)gbtn->content) + 4;
-    }
-    // Now handle instance for this button
+    curbtn_avail_pos = (long)gbtn->content;
     int curbtn_inst_id;
     curbtn_inst_id = creature_instance_get_available_id_for_pos(ctrltng, curbtn_avail_pos);
     gbtn->sprite_idx = instance_button_init[curbtn_inst_id].symbol_spridx;
@@ -1840,6 +1825,13 @@ void maintain_activity_up(struct GuiButton *gbtn)
         gbtn->flags |= LbBtnF_Visible;
         gbtn->flags ^= (gbtn->flags ^ LbBtnF_Enabled * (top_of_breed_list > 0)) & LbBtnF_Enabled;
     }
+    if (wheel_scrolled_up & lbKeyOn[KC_LSHIFT])
+    {
+        if (top_of_breed_list > 0)
+        {
+            top_of_breed_list--;
+        }
+    }
 }
 
 void maintain_activity_down(struct GuiButton *gbtn)
@@ -1853,6 +1845,13 @@ void maintain_activity_down(struct GuiButton *gbtn)
     {
         gbtn->flags |= LbBtnF_Visible;
         gbtn->flags ^= (gbtn->flags ^ LbBtnF_Enabled * (no_of_breeds_owned - 6 > top_of_breed_list)) & LbBtnF_Enabled;
+    }
+    if (wheel_scrolled_down & lbKeyOn[KC_LSHIFT])
+    {
+        if (top_of_breed_list + 6 < no_of_breeds_owned)
+        {
+            top_of_breed_list++;
+        }
     }
 }
 

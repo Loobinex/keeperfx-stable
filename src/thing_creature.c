@@ -2795,10 +2795,12 @@ void creature_fire_shot(struct Thing *firing, struct Thing *target, ThingModel s
     }
     shotng = NULL;
     target_idx = 0;
-    // Set target index for shots
+    // Set target index for navigating shots
+    if (shot_model_is_navigable(shot_model))
+    {
       if (!thing_is_invalid(target))
         target_idx = target->index;
-
+    }
     switch ( shot_model )
     {
     case ShM_Lightning:
@@ -2865,23 +2867,6 @@ void creature_fire_shot(struct Thing *firing, struct Thing *target, ThingModel s
         shotng->parent_idx = firing->index;
         shotng->shot.target_idx = target_idx;
         shotng->shot.dexterity = compute_creature_max_dexterity(crstat->dexterity,cctrl->explevel);
-        if (shot_model == ShM_Grenade)
-        {
-            if (!thing_is_invalid(target))
-            {
-                long range = 2200 - ((crstat->dexterity + ((cctrl->explevel + 1) * 5)) * 15);
-                range = range < 1 ? 1 : range;
-                long rnd = (ACTION_RANDOM(2 * range) - range);
-                rnd = rnd < (range / 3) && rnd > 0 ? (ACTION_RANDOM(range / 2) + (range / 2)) + 200 : rnd + 200;
-                rnd = rnd > -(range / 3) && rnd < 0 ? -(ACTION_RANDOM(range / 3) + (range / 3)) : rnd;
-                long x = move_coord_with_angle_x(target->mappos.x.val, rnd, angle_xy);
-                long y = move_coord_with_angle_y(target->mappos.y.val, rnd, angle_xy);
-                int posint = y / 300;
-                shotng->price.number = x;
-                shotng->shot.byte_19 = posint;
-                shotng->shot.dexterity = range / 10;
-            }
-        }
         break;
     }
     if (!thing_is_invalid(shotng))
@@ -5268,17 +5253,12 @@ int claim_neutral_creatures_in_sight(struct Thing *creatng, struct Coord3d *pos,
         {
             if (is_neutral_thing(thing) && line_of_sight_3d(&thing->mappos, pos))
             {
-                // Unless the relevant classic bug is enabled,
-                // neutral creatures in custody (prison/torture) can only be claimed by the player who holds it captive
-                // and neutral creatures can not be claimed by creatures in custody.
-                if ((gameadd.classic_bugs_flags & ClscBug_PassiveNeutrals)
-                    || (get_room_creature_works_in(thing)->owner == creatng->owner && !creature_is_kept_in_custody(creatng))
-                    || !( creature_is_kept_in_custody(thing) || creature_is_kept_in_custody(creatng) ))
-                {
-                    change_creature_owner(thing, creatng->owner);
-                    mark_creature_joined_dungeon(thing);
-                    n++;
-                }
+				if (!creature_is_kept_in_custody(creatng))
+				{
+				change_creature_owner(thing, creatng->owner);
+                mark_creature_joined_dungeon(thing);
+                n++;
+				}
             }
         }
         // Per thing code ends

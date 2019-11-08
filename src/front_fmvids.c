@@ -61,6 +61,16 @@ const struct DemoItem demo_item[] = {
 short play_smacker_file(char *filename, FrontendMenuState nstate)
 {
   unsigned int movie_flags = 0;
+  char *bullfrog;
+  bullfrog = "./ldata/bullfrog.smk";
+  if (resize_movies_enabled())
+  {
+    // bullfrog.smk cannot be played resized //todo: Exclude movies that cannot be doubled in size, instead of calling it by name.
+    if (strcmp(filename,bullfrog) != 0)
+    {
+      movie_flags |= 0x84;
+    }
+  }
   if ( SoundDisabled )
     movie_flags |= 0x01;
   short result;
@@ -160,6 +170,14 @@ TbBool moon_video(void)
     fname = prepare_file_path(FGrp_LoData, "bullfrog.smk");
     SYNCDBG(0,"Playing outro movie \"%s\"",fname);
     return play_smacker_file(fname, -2);
+}
+
+TbBool drag_video(void)
+{
+    char *fname;
+    fname = prepare_file_path(FGrp_LoData, "drag.smk");
+    SYNCDBG(0,"Playing outro movie \"%s\"",fname);
+    return play_smacker_file(fname, FeSt_TORTURE);
 }
 
 void demo(void)

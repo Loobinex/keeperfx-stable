@@ -2102,14 +2102,21 @@ long task_magic_call_to_arms(struct Computer2 *comp, struct ComputerTask *ctask)
         remove_task(comp, ctask);
         return CTaskRet_Unk0;
     case 2:
-        // Keep CTA running until it timeouts
-        if ((game.play_gameturn - ctask->lastrun_turn) < ctask->field_60) {
-            return CTaskRet_Unk1;
-        }
         // Keep CTA running until most creatures are able to reach it
-        if (count_creatures_at_call_to_arms(comp) < ctask->magic_cta.repeat_num - ctask->magic_cta.repeat_num / 4) {
-            return CTaskRet_Unk1;
+        if (count_creatures_at_call_to_arms(comp) < ctask->magic_cta.repeat_num - ctask->magic_cta.repeat_num / 4) 
+        {
+            // For a minimum amount of time
+            if ((game.play_gameturn - ctask->lastrun_turn) < (ctask->field_60 / 10)) 
+            {
+                JUSTMSG("TESTLOG:CASEA");
+                return CTaskRet_Unk1;
+            }
         }
+        // There's a time limit for how long CTA may run
+        if ((game.play_gameturn - ctask->lastrun_turn) < ctask->field_60) 
+            {
+                return CTaskRet_Unk1;
+            }
         // Finish the CTA casting task
         SYNCDBG(7,"Player %d finishes CTA at (%d,%d)",(int)dungeon->owner, (int)ctask->magic_cta.target_pos.x.stl.num, (int)ctask->magic_cta.target_pos.y.stl.num);
         if (dungeon->cta_start_turn > 0) {
@@ -2679,8 +2686,8 @@ long task_slap_imps(struct Computer2 *comp, struct ComputerTask *ctask)
             cctrl = creature_control_get_from_thing(thing);
             i = cctrl->players_next_creature_idx;
             // Per-thing code
-            // Don't slap if picked up or affected by speed or already slapped
-            if (!thing_is_picked_up(thing) && !thing_affected_by_spell(thing, SplK_Speed) && !creature_affected_by_slap(thing))
+            // Don't slap if picked up or already slapped
+            if (!thing_is_picked_up(thing) && !creature_affected_by_slap(thing))
             {
                 // Check if we really can use the spell on that creature, considering its position and state
                 if (can_cast_spell(dungeon->owner, PwrK_SLAP, thing->mappos.x.stl.num, thing->mappos.y.stl.num, thing, CastChk_Default))

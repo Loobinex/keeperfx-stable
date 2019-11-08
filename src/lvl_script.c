@@ -1720,7 +1720,7 @@ void command_set_music(long val)
   {
     SCRPTWRNLOG("Music set inside conditional block; condition ignored");
   }
-  game.music_track_index = val;
+  game.audiotrack = val;
 }
 
 void command_set_hate(long trgt_plr_range_id, long enmy_plr_range_id, long hate_val)
@@ -3229,8 +3229,8 @@ long script_support_create_thing_at_hero_door(long gate_num, ThingClass tngclass
 
     if ((get_creature_model_flags(thing) & CMF_IsLordOTLand) != 0)
     {
-        output_message(SMsg_LordOfLandComming, 0, 1);
-        output_message(SMsg_EnemyLordQuote + ACTION_RANDOM(8), 0, 1);
+        output_message(SMsg_LordOfLandComming, MESSAGE_DELAY_LORD, 1);
+        output_message(SMsg_EnemyLordQuote + ACTION_RANDOM(8), MESSAGE_DELAY_LORD, 1);
     }
     return thing->index;
 }
