@@ -45,6 +45,7 @@ DLLIMPORT int _DK_LbFileRead(TbFileHandle handle, void *buffer, unsigned long le
 DLLIMPORT int _DK_LbFilePosition(TbFileHandle handle);
 // Global variables
 long NoSoundEmitters = SOUND_EMITTERS_MAX;
+int atmos_sound_volume = 800;
 /******************************************************************************/
 // Internal routines
 SoundEmitterID allocate_free_sound_emitter(void);

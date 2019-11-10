@@ -31,6 +31,7 @@
 #include "bflib_datetm.h"
 #include "bflib_mouse.h"
 #include "bflib_sound.h"
+#include "sounds.h"
 
 #include "config_campaigns.h"
 #include "front_simple.h"
@@ -81,7 +82,7 @@ const struct NamedCommand scrshot_type[] = {
   };
 
 const struct NamedCommand atmos_volume[] = {
-  {"LOW",     32},
+  {"LOW",     64},
   {"MEDIUM", 128},
   {"HIGH",   255},
   {NULL,  0},

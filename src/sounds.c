@@ -53,6 +53,7 @@ const char foot_down_sound_sample_variant[] = {
 };
 
 char sound_dir[64] = "SOUND";
+int atmos_sound_frequency = 800;
 /******************************************************************************/
 DLLIMPORT TbFileHandle _DK_LbFileOpen(const char *fname, int mode);
 DLLIMPORT int _DK_LbFileClose(TbFileHandle handle);
