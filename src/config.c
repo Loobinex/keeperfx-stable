@@ -701,11 +701,9 @@ short load_configuration(void)
           break;
       case 11: // Atmospheric Sound Volume
           i = recognize_conf_parameter(buf,&pos,len,atmos_volume);
-		  JUSTMSG("TESTLOG: ATMOS VOLUME IS %d",i);
           if (i <= 0)
           {
             CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",COMMAND_TEXT(cmd_num),config_textname);
-            //atmos_sound_volume = 128; // Default value
             break;
           }
           else 
@@ -718,7 +716,6 @@ short load_configuration(void)
           if (i <= 0)
           {
             CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",COMMAND_TEXT(cmd_num),config_textname);
-            //atmos_sound_frequency = 800; // Default value
             break;
           }
           else
