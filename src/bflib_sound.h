@@ -194,6 +194,9 @@ TbBool process_sound_emitters(void);
 void increment_sample_times(void);
 TbBool process_sound_samples(void);
 
+int atmos_sound_volume = 128;
+int atmos_sound_frequency = 800;
+
 /******************************************************************************/
 #ifdef __cplusplus
 }
