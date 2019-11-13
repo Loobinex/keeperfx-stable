@@ -1982,6 +1982,10 @@ void maintain_event_button(struct GuiButton *gbtn)
     if ((dungeon->visible_event_idx != 0) && (evidx == dungeon->visible_event_idx))
     {
         turn_on_event_info_panel_if_necessary(dungeon->visible_event_idx);
+		if(is_key_pressed(KC_O,KMod_DONTCARE))
+		{
+		gui_kill_event(gbtn);
+		}
     }
 
     if (evidx == 0)
