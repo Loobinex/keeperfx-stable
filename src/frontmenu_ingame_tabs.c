@@ -1974,11 +1974,11 @@ void maintain_event_button(struct GuiButton *gbtn)
     unsigned long evbtn_idx;
     evbtn_idx = (unsigned long)gbtn->content;
     if (evbtn_idx <= EVENT_BUTTONS_COUNT)
-	{
+    {
         evidx = dungeon->event_button_index[evbtn_idx];
     } 
-	else 
-	{
+    else 
+    {
         evidx = 0;
     }
     struct Event *event;
@@ -1986,43 +1986,34 @@ void maintain_event_button(struct GuiButton *gbtn)
     if ((dungeon->visible_event_idx != 0) && (evidx == dungeon->visible_event_idx))
     {
         turn_on_event_info_panel_if_necessary(dungeon->visible_event_idx);
-		if(is_key_pressed(KC_O,KMod_DONTCARE))
-		{
-			JUSTMSG("TESTLOG: KILL %d",dungeon->event_button_index[evbtn_idx]);
-			gui_kill_event(gbtn);
-			clear_key_pressed(KC_O);
-		}
+        if(is_key_pressed(KC_E,KMod_NONE))
+        {
+            gui_kill_event(gbtn);
+            clear_key_pressed(KC_E);
+        }
     }
-	else
-	{
-	if (dungeon->visible_event_idx == 0)
-	{
-		if(is_key_pressed(KC_I,KMod_DONTCARE))
-		{
-		    struct Event *evloop;
-			//evloop = &game.event[evidx];
-			int i;
-			i = 12;
-			for (i=12; i > 0; i--)
-			{
-				evloop = &game.event[i];
-				JUSTMSG("TESTLOG: event=%d",event->kind);
-				JUSTMSG("TESTLOG: i=%d",i);
-				JUSTMSG("TESTLOG: event button index = %d",dungeon->event_button_index[evbtn_idx]);
-				//if (dungeon->event_button_index[i] == dungeon->visible_event_idx)
-				if(evloop->kind > 0)
-				{
-					JUSTMSG("TESTLOG: found %d with type, activate",i);
-					activate_event_box(i);
-					//gui_open_event(i);
-					break;
-					
-				}
-			}
-			clear_key_pressed(KC_I);
-		}
-	}
-	}
+    else
+    {
+        if (dungeon->visible_event_idx == 0)
+        {
+            if(is_key_pressed(KC_E,KMod_NONE))
+            {
+                struct Event *evloop;
+                int i = EVENT_BUTTONS_COUNT;
+                for (i=EVENT_BUTTONS_COUNT; i > 0; i--)
+                {
+                    evloop = &game.event[i];
+                    if((evloop->kind > 0) && (evloop->owner == my_player_number))
+                    {
+                        activate_event_box(i);
+                        break;
+                        
+                    }
+                }
+                clear_key_pressed(KC_E);
+            }
+        }
+    }
 
 
     if (evidx == 0)
