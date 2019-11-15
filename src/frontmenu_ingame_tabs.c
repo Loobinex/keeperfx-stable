@@ -1973,6 +1973,7 @@ void maintain_event_button(struct GuiButton *gbtn)
     EventIndex evidx;
     unsigned long evbtn_idx;
     evbtn_idx = (unsigned long)gbtn->content;
+    long keycode;
     if (evbtn_idx <= EVENT_BUTTONS_COUNT)
     {
         evidx = dungeon->event_button_index[evbtn_idx];
@@ -2036,22 +2037,19 @@ void maintain_event_button(struct GuiButton *gbtn)
     {
         // Fight icon flashes when there are fights to show
         gbtn->sprite_idx += 2;
-		long keycode;
-		if(is_game_key_pressed(Gkey_ZoomToFight, &keycode, true) && lbKeyOn[KC_LSHIFT])
-		{
-		    if ((evidx == dungeon->visible_event_idx)) 
-			{
-			clear_key_pressed(keycode);
-			JUSTMSG("TESTLOG: ENOUGH OF THIS SHIT");
-	        gui_close_objective(gbtn);
-			}
-			else
-			{
-			clear_key_pressed(keycode);
-			JUSTMSG("TESTLOG: SHIT IS GOIN DOWN");
-			activate_event_box(evidx);
-			}
-		}
+        if(is_game_key_pressed(Gkey_ZoomToFight, &keycode, true) && lbKeyOn[KC_LSHIFT])
+        {
+            if ((evidx == dungeon->visible_event_idx)) 
+            {
+            clear_key_pressed(keycode);
+            gui_close_objective(gbtn);
+            }
+            else
+            {
+            clear_key_pressed(keycode);
+            activate_event_box(evidx);
+            }
+        }
     } else
     if (((event->kind == EvKind_Information) || (event->kind == EvKind_QuickInformation))
       && (event->target < 0) && ((game.play_gameturn & 0x01) != 0))
