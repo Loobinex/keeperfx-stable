@@ -1973,20 +1973,57 @@ void maintain_event_button(struct GuiButton *gbtn)
     EventIndex evidx;
     unsigned long evbtn_idx;
     evbtn_idx = (unsigned long)gbtn->content;
-    if (evbtn_idx <= EVENT_BUTTONS_COUNT) {
+    if (evbtn_idx <= EVENT_BUTTONS_COUNT)
+	{
         evidx = dungeon->event_button_index[evbtn_idx];
-    } else {
+    } 
+	else 
+	{
         evidx = 0;
     }
-
+    struct Event *event;
+    event = &game.event[evidx];
     if ((dungeon->visible_event_idx != 0) && (evidx == dungeon->visible_event_idx))
     {
         turn_on_event_info_panel_if_necessary(dungeon->visible_event_idx);
 		if(is_key_pressed(KC_O,KMod_DONTCARE))
 		{
-		gui_kill_event(gbtn);
+			JUSTMSG("TESTLOG: KILL %d",dungeon->event_button_index[evbtn_idx]);
+			gui_kill_event(gbtn);
+			clear_key_pressed(KC_O);
 		}
     }
+	else
+	{
+	if (dungeon->visible_event_idx == 0)
+	{
+		if(is_key_pressed(KC_I,KMod_DONTCARE))
+		{
+		    struct Event *evloop;
+			//evloop = &game.event[evidx];
+			int i;
+			i = 12;
+			for (i=12; i > 0; i--)
+			{
+				evloop = &game.event[i];
+				JUSTMSG("TESTLOG: event=%d",event->kind);
+				JUSTMSG("TESTLOG: i=%d",i);
+				JUSTMSG("TESTLOG: event button index = %d",dungeon->event_button_index[evbtn_idx]);
+				//if (dungeon->event_button_index[i] == dungeon->visible_event_idx)
+				if(evloop->kind > 0)
+				{
+					JUSTMSG("TESTLOG: found %d with type, activate",i);
+					activate_event_box(i);
+					//gui_open_event(i);
+					break;
+					
+				}
+			}
+			clear_key_pressed(KC_I);
+		}
+	}
+	}
+
 
     if (evidx == 0)
     {
@@ -1998,8 +2035,6 @@ void maintain_event_button(struct GuiButton *gbtn)
       gbtn->tooltip_stridx = GUIStr_Empty;
       return;
     }
-    struct Event *event;
-    event = &game.event[evidx];
     if ((event->kind == EvKind_Objective) && (new_objective))
     {
         activate_event_box(evidx);
@@ -2016,11 +2051,13 @@ void maintain_event_button(struct GuiButton *gbtn)
 		    if ((evidx == dungeon->visible_event_idx)) 
 			{
 			clear_key_pressed(keycode);
+			JUSTMSG("TESTLOG: ENOUGH OF THIS SHIT");
 	        gui_close_objective(gbtn);
 			}
 			else
 			{
 			clear_key_pressed(keycode);
+			JUSTMSG("TESTLOG: SHIT IS GOIN DOWN");
 			activate_event_box(evidx);
 			}
 		}
