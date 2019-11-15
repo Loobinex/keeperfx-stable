@@ -1987,17 +1987,17 @@ void maintain_event_button(struct GuiButton *gbtn)
     if ((dungeon->visible_event_idx != 0) && (evidx == dungeon->visible_event_idx))
     {
         turn_on_event_info_panel_if_necessary(dungeon->visible_event_idx);
-        if(is_key_pressed(KC_E,KMod_NONE))
+        if (is_game_key_pressed(Gkey_ToggleMessage, &keycode, false))
         {
             gui_kill_event(gbtn);
-            clear_key_pressed(KC_E);
+            clear_key_pressed(keycode);
         }
     }
     else
     {
         if (dungeon->visible_event_idx == 0)
         {
-            if(is_key_pressed(KC_E,KMod_NONE))
+            if (is_game_key_pressed(Gkey_ToggleMessage, &keycode, false))
             {
                 struct Event *evloop;
                 int i = EVENT_BUTTONS_COUNT;
@@ -2011,7 +2011,7 @@ void maintain_event_button(struct GuiButton *gbtn)
                         
                     }
                 }
-                clear_key_pressed(KC_E);
+                clear_key_pressed(keycode);
             }
         }
     }
