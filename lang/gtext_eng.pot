@@ -3029,22 +3029,22 @@ msgstr ""
 
 #: guitext:477
 msgctxt "Game controls"
-msgid "Rotate left"
+msgid "Rotate Left"
 msgstr ""
 
 #: guitext:478
 msgctxt "Game controls"
-msgid "Rotate right"
+msgid "Rotate Right"
 msgstr ""
 
 #: guitext:479
 msgctxt "Game controls"
-msgid "Zoom in"
+msgid "Zoom In"
 msgstr ""
 
 #: guitext:480
 msgctxt "Game controls"
-msgid "Zoom out"
+msgid "Zoom Out"
 msgstr ""
 
 #: guitext:481
