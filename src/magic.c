@@ -1007,7 +1007,9 @@ TbResult magic_use_power_chicken(PlayerNumber plyr_idx, struct Thing *thing, Map
         return Lb_SUCCESS;
     }
     apply_spell_effect_to_thing(thing, SplK_Chicken, splevel);
-    thing_play_sample(thing, 109, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+	struct PowerConfigStats *powerst;
+    powerst = get_power_model_stats(PwrK_CHICKEN);
+    thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     return Lb_SUCCESS;
 }
 
@@ -1030,7 +1032,9 @@ TbResult magic_use_power_disease(PlayerNumber plyr_idx, struct Thing *thing, Map
         cctrl = creature_control_get_from_thing(thing);
         cctrl->disease_caster_plyridx = plyr_idx;
     }
-    thing_play_sample(thing, 59, NORMAL_PITCH, 0, 3, 0, 3, FULL_LOUDNESS);
+	struct PowerConfigStats *powerst;
+    powerst = get_power_model_stats(PwrK_DISEASE);
+    thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 3, FULL_LOUDNESS);
     return Lb_SUCCESS;
 }
 
@@ -1189,7 +1193,9 @@ TbResult magic_use_power_heal(PlayerNumber plyr_idx, struct Thing *thing, MapSub
         }
     }
     // Apply spell effect
-    thing_play_sample(thing, 37, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+	struct PowerConfigStats *powerst;
+    powerst = get_power_model_stats(PwrK_HEALCRTR);
+    thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     apply_spell_effect_to_thing(thing, SplK_Heal, splevel);
     return Lb_SUCCESS;
 }
@@ -1211,7 +1217,9 @@ TbResult magic_use_power_conceal(PlayerNumber plyr_idx, struct Thing *thing, Map
             return Lb_FAIL;
         }
     }
-    thing_play_sample(thing, 154, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+	struct PowerConfigStats *powerst;
+    powerst = get_power_model_stats(PwrK_CONCEAL);
+    thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     apply_spell_effect_to_thing(thing, SplK_Invisibility, splevel);
     return Lb_SUCCESS;
 }
@@ -1233,7 +1241,9 @@ TbResult magic_use_power_armour(PlayerNumber plyr_idx, struct Thing *thing, MapS
             return Lb_FAIL;
         }
     }
-    thing_play_sample(thing, 153, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+	struct PowerConfigStats *powerst;
+    powerst = get_power_model_stats(PwrK_PROTECT);
+    thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     apply_spell_effect_to_thing(thing, SplK_Armour, splevel);
     return Lb_SUCCESS;
 }
@@ -1254,7 +1264,9 @@ TbResult magic_use_power_speed(PlayerNumber plyr_idx, struct Thing *thing, MapSu
             return Lb_FAIL;
         }
     }
-    thing_play_sample(thing, 38, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+	struct PowerConfigStats *powerst;
+    powerst = get_power_model_stats(PwrK_SPEEDCRTR);
+    thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     apply_spell_effect_to_thing(thing, SplK_Speed, splevel);
     return Lb_SUCCESS;
 }
@@ -1317,7 +1329,9 @@ TbResult magic_use_power_lightning(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
         efftng = create_effect(&shtng->mappos, TngEff_Unknown49, shtng->owner);
         if (!thing_is_invalid(efftng))
         {
-            thing_play_sample(efftng, 55, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+			struct PowerConfigStats *powerst;
+            powerst = get_power_model_stats(PwrK_LIGHTNING);
+            thing_play_sample(efftng, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
         }
     }
     player->field_4E3 = game.play_gameturn;
@@ -1376,13 +1390,15 @@ TbResult magic_use_power_sight(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSu
     thing = create_object(&pos, 123, plyr_idx, -1);
     if (!thing_is_invalid(thing))
     {
+		struct PowerConfigStats *powerst;
+        powerst = get_power_model_stats(PwrK_SIGHT);
         dungeon->sight_casted_gameturn = game.play_gameturn;
         thing->health = 2;
         dungeon->sight_casted_splevel = splevel;
         dungeon->sight_casted_thing_idx = thing->index;
         LbMemorySet(dungeon->soe_explored_flags, 0, sizeof(dungeon->soe_explored_flags));
         thing->field_4F |= TF4F_Unknown01;
-        thing_play_sample(thing, 51, NORMAL_PITCH, -1, 3, 0, 3, FULL_LOUDNESS);
+        thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, -1, 3, 0, 3, FULL_LOUDNESS);
     }
     return Lb_SUCCESS;
 }

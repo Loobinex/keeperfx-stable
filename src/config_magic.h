@@ -27,6 +27,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+
 /******************************************************************************/
 #define MAGIC_ITEMS_MAX        64
 #define SPELL_MAX_LEVEL         8
@@ -247,6 +248,7 @@ struct PowerConfigStats {
     short select_sample_idx;
     short pointer_sprite_idx;
     long panel_tab_idx;
+	unsigned short select_sound_idx;
 };
 
 /**
