@@ -261,6 +261,7 @@ struct Thing *process_object_being_picked_up(struct Thing *thing, long plyr_idx)
         pos.z.val = thing->mappos.z.val + 128;
         create_price_effect(&pos, thing->owner, i);
       }
+      thing_play_sample(thing, 0, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
       picktng = thing;
       break;
     case 10:
