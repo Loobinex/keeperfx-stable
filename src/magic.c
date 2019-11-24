@@ -1112,8 +1112,8 @@ TbResult magic_use_power_destroy_walls(PlayerNumber plyr_idx, MapSubtlCoord stl_
         struct PowerConfigStats *powerst;
         powerst = get_power_model_stats(PwrK_DESTRWALLS);
         play_non_3d_sample(powerst->select_sound_idx);
-        return Lb_SUCCESS;
     }
+    return Lb_SUCCESS;
 }
 
 TbResult magic_use_power_time_bomb(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long splevel, unsigned long mod_flags)
@@ -1153,6 +1153,7 @@ TbResult magic_use_power_imp(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubt
     struct Thing *thing;
     struct Thing *heartng;
     struct Coord3d pos;
+    struct PowerConfigStats *powerst;
     if (!i_can_allocate_free_control_structure()
      || !i_can_allocate_free_thing_structure(FTAF_FreeEffectIfNoSlots)) {
         return Lb_FAIL;
@@ -1180,7 +1181,8 @@ TbResult magic_use_power_imp(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubt
     thing->state_flags |= TF1_PushAdd;
     thing->move_angle_xy = 0;
     initialise_thing_state(thing, CrSt_ImpBirth);
-    thing_play_sample(thing, 0, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);  //todo: Make configurable, default sound 0, for power2
+    powerst = get_power_model_stats(PwrK_MKDIGGER);
+    thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     play_creature_sound(thing, 3, 2, 0);
     return Lb_SUCCESS;
 }
@@ -1471,7 +1473,9 @@ TbResult magic_use_power_cave_in(PlayerNumber plyr_idx, MapSubtlCoord stl_x, Map
         pos.y.val = subtile_coord_center(slab_subtile_center(slb_y));
         pos.z.val = 0;
         thing = create_thing(&pos, TCls_CaveIn, splevel, plyr_idx, -1);
-        thing_play_sample(thing, 927, 25, 0, 3, 0, 2, FULL_LOUDNESS);  //todo Make configurable, sound 927, for Power7
+        struct PowerConfigStats *powerst;
+        powerst = get_power_model_stats(PwrK_CAVEIN);
+        thing_play_sample(thing, powerst->select_sound_idx, 25, 0, 3, 0, 2, FULL_LOUDNESS);
     }
     return Lb_SUCCESS;
 }

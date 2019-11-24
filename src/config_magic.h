@@ -33,7 +33,7 @@ extern "C" {
 #define SPELL_MAX_LEVEL         8
 #define MAGIC_OVERCHARGE_LEVELS (SPELL_MAX_LEVEL+1)
 #define MAGIC_TYPES_COUNT      30
-#define POWER_TYPES_COUNT      20
+#define POWER_TYPES_COUNT      23
 
 enum SpellKinds {
     SplK_None = 0,
@@ -109,6 +109,9 @@ enum PowerKinds {
     PwrK_TIMEBOMB,
     PwrK_POSSESS,
     PwrK_ARMAGEDDON,
+    PwrK_PICKUPCRTR, // 20
+    PwrK_PICKUPGOLD,
+    PwrK_PICKUPFOOD,
 };
 
 /** Contains properties of a shot model, to be stored in ShotConfigStats.
