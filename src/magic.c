@@ -1142,6 +1142,7 @@ TbResult magic_use_power_time_bomb(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     thing->veloc_push_add.y.val += ACTION_RANDOM(321) - 160;
     thing->veloc_push_add.z.val += 40;
     thing->state_flags |= TF1_PushAdd;
+    thing_play_sample(thing, 160, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     return Lb_SUCCESS;
 }
 
