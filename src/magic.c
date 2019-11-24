@@ -1108,10 +1108,12 @@ TbResult magic_use_power_destroy_walls(PlayerNumber plyr_idx, MapSubtlCoord stl_
         }
     }
     if (is_my_player_number(plyr_idx))
-		struct PowerConfigStats *powerst;
-		powerst = get_power_model_stats(PwrK_DESTRWALLS);
+    {
+        struct PowerConfigStats *powerst;
+        powerst = get_power_model_stats(PwrK_DESTRWALLS);
         play_non_3d_sample(powerst->select_sound_idx);
-    return Lb_SUCCESS;
+        return Lb_SUCCESS;
+    }
 }
 
 TbResult magic_use_power_time_bomb(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long splevel, unsigned long mod_flags)
@@ -1202,7 +1204,7 @@ TbResult magic_use_power_heal(PlayerNumber plyr_idx, struct Thing *thing, MapSub
         }
     }
     // Apply spell effect
-	struct PowerConfigStats *powerst;
+    struct PowerConfigStats *powerst;
     powerst = get_power_model_stats(PwrK_HEALCRTR);
     thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     apply_spell_effect_to_thing(thing, SplK_Heal, splevel);
@@ -1226,7 +1228,7 @@ TbResult magic_use_power_conceal(PlayerNumber plyr_idx, struct Thing *thing, Map
             return Lb_FAIL;
         }
     }
-	struct PowerConfigStats *powerst;
+    struct PowerConfigStats *powerst;
     powerst = get_power_model_stats(PwrK_CONCEAL);
     thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     apply_spell_effect_to_thing(thing, SplK_Invisibility, splevel);
@@ -1338,7 +1340,7 @@ TbResult magic_use_power_lightning(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
         efftng = create_effect(&shtng->mappos, TngEff_Unknown49, shtng->owner);
         if (!thing_is_invalid(efftng))
         {
-			struct PowerConfigStats *powerst;
+            struct PowerConfigStats *powerst;
             powerst = get_power_model_stats(PwrK_LIGHTNING);
             thing_play_sample(efftng, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
         }
@@ -1399,7 +1401,7 @@ TbResult magic_use_power_sight(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSu
     thing = create_object(&pos, 123, plyr_idx, -1);
     if (!thing_is_invalid(thing))
     {
-		struct PowerConfigStats *powerst;
+        struct PowerConfigStats *powerst;
         powerst = get_power_model_stats(PwrK_SIGHT);
         dungeon->sight_casted_gameturn = game.play_gameturn;
         thing->health = 2;
