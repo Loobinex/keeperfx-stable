@@ -251,7 +251,7 @@ struct PowerConfigStats {
     short select_sample_idx;
     short pointer_sprite_idx;
     long panel_tab_idx;
-	unsigned short select_sound_idx;
+    unsigned short select_sound_idx;
 };
 
 /**
