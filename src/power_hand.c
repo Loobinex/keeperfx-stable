@@ -261,12 +261,12 @@ struct Thing *process_object_being_picked_up(struct Thing *thing, long plyr_idx)
         pos.z.val = thing->mappos.z.val + 128;
         create_price_effect(&pos, thing->owner, i);
       }
-      thing_play_sample(thing, 0, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+      thing_play_sample(thing, 0, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS); //Todo: Make configurable, default sound 0, for Power 21
       picktng = thing;
       break;
     case 10:
       i = UNSYNC_RANDOM(3);
-      thing_play_sample(thing, 109+i, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+      thing_play_sample(thing, 109+i, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS); //Todo: Make configurable, default sound 109(keep the +i) for Power 22
       i = convert_td_iso(122);
       set_thing_draw(thing, i, 256, -1, -1, 0, 2);
       remove_food_from_food_room_if_possible(thing);
@@ -428,11 +428,13 @@ TbBool insert_thing_into_power_hand_list(struct Thing *thing, PlayerNumber plyr_
     }
     dungeon->num_things_in_hand++;
     dungeon->things_in_hand[0] = thing->index;
+    thing_play_sample(thing, 0, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS); //todo: make configurable, default sound 0, as power1
     if (thing->class_id == TCls_Creature) {
         remove_all_traces_of_combat(thing);
     }
     if (thing->class_id == TCls_Creature)
     {
+        thing_play_sample(thing, 0, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS); //todo: make configurable, default sound 0, as power20
         if (is_my_player_number(thing->owner)) {
             play_creature_sound(thing, CrSnd_Hang, 3, 1);
         }

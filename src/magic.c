@@ -1144,7 +1144,7 @@ TbResult magic_use_power_time_bomb(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     thing->veloc_push_add.y.val += ACTION_RANDOM(321) - 160;
     thing->veloc_push_add.z.val += 40;
     thing->state_flags |= TF1_PushAdd;
-    thing_play_sample(thing, 160, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+    thing_play_sample(thing, 160, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);  //todo: Make configurable, default sound 0, for power17
     return Lb_SUCCESS;
 }
 
@@ -1470,7 +1470,7 @@ TbResult magic_use_power_cave_in(PlayerNumber plyr_idx, MapSubtlCoord stl_x, Map
         pos.y.val = subtile_coord_center(slab_subtile_center(slb_y));
         pos.z.val = 0;
         thing = create_thing(&pos, TCls_CaveIn, splevel, plyr_idx, -1);
-        thing_play_sample(thing, 927, 25, 0, 3, 0, 2, FULL_LOUDNESS);
+        thing_play_sample(thing, 927, 25, 0, 3, 0, 2, FULL_LOUDNESS);  //todo Make configurable, sound 927, for Power7
     }
     return Lb_SUCCESS;
 }
