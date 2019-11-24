@@ -1422,9 +1422,9 @@ TbResult magic_use_power_cave_in(PlayerNumber plyr_idx, MapSubtlCoord stl_x, Map
     unsigned long k;
     k = 0;
     i = get_mapwho_thing_index(mapblk);
+    struct Thing *thing;
     while (i != 0)
     {
-        struct Thing *thing;
         thing = thing_get(i);
         TRACE_THING(thing);
         if (thing_is_invalid(thing))
@@ -1466,7 +1466,8 @@ TbResult magic_use_power_cave_in(PlayerNumber plyr_idx, MapSubtlCoord stl_x, Map
         pos.x.val = subtile_coord_center(slab_subtile_center(slb_x));
         pos.y.val = subtile_coord_center(slab_subtile_center(slb_y));
         pos.z.val = 0;
-        create_thing(&pos, TCls_CaveIn, splevel, plyr_idx, -1);
+        thing = create_thing(&pos, TCls_CaveIn, splevel, plyr_idx, -1);
+        thing_play_sample(thing, 927, 25, 0, 3, 0, 2, FULL_LOUDNESS);
     }
     return Lb_SUCCESS;
 }
