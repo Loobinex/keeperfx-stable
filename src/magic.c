@@ -1180,6 +1180,7 @@ TbResult magic_use_power_imp(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubt
     thing->state_flags |= TF1_PushAdd;
     thing->move_angle_xy = 0;
     initialise_thing_state(thing, CrSt_ImpBirth);
+    thing_play_sample(thing, 0, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);  //todo: Make configurable, default sound 0, for power2
     play_creature_sound(thing, 3, 2, 0);
     return Lb_SUCCESS;
 }
