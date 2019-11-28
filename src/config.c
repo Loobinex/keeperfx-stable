@@ -45,6 +45,7 @@ extern "C" {
 /******************************************************************************/
 const char keeper_config_file[]="keeperfx.cfg";
 int max_track = 7;
+TbBool CustomAtmos = false;
 
 /**
  * Language 3-char abbreviations.
@@ -112,6 +113,7 @@ const struct NamedCommand conf_commands[] = {
   {"ATMOS_FREQUENCY",     12},
   {"RESIZE_MOVIES",       13},
   {"MUSIC_TRACKS",        14},
+  {"CUSTOM_ATMOS",	      15},
   {NULL,                   0},
   };
 
@@ -749,6 +751,19 @@ short load_configuration(void)
               CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",
                 COMMAND_TEXT(cmd_num),config_textname);
           }
+          break;
+	  case 15: // Custom atmos
+          i = recognize_conf_parameter(buf,&pos,len,logicval_type);
+          if (i <= 0)
+          {
+              CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",
+                COMMAND_TEXT(cmd_num),config_textname);
+            break;
+          }
+          if (i == 1)
+              CustomAtmos = true;
+		  else
+			  CustomAtmos = false;
           break;
       case 0: // comment
           break;
