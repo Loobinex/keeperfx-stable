@@ -326,14 +326,7 @@ void update_player_sounds(void)
                     // No atmos sounds the first 3 minutes
                     if (game.play_gameturn > 3600)
                     {
-						if (CustomAtmos == true)
-						{
-						play_atmos_sound(1035 + UNSYNC_RANDOM(samples_in_bank - 1035));	
-						}
-						else
-						{
                         play_atmos_sound(1014 + UNSYNC_RANDOM(21));
-						}
                     }
                 } else
                 {
