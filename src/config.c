@@ -46,6 +46,8 @@ extern "C" {
 const char keeper_config_file[]="keeperfx.cfg";
 int max_track = 7;
 TbBool CustomAtmos = false;
+unsigned short CustomAtmosStart = 0;
+unsigned short CustomAtmosEnd = 0;
 
 /**
  * Language 3-char abbreviations.
@@ -113,7 +115,9 @@ const struct NamedCommand conf_commands[] = {
   {"ATMOS_FREQUENCY",     12},
   {"RESIZE_MOVIES",       13},
   {"MUSIC_TRACKS",        14},
-  {"CUSTOM_ATMOS",        15},
+  {"CUSTOM_ATMOS",	      15},
+  {"RANGE_START",	      16},
+  {"RANGE_END",	          17},
   {NULL,                   0},
   };
 
@@ -752,7 +756,7 @@ short load_configuration(void)
                 COMMAND_TEXT(cmd_num),config_textname);
           }
           break;
-      case 15: // Custom atmos
+	  case 15: // Custom atmos
           i = recognize_conf_parameter(buf,&pos,len,logicval_type);
           if (i <= 0)
           {
@@ -762,8 +766,30 @@ short load_configuration(void)
           }
           if (i == 1)
               CustomAtmos = true;
-          else
-              CustomAtmos = false;
+		  else
+			  CustomAtmos = false;
+          break;
+	  case 16: // RANGE_START
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            i = atoi(word_buf);
+			CustomAtmosStart = i;
+          }
+          else {
+              CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",
+                COMMAND_TEXT(cmd_num),config_textname);
+          }
+          break;
+	  case 17: // RANGE_END
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            i = atoi(word_buf);
+			CustomAtmosEnd = i;
+          }
+          else {
+              CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",
+                COMMAND_TEXT(cmd_num),config_textname);
+          }
           break;
       case 0: // comment
           break;

@@ -167,6 +167,8 @@ struct NetLevelDesc { // sizeof = 14
 };
 
 extern TbBool CustomAtmos;
+extern unsigned short CustomAtmosStart;
+extern unsigned short CustomAtmosEnd;
 
 /******************************************************************************/
 DLLIMPORT extern float _DK_phase_of_moon;
