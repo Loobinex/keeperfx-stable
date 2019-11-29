@@ -326,14 +326,7 @@ void update_player_sounds(void)
                     // No atmos sounds the first 3 minutes
                     if (game.play_gameturn > 3600)
                     {
-						if (CustomAtmos == true)
-						{
-						play_atmos_sound(CustomAtmosStart + UNSYNC_RANDOM((CustomAtmosEnd + 1) - CustomAtmosStart));	
-						}
-						else
-						{
-                        play_atmos_sound(1014 + UNSYNC_RANDOM(21));
-						}
+						play_atmos_sound(AtmosStart + UNSYNC_RANDOM((AtmosEnd + 1) - AtmosStart));
                     }
                 } else
                 {
@@ -343,7 +336,7 @@ void update_player_sounds(void)
                         // Roughly every 2 seconds drops sound
                         if ((k % 40) == 0)
                         {
-                            play_atmos_sound(1013);
+                            play_atmos_sound(AtmosRepeat);
                         }
                     }
                 }
