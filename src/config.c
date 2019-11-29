@@ -113,9 +113,9 @@ const struct NamedCommand conf_commands[] = {
   {"ATMOSPHERIC_SOUNDS",  10},
   {"ATMOS_VOLUME",        11},
   {"ATMOS_FREQUENCY",     12},
-  {"RESIZE_MOVIES",       13},
-  {"MUSIC_TRACKS",        14},
-  {"ATMOS",	              15},
+  {"ATMOS_SAMPLES",       13},
+  {"RESIZE_MOVIES",       14},
+  {"MUSIC_TRACKS",        15},
   {NULL,                   0},
   };
 
@@ -730,31 +730,7 @@ short load_configuration(void)
             atmos_sound_frequency = i;
             break;
           }
-      case 13: // Resize Movies
-          i = recognize_conf_parameter(buf,&pos,len,logicval_type);
-          if (i <= 0)
-          {
-            CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",COMMAND_TEXT(cmd_num),config_textname);
-            break;
-          }
-          if (i == 1)
-              features_enabled |= Ft_Resizemovies;
-          else
-              features_enabled &= ~Ft_Resizemovies;
-          break;
-      case 14: // MUSIC_TRACKS
-          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
-          {
-            i = atoi(word_buf);
-          }
-          if ((i > 0) && (i <= 50)) {
-              max_track = i;
-          } else {
-              CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",
-                COMMAND_TEXT(cmd_num),config_textname);
-          }
-          break;
-	  case 15: // Atmos
+      case 13: // Atmos_samples
           for (i=0; i<3; i++)
           {
             if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
@@ -779,6 +755,30 @@ short load_configuration(void)
                 AtmosRepeat = k;
                 break;
             }
+          }
+          break;
+      case 14: // Resize Movies
+          i = recognize_conf_parameter(buf,&pos,len,logicval_type);
+          if (i <= 0)
+          {
+            CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",COMMAND_TEXT(cmd_num),config_textname);
+            break;
+          }
+          if (i == 1)
+              features_enabled |= Ft_Resizemovies;
+          else
+              features_enabled &= ~Ft_Resizemovies;
+          break;
+      case 15: // MUSIC_TRACKS
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            i = atoi(word_buf);
+          }
+          if ((i > 0) && (i <= 50)) {
+              max_track = i;
+          } else {
+              CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",
+                COMMAND_TEXT(cmd_num),config_textname);
           }
           break;
       case 0: // comment

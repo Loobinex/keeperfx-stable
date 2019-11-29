@@ -319,14 +319,14 @@ void update_player_sounds(void)
         {
             if ( atmos_sounds_enabled() )
             {
-                //Plays the drops, sound 1013, with a small chance of a random other sound.
+                //Plays a sound on repeat, default sound sample 1013(water drops), with a small chance of a random other sound from the range.
                 k = UNSYNC_RANDOM(atmos_sound_frequency);
                 if (k == 1)
                 {
                     // No atmos sounds the first 3 minutes
                     if (game.play_gameturn > 3600)
                     {
-						play_atmos_sound(AtmosStart + UNSYNC_RANDOM((AtmosEnd + 1) - AtmosStart));
+                        play_atmos_sound(AtmosStart + UNSYNC_RANDOM((AtmosEnd + 1) - AtmosStart));
                     }
                 } else
                 {
