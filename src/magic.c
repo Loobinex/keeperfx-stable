@@ -1544,7 +1544,7 @@ long update_creatures_influenced_by_call_to_arms(PlayerNumber plyr_idx)
         }
         i = cctrl->players_next_creature_idx;
         // Thing list loop body
-        if (!thing_is_picked_up(thing) && !creature_is_being_unconscious(thing))
+        if (!thing_is_picked_up(thing) && !creature_is_being_unconscious(thing))// && !creature_is_fleeing_combat(thing))
         {
             if (creature_affected_by_call_to_arms(thing))
             {
