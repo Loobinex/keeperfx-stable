@@ -309,6 +309,8 @@ TbBool creature_is_actually_scared(const struct Thing *creatng, const struct Thi
 {
     struct CreatureStats *crstat;
     crstat = creature_stats_get_from_thing(creatng);
+    struct CreatureStats *enmstat;
+    enmstat = creature_stats_get_from_thing(enmtng);
     // Neutral creatures are not easily scared, as they shouldn't have enemies
     if (is_neutral_thing(creatng))
         return false;
@@ -344,13 +346,25 @@ TbBool creature_is_actually_scared(const struct Thing *creatng, const struct Thi
         return true;
     }
     // If the enemy is way stronger, a creature may be scared anyway
+    // Ranged units get 10 times the strenght in fear calculation to account for ranged attacks.
     long long enmstrength,ownstrength;
     fear = crstat->fear_stronger;
-    enmstrength = LbSqrL(calculate_melee_damage(enmtng)) * ((long long)enmaxhealth + (long long)enmtng->health)/2;
-    ownstrength = LbSqrL(calculate_melee_damage(creatng)) * ((long long)crmaxhealth + (long long)creatng->health)/2;
+    if ((enmstat->attack_preference == AttckT_Ranged) && creature_has_ranged_object_weapon(enmtng)) 
+    {
+        enmstrength = LbSqrL(calculate_melee_damage(enmtng)) * ((long long)enmaxhealth + (long long)enmtng->health)*5;
+    } else
+    {
+        enmstrength = LbSqrL(calculate_melee_damage(enmtng)) * ((long long)enmaxhealth + (long long)enmtng->health)/2;
+    }
+    if ((crstat->attack_preference == AttckT_Ranged) && creature_has_ranged_object_weapon(creatng))
+    {        
+        ownstrength = LbSqrL(calculate_melee_damage(creatng)) * ((long long)crmaxhealth + (long long)creatng->health)*5;
+    } else
+    {
+        ownstrength = LbSqrL(calculate_melee_damage(creatng)) * ((long long)crmaxhealth + (long long)creatng->health)/2;
+    }
     if (enmstrength >= (fear * ownstrength) / 100)
     {
-        // TODO: Base fear on score, not strenght as that causes issues with fearfull spellcasters.
         // check if there are allied creatures nearby; assume that such creatures are multiplying strength of the creature we're checking
         long support_count;
         support_count = count_creatures_near_and_owned_by_or_allied_with(creatng->mappos.x.val, creatng->mappos.y.val, 9, creatng->owner);
