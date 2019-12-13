@@ -349,20 +349,8 @@ TbBool creature_is_actually_scared(const struct Thing *creatng, const struct Thi
     // Ranged units get 10 times the strenght in fear calculation to account for ranged attacks.
     long long enmstrength,ownstrength;
     fear = crstat->fear_stronger;
-    if ((enmstat->attack_preference == AttckT_Ranged) && creature_has_ranged_object_weapon(enmtng)) 
-    {
-        enmstrength = LbSqrL(calculate_melee_damage(enmtng)) * ((long long)enmaxhealth + (long long)enmtng->health)*5;
-    } else
-    {
-        enmstrength = LbSqrL(calculate_melee_damage(enmtng)) * ((long long)enmaxhealth + (long long)enmtng->health)/2;
-    }
-    if ((crstat->attack_preference == AttckT_Ranged) && creature_has_ranged_object_weapon(creatng))
-    {        
-        ownstrength = LbSqrL(calculate_melee_damage(creatng)) * ((long long)crmaxhealth + (long long)creatng->health)*5;
-    } else
-    {
-        ownstrength = LbSqrL(calculate_melee_damage(creatng)) * ((long long)crmaxhealth + (long long)creatng->health)/2;
-    }
+    enmstrength = LbSqrL(calculate_melee_damage(enmtng)) * (enmstat->fearsome_factor / 100) * ((long long)enmaxhealth + (long long)enmtng->health)/2;
+    ownstrength = LbSqrL(calculate_melee_damage(creatng)) * (crstat->fearsome_factor / 100) * ((long long)crmaxhealth + (long long)creatng->health)/2;
     if (enmstrength >= (fear * ownstrength) / 100)
     {
         // check if there are allied creatures nearby; assume that such creatures are multiplying strength of the creature we're checking
