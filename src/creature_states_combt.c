@@ -346,11 +346,10 @@ TbBool creature_is_actually_scared(const struct Thing *creatng, const struct Thi
         return true;
     }
     // If the enemy is way stronger, a creature may be scared anyway
-    // Ranged units get 10 times the strenght in fear calculation to account for ranged attacks.
     long long enmstrength,ownstrength;
     fear = crstat->fear_stronger;
-    enmstrength = LbSqrL(calculate_melee_damage(enmtng)) * (enmstat->fearsome_factor / 100) * ((long long)enmaxhealth + (long long)enmtng->health)/2;
-    ownstrength = LbSqrL(calculate_melee_damage(creatng)) * (crstat->fearsome_factor / 100) * ((long long)crmaxhealth + (long long)creatng->health)/2;
+    enmstrength = LbSqrL(calculate_melee_damage(enmtng)) * (enmstat->fearsome_factor)/100 * ((long long)enmaxhealth + (long long)enmtng->health)/2;
+    ownstrength = LbSqrL(calculate_melee_damage(creatng)) * (crstat->fearsome_factor)/100 * ((long long)crmaxhealth + (long long)creatng->health)/2;
     if (enmstrength >= (fear * ownstrength) / 100)
     {
         // check if there are allied creatures nearby; assume that such creatures are multiplying strength of the creature we're checking
