@@ -746,7 +746,7 @@ TbBool parse_creaturemodel_attributes_blocks(long crtr_model,char *buf,long len,
                 COMMAND_TEXT(cmd_num),block_buf,config_textname);
           }
           break;
-          case 31: // TOKINGRECOVERY
+      case 31: // TOKINGRECOVERY
           if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
           {
             k = atoi(word_buf);
