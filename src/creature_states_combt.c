@@ -1363,7 +1363,6 @@ short cleanup_door_combat(struct Thing *thing)
     cctrl->combat_flags &= ~CmbtF_DoorFight;
     cctrl->combat.battle_enemy_idx = 0;
     return 1;
-
 }
 
 short cleanup_object_combat(struct Thing *thing)
