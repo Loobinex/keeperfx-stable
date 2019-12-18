@@ -2029,7 +2029,7 @@ long count_player_list_creatures_of_model(long thing_idx, ThingModel crmodel)
 {
     unsigned long k;
     long i;
-    int count,owner;
+    int count;
     count = 0;
     i = thing_idx;
     k = 0;
@@ -2044,12 +2044,10 @@ long count_player_list_creatures_of_model(long thing_idx, ThingModel crmodel)
           ERRORLOG("Jump to invalid thing detected");
           break;
         }
-        cctrl = creature_control_get_from_thing(thing);
         i = cctrl->players_next_creature_idx;
         // Per creature code
         if ((crmodel <= 0) || (thing->model == crmodel))
         {
-            owner = get_slab_owner_thing_is_on(thing);
             count++;
         }
         // Per creature code ends
@@ -2233,7 +2231,9 @@ struct Thing *get_random_players_creature_of_model_on_territory(PlayerNumber ply
     dungeon = get_players_num_dungeon(plyr_idx);
     total_count = count_player_list_creatures_of_model_on_territory(dungeon->creatr_list_start, crmodel, friendly);
     if (total_count < 1)
-        return INVALID_THING;
+    {
+      return INVALID_THING;
+    }
     crtr_idx = ACTION_RANDOM(total_count)+1;
     return get_player_list_nth_creature_of_model_on_territory(dungeon->creatr_list_start, crmodel, crtr_idx, friendly);
 }
