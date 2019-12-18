@@ -3629,14 +3629,15 @@ struct Thing *get_creature_in_range_around_any_of_enemy_heart(PlayerNumber plyr_
     return INVALID_THING;
 }
 
-long count_player_list_creatures_of_model_on_territory(long thing_idx, ThingModel crmodel)
+long count_player_list_creatures_of_model_on_territory(long thing_idx, ThingModel crmodel, int friendly)
 {
     unsigned long k;
     long i;
-    int count,slbwnr,rvlr;
+    int count,slbwnr;
     count = 0;
     i = thing_idx;
     k = 0;
+    JUSTMSG("TESTLOG: Count on territory. Friendly = %d",friendly);
     while (i != 0)
     {
         struct CreatureControl *cctrl;
@@ -3651,10 +3652,11 @@ long count_player_list_creatures_of_model_on_territory(long thing_idx, ThingMode
         i = cctrl->players_next_creature_idx;
         // Per creature code
         slbwnr = get_slab_owner_thing_is_on(thing);
-        rvlr = players_are_enemies(thing->owner,slbwnr);
-        JUSTMSG("TESTLOG: Unit is on rival ground = %d",rvlr);
-        if ((thing->model == crmodel) && (rvlr == 1))
+        if ( (thing->model == crmodel) && ( (players_are_enemies(thing->owner,slbwnr) && (friendly == 0)) || (players_are_mutual_allies(thing->owner,slbwnr) && (friendly == 1)) ) )
+        {
             count++;
+            JUSTMSG("TESTLOG: Counted %d units of model %d from owner %d",count, crmodel,thing->owner);
+        }
         // Per creature code ends
         k++;
         if (k > THINGS_COUNT)
@@ -3663,7 +3665,6 @@ long count_player_list_creatures_of_model_on_territory(long thing_idx, ThingMode
             break;
         }
     }
-    //JUSTMSG("TESTLOG: Counted %d units model %d from owner %d",count, crmodel,thing->owner);
     return count;
 }
 
@@ -3715,7 +3716,7 @@ TbBool script_kill_creature_with_criteria(PlayerNumber plyr_idx, long crmodel, l
         thing = get_creature_in_range_around_any_of_enemy_heart(plyr_idx, crmodel, 11);
         break;
     case CSelCrit_OnEnemyGround:
-        thing = get_random_players_creature_of_model_on_territory(plyr_idx, crmodel);
+        thing = get_random_players_creature_of_model_on_territory(plyr_idx, crmodel,0);
         break;
     default:
         ERRORLOG("Invalid kill criteria %d",(int)criteria);
