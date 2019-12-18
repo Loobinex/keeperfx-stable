@@ -84,6 +84,7 @@ enum CreatureSelectCriteria {
     CSelCrit_NearOwnHeart      =  9,
     CSelCrit_NearEnemyHeart    = 10,
     CSelCrit_OnEnemyGround     = 11,
+    CSelCrit_OnFriendlyGround  = 12,
 };
 
 //TODO replace HitType with these

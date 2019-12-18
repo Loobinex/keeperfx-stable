@@ -371,7 +371,8 @@ const struct NamedCommand creature_select_criteria_desc[] = {
   {"NEAR_OWN_HEART",       CSelCrit_NearOwnHeart},
   {"NEAR_ENEMY_HEART",     CSelCrit_NearEnemyHeart},
   {"ON_ENEMY_GROUND",      CSelCrit_OnEnemyGround},
-  {"ANY",                  CSelCrit_Any},
+  {"ON_FRIENDLY_GROUND",   CSelCrit_OnFriendlyGround},
+  {"ANYWHERE",             CSelCrit_Any},
   {NULL,                   0},
 };
 
@@ -3637,7 +3638,6 @@ long count_player_list_creatures_of_model_on_territory(long thing_idx, ThingMode
     count = 0;
     i = thing_idx;
     k = 0;
-    JUSTMSG("TESTLOG: Count on territory. Friendly = %d",friendly);
     while (i != 0)
     {
         struct CreatureControl *cctrl;
@@ -3655,7 +3655,6 @@ long count_player_list_creatures_of_model_on_territory(long thing_idx, ThingMode
         if ( (thing->model == crmodel) && ( (players_are_enemies(thing->owner,slbwnr) && (friendly == 0)) || (players_are_mutual_allies(thing->owner,slbwnr) && (friendly == 1)) ) )
         {
             count++;
-            JUSTMSG("TESTLOG: Counted %d units of model %d from owner %d",count, crmodel,thing->owner);
         }
         // Per creature code ends
         k++;
@@ -3717,6 +3716,9 @@ TbBool script_kill_creature_with_criteria(PlayerNumber plyr_idx, long crmodel, l
         break;
     case CSelCrit_OnEnemyGround:
         thing = get_random_players_creature_of_model_on_territory(plyr_idx, crmodel,0);
+        break;
+    case CSelCrit_OnFriendlyGround:
+        thing = get_random_players_creature_of_model_on_territory(plyr_idx, crmodel,1);
         break;
     default:
         ERRORLOG("Invalid kill criteria %d",(int)criteria);

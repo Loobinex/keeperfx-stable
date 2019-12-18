@@ -2050,7 +2050,6 @@ long count_player_list_creatures_of_model(long thing_idx, ThingModel crmodel)
         if ((crmodel <= 0) || (thing->model == crmodel))
         {
             owner = get_slab_owner_thing_is_on(thing);
-            JUSTMSG("TESTLOG: Thing owner is %d, Slab owner is %d",thing->owner,owner);
             count++;
         }
         // Per creature code ends
@@ -2115,7 +2114,6 @@ struct Thing *get_player_list_nth_creature_of_model_on_territory(long thing_idx,
     int slbwnr,match;
     i = thing_idx;
     k = 0;
-    JUSTMSG("TESTLOG: We want number %d on the list. Friendly is %d",crtr_idx,friendly);
     while (i != 0)
     {
       thing = thing_get(i);
@@ -2134,24 +2132,20 @@ struct Thing *get_player_list_nth_creature_of_model_on_territory(long thing_idx,
         if (players_are_mutual_allies(thing->owner,slbwnr));
         {
           match = 1;
-          JUSTMSG("TESTLOG: To business, matched because we're allies.");
         }
       } else
       {
         if (players_are_enemies(thing->owner,slbwnr));
         {
           match = 1;
-          JUSTMSG("TESTLOG: to business, matched because we're enemies.");
         }
       }
       if (((crtr_idx <= 0) || (thing->model == crmodel && crtr_idx <= 1)) && (match == 1))
       {
-          JUSTMSG("TESTLOG: Counter at %d. We found it!.",crtr_idx);
           return thing;
       }
       if ((crmodel <= 0) || ((thing->model == crmodel) && (match == 1)))
       {
-          JUSTMSG("TESTLOG: We found a match. Counter at %d.",crtr_idx);
           crtr_idx--;
       }
       // Per creature code ends
@@ -2238,7 +2232,6 @@ struct Thing *get_random_players_creature_of_model_on_territory(PlayerNumber ply
     long total_count,crtr_idx;
     dungeon = get_players_num_dungeon(plyr_idx);
     total_count = count_player_list_creatures_of_model_on_territory(dungeon->creatr_list_start, crmodel, friendly);
-    JUSTMSG("TESTLOG: Got a total count of %d units. Friendly = %d",total_count,friendly);
     if (total_count < 1)
         return INVALID_THING;
     crtr_idx = ACTION_RANDOM(total_count)+1;
