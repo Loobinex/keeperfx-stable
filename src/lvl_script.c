@@ -3629,6 +3629,44 @@ struct Thing *get_creature_in_range_around_any_of_enemy_heart(PlayerNumber plyr_
     return INVALID_THING;
 }
 
+long count_player_list_creatures_of_model_on_territory(long thing_idx, ThingModel crmodel)
+{
+    unsigned long k;
+    long i;
+    int count,slbwnr,rvlr;
+    count = 0;
+    i = thing_idx;
+    k = 0;
+    while (i != 0)
+    {
+        struct CreatureControl *cctrl;
+        struct Thing *thing;
+        thing = thing_get(i);
+        cctrl = creature_control_get_from_thing(thing);
+        if (thing_is_invalid(thing))
+        {
+          ERRORLOG("Jump to invalid thing detected");
+          break;
+        }
+        i = cctrl->players_next_creature_idx;
+        // Per creature code
+        slbwnr = get_slab_owner_thing_is_on(thing);
+        rvlr = players_are_enemies(thing->owner,slbwnr);
+        JUSTMSG("TESTLOG: Unit is on rival ground = %d",rvlr);
+        if ((thing->model == crmodel) && (rvlr == 1))
+            count++;
+        // Per creature code ends
+        k++;
+        if (k > THINGS_COUNT)
+        {
+            ERRORLOG("Infinite loop detected when sweeping things list");
+            break;
+        }
+    }
+    //JUSTMSG("TESTLOG: Counted %d units model %d from owner %d",count, crmodel,thing->owner);
+    return count;
+}
+
 /**
  * Kills a creature which meets given criteria.
  * @param plyr_idx The player whose creature will be affected.
@@ -3677,8 +3715,7 @@ TbBool script_kill_creature_with_criteria(PlayerNumber plyr_idx, long crmodel, l
         thing = get_creature_in_range_around_any_of_enemy_heart(plyr_idx, crmodel, 11);
         break;
     case CSelCrit_OnEnemyGround:
-        //TODO SCRIPT finish killing code by adding creature choosing function.
-        thing = INVALID_THING;
+        thing = get_random_players_creature_of_model_on_territory(plyr_idx, crmodel);
         break;
     default:
         ERRORLOG("Invalid kill criteria %d",(int)criteria);
