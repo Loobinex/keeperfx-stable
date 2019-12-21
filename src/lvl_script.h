@@ -119,6 +119,7 @@ enum TbScriptCommands {
     Cmd_IMPORT                            = 99,
     Cmd_RUN_AFTER_VICTORY                 = 100,
     Cmd_LEVEL_UP_CREATURE                 = 101,
+    Cmd_CHANGE_CREATURE_OWNER             = 102,
 };
 
 enum ScriptVariables {
@@ -223,7 +224,7 @@ struct PartyTrigger { // sizeof = 13
   unsigned short ncopies;
 };
 
-struct ScriptValue { // sizeof = 16
+struct ScriptValue { // sizeof = 18, was 16, why does it matter?
   unsigned char flags;
   char condit_idx;
   unsigned char valtype;
@@ -231,6 +232,7 @@ struct ScriptValue { // sizeof = 16
   long field_4;
   long field_8;
   long field_C;
+  long field_10;
 };
 
 struct Condition { // sizeof = 12
@@ -300,7 +302,7 @@ long script_scan_line(char *line,TbBool preloaded);
 const struct CommandDesc *get_next_word(char **line, char *param, int *para_level, const struct CommandDesc *cmdlist_desc);
 const char *script_get_command_name(long cmnd_index);
 
-void command_add_value(unsigned long var_index, unsigned long plr_range_id, long val2, long val3, long val4);
+void command_add_value(unsigned long var_index, unsigned long plr_range_id, long val2, long val3, long val4, long val5);
 void command_message(const char *msgtext, unsigned char kind);
 unsigned short get_map_location_type(TbMapLocation location);
 unsigned long get_map_location_longval(TbMapLocation location);
@@ -312,7 +314,7 @@ short clear_script(void);
 short load_script(long lvl_num);
 short preload_script(long lvnum);
 /******************************************************************************/
-void script_process_value(unsigned long var_index, unsigned long val1, long val2, long val3, long val4);
+void script_process_value(unsigned long var_index, unsigned long val1, long val2, long val3, long val4, long val5);
 void script_process_win_game(PlayerNumber plyr_idx);
 void script_process_lose_game(PlayerNumber plyr_idx);
 struct Thing *script_process_new_tunneler(unsigned char plyr_idx, TbMapLocation location, TbMapLocation heading, unsigned char crtr_level, unsigned long carried_gold);
