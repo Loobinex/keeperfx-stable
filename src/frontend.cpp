@@ -3381,7 +3381,6 @@ void frontend_update(short *finish_menu)
         *finish_menu = frontmap_update();
         break;
     case FeSt_CAMPAIGN_INTRO:
-        *finish_menu = frontmap_update();
         break;
     case FeSt_NET_SERVICE:
         frontnet_service_update();
