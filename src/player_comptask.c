@@ -1731,7 +1731,12 @@ short tool_dig_to_pos2_f(struct Computer2 * comp, struct ComputerDig * cdig, TbB
             i = get_subtile_number_at_slab_center(digslb_x,digslb_y);
             if ((find_from_task_list(dungeon->owner, i) < 0) && (!simulation))
             {
-                if (try_game_action(comp, dungeon->owner, GA_MarkDig, 0, digstl_x, digstl_y, 1, 1) <= Lb_OK) {
+                if( computer_able_to_use_power(comp, PwrK_DESTRWALLS, 3, 1))
+                {
+                    magic_use_available_power_on_subtile(dungeon->owner, PwrK_DESTRWALLS, 3, digstl_x, digstl_y, PwCast_Unrevealed);
+                }
+                if (try_game_action(comp, dungeon->owner, GA_MarkDig, 0, digstl_x, digstl_y, 1, 1) <= Lb_OK) 
+                {
                     ERRORLOG("%s: Couldn't do game action - cannot dig",func_name);
                     return -2;
                 }
