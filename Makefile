@@ -296,6 +296,7 @@ DEPFLAGS = -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"
 # other flags to include while compiling
 INCFLAGS =
 # code optimization and debugging flags
+CV2PDB := $(shell PATH=`pwd`:$PATH command -v cv2pdb.exe 2> /dev/null)
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
   OPTFLAGS = -march=i686 -Og -fno-omit-frame-pointer
@@ -303,7 +304,12 @@ ifeq ($(DEBUG), 1)
 else
   # frame pointer is required for ASM code to work
   OPTFLAGS = -march=i686 -fno-omit-frame-pointer -O3
-  DBGFLAGS = 
+  # if we can create a separate debug info file then do it
+  ifdef CV2PDB
+    DBGFLAGS = -g
+  else
+    DBGFLAGS =
+  endif
 endif
 # linker flags
 # useful for development only: -Wl,-Map,"$(@:%.exe=%.map)"
@@ -398,12 +404,18 @@ clean-build:
 $(BIN): $(GENSRC) $(STDOBJS) $(LIBS) std-before
 	-$(ECHO) 'Building target: $@'
 	$(CPP) -o "$@" $(STDOBJS) $(LDFLAGS)
+ifdef CV2PDB
+	$(CV2PDB) -C "$@"
+endif
 	-$(ECHO) 'Finished building target: $@'
 	-$(ECHO) ' '
 
 $(HVLOGBIN): $(GENSRC) $(HVLOGOBJS) $(LIBS) hvlog-before
 	-$(ECHO) 'Building target: $@'
 	$(CPP) -o "$@" $(HVLOGOBJS) $(LDFLAGS)
+ifdef CV2PDB
+	$(CV2PDB) -C "$@"
+endif
 	-$(ECHO) 'Finished building target: $@'
 	-$(ECHO) ' '
 
