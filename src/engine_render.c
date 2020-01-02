@@ -60,24 +60,13 @@ extern "C" {
 DLLIMPORT void _DK_draw_fastview_mapwho(struct Camera *cam, struct JontySpr *outbuf);
 DLLIMPORT void _DK_draw_stripey_line(long pos_x, long pos_z, long beg_y, long end_y, unsigned char scale);
 DLLIMPORT long _DK_convert_world_coord_to_front_view_screen_coord(struct Coord3d *pos, struct Camera *cam, long *x, long *y, long *z);
-DLLIMPORT void _DK_rotate_base_axis(struct M33 *matx, short pos_z, unsigned char beg_y);
-DLLIMPORT void _DK_fill_in_points_perspective(long pos_x, long pos_z, struct MinMax *mm);
-DLLIMPORT void _DK_fill_in_points_cluedo(long pos_x, long pos_z, struct MinMax *mm);
-DLLIMPORT void _DK_fill_in_points_isometric(long pos_x, long pos_z, struct MinMax *mm);
-DLLIMPORT void _DK_find_gamut(void);
-DLLIMPORT void _DK_frame_wibble_generate(void);
-DLLIMPORT void _DK_setup_rotate_stuff(long pos_x, long pos_z, long beg_y, long end_y, long scale, long a6, long a7, long a8);
 DLLIMPORT void _DK_do_a_trig_gourad_tr(struct EngineCoord *ep1, struct EngineCoord *ep2, struct EngineCoord *ep3, short plane_end, long scale);
 DLLIMPORT void _DK_do_a_trig_gourad_bl(struct EngineCoord *ep1, struct EngineCoord *ep2, struct EngineCoord *ep3, short plane_end, long scale);
-DLLIMPORT void _DK_do_map_who(short stl_x);
-DLLIMPORT void _DK_fiddle_half_gamut(long y, long pos_y, long floor_x, long floor_y);
 DLLIMPORT long _DK_do_a_plane_of_engine_columns_sub5(struct EngineCoord *ec1, struct EngineCoord *ec2, struct EngineCoord *ec3);
 DLLIMPORT void _DK_do_a_gpoly_gourad_tr(struct EngineCoord *ec1, struct EngineCoord *ec2, struct EngineCoord *ec3, short plane_end, int a5);
 DLLIMPORT void _DK_do_a_gpoly_unlit_tr(struct EngineCoord *ec1, struct EngineCoord *ec2, struct EngineCoord *ec3, short plane_end);
 DLLIMPORT void _DK_do_a_gpoly_unlit_bl(struct EngineCoord *ec1, struct EngineCoord *ec2, struct EngineCoord *ec3, short plane_end);
 DLLIMPORT void _DK_do_a_gpoly_gourad_bl(struct EngineCoord *ec1, struct EngineCoord *ec2, struct EngineCoord *ec3, short plane_end, int a5);
-DLLIMPORT long _DK_find_closest_lights(struct Coord3d *pos, struct NearestLights *nlgt);
-DLLIMPORT void _DK_create_shadows(struct Thing *thing, struct EngineCoord *ecor, struct Coord3d *pos);
 DLLIMPORT void _DK_create_status_box(struct Thing *thing, struct EngineCoord *ecor);
 /******************************************************************************/
 unsigned short shield_offset[] = {
@@ -2249,7 +2238,31 @@ void create_shadows(struct Thing *thing, struct EngineCoord *ecor, struct Coord3
 
 void create_status_box(struct Thing *thing, struct EngineCoord *ecor)
 {
-    _DK_create_status_box(thing, ecor); return;
+    //_DK_create_status_box(thing, ecor); return;
+    struct EngineCoord coord = *ecor;
+    coord.y += (uint16_t)thing->clipbox_size_yz + shield_offset[thing->model];
+    rotpers(&coord, &camera_matrix);
+    if (getpoly >= poly_pool_end)
+        return;
+    int bckt_idx = coord.z / 16;
+    if (!lens_mode)
+        bckt_idx = 1;
+    if (bckt_idx < 0)
+        bckt_idx = 0;
+    else if (bckt_idx > BUCKETS_COUNT-2)
+        bckt_idx = BUCKETS_COUNT-2;
+
+    struct BasicUnk14* poly = (struct BasicUnk14*)getpoly;
+    if (getpoly >= poly_pool_end)
+        return;
+    getpoly += sizeof(struct BasicUnk14);
+    poly->b.next = buckets[bckt_idx];
+    poly->b.kind = QK_StatusSprites;
+    buckets[bckt_idx] = (struct BasicQ *)poly;
+    poly->thing = thing;
+    poly->x = coord.view_width;
+    poly->y = coord.view_height;
+    poly->z = coord.z;
 }
 
 void do_a_plane_of_engine_columns_perspective(long stl_x, long stl_y, long plane_start, long plane_end)
@@ -4128,7 +4141,7 @@ void display_drawlist(void)
                   // Status sprites grow smaller slower than zoom
                   int status_zoom;
                   status_zoom = (camera_zoom+CAMERA_ZOOM_MAX)/2;
-                  draw_status_sprites(item.unk14->field_C, item.unk14->field_10, item.unk14->thing, status_zoom*16/units_per_pixel);
+                  draw_status_sprites(item.unk14->x, item.unk14->y, item.unk14->thing, status_zoom*16/units_per_pixel);
               }
           }
           break;
@@ -4455,9 +4468,9 @@ void display_fast_drawlist(struct Camera *cam)
                 break;
             case QK_StatusSprites:
                 if (pixel_size == 1)
-                    draw_status_sprites(item.unk14->field_C, item.unk14->field_10, item.unk14->thing, 48*256);
+                    draw_status_sprites(item.unk14->x, item.unk14->y, item.unk14->thing, 48*256);
                 else
-                    draw_status_sprites(item.unk14->field_C, item.unk14->field_10, item.unk14->thing, 16*256);
+                    draw_status_sprites(item.unk14->x, item.unk14->y, item.unk14->thing, 16*256);
                 break;
             case QK_TextureQuad:
                 draw_texturedquad_block(item.txquad);
@@ -4552,10 +4565,10 @@ void create_status_box_element(struct Thing *thing, long a2, long a3, long a4, l
     poly->thing = thing;
     if (pixel_size > 0)
     {
-        poly->field_C = a2 / pixel_size;
-        poly->field_10 = a3 / pixel_size;
+        poly->x = a2 / pixel_size;
+        poly->y = a3 / pixel_size;
     }
-    poly->field_14 = a4;
+    poly->z = a4;
 }
 
 void create_fast_view_status_box(struct Thing *thing, long x, long y)

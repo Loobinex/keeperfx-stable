@@ -26,8 +26,6 @@
 extern "C" {
 #endif
 /******************************************************************************/
-DLLIMPORT unsigned long _DK_regions_connected(long tree_reg1, long tree_reg2);
-DLLIMPORT void _DK_region_connect(unsigned long tree_reg);
 /******************************************************************************/
 /** Array of regions.
  * Note that region[0] is used for storing unused triangles and shouldn't be
@@ -55,7 +53,6 @@ struct RegionT bad_region;
 unsigned long region_alloc(void)
 {
     struct RegionT * rgn;
-    struct Triangle * tri;
     long reg_id,sreg_id;
     long i;
     int min_f0;
@@ -84,7 +81,6 @@ unsigned long region_alloc(void)
     NAVIDBG(19,"removing triangles from region %ld",reg_id);
     for (i=0; i < ix_Triangles; i++)
     {
-        tri = &Triangles[i];
         sreg_id = get_triangle_region_id(i);
         if (sreg_id >= REGIONS_COUNT)
         {

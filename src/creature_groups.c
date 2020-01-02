@@ -36,9 +36,6 @@
 extern "C" {
 #endif
 /******************************************************************************/
-DLLIMPORT void _DK_leader_find_positions_for_followers(struct Thing *creatng);
-DLLIMPORT long _DK_remove_creature_from_group(struct Thing *creatng);
-DLLIMPORT long _DK_add_creature_to_group_as_leader(struct Thing *thing1, struct Thing *thing2);
 
 /******************************************************************************/
 struct Thing *get_highest_experience_and_score_creature_in_group(struct Thing *grptng)
@@ -124,7 +121,7 @@ long get_no_creatures_in_group(const struct Thing *grptng)
 struct Thing *get_last_follower_creature_in_group(const struct Thing *grptng)
 {
     struct CreatureControl *cctrl;
-    struct Thing *ctng;
+    struct Thing* ctng = NULL;
     long i;
     unsigned long k;
     cctrl = creature_control_get_from_thing(grptng);

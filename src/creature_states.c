@@ -87,19 +87,11 @@ extern "C" {
 #define CREATURE_GUI_STATES_COUNT 3
 /* Please note that functions returning 'short' are not ment to return true/false only! */
 /******************************************************************************/
-DLLIMPORT short _DK_creature_cannot_find_anything_to_do(struct Thing *creatng);
 DLLIMPORT short _DK_creature_pretend_chicken_setup_move(struct Thing *creatng);
-DLLIMPORT short _DK_creature_set_work_room_based_on_position(struct Thing *creatng);
-DLLIMPORT short _DK_creature_wait_at_treasure_room_door(struct Thing *creatng);
 DLLIMPORT long _DK_move_check_can_damage_wall(struct Thing *creatng);
-DLLIMPORT long _DK_move_check_near_dungeon_heart(struct Thing *creatng);
 DLLIMPORT long _DK_move_check_on_head_for_room(struct Thing *creatng);
 DLLIMPORT long _DK_move_check_persuade(struct Thing *creatng);
 DLLIMPORT long _DK_move_check_wait_at_door_for_wage(struct Thing *creatng);
-DLLIMPORT char _DK_new_slab_tunneller_check_for_breaches(struct Thing *creatng);
-DLLIMPORT short _DK_patrol_here(struct Thing *creatng);
-DLLIMPORT void _DK_create_effect_around_thing(struct Thing *creatng, long eff_kind);
-DLLIMPORT void _DK_remove_health_from_thing_and_display_health(struct Thing *creatng, long delta);
 DLLIMPORT long _DK_setup_head_for_empty_treasure_space(struct Thing *creatng, struct Room *room);
 DLLIMPORT long _DK_get_best_position_outside_room(struct Thing *creatng, struct Coord3d *pos, struct Room *room);
 DLLIMPORT long _DK_get_thing_navigation_distance(struct Thing *creatng, struct Coord3d *pos, unsigned char a3);
@@ -1587,7 +1579,15 @@ short creature_being_dropped(struct Thing *creatng)
 short creature_cannot_find_anything_to_do(struct Thing *creatng)
 {
     TRACE_THING(creatng);
-    return _DK_creature_cannot_find_anything_to_do(creatng);
+	struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+	if ((game.play_gameturn - cctrl->countdown_282) >= 128)
+	{
+		set_start_state(creatng);
+		return 0;
+	}
+	if (creature_choose_random_destination_on_valid_adjacent_slab(creatng))
+		creatng->continue_state = 123;
+	return 1;
 }
 
 void set_creature_size_stuff(struct Thing *creatng)
@@ -3332,7 +3332,40 @@ CrCheckRet move_check_wait_at_door_for_wage(struct Thing *creatng)
 
 char new_slab_tunneller_check_for_breaches(struct Thing *creatng)
 {
-  return _DK_new_slab_tunneller_check_for_breaches(creatng);
+    TRACE_THING(creatng);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+
+    // NB: the code assumes PLAYERS_COUNT = DUNGEONS_COUNT
+    for (int i = 0; i < PLAYERS_COUNT; ++i)
+    {
+        struct PlayerInfo* player = get_player(i);
+        struct Dungeon* dgn = get_dungeon(i);
+        if (!player_exists(player) || (player->field_2C != 1))
+            continue;
+
+        if (!dgn->dnheart_idx)
+            continue;
+
+        if (cctrl->byte_8A & (1 << i))
+            continue;
+
+        if (!creature_can_navigate_to(
+                creatng,
+                &game.things.lookup[dgn->dnheart_idx]->mappos,
+                0))
+            continue;
+        if (!((game.map[creatng->mappos.x.stl.num + (creatng->mappos.y.stl.num << 8)].data >> 28) & (1 << i)))
+            continue;
+
+        cctrl->byte_8A |= 1 << i;
+        ++dgn->times_broken_into;
+        event_create_event_or_update_nearby_existing_event(
+            creatng->mappos.x.val, creatng->mappos.y.val,
+            4u, i, 0);
+        if (is_my_player_number(i))
+            output_message(7, 0, 1);
+    }
+    return 0;
 }
 
 TbBool go_to_random_area_near_xy(struct Thing *creatng, MapSubtlCoord bstl_x, MapSubtlCoord bstl_y)
