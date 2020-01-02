@@ -185,6 +185,7 @@ struct GuiMenu *menu_list[] = {
     &frontend_select_campaign_menu,
     &frontend_error_box,
     &frontend_add_session_box,
+    &frontend_select_mappack_menu,
     NULL,
 };
 
@@ -1944,6 +1945,7 @@ short is_toggleable_menu(short mnu_idx)
   case GMnu_AUTOPILOT:
   case GMnu_FEOPTION:
   case GMnu_FELEVEL_SELECT:
+  case GMnu_MAPPACK_SELECT:
   case GMnu_FECAMPAIGN_SELECT:
   case GMnu_FEERROR_BOX:
       return false;
