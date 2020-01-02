@@ -274,6 +274,33 @@ void frontend_campaign_select(struct GuiButton *gbtn)
     frontend_set_state(FeSt_CAMPAIGN_INTRO);
 }
 
+void frontend_mappack_select(struct GuiButton *gbtn)
+{
+    long i;
+    long btn_idx;
+    struct GameCampaign *campgn;
+    if (gbtn == NULL)
+        return;
+    btn_idx = (long)gbtn->content;
+    i = select_campaign_scroll_offset + btn_idx-45;
+    campgn = NULL;
+    if ((i >= 1) && (i < campaigns_list.items_num))
+        campgn = &campaigns_list.items[i];
+    if (i == 0)
+    {
+        frontend_set_state(FeSt_LEVEL_SELECT);
+        return;
+    }
+    if (campgn == NULL)
+        return;
+    if (!frontend_start_new_campaign(campgn->fname))
+    {
+        ERRORLOG("Unable to start new campaign");
+        return;
+    }
+    frontend_set_state(FeSt_CAMPAIGN_INTRO);
+}
+
 void frontend_campaign_select_update(void)
 {
     if (campaigns_list.items_num <= 0)
@@ -307,5 +334,34 @@ void frontend_campaign_select_update(void)
 void frontend_draw_campaign_scroll_tab(struct GuiButton *gbtn)
 {
     frontend_draw_scroll_tab(gbtn, select_campaign_scroll_offset, frontend_select_campaign_items_visible-2, campaigns_list.items_num);
+}
+
+void frontend_draw_mappack_select_button(struct GuiButton *gbtn)
+{
+    struct GameCampaign *campgn;
+    long btn_idx;
+    long i;
+    if (gbtn == NULL)
+      return;
+    btn_idx = (long)gbtn->content;
+    i = select_campaign_scroll_offset + btn_idx-45;
+    campgn = NULL;
+    if ((i >= 0) && (i < campaigns_list.items_num))
+      campgn = &campaigns_list.items[i];
+    if (campgn == NULL)
+      return;
+    if ((btn_idx > 0) && (frontend_mouse_over_button == btn_idx))
+      i = 2;
+    else
+      i = 1;
+  
+    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_LEFT;
+    LbTextSetFont(frontend_font[i]);
+    int tx_units_per_px;
+    // This text is a bit condensed - button size is smaller than text height
+    tx_units_per_px = (gbtn->height*13/11) * 16 / LbTextLineHeight();
+    i = LbTextLineHeight() * tx_units_per_px / 16;
+    LbTextSetWindow(gbtn->scr_pos_x, gbtn->scr_pos_y, gbtn->width, i);
+    LbTextDrawResized(0, 0, tx_units_per_px, get_string(btn_idx-45+884));
 }
 /******************************************************************************/
