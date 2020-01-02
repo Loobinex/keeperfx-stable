@@ -36,6 +36,8 @@ struct GuiButton;
 extern struct GuiMenu frontend_select_level_menu;
 #define frontend_select_campaign_items_visible  7
 extern struct GuiMenu frontend_select_campaign_menu;
+#define frontend_select_mappack_items_visible  7
+extern struct GuiMenu frontend_select_mappack_menu;
 /******************************************************************************/
 // Level list selection screen
 void frontend_draw_levels_scroll_tab(struct GuiButton *gbtn);
