@@ -33,6 +33,8 @@
 extern "C" {
 #endif
 /******************************************************************************/
+#define USE_ORIGINAL_TRIANGLES_DATA 0
+#if USE_ORIGINAL_TRIANGLES_DATA
 DLLIMPORT unsigned char _DK_Tags[TREEITEMS_COUNT];
 #define Tags _DK_Tags
 DLLIMPORT long _DK_tree_dad[TREEITEMS_COUNT];
@@ -43,6 +45,14 @@ DLLIMPORT long _DK_ix_delaunay;
 #define ix_delaunay _DK_ix_delaunay
 DLLIMPORT long _DK_delaunay_stack[DELAUNAY_COUNT];
 #define delaunay_stack _DK_delaunay_stack
+#else
+unsigned char Tags[TREEITEMS_COUNT];
+long tree_dad[TREEITEMS_COUNT];
+unsigned char tag_current = 0;
+long ix_delaunay = 0;
+long delaunay_stack[DELAUNAY_COUNT];
+#endif
+
 /******************************************************************************/
 /******************************************************************************/
 void nodes_classify(void)
