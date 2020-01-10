@@ -1452,10 +1452,11 @@ void pick_up_next_creature(struct GuiButton *gbtn)
     }
 
     pick_flags = TPF_PickableCheck;
-    if (lbKeyOn[KC_LCONTROL] || lbKeyOn[KC_RCONTROL])
-        pick_flags |= TPF_OrderedPick;
-    if (lbKeyOn[KC_LSHIFT] || lbKeyOn[KC_RSHIFT])
-        pick_flags |= TPF_ReverseOrder;
+	pick_flags |= TPF_OrderedPick;
+	if (lbKeyOn[KC_LSHIFT] || lbKeyOn[KC_RSHIFT])
+	{
+		pick_flags |= TPF_ReverseOrder;
+	}
     pick_up_creature_of_model_and_gui_job(kind, CrGUIJob_Any, my_player_number, pick_flags);
 }
 
