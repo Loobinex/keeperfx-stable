@@ -223,7 +223,8 @@ void draw_battle_head(struct Thing *thing, long scr_x, long scr_y, int units_per
     spr = &gui_panel_sprites[spr_idx];
     int ps_units_per_px;
     ps_units_per_px = (50 * units_per_px + spr->SHeight/2) / spr->SHeight;
-    int curscr_x, curscr_y;
+    int curscr_x;
+    int curscr_y;
     curscr_x = scr_x - (spr->SWidth*ps_units_per_px/16)/2;
     curscr_y = scr_y - (spr->SHeight*ps_units_per_px/16)/2;
     if ((thing->creature.health_bar_turns) && ((game.play_gameturn & 1) != 0)) {
@@ -237,7 +238,8 @@ void draw_battle_head(struct Thing *thing, long scr_x, long scr_y, int units_per
     // Show health
     struct CreatureControl *cctrl;
     cctrl = creature_control_get_from_thing(thing);
-    HitPoints health,max_health;
+    HitPoints health;
+    HitPoints max_health;
     health = thing->health;
     if (health < 0)
         health = 0;
@@ -273,14 +275,16 @@ void gui_area_friendly_battlers(struct GuiButton *gbtn)
     }
     int units_per_px;
     units_per_px = (gbtn->width * 16 + 160/2) / 160;
-    int scr_pos_x, wdelta;
+    int scr_pos_x;
+    int wdelta;
     wdelta = gbtn->width / 7;
     scr_pos_x = gbtn->scr_pos_x - wdelta + gbtn->width;
     lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
     LbDrawBox(gbtn->scr_pos_x, gbtn->scr_pos_y,
         gbtn->width, gbtn->height, colours[0][0][0]);
     lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
-    int i,battlr_id;
+    int i;
+    int battlr_id;
     for (battlr_id=0; battlr_id < MESSAGE_BATTLERS_COUNT; battlr_id++)
     {
         struct Thing *thing;
@@ -349,14 +353,16 @@ void gui_area_enemy_battlers(struct GuiButton *gbtn)
     }
     int units_per_px;
     units_per_px = (gbtn->width * 16 + 160/2) / 160;
-    int scr_pos_x, wdelta;
+    int scr_pos_x;
+    int wdelta;
     wdelta = gbtn->width / 7;
     scr_pos_x = gbtn->scr_pos_x;
     lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
     LbDrawBox(gbtn->scr_pos_x, gbtn->scr_pos_y,
         gbtn->width, gbtn->height, colours[0][0][0]);
     lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
-    int i,battlr_id;
+    int i;
+    int battlr_id;
     for (battlr_id=0; battlr_id < MESSAGE_BATTLERS_COUNT; battlr_id++)
     {
         struct Thing *thing;
@@ -410,11 +416,13 @@ void draw_bonus_timer(void)
     LbTextSetFont(winfont);
     char * text;
     text = buf_sprintf("%05d", nturns/2);
-    long width, height;
+    long width;
+    long height;
     width = 10 * (LbTextCharWidth('0')*units_per_pixel/16);
     height = LbTextLineHeight()*units_per_pixel/16 + (LbTextLineHeight()*units_per_pixel/16) / 2;
     lbDisplay.DrawFlags = Lb_TEXT_HALIGN_CENTER;
-    long scr_x, scr_y;
+    long scr_x;
+    long scr_y;
     scr_x = MyScreenWidth - width - 16*units_per_pixel/16;
     scr_y = 16*units_per_pixel/16;
     LbTextSetWindow(scr_x, scr_y, width, height);

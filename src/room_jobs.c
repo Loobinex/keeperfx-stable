@@ -272,7 +272,8 @@ TbBool remove_creature_from_work_room(struct Thing *creatng)
  */
 struct Thing *find_object_in_room_for_creature_matching_bool_filter(struct Thing *creatng, const struct Room *room, Thing_Bool_Filter matcher_cb)
 {
-    struct Thing *rettng,*tmptng;
+    struct Thing* rettng;
+    struct Thing* tmptng;
     long selected;
     unsigned long k;
     long i;
@@ -287,7 +288,8 @@ struct Thing *find_object_in_room_for_creature_matching_bool_filter(struct Thing
     i = room->slabs_list;
     while (i != 0)
     {
-        MapSubtlCoord stl_x,stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = slab_subtile_center(slb_num_decode_x(i));
         stl_y = slab_subtile_center(slb_num_decode_y(i));
         // Per room tile code
@@ -435,7 +437,8 @@ short send_creature_to_room(struct Thing *creatng, struct Room *room, CreatureJo
 {
     SYNCDBG(16,"Starting for %s (owner %d) and room %s",thing_model_name(creatng),(int)creatng->owner,room_code_name(room->kind));
     // Job selection is based on subtile, not on room - so select a subtile within the room
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = slab_subtile(slb_num_decode_x(room->slabs_list),0);
     stl_y = slab_subtile(slb_num_decode_y(room->slabs_list),0);
     if (!creature_can_do_job_near_position(creatng, stl_x, stl_y, jobpref, JobChk_SetStateOnFail|JobChk_PlayMsgOnFail)) {

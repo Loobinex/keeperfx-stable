@@ -113,7 +113,8 @@ TbBool point_is_invalid(const struct Point *pt)
 
 TbBool point_equals(AridPointId pt_idx, long pt_x, long pt_y)
 {
-    long tip_x,tip_y;
+    long tip_x;
+    long tip_y;
     if ((pt_idx < 0) || (pt_idx >= POINTS_COUNT))
         return false;
     tip_x = Points[pt_idx].x;
@@ -131,7 +132,8 @@ AridPointId allocated_point_search(long pt_x, long pt_y)
     }
     for (pt_idx=0; pt_idx < POINTS_COUNT; pt_idx++)
     {
-        long tip_x,tip_y;
+        long tip_x;
+        long tip_y;
         tip_x = Points[pt_idx].x;
         tip_y = Points[pt_idx].y;
         if ((tip_x == pt_x) && (tip_y == pt_y)) {

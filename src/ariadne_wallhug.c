@@ -175,7 +175,8 @@ long get_angle_of_wall_hug(struct Thing *creatng, long a2, long a3, unsigned cha
         cctrl = creature_control_get_from_thing(creatng);
         navi = &cctrl->navi;
     }
-    long quadr, whangle;
+    long quadr;
+    long whangle;
     switch (navi->field_1[0])
     {
     case 1:
@@ -234,7 +235,8 @@ long slab_wall_hug_route(struct Thing *thing, struct Coord3d *pos, long max_val)
     curr_pos.z.val = thing->mappos.z.val;
     curr_pos.x.stl.num = stl_slab_center_subtile(curr_pos.x.stl.num);
     curr_pos.y.stl.num = stl_slab_center_subtile(curr_pos.y.stl.num);
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = stl_slab_center_subtile(pos->x.stl.num);
     stl_y = stl_slab_center_subtile(pos->y.stl.num);
     pos3.x.val = pos->x.val;
@@ -421,7 +423,8 @@ long creature_cannot_move_directly_to_with_collide(struct Thing *creatng, struct
     struct Coord3d next_pos;
     struct Coord3d prev_pos;
     struct Coord3d orig_pos;
-    MapCoordDelta dt_x, dt_y;
+    MapCoordDelta dt_x;
+    MapCoordDelta dt_y;
 
     prev_pos = creatng->mappos;
     dt_x = (prev_pos.x.val - pos->x.val);
@@ -642,7 +645,8 @@ TbBool find_approach_position_to_subtile(const struct Coord3d *srcpos, MapSubtlC
     min_dist = LONG_MAX;
     for (n=0; n < SMALL_AROUND_SLAB_LENGTH; n++)
     {
-        long dx,dy;
+        long dx;
+        long dy;
         dx = spacing * (long)small_around[n].delta_x;
         dy = spacing * (long)small_around[n].delta_y;
         struct Coord3d tmpos;
@@ -705,7 +709,8 @@ TbBool navigation_push_towards_target(struct Navigation *navi, struct Thing *cre
         SubtlCodedCoords stl_num;
         stl_num = get_map_index_of_first_block_thing_colliding_with_travelling_to(creatng, &creatng->mappos, &navi->pos_next, 40, 0);
         navi->field_15 = stl_num;
-        MapSubtlCoord stl_x, stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = slab_subtile_center(subtile_slab_fast(stl_num_decode_x(stl_num)));
         stl_y = slab_subtile_center(subtile_slab_fast(stl_num_decode_y(stl_num)));
         find_approach_position_to_subtile(&creatng->mappos, stl_x, stl_y, nav_radius + 385, &navi->pos_next);
@@ -729,13 +734,16 @@ long get_next_position_and_angle_required_to_tunnel_creature_to(struct Thing *cr
     }
     a3 |= (1 << creatng->owner);
     //return _DK_get_next_position_and_angle_required_to_tunnel_creature_to(creatng, pos, a3);
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     SubtlCodedCoords stl_num;
     MapCoordDelta dist_to_next;
     struct Coord3d tmpos;
     int nav_radius;
-    long angle, i;
-    int block_flags, cannot_move;
+    long angle;
+    long i;
+    int block_flags;
+    int cannot_move;
     struct Map *mapblk;
     switch (navi->navstate)
     {
@@ -803,7 +811,8 @@ long get_next_position_and_angle_required_to_tunnel_creature_to(struct Thing *cr
                 stl_num = get_map_index_of_first_block_thing_colliding_with_travelling_to(creatng, &creatng->mappos, &navi->pos_next, 40, 0);
                 navi->field_15 = stl_num;
                 nav_radius = thing_nav_sizexy(creatng) / 2;
-                MapSubtlCoord stl_x, stl_y;
+                MapSubtlCoord stl_x;
+                MapSubtlCoord stl_y;
                 stl_x = slab_subtile_center(subtile_slab_fast(stl_num_decode_x(stl_num)));
                 stl_y = slab_subtile_center(subtile_slab_fast(stl_num_decode_y(stl_num)));
                 find_approach_position_to_subtile(&creatng->mappos, stl_x, stl_y, nav_radius + 385, &navi->pos_next);
@@ -1112,7 +1121,9 @@ TbBool is_valid_hug_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, PlayerNumb
 
 long dig_to_position(PlayerNumber plyr_idx, MapSubtlCoord basestl_x, MapSubtlCoord basestl_y, int direction_around, TbBool revside)
 {
-    long i,round_idx,round_change;
+    long i;
+    long round_idx;
+    long round_change;
     //return _DK_dig_to_position(a1, a2, a3, start_side, revside);
     SYNCDBG(14,"Starting for subtile (%d,%d)",(int)basestl_x,(int)basestl_y);
     if (revside) {
@@ -1123,7 +1134,8 @@ long dig_to_position(PlayerNumber plyr_idx, MapSubtlCoord basestl_x, MapSubtlCoo
     round_idx = (direction_around + SMALL_AROUND_LENGTH - round_change) % SMALL_AROUND_LENGTH;
     for (i=0; i < SMALL_AROUND_LENGTH; i++)
     {
-        MapSubtlCoord stl_x,stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = basestl_x + STL_PER_SLB * (int)small_around[round_idx].delta_x;
         stl_y = basestl_y + STL_PER_SLB * (int)small_around[round_idx].delta_y;
         if (!is_valid_hug_subtile(stl_x, stl_y, plyr_idx))
@@ -1141,14 +1153,16 @@ long dig_to_position(PlayerNumber plyr_idx, MapSubtlCoord basestl_x, MapSubtlCoo
 static inline void get_hug_side_next_step(MapSubtlCoord dst_stl_x, MapSubtlCoord dst_stl_y, int dirctn, PlayerNumber plyr_idx,
     char *state, MapSubtlCoord *ostl_x, MapSubtlCoord *ostl_y, short *round, int *maxdist)
 {
-    MapSubtlCoord curr_stl_x, curr_stl_y;
+    MapSubtlCoord curr_stl_x;
+    MapSubtlCoord curr_stl_y;
     curr_stl_x = *ostl_x;
     curr_stl_y = *ostl_y;
     unsigned short round_idx;
     round_idx = small_around_index_in_direction(curr_stl_x, curr_stl_y, dst_stl_x, dst_stl_y);
     int dist;
     dist = max(abs(curr_stl_x - dst_stl_x), abs(curr_stl_y - dst_stl_y));
-    int dx,dy;
+    int dx;
+    int dy;
     dx = small_around[round_idx].delta_x;
     dy = small_around[round_idx].delta_y;
     // If we can follow direction straight to the target, and we will get closer to it, then do it
@@ -1196,11 +1210,16 @@ short get_hug_side_options(MapSubtlCoord src_stl_x, MapSubtlCoord src_stl_y, Map
     unsigned short direction, PlayerNumber plyr_idx, MapSubtlCoord *ostla_x, MapSubtlCoord *ostla_y, MapSubtlCoord *ostlb_x, MapSubtlCoord *ostlb_y)
 {
     SYNCDBG(4,"Starting");
-    MapSubtlCoord stl_b_x, stl_b_y;
-    MapSubtlCoord stl_a_x, stl_a_y;
-    int maxdist_a,maxdist_b;
-    short round_a,round_b;
-    char state_a, state_b;
+    MapSubtlCoord stl_b_x;
+    MapSubtlCoord stl_b_y;
+    MapSubtlCoord stl_a_x;
+    MapSubtlCoord stl_a_y;
+    int maxdist_a;
+    int maxdist_b;
+    short round_a;
+    short round_b;
+    char state_a;
+    char state_b;
     int dist;
     dist = max(abs(src_stl_x - dst_stl_x), abs(src_stl_y - dst_stl_y));
 

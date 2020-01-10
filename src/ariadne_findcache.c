@@ -36,7 +36,8 @@ DLLIMPORT long _DK_find_cache[4][4];
 long triangle_brute_find8_near(long pos_x, long pos_y)
 {
     //return _DK_triangle_brute_find8_near(pos_x, pos_y);
-    long cx, cy;
+    long cx;
+    long cy;
     cx = pos_x >> 14;
     if (cx < 0)
         cx = 0;
@@ -90,29 +91,30 @@ long triangle_brute_find8_near(long pos_x, long pos_y)
 
 long triangle_find_cache_get(long pos_x, long pos_y)
 {
-  long cache_x,cache_y;
-  long ntri;
-  cache_x = (pos_x >> 14);
-  if (cache_x > 3)
-    cache_x = 3;
-  if (cache_x < 0)
-    cache_x = 0;
-  cache_y = (pos_y >> 14);
-  if (cache_y > 3)
-    cache_y = 3;
-  if (cache_y < 0)
-    cache_y = 0;
+    long cache_x;
+    long cache_y;
+    long ntri;
+    cache_x = (pos_x >> 14);
+    if (cache_x > 3)
+        cache_x = 3;
+    if (cache_x < 0)
+        cache_x = 0;
+    cache_y = (pos_y >> 14);
+    if (cache_y > 3)
+        cache_y = 3;
+    if (cache_y < 0)
+        cache_y = 0;
 
-  ntri = find_cache[cache_y][cache_x];
-  if (get_triangle_tree_alt(ntri) == -1)
-  {
-    ntri = triangle_brute_find8_near(pos_x, pos_y);
-    if ((ntri < 0) || (ntri > ix_Triangles))
+    ntri = find_cache[cache_y][cache_x];
+    if (get_triangle_tree_alt(ntri) == -1)
     {
-        ERRORLOG("triangles count overflow");
-        ntri = -1;
-    }
-    find_cache[cache_y][cache_x] = ntri;
+        ntri = triangle_brute_find8_near(pos_x, pos_y);
+        if ((ntri < 0) || (ntri > ix_Triangles))
+        {
+            ERRORLOG("triangles count overflow");
+            ntri = -1;
+        }
+        find_cache[cache_y][cache_x] = ntri;
   }
   return ntri;
 
@@ -120,18 +122,19 @@ long triangle_find_cache_get(long pos_x, long pos_y)
 
 void triangle_find_cache_put(long pos_x, long pos_y, long ntri)
 {
-  long cache_x,cache_y;
-  cache_x = (pos_x >> 14);
-  if (cache_x > 3)
-    cache_x = 3;
-  if (cache_x < 0)
-    cache_x = 0;
-  cache_y = (pos_y >> 14);
-  if (cache_y > 3)
-    cache_y = 3;
-  if (cache_y < 0)
-    cache_y = 0;
-  find_cache[cache_y][cache_x] = ntri;
+    long cache_x;
+    long cache_y;
+    cache_x = (pos_x >> 14);
+    if (cache_x > 3)
+        cache_x = 3;
+    if (cache_x < 0)
+        cache_x = 0;
+    cache_y = (pos_y >> 14);
+    if (cache_y > 3)
+        cache_y = 3;
+    if (cache_y < 0)
+        cache_y = 0;
+    find_cache[cache_y][cache_x] = ntri;
 }
 
 void triangulation_init_cache(long tri_idx)
@@ -148,8 +151,11 @@ void triangulation_init_cache(long tri_idx)
 
 long triangle_find8(long pt_x, long pt_y)
 {
-    int eqA,eqB,eqC;
-    long ntri,ncor;
+    int eqA;
+    int eqB;
+    int eqC;
+    long ntri;
+    long ncor;
     long nxcor; // Used only to verify if pointed_at8() didn't failed
     unsigned long k;
     NAVIDBG(19,"Starting");
@@ -213,7 +219,8 @@ long triangle_find8(long pt_x, long pt_y)
 TbBool point_find(long pt_x, long pt_y, long *out_tri_idx, long *out_cor_idx)
 {
     struct Point *pt;
-    long tri_idx,cor_id;
+    long tri_idx;
+    long cor_id;
     tri_idx = triangle_find8(pt_x << 8, pt_y << 8);
     if (tri_idx < 0)
     {

@@ -97,7 +97,8 @@ TbBool is_wide_charcode(unsigned long chr)
  */
 void LbDrawCharUnderline(long pos_x, long pos_y, long width, long height, uchar draw_colr, uchar shadow_colr)
 {
-    long w,h;
+    long w;
+    long h;
     h = height;
     w = width;
     // Draw shadow
@@ -124,7 +125,8 @@ void LbDrawCharUnderline(long pos_x, long pos_y, long width, long height, uchar 
 
 unsigned short dbc_char_to_font_char(unsigned long chr)
 {
-    unsigned char i,k;
+    unsigned char i;
+    unsigned char k;
     unsigned short n;
     unsigned short font_char;
     switch (dbc_language)
@@ -161,7 +163,8 @@ unsigned short dbc_char_to_font_char(unsigned long chr)
 
 int dbc_get_sprite_for_char(struct AsianDraw *adraw, unsigned long chr)
 {
-    long c,i;
+    long c;
+    long i;
     SYNCDBG(19,"Starting");
     if (active_dbcfont->data == 0)
         return 5;
@@ -237,7 +240,8 @@ int dbc_draw_font_sprite(unsigned char *dst_buf, long dst_scanline, unsigned cha
     short colour;
     short skip_count;
     unsigned short src_val;
-    int x,y;
+    int x;
+    int y;
     SYNCDBG(19,"Starting at %d,%d size %d,%d",(int)start_x, (int)start_y, (int)width, (int)height);
     // Computing width in bytes from the number of bits
     src_scanline = src_bitwidth >> 3;
@@ -306,10 +310,13 @@ struct AsianFont *dbc_fonts_list(void)
 int dbc_draw_font_sprite_text(const struct AsianFontWindow *awind, const struct AsianDraw *adraw,
       long pos_x, long pos_y, short colr1, short colr2, short colr3)
 {
-    long scr_x,scr_y;
+    long scr_x;
+    long scr_y;
     unsigned char *dst_buf;
-    long width,height;
-    long x,y;
+    long width;
+    long height;
+    long x;
+    long y;
     SYNCDBG(19,"Starting");
     if ((adraw == NULL) || (awind == NULL))
       return 4;
@@ -418,7 +425,8 @@ void put_down_dbctext_sprites(const char *sbuf, const char *ebuf, long x, long y
 {
     const char *c;
     unsigned long chr;
-    long w,h;
+    long w;
+    long h;
     struct AsianFontWindow awind;
     TbBool needs_draw;
     awind.buf_ptr = lbDisplay.GraphicsWindowPtr;
@@ -521,7 +529,8 @@ void put_down_dbctext_sprites_resized(const char *sbuf, const char *ebuf, long x
 {
     const char *c;
     unsigned long chr;
-    long w,h;
+    long w;
+    long h;
     struct AsianFontWindow awind;
     TbBool needs_draw;
     awind.buf_ptr = lbDisplay.GraphicsWindowPtr;
@@ -634,7 +643,8 @@ void put_down_simpletext_sprites(const char *sbuf, const char *ebuf, long x, lon
   const char *c;
   const struct TbSprite *spr;
   unsigned char chr;
-  long w,h;
+  long w;
+  long h;
   for (c=sbuf; c < ebuf; c++)
   {
     chr = (unsigned char)(*c);
@@ -724,7 +734,8 @@ void put_down_simpletext_sprites_resized(const char *sbuf, const char *ebuf, lon
   const char *c;
   const struct TbSprite *spr;
   unsigned char chr;
-  long w,h;
+  long w;
+  long h;
   for (c=sbuf; c < ebuf; c++)
   {
     chr = (unsigned char)(*c);
@@ -835,7 +846,8 @@ void put_down_sprites(const char *sbuf, const char *ebuf, long x, long y, long l
 long text_string_height(int units_per_px, const char *text)
 {
     long nlines;
-    long lnwidth,lnwidth_clip;
+    long lnwidth;
+    long lnwidth_clip;
     long w;
     const char *pchr;
     long chr;
@@ -924,14 +936,19 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
     TbGraphicsWindow grwnd;
     // Counter for amount of blank characters in a line
     long count;
-    long justifyx,justifyy;
-    long startx,starty;
+    long justifyx;
+    long justifyy;
+    long startx;
+    long starty;
     const char *sbuf;
     const char *ebuf;
     const char *prev_ebuf;
     long chr;
-    long x,y,len;
-    long w,h;
+    long x;
+    long y;
+    long len;
+    long w;
+    long h;
     if ((lbFontPtr == NULL) || (text == NULL))
         return true;
     LbScreenStoreGraphicsWindow(&grwnd);
@@ -1428,7 +1445,9 @@ int LbTextStringWidth(const char *text)
 
 int LbTextStringHeight(const char *str)
 {
-    int i,h,lines;
+    int i;
+    int h;
+    int lines;
     lines=1;
     if ((lbFontPtr == NULL) || (str == NULL))
         return 0;
@@ -1444,7 +1463,8 @@ int LbTextStringHeight(const char *str)
 int LbTextNumberDraw(int pos_x, int pos_y, int units_per_px, long number, unsigned short fdflags)
 {
     char text[16];
-    int w,h;
+    int w;
+    int h;
     if (lbFontPtr == NULL)
       return 0;
     sprintf(text,"%ld",number);
@@ -1468,7 +1488,8 @@ int LbTextNumberDraw(int pos_x, int pos_y, int units_per_px, long number, unsign
 
 int LbTextStringDraw(int pos_x, int pos_y, int units_per_px, const char *text, unsigned short fdflags)
 {
-    int w,h;
+    int w;
+    int h;
     if (lbFontPtr == NULL)
       return 0;
     if (text == NULL)
@@ -1519,8 +1540,10 @@ TbResult LbTextSetJustifyWindow(int pos_x, int pos_y, int width)
 
 TbResult LbTextSetClipWindow(int pos_x, int pos_y, int width, int height)
 {
-    int start_x,start_y;
-    int end_x,end_y;
+    int start_x;
+    int start_y;
+    int end_x;
+    int end_y;
     int i;
     start_x = pos_x;
     start_y = pos_y;
@@ -1732,7 +1755,8 @@ short dbc_initialize(const char *fpath)
   struct AsianFont *dbcfonts = dbc_fonts_list();
   short ret;
   char fname[DISKPATH_SIZE];
-  long i,k;
+  long i;
+  long k;
   TbFileHandle fhandle;
 
   ret = 0;

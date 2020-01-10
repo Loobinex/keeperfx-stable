@@ -384,7 +384,8 @@ long check_out_place_for_convert_behind_door(struct Thing *thing, MapSlabCoord s
     int n;
     for (n=0; n < SMALL_AROUND_LENGTH; n++)
     {
-        MapSlabCoord sslb_x, sslb_y;
+        MapSlabCoord sslb_x;
+        MapSlabCoord sslb_y;
         sslb_x = slb_x + small_around[n].delta_x;
         sslb_y = slb_y + small_around[n].delta_y;
         if (slab_is_my_door(thing->owner, sslb_x, sslb_y))
@@ -409,7 +410,8 @@ long check_out_place_for_convert_behind_door(struct Thing *thing, MapSlabCoord s
 long check_out_unconverted_drop_place(struct Thing *thing)
 {
     //return _DK_check_out_unconverted_drop_place(thing);
-    MapSlabCoord slb_x,slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     slb_x = subtile_slab_fast(thing->mappos.x.stl.num);
     slb_y = subtile_slab_fast(thing->mappos.x.stl.num);
     if (check_place_to_convert_excluding(thing, slb_x, slb_y))
@@ -517,7 +519,8 @@ long check_out_object_for_trap(struct Thing *spdigtng, struct Thing *traptng)
     struct Thing *thing;
     struct SlabMap *slb;
     struct Room *room;
-    long find_model,find_owner;
+    long find_model;
+    long find_owner;
     long i;
     unsigned long k;
     cctrl = creature_control_get_from_thing(spdigtng);
@@ -612,11 +615,15 @@ long check_out_empty_traps(struct Thing *spdigtng, long range)
 long check_out_unreinforced_drop_place(struct Thing *thing)
 {
     struct CreatureControl *cctrl;
-    MapSubtlCoord stl_x,stl_y;
-    MapSlabCoord slb_x,slb_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     long stl_num;
-    long pos_x,pos_y;
-    long i,n;
+    long pos_x;
+    long pos_y;
+    long i;
+    long n;
     stl_x = thing->mappos.x.stl.num;
     stl_y = thing->mappos.y.stl.num;
     cctrl = creature_control_get_from_thing(thing);
@@ -802,7 +809,8 @@ short imp_arrives_at_convert_dungeon(struct Thing *thing)
 
 TbBool move_imp_to_uncrowded_dig_mine_access_point(struct Thing *spdigtng, SubtlCodedCoords stl_num)
 {
-    long pos_x,pos_y;
+    long pos_x;
+    long pos_y;
     TRACE_THING(spdigtng);
     if (!check_place_to_dig_and_get_position(spdigtng, stl_num, &pos_x, &pos_y))
         return false;
@@ -884,8 +892,10 @@ short imp_converts_dungeon(struct Thing *spdigtng)
 {
     struct CreatureControl *cctrl;
     struct Room *room;
-    MapSubtlCoord stl_x,stl_y;
-    MapSlabCoord slb_x,slb_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     TRACE_THING(spdigtng);
     stl_x = spdigtng->mappos.x.stl.num;
     stl_y = spdigtng->mappos.y.stl.num;
@@ -913,7 +923,8 @@ short imp_converts_dungeon(struct Thing *spdigtng)
             room = room_get(slb->room_index);
             if (!room_is_invalid(room))
             {
-                MapCoord coord_x,coord_y;
+                MapCoord coord_x;
+                MapCoord coord_y;
                 coord_x = subtile_coord_center(room->central_stl_x);
                 coord_y = subtile_coord_center(room->central_stl_y);
                 event_create_event_or_update_nearby_existing_event(coord_x, coord_y,
@@ -951,8 +962,10 @@ short imp_digs_mines(struct Thing *spdigtng)
     struct MapTask* mtask;
     struct SlabMap *slb;
     struct Coord3d pos;
-    MapSubtlCoord stl_x,stl_y;
-    MapSubtlDelta delta_x,delta_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapSubtlDelta delta_x;
+    MapSubtlDelta delta_y;
     SYNCDBG(19,"Starting");
     TRACE_THING(spdigtng);
     cctrl = creature_control_get_from_thing(spdigtng);
@@ -1072,7 +1085,8 @@ short imp_drops_gold(struct Thing *spdigtng)
         internal_set_thing_state(spdigtng, CrSt_ImpLastDidJob);
         return 1;
     }
-    MapSubtlCoord center_stl_x,center_stl_y;
+    MapSubtlCoord center_stl_x;
+    MapSubtlCoord center_stl_y;
     center_stl_x = slab_subtile_center(subtile_slab_fast(spdigtng->mappos.x.stl.num));
     center_stl_y = slab_subtile_center(subtile_slab_fast(spdigtng->mappos.y.stl.num));
     struct Room *curoom;
@@ -1111,8 +1125,10 @@ short imp_drops_gold(struct Thing *spdigtng)
 short imp_improves_dungeon(struct Thing *spdigtng)
 {
     struct CreatureControl *cctrl;
-    MapSubtlDelta delta_x,delta_y;
-    long slb_x,slb_y;
+    MapSubtlDelta delta_x;
+    MapSubtlDelta delta_y;
+    long slb_x;
+    long slb_y;
     SYNCDBG(19,"Starting");
     TRACE_THING(spdigtng);
     cctrl = creature_control_get_from_thing(spdigtng);
@@ -1220,14 +1236,16 @@ short imp_reinforces(struct Thing *thing)
     //return _DK_imp_reinforces(thing);
     struct CreatureControl *cctrl;
     cctrl = creature_control_get_from_thing(thing);
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = stl_num_decode_x(cctrl->digger.working_stl);
     stl_y = stl_num_decode_y(cctrl->digger.working_stl);
     struct Coord3d pos;
     pos.x.val = subtile_coord_center(stl_x);
     pos.y.val = subtile_coord_center(stl_y);
     pos.z.val = subtile_coord(1,0);
-    MapSubtlDelta dist_x, dist_y;
+    MapSubtlDelta dist_x;
+    MapSubtlDelta dist_y;
     dist_x = abs(thing->mappos.x.stl.num - (MapSubtlDelta)cctrl->moveto_pos.x.stl.num);
     dist_y = abs(thing->mappos.y.stl.num - (MapSubtlDelta)cctrl->moveto_pos.y.stl.num);
     if (dist_x + dist_y >= 1)
@@ -1348,7 +1366,8 @@ TbBool creature_drop_thing_to_another_room(struct Thing *thing, struct Room *ski
 TbBool set_creature_being_dragged_by(struct Thing *dragtng, struct Thing *thing)
 {
     struct Thing *picktng;
-    struct CreatureControl *cctrl, *dragctrl;
+    struct CreatureControl* cctrl;
+    struct CreatureControl* dragctrl;
     TRACE_THING(dragtng);
     TRACE_THING(thing);
     cctrl = creature_control_get_from_thing(thing);
@@ -1487,7 +1506,8 @@ short creature_picks_up_corpse(struct Thing *creatng)
  */
 short creature_picks_up_spell_object(struct Thing *creatng)
 {
-    struct Room *enmroom, *dstroom;
+    struct Room* enmroom;
+    struct Room* dstroom;
     struct CreatureControl *cctrl;
     struct Thing *picktng;
     struct Coord3d pos;

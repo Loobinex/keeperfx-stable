@@ -90,7 +90,8 @@ TbBool show_onscreen_msg(int nturns, const char *fmt_str, ...)
 
 TbBool erstat_check(void)
 {
-    int stat_num,sdiff;
+    int stat_num;
+    int sdiff;
     // Don't check more often than every 7 turns
     if ((game.play_gameturn & 0x07) != 0)
         return false;

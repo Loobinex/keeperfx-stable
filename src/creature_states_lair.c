@@ -132,7 +132,8 @@ long creature_will_sleep(struct Thing *thing)
 {
     struct CreatureControl *cctrl;
     struct Thing *lairtng;
-    long dist_x,dist_y;
+    long dist_x;
+    long dist_y;
     TRACE_THING(thing);
     cctrl = creature_control_get_from_thing(thing);
     lairtng = thing_get(cctrl->lairtng_idx);
@@ -304,12 +305,14 @@ TbBool setup_head_for_random_unused_lair_subtile(struct Thing *creatng, struct R
     // It is very rare to have more than one lair on a slab, as it will look overlapping; but may be needed if efficiency is large enough
     for (n = 0; n < MID_AROUND_LENGTH; n++)
     {
-        MapSubtlDelta ssub_x, ssub_y;
+        MapSubtlDelta ssub_x;
+        MapSubtlDelta ssub_y;
         ssub_x = 1 + start_at_around[n].delta_x;
         ssub_y = 1 + start_at_around[n].delta_y;
         for (k = 0; k < room->slabs_count; k++)
         {
-            MapSlabCoord slb_x,slb_y;
+            MapSlabCoord slb_x;
+            MapSlabCoord slb_y;
             slb_x = slb_num_decode_x(slbnum);
             slb_y = slb_num_decode_y(slbnum);
             struct Thing *lairtng;

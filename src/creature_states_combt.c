@@ -248,7 +248,8 @@ TbBool creature_will_do_combat(const struct Thing *thing)
 
 long get_combat_distance(const struct Thing *thing, const struct Thing *enmtng)
 {
-    long dist,avgc;
+    long dist;
+    long avgc;
     dist = get_2d_box_distance(&thing->mappos, &enmtng->mappos);
     avgc = ((long)enmtng->clipbox_size_xy + (long)thing->clipbox_size_xy) / 2;
     if (dist < avgc)
@@ -316,7 +317,8 @@ TbBool creature_is_actually_scared(const struct Thing *creatng, const struct Thi
     }
     // Creatures are scared if their health drops lower than
     // fear_wounded percent of base health
-    HitPoints crmaxhealth,enmaxhealth;
+    HitPoints crmaxhealth;
+    HitPoints enmaxhealth;
     long fear;
     if (player_creature_tends_to(creatng->owner,CrTend_Flee)) {
         // In flee mode, use full fear value
@@ -336,7 +338,8 @@ TbBool creature_is_actually_scared(const struct Thing *creatng, const struct Thi
         return true;
     }
     // If the enemy is way stronger, a creature may be scared anyway
-    long long enmstrength,ownstrength;
+    long long enmstrength;
+    long long ownstrength;
     fear = crstat->fear_stronger;
     enmstrength = LbSqrL(project_melee_damage(enmtng)) * (enmstat->fearsome_factor)/100 * ((long long)enmaxhealth + (long long)enmtng->health)/2;
     ownstrength = LbSqrL(project_melee_damage(creatng)) * (crstat->fearsome_factor)/100 * ((long long)crmaxhealth + (long long)creatng->health)/2;
@@ -600,7 +603,8 @@ void update_battle_events(BattleIndex battle_id)
     struct CreatureControl *cctrl;
     struct Thing *thing;
     unsigned short owner_flags;
-    MapCoord map_x,map_y;
+    MapCoord map_x;
+    MapCoord map_y;
     unsigned long k;
     int i;
     owner_flags = 0;
@@ -1018,7 +1022,8 @@ TbBool remove_ranged_attacker(struct Thing *fightng, struct Thing *enmtng)
 long remove_all_melee_combat_attackers(struct Thing *victmtng)
 {
     struct CreatureControl *vicctrl;
-    long oppn_idx,num;
+    long oppn_idx;
+    long num;
     TRACE_THING(victmtng);
     num = 0;
     vicctrl = creature_control_get_from_thing(victmtng);
@@ -1046,7 +1051,8 @@ long remove_all_melee_combat_attackers(struct Thing *victmtng)
 long remove_all_ranged_combat_attackers(struct Thing *victmtng)
 {
     struct CreatureControl *vicctrl;
-    long oppn_idx,num;
+    long oppn_idx;
+    long num;
     TRACE_THING(victmtng);
     num = 0;
     vicctrl = creature_control_get_from_thing(victmtng);
@@ -1574,7 +1580,8 @@ long get_combat_score(const struct Thing *thing, const struct Thing *enmtng, CrA
 CrAttackType check_for_possible_melee_combat_with_attacker_within_distance(struct Thing *fightng, struct Thing **outenmtng, long maxdist, unsigned long *outscore)
 {
     struct Thing *thing;
-    long oppn_idx, thing_idx;
+    long oppn_idx;
+    long thing_idx;
     struct CreatureControl *figctrl;
     figctrl = creature_control_get_from_thing(fightng);
     CrAttackType best;
@@ -1616,7 +1623,8 @@ CrAttackType check_for_possible_melee_combat_with_attacker_within_distance(struc
 CrAttackType check_for_possible_ranged_combat_with_attacker_within_distance(struct Thing *fightng, struct Thing **outenmtng, long maxdist, unsigned long *outscore)
 {
     struct Thing *thing;
-    long oppn_idx, thing_idx;
+    long oppn_idx;
+    long thing_idx;
     struct CreatureControl *figctrl;
     figctrl = creature_control_get_from_thing(fightng);
     CrAttackType best;
@@ -1717,7 +1725,8 @@ CrAttackType check_for_possible_combat_with_attacker(struct Thing *figtng, struc
 long creature_is_most_suitable_for_combat(struct Thing *thing, struct Thing *enmtng)
 {
     struct CreatureControl *cctrl;
-    unsigned long curr_score,other_score;
+    unsigned long curr_score;
+    unsigned long other_score;
     // If we're already fighting with that enemy
     cctrl = creature_control_get_from_thing(thing);
     if ( creature_has_creature_in_combat(thing, enmtng) )
@@ -1826,7 +1835,8 @@ long guard_post_combat_move(struct Thing *thing, long cntn_crstate)
 TbBool thing_in_field_of_view(struct Thing *thing, struct Thing *checktng)
 {
     struct CreatureStats *crstat;
-    long angle, angdiff;
+    long angle;
+    long angdiff;
     crstat = creature_stats_get_from_thing(thing);
     angle = get_angle_xy_to(&thing->mappos, &checktng->mappos);
     angdiff = get_angle_difference(thing->move_angle_xy, angle);
@@ -2121,7 +2131,10 @@ struct Thing *get_thing_collided_with_at_satisfying_filter_in_square_of_for_subt
 
 struct Thing *get_thing_collided_with_at_satisfying_filter_in_square_of(struct Thing *shotng, struct Coord3d *pos, long square_size, Thing_Collide_Func filter, long filter_par1, long filter_par2)
 {
-    MapSubtlCoord stl_y_beg, stl_x_beg, stl_x_end, stl_y_end;
+    MapSubtlCoord stl_y_beg;
+    MapSubtlCoord stl_x_beg;
+    MapSubtlCoord stl_x_end;
+    MapSubtlCoord stl_y_end;
     stl_x_beg = coord_subtile(pos->x.val - square_size / 2);
     if (stl_x_beg <= 0)
         stl_x_beg = 0;
@@ -2134,7 +2147,8 @@ struct Thing *get_thing_collided_with_at_satisfying_filter_in_square_of(struct T
     stl_y_beg = coord_subtile(pos->y.val - square_size / 2);
     if (stl_y_beg <= 0)
         stl_y_beg = 0;
-    MapSubtlCoord stl_y, stl_x;
+    MapSubtlCoord stl_y;
+    MapSubtlCoord stl_x;
     for (stl_y = stl_y_beg; stl_y <= stl_y_end; stl_y++)
     {
         for (stl_x = stl_x_beg; stl_x <= stl_x_end; stl_x++)
@@ -2168,7 +2182,8 @@ long creature_move_to_a_space_around_enemy(struct Thing *creatng, struct Thing *
     int i;
     for (i = 0; i < POSITION_FIND_TRIES; i++)
     {
-        long angle_final, angle_dt;
+        long angle_final;
+        long angle_dt;
         angle_final = get_angle_xy_to(&enmtng->mappos, &pos);
         angle_dt = angle_final;
         do
@@ -2760,7 +2775,8 @@ void creature_in_ranged_combat(struct Thing *creatng)
     SYNCDBG(19,"Starting for %s index %d",thing_model_name(creatng),(int)creatng->index);
     struct CreatureControl *cctrl;
     struct Thing *enmtng;
-    long dist, cmbtyp;
+    long dist;
+    long cmbtyp;
     CrInstance weapon;
     cctrl = creature_control_get_from_thing(creatng);
     enmtng = thing_get(cctrl->combat.battle_enemy_idx);
@@ -3102,11 +3118,13 @@ TbBool creature_look_for_enemy_heart_combat(struct Thing *thing)
 struct Thing *check_for_door_to_fight(const struct Thing *thing)
 {
     struct Thing *doortng;
-    long m,n;
+    long m;
+    long n;
     m = ACTION_RANDOM(SMALL_AROUND_SLAB_LENGTH);
     for (n=0; n < SMALL_AROUND_SLAB_LENGTH; n++)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = subtile_slab_fast(thing->mappos.x.stl.num) + (long)small_around[m].delta_x;
         slb_y = subtile_slab_fast(thing->mappos.y.stl.num) + (long)small_around[m].delta_y;
         doortng = get_door_for_position(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
@@ -3141,7 +3159,8 @@ TbResult creature_retreat_from_combat(struct Thing *figtng, struct Thing *enmtng
 {
     struct CreatureControl *figctrl;
     struct Coord3d pos;
-    MapCoordDelta dist_x,dist_y;
+    MapCoordDelta dist_x;
+    MapCoordDelta dist_y;
     long i;
     TRACE_THING(figtng);
     TRACE_THING(enmtng);
@@ -3218,11 +3237,13 @@ short creature_attack_rooms(struct Thing *creatng)
         return 1;
     }
     // If we're not (or no longer) on room tile, find adjacent one
-    int n, i;
+    int n;
+    int i;
     n = ACTION_RANDOM(SMALL_AROUND_LENGTH);
     for (i = 0; i < SMALL_AROUND_LENGTH; i++)
     {
-        MapSubtlCoord stl_x,stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = creatng->mappos.x.stl.num + STL_PER_SLB * (int)small_around[n].delta_x;
         stl_y = creatng->mappos.y.stl.num + STL_PER_SLB * (int)small_around[n].delta_y;
         if (attempt_to_destroy_enemy_room(creatng, stl_x, stl_y)) {
@@ -3284,7 +3305,8 @@ long project_creature_attack_target_damage(const struct Thing *firing, const str
         // Do a check to make sure the instance fires a shot
         shot_model = inst_inf->func_params[0];
     }
-    long dexterity, damage;
+    long dexterity;
+    long damage;
     damage = project_creature_shot_damage(firing, shot_model);
     // Adjust the damage with target creature defense
     struct CreatureControl *cctrl;

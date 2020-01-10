@@ -155,7 +155,8 @@ long setup_torture_move_to_device(struct Thing *creatng, struct Room *room, Crea
     k = 0;
     while (1)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(slbnum);
         slb_y = slb_num_decode_y(slbnum);
         tortrtng = find_base_thing_on_mapwho(TCls_Object, 125, slab_subtile_center(slb_x), slab_subtile_center(slb_y));
@@ -336,11 +337,15 @@ long reveal_players_map_to_player(struct Thing *thing, PlayerNumber benefit_plyr
     struct Thing *heartng;
     SlabCodedCoords slb_num;
     struct SlabMap *slb;
-    MapSubtlCoord revealstl_x,revealstl_y;
-    MapSlabCoord slb_x, slb_y;
+    MapSubtlCoord revealstl_x;
+    MapSubtlCoord revealstl_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     unsigned char *ownership_map;
     struct USPOINT_2D *revealed_pts;
-    unsigned int pt_idx,pts_count,pts_to_reveal;
+    unsigned int pt_idx;
+    unsigned int pts_count;
+    unsigned int pts_to_reveal;
     TbBool reveal_success;
     TRACE_THING(thing);
     heartng = get_player_soul_container(thing->owner);

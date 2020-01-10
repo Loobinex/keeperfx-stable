@@ -469,7 +469,8 @@ const struct Coord3d *dungeon_get_essential_pos(PlayerNumber plyr_idx)
 
 void init_dungeons(void)
 {
-    int i,k;
+    int i;
+    int k;
     struct Dungeon *dungeon;
     for (i=0; i < DUNGEONS_COUNT; i++)
     {

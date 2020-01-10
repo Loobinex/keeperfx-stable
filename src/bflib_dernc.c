@@ -103,11 +103,15 @@ long rnc_unpack (void *packed, void *unpacked, unsigned int flags
 {
     unsigned char *input = (unsigned char *)packed;
     unsigned char *output = (unsigned char *)unpacked;
-    unsigned char *inputend, *outputend;
+    unsigned char* inputend;
+    unsigned char* outputend;
     bit_stream bs;
-    huf_table raw, dist, len;
+    huf_table raw;
+    huf_table dist;
+    huf_table len;
     unsigned long ch_count;
-    unsigned long ret_len, inp_len;
+    unsigned long ret_len;
+    unsigned long inp_len;
     long out_crc;
 #ifdef COMPRESSOR
     long lee = 0;
@@ -155,15 +159,20 @@ long rnc_unpack (void *packed, void *unpacked, unsigned int flags
 
       while (1)
       {
-        long length, posn;
+          long length;
+          long posn;
 
-        length = huf_read (&raw, &bs, &input,inputend);
-        if (length == -1)
-            {
-            if (!(flags&RNC_IGNORE_HUF_DECODE_ERROR))
-                return RNC_HUF_DECODE_ERROR;
-            else
-                {output=outputend;ch_count=0;break;}
+          length = huf_read(&raw, &bs, &input, inputend);
+          if (length == -1)
+          {
+              if (!(flags & RNC_IGNORE_HUF_DECODE_ERROR))
+                  return RNC_HUF_DECODE_ERROR;
+              else
+              {
+                  output = outputend;
+                  ch_count = 0;
+                  break;
+              }
             }
         if (length)
         {
@@ -250,7 +259,10 @@ long rnc_unpack (void *packed, void *unpacked, unsigned int flags
 static void read_huftable (huf_table *h, bit_stream *bs,
                           unsigned char **p, unsigned char *pend)
 {
-    int i, j, k, num;
+    int i;
+    int j;
+    int k;
+    int num;
     int leaflen[32];
     int leafmax;
     unsigned long codeb;           // big-endian form of code
@@ -369,7 +381,8 @@ static unsigned long bit_read (bit_stream *bs, unsigned long mask,
 
 // Mirror the bottom n bits of x.
 static unsigned long mirror (unsigned long x, int n) {
-    unsigned long top = 1 << (n-1), bottom = 1;
+    unsigned long top = 1 << (n - 1);
+    unsigned long bottom = 1;
     while (top > bottom)
     {
         unsigned long mask = top | bottom;
@@ -389,7 +402,8 @@ short crctab_ready=false;
 long rnc_crc(void *data, unsigned long len)
 {
   unsigned short val;
-  int i, j;
+  int i;
+  int j;
   unsigned char *p = (unsigned char *)data;
   //computing CRC table
   if (!crctab_ready)

@@ -96,7 +96,8 @@ TbBool is_my_player_number(PlayerNumber plyr_num)
  */
 TbBool players_are_enemies(long origin_plyr_idx, long check_plyr_idx)
 {
-    struct PlayerInfo *origin_player,*check_player;
+    struct PlayerInfo* origin_player;
+    struct PlayerInfo* check_player;
     // Player can't be his own enemy
     if (origin_plyr_idx == check_plyr_idx)
         return false;
@@ -124,7 +125,8 @@ TbBool players_are_enemies(long origin_plyr_idx, long check_plyr_idx)
  */
 TbBool players_are_mutual_allies(PlayerNumber plyr1_idx, PlayerNumber plyr2_idx)
 {
-    struct PlayerInfo *player1,*player2;
+    struct PlayerInfo* player1;
+    struct PlayerInfo* player2;
     // Player is always his own ally
     if (plyr1_idx == plyr2_idx)
         return true;
@@ -151,7 +153,8 @@ TbBool players_are_mutual_allies(PlayerNumber plyr1_idx, PlayerNumber plyr2_idx)
  */
 TbBool players_creatures_tolerate_each_other(PlayerNumber plyr1_idx, PlayerNumber plyr2_idx)
 {
-    struct PlayerInfo *player1,*player2;
+    struct PlayerInfo* player1;
+    struct PlayerInfo* player2;
     // Player is always tolerating fellow creatures
     if (plyr1_idx == plyr2_idx)
         return true;

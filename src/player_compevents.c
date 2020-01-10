@@ -143,7 +143,8 @@ long computer_event_battle(struct Computer2 *comp, struct ComputerEvent *cevent,
         SYNCDBG(8,"No enemies near %s",cevent->name);
         return 0;
     }
-    long creatrs_def, creatrs_num;
+    long creatrs_def;
+    long creatrs_num;
     creatrs_def = count_creatures_for_defend_pickup(comp);
     creatrs_num = creatrs_def * (long)cevent->param1 / 100;
     if ((creatrs_num < 1) && (creatrs_def > 0)) {
@@ -293,7 +294,8 @@ long computer_event_battle_test(struct Computer2 *comp, struct ComputerEvent *ce
     pos.x.val = creatng->mappos.x.val;
     pos.y.val = creatng->mappos.y.val;
     pos.z.val = creatng->mappos.z.val;
-    long creatrs_def, creatrs_num;
+    long creatrs_def;
+    long creatrs_num;
     creatrs_def = count_creatures_for_defend_pickup(comp);
     creatrs_num = creatrs_def * (long)cevent->param1 / 100;
     if ((creatrs_num < 1) && (creatrs_def > 0)) {
@@ -597,7 +599,8 @@ long computer_event_breach(struct Computer2 *comp, struct ComputerEvent *cevent,
 {
     //TODO COMPUTER_EVENT_BREACH is remade from beta; make it work (if it's really needed)
     struct Coord3d pos;
-    long i,count;
+    long i;
+    long count;
 
     //TODO COMPUTER_EVENT_BREACH check why mappos_x and mappos_y isn't used normally
     pos.x.val = event->mappos_x;

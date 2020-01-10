@@ -186,7 +186,8 @@ short creature_scavenged_disappear(struct Thing *thing)
     struct Dungeon *dungeon;
     struct Room *room;
     struct Coord3d pos;
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     long i;
     cctrl = creature_control_get_from_thing(thing);
     cctrl->byte_9A--;

@@ -53,9 +53,14 @@ void fade_out(void)
 void compute_fade_tables(struct TbColorTables *coltbl,unsigned char *spal,unsigned char *dpal)
 {
     unsigned char *dst;
-    unsigned long i,k;
-    unsigned long r,g,b;
-    unsigned long rr,rg,rb;
+    unsigned long i;
+    unsigned long k;
+    unsigned long r;
+    unsigned long g;
+    unsigned long b;
+    unsigned long rr;
+    unsigned long rg;
+    unsigned long rb;
     SYNCMSG("Recomputing fade tables");
     // Intense fade to/from black - slower fade near black
     dst = coltbl->fade_tables;
@@ -104,8 +109,11 @@ void compute_fade_tables(struct TbColorTables *coltbl,unsigned char *spal,unsign
 
 void compute_alpha_table(unsigned char *alphtbl, unsigned char *spal, unsigned char *dpal, char dred, char dgreen, char dblue)
 {
-    int blendR, blendG, blendB;
-    int nrow, n;
+    int blendR;
+    int blendG;
+    int blendB;
+    int nrow;
+    int n;
     blendR = 0;
     blendG = 0;
     blendB = 0;
@@ -116,7 +124,9 @@ void compute_alpha_table(unsigned char *alphtbl, unsigned char *spal, unsigned c
         {
             unsigned char *baseCol;
             baseCol = &spal[3*n];
-            int valR,valG,valB;
+            int valR;
+            int valG;
+            int valB;
             valR = blendR + baseCol[0];
             if (valR >= 63)
               valR = 63;
@@ -160,7 +170,10 @@ void compute_alpha_tables(struct TbAlphaTables *alphtbls,unsigned char *spal,uns
 
 void compute_rgb2idx_table(TbRGBColorTable ctab,unsigned char *spal)
 {
-    int valR, valG, valB, scaler;
+    int valR;
+    int valG;
+    int valB;
+    int scaler;
     SYNCMSG("Recomputing rgb-to-index tables");
     scaler = (1<<6)/COLOUR_TABLE_DIMENSION;
     for (valR=0; valR < COLOUR_TABLE_DIMENSION; valR++)
@@ -188,7 +201,10 @@ void compute_rgb2idx_table(TbRGBColorTable ctab,unsigned char *spal)
  */
 void compute_shifted_palette_table(TbPixel *ocol, const unsigned char *spal, const unsigned char *dpal, int shiftR, int shiftG, int shiftB)
 {
-    int valR, valG, valB, i;
+    int valR;
+    int valG;
+    int valB;
+    int i;
     SYNCMSG("Recomputing palette table");
     for (i=0; i < 256; i++)
     {
@@ -266,15 +282,16 @@ void ProperForcedFadePalette(unsigned char *pal, long fade_steps, enum TbPalette
 
 long PaletteFadePlayer(struct PlayerInfo *player)
 {
-  long i,step;
-  unsigned char palette[PALETTE_SIZE];
-  unsigned char *dst;
-  unsigned char *src;
-  unsigned long pix;
-  // Find the fade step
-  if ((player->field_4C1 != 0) && (player->field_4C5 != 0))
-  {
-    i = 12 * (player->field_4C1-1) + 10 * (player->field_4C5-1);
+    long i;
+    long step;
+    unsigned char palette[PALETTE_SIZE];
+    unsigned char* dst;
+    unsigned char* src;
+    unsigned long pix;
+    // Find the fade step
+    if ((player->field_4C1 != 0) && (player->field_4C5 != 0))
+    {
+        i = 12 * (player->field_4C1 - 1) + 10 * (player->field_4C5 - 1);
   } else
   if (player->field_4C5 != 0)
   {

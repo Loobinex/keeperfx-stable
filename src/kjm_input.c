@@ -461,8 +461,10 @@ void init_key_to_strings(void)
  */
 TbBool mouse_is_over_pannel_map(ScreenCoord x, ScreenCoord y)
 {
-    long cmx,cmy;
-    long px,py;
+    long cmx;
+    long cmy;
+    long px;
+    long py;
     cmx = GetMouseX();
     cmy = GetMouseY();
     int units_per_px;

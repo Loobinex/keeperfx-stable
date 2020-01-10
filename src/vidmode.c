@@ -209,7 +209,8 @@ TbScreenMode get_next_vidmode(TbScreenMode mode)
  */
 TbScreenMode get_higher_vidmode(TbScreenMode curr_mode)
 {
-    unsigned long curr_size, next_size;
+    unsigned long curr_size;
+    unsigned long next_size;
     TbScreenModeInfo *mdinfo;
     // Get size of current mode
     mdinfo = LbScreenGetModeInfo(curr_mode);
@@ -339,14 +340,16 @@ TbBool set_pointer_graphic_menu(void)
 
 TbBool set_pointer_graphic_spell(long group_idx, long frame)
 {
-  long i,x,y;
-  struct TbSprite *spr;
-  SYNCDBG(8,"Setting to group %d",(int)group_idx);
-  if (pointer_sprites == NULL)
-  {
-    WARNLOG("Pointer sprites not loaded, setting to none");
-    LbMouseChangeSpriteAndHotspot(NULL, 0, 0);
-    return false;
+    long i;
+    long x;
+    long y;
+    struct TbSprite* spr;
+    SYNCDBG(8, "Setting to group %d", (int)group_idx);
+    if (pointer_sprites == NULL)
+    {
+        WARNLOG("Pointer sprites not loaded, setting to none");
+        LbMouseChangeSpriteAndHotspot(NULL, 0, 0);
+        return false;
   }
   if ((group_idx < 0) || (group_idx >= SPELL_POINTER_GROUPS))
   {
@@ -380,14 +383,15 @@ TbBool set_pointer_graphic_spell(long group_idx, long frame)
 
 TbBool set_pointer_graphic(long ptr_idx)
 {
-  long x,y;
-  struct TbSprite *spr;
-  SYNCDBG(8,"Setting to %d",(int)ptr_idx);
-  if (pointer_sprites == NULL)
-  {
-    WARNLOG("Pointer sprites not loaded, setting to none");
-    LbMouseChangeSpriteAndHotspot(NULL, 0, 0);
-    return false;
+    long x;
+    long y;
+    struct TbSprite* spr;
+    SYNCDBG(8, "Setting to %d", (int)ptr_idx);
+    if (pointer_sprites == NULL)
+    {
+        WARNLOG("Pointer sprites not loaded, setting to none");
+        LbMouseChangeSpriteAndHotspot(NULL, 0, 0);
+        return false;
   }
   switch (ptr_idx)
   {

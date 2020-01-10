@@ -84,7 +84,8 @@ short write_effects_effect_to_log(const struct EffectConfigStats *effcst, int nu
 TbBool parse_effects_common_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -150,7 +151,9 @@ TbBool parse_effects_effect_blocks(char *buf, long len, const char *config_textn
 {
   struct EffectConfigStats *effcst;
   long pos;
-  int i,k,n;
+  int i;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];

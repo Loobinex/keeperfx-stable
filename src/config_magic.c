@@ -317,7 +317,8 @@ short write_magic_shot_to_log(const struct ShotConfigStats *shotst, int num)
 TbBool parse_magic_common_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -435,7 +436,9 @@ TbBool parse_magic_spell_blocks(char *buf, long len, const char *config_textname
   struct SpellConfig *splconf;
   struct SpellInfo *spinfo;
   long pos;
-  int i,k,n;
+  int i;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -639,7 +642,9 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
 {
   struct ShotConfigStats *shotst;
   long pos;
-  int i,k,n;
+  int i;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -869,7 +874,9 @@ TbBool parse_magic_power_blocks(char *buf, long len, const char *config_textname
   struct PowerConfigStats *powerst;
   struct MagicStats *pwrdynst;
   long pos;
-  int i,k,n;
+  int i;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -1244,7 +1251,9 @@ TbBool parse_magic_special_blocks(char *buf, long len, const char *config_textna
 {
   struct SpecialConfigStats *specst;
   long pos;
-  int i,k,n;
+  int i;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -1587,7 +1596,8 @@ void remove_power_from_player(PowerKind pwkind, PlayerNumber plyr_idx)
 TbBool make_all_powers_cost_free(void)
 {
   struct MagicStats *pwrdynst;
-  long i,n;
+  long i;
+  long n;
   for (i=0; i < magic_conf.power_types_count; i++)
   {
       pwrdynst = get_power_dynamic_stats(i);

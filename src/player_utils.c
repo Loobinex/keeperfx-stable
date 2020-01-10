@@ -210,10 +210,12 @@ GoldAmount take_money_from_room(struct Room *room, GoldAmount amount_take)
             break;
         }
         // Per-slab code starts
-        MapSlabCoord slb_x, slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(slbnum);
         slb_y = slb_num_decode_y(slbnum);
-        MapSubtlCoord stl_x,stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = slab_subtile_center(slb_x);
         stl_y = slab_subtile_center(slb_y);
         if (slab_is_area_outer_border(slb_x, slb_y))
@@ -249,7 +251,8 @@ GoldAmount take_money_from_room(struct Room *room, GoldAmount amount_take)
             break;
         }
         // Per-slab code starts
-        MapSubtlCoord stl_x,stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = slab_subtile_center(slb_num_decode_x(slbnum));
         stl_y = slab_subtile_center(slb_num_decode_y(slbnum));
         {
@@ -406,7 +409,8 @@ void calculate_dungeon_area_scores(void)
         }
     }
     // Compute new values for dungeon areas
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     for (slb_y=0; slb_y < map_tiles_y; slb_y++)
     {
         for (slb_x=0; slb_x < map_tiles_x; slb_x++)
@@ -461,7 +465,8 @@ TbBool map_position_has_sibling_slab(MapSlabCoord slb_x, MapSlabCoord slb_y, Sla
     int n;
     for (n = 0; n < SMALL_AROUND_LENGTH; n++)
     {
-        int dx,dy;
+        int dx;
+        int dy;
         dx = small_around[n].delta_x;
         dy = small_around[n].delta_y;
         struct SlabMap *slb;
@@ -517,7 +522,8 @@ void init_keeper_map_exploration_by_terrain(struct PlayerInfo *player)
     if (thing_exists(heartng)) {
         fill_in_explored_area(player->id_number, heartng->mappos.x.stl.num, heartng->mappos.y.stl.num);
     }
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     for (slb_y=0; slb_y < map_tiles_y; slb_y++)
     {
         for (slb_x=0; slb_x < map_tiles_x; slb_x++)
@@ -650,7 +656,8 @@ void init_players(void)
 TbBool wp_check_map_pos_valid(struct Wander *wandr, SubtlCodedCoords stl_num)
 {
     SYNCDBG(16,"Starting");
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = stl_num_decode_x(stl_num);
     stl_y = stl_num_decode_y(stl_num);
     if (wandr->wandr_slot == CrWaS_WithinDungeon)
@@ -720,7 +727,8 @@ TbBool store_wander_points_up_to(struct Wander *wandr, const SubtlCodedCoords st
     long i;
     if (stl_num_count > max_to_store)
     {
-        double realidx,delta;
+        double realidx;
+        double delta;
         if (wandr->max_found_per_check <= 0)
             return 1;
         wandr->point_insert_idx %= WANDER_POINTS_COUNT;
@@ -761,7 +769,8 @@ long wander_point_initialise(struct Wander *wandr, PlayerNumber plyr_idx, unsign
     slb_num = 0;
     while (1)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         SubtlCodedCoords stl_num;
         slb_x = slb_num_decode_x(slb_num);
         slb_y = slb_num_decode_y(slb_num);
@@ -799,7 +808,8 @@ long wander_point_update(struct Wander *wandr)
     stl_num_list_count = 0;
     for (i = 0; i < wandr->num_check_per_run; i++)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         SubtlCodedCoords stl_num;
         slb_x = slb_num_decode_x(slb_num);
         slb_y = slb_num_decode_y(slb_num);
@@ -933,7 +943,8 @@ TbBool player_sell_trap_at_subtile(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
 {
     struct Dungeon *dungeon;
     struct Thing *thing;
-    MapSlabCoord slb_x,slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     long sell_value;
     thing = get_trap_for_slab_position(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
     if (thing_is_invalid(thing))
@@ -972,7 +983,8 @@ TbBool player_sell_door_at_subtile(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
 {
     struct Dungeon *dungeon;
     struct Thing *thing;
-    MapSubtlCoord cstl_x,cstl_y;
+    MapSubtlCoord cstl_x;
+    MapSubtlCoord cstl_y;
     long i;
     cstl_x = stl_slab_center_subtile(stl_x);
     cstl_y = stl_slab_center_subtile(stl_y);

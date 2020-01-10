@@ -130,7 +130,8 @@ ThingModel crate_thing_to_workshop_item_model(const struct Thing *thing)
 TbBool parse_objects_common_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -196,7 +197,9 @@ TbBool parse_objects_object_blocks(char *buf, long len, const char *config_textn
     struct ObjectConfigStats *objst;
     struct Objects *objdat;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];

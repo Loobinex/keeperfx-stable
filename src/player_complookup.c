@@ -64,7 +64,8 @@ long gold_lookup_index(const struct GoldLookup *gldlook)
 long smaller_gold_vein_lookup_idx(long higher_gold_slabs, long higher_gem_slabs)
 {
     struct GoldLookup *gldlook;
-    long gold_slabs, gem_slabs;
+    long gold_slabs;
+    long gem_slabs;
     long gold_idx;
     long i;
     gold_slabs = higher_gold_slabs;
@@ -95,11 +96,17 @@ void check_treasure_map(unsigned char *treasure_map, unsigned short *vein_list, 
 {
     struct GoldLookup *gldlook;
     struct SlabMap *slb;
-    SlabCodedCoords slb_num,slb_around;
-    MapSlabCoord slb_x,slb_y;
-    long gold_slabs,gem_slabs;
-    long vein_total,vein_idx;
-    long gld_v1,gld_v2,gld_v3;
+    SlabCodedCoords slb_num;
+    SlabCodedCoords slb_around;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
+    long gold_slabs;
+    long gem_slabs;
+    long vein_total;
+    long vein_idx;
+    long gld_v1;
+    long gld_v2;
+    long gld_v3;
     long gold_idx;
     // First, find a vein
     vein_total = 0;
@@ -188,7 +195,8 @@ void check_treasure_map(unsigned char *treasure_map, unsigned short *vein_list, 
  */
 void check_map_for_gold(void)
 {
-    MapSlabCoord slb_x,slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     struct SlabMap *slb;
     SlabCodedCoords slb_num;
     unsigned char *treasure_map;

@@ -303,7 +303,8 @@ short get_packet_load_game_control_inputs(void)
 long get_small_map_inputs(long x, long y, long zoom)
 {
   SYNCDBG(7,"Starting");
-  long curr_mx,curr_my;
+  long curr_mx;
+  long curr_my;
   short result;
   result = 0;
   curr_mx = GetMouseX();
@@ -561,12 +562,14 @@ TbBool get_level_lost_inputs(void)
     }
     if (player->view_type == PVT_MapScreen)
     {
-        long mouse_y,mouse_x;
+        long mouse_y;
+        long mouse_x;
         mouse_x = GetMouseX();
         mouse_y = GetMouseY();
         // Position on the parchment map on which we're doing action
         TbBool map_valid;
-        long map_x, map_y;
+        long map_x;
+        long map_y;
         map_valid = point_to_overhead_map(player->acamera, mouse_x/pixel_size, mouse_y/pixel_size, &map_x, &map_y);
         if (is_game_key_pressed(Gkey_SwitchToMap, &keycode, false))
         {
@@ -581,7 +584,8 @@ TbBool get_level_lost_inputs(void)
         if ( left_button_released )
         {
             if  ( map_valid ) {
-                MapSubtlCoord stl_x, stl_y;
+                MapSubtlCoord stl_x;
+                MapSubtlCoord stl_y;
                 stl_x = coord_subtile(map_x);
                 stl_y = coord_subtile(map_y);
                 set_players_packet_action(player, PckA_ZoomFromMap, stl_x, stl_y, 0, 0);
@@ -1305,17 +1309,20 @@ short get_map_action_inputs(void)
 {
     struct PlayerInfo *player;
     long keycode;
-    long mouse_y,mouse_x;
+    long mouse_y;
+    long mouse_x;
     player = get_my_player();
     mouse_x = GetMouseX();
     mouse_y = GetMouseY();
     // Get map coordinates from mouse position on parchment screen
     TbBool map_valid;
-    long map_x, map_y;
+    long map_x;
+    long map_y;
     map_valid = point_to_overhead_map(player->acamera, mouse_x/pixel_size, mouse_y/pixel_size, &map_x, &map_y);
     if  (map_valid)
     {
-        MapSubtlCoord stl_x, stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = coord_subtile(map_x);
         stl_y = coord_subtile(map_y);
         if (left_button_clicked) {
@@ -1420,7 +1427,8 @@ void get_isometric_or_front_view_mouse_inputs(struct Packet *pckt,int rotate_pre
         if (!moveTheCamera) return;
     }
 
-    long mx,my;
+    long mx;
+    long my;
     mx = my_mouse_x;
     my = my_mouse_y;
     if (mx <= 4)
@@ -1465,7 +1473,8 @@ void get_isometric_view_nonaction_inputs(void)
 {
     struct PlayerInfo *player;
     struct Packet *pckt;
-    int rotate_pressed,speed_pressed;
+    int rotate_pressed;
+    int speed_pressed;
     TbBool no_mods;
     player = get_my_player();
     pckt = get_packet(my_player_number);
@@ -1516,8 +1525,10 @@ void get_overhead_view_nonaction_inputs(void)
 {
     struct PlayerInfo *player;
     struct Packet *pckt;
-    int rotate_pressed,speed_pressed;
-    long mx,my;
+    int rotate_pressed;
+    int speed_pressed;
+    long mx;
+    long my;
     SYNCDBG(19,"Starting");
     player=get_my_player();
     pckt = get_packet(my_player_number);
@@ -1549,10 +1560,12 @@ void get_overhead_view_nonaction_inputs(void)
 
 void get_front_view_nonaction_inputs(void)
 {
-    static TbClockMSec last_rotate_left_time=0,last_rotate_right_time=0;
+    static TbClockMSec last_rotate_left_time = 0;
+    static TbClockMSec last_rotate_right_time = 0;
     struct PlayerInfo *player;
     struct Packet *pckt;
-    int rotate_pressed,speed_pressed;
+    int rotate_pressed;
+    int speed_pressed;
     TbBool no_mods;
     player = get_my_player();
     pckt = get_packet(my_player_number);
@@ -1634,8 +1647,10 @@ TbBool get_player_coords_and_context(struct Coord3d *pos, unsigned char *context
   struct SlabMap *slb;
   struct SlabAttr *slbattr;
   struct Thing *thing;
-  unsigned long x,y;
-  unsigned int slb_x,slb_y;
+  unsigned long x;
+  unsigned long y;
+  unsigned int slb_x;
+  unsigned int slb_y;
   player = get_my_player();
   if ((pointer_x < 0) || (pointer_y < 0)
    || (pointer_x >= player->engine_window_width/pixel_size)
@@ -1814,7 +1829,10 @@ void get_creature_control_nonaction_inputs(void)
   struct PlayerInfo *player;
   struct Packet *pckt;
   struct Thing *thing;
-  long x,y,i,k;
+  long x;
+  long y;
+  long i;
+  long k;
   player = get_my_player();
   pckt = get_packet(my_player_number);
 

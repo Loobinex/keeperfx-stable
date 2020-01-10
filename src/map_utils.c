@@ -85,7 +85,8 @@ struct Around const small_around_mid[] = {
 void init_spiral_steps(void)
 {
     struct MapOffset *sstep;
-    long x,y;
+    long x;
+    long y;
     long i;
     y = 0;
     x = 0;
@@ -149,7 +150,8 @@ void get_min_floor_and_ceiling_heights_for_rect(MapSubtlCoord stl_x_beg, MapSubt
     MapSubtlCoord stl_x_end, MapSubtlCoord stl_y_end,
     MapSubtlCoord *floor_height, MapSubtlCoord *ceiling_height)
 {
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     *floor_height = 0;
     *ceiling_height = 15;
     // Sweep through subtiles and select highest floor and lowest ceiling
@@ -188,7 +190,8 @@ long near_coord_filter_battle_drop_point(const struct Coord3d *pos, MaxCoordFilt
  */
 unsigned int small_around_index_towards_destination(long curr_x,long curr_y,long dest_x,long dest_y)
 {
-    long i,n;
+    long i;
+    long n;
     i = LbArcTanAngle(dest_x - curr_x, dest_y - curr_y);
     // Check the angle - we're a bit afraid of angles which are pi/4 multiplications
     if ((i & 0xFF) != 0)
@@ -221,7 +224,8 @@ TbBool get_position_spiral_near_map_block_with_filter(struct Coord3d *retpos, Ma
     struct MapOffset *sstep;
     long maximizer;
     struct Map *mapblk;
-    MapSubtlCoord sx,sy;
+    MapSubtlCoord sx;
+    MapSubtlCoord sy;
     int around;
     SYNCDBG(19,"Starting");
     maximizer = 0;
@@ -256,8 +260,10 @@ TbBool get_position_spiral_near_map_block_with_filter(struct Coord3d *retpos, Ma
 
 long slabs_count_near(MapSlabCoord tx, MapSlabCoord ty, long rad, SlabKind slbkind)
 {
-    long dx,dy;
-    long x,y;
+    long dx;
+    long dy;
+    long x;
+    long y;
     long count;
     count=0;
     struct SlabMap *slb;
@@ -289,8 +295,10 @@ long slabs_count_near(MapSlabCoord tx, MapSlabCoord ty, long rad, SlabKind slbki
  */
 long pos_move_in_direction_to_last_allowing_drop(struct Coord3d *mvpos, unsigned char round_directn, PlayerNumber plyr_idx, unsigned short slabs_dist)
 {
-    MapSubtlCoord prev_stl_x, prev_stl_y;
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord prev_stl_x;
+    MapSubtlCoord prev_stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = mvpos->x.stl.num;
     stl_y = mvpos->y.stl.num;
     prev_stl_x = stl_x;
@@ -327,7 +335,8 @@ long pos_move_in_direction_to_last_allowing_drop(struct Coord3d *mvpos, unsigned
  */
 long pos_move_in_direction_to_outside_player_room(struct Coord3d *mvpos, unsigned char round_directn, PlayerNumber plyr_idx, unsigned short slabs_dist)
 {
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = mvpos->x.stl.num;
     stl_y = mvpos->y.stl.num;
     struct SlabAttr *slbattr;
@@ -395,7 +404,8 @@ TbBool subtile_is_blocking_wall_or_lava(MapSubtlCoord stl_x, MapSubtlCoord stl_y
 
 long pos_move_in_direction_to_blocking_wall_or_lava(struct Coord3d *mvpos, unsigned char round_directn, PlayerNumber plyr_idx, unsigned short slabs_dist)
 {
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = mvpos->x.stl.num;
     stl_y = mvpos->y.stl.num;
     int i;
@@ -420,7 +430,8 @@ long pos_move_in_direction_to_blocking_wall_or_lava(struct Coord3d *mvpos, unsig
 
 long pos_move_in_direction_to_unowned_filled_or_water(struct Coord3d *mvpos, unsigned char round_directn, PlayerNumber plyr_idx, unsigned short slabs_dist)
 {
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = mvpos->x.stl.num;
     stl_y = mvpos->y.stl.num;
     struct SlabAttr *slbattr;

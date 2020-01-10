@@ -117,7 +117,10 @@ struct TbSprite *get_map_ensign(long idx)
 short is_over_ensign(const struct LevelInformation *lvinfo, long scr_x, long scr_y)
 {
     const struct TbSprite *spr;
-    long map_x,map_y,spr_w,spr_h;
+    long map_x;
+    long map_y;
+    long spr_w;
+    long spr_h;
     map_x = map_info.screen_shift_x + scr_x*16/units_per_pixel;
     map_y = map_info.screen_shift_y + scr_y*16/units_per_pixel;
     spr = get_map_ensign(10);
@@ -160,7 +163,8 @@ void update_ensigns_visibility(void)
 {
   struct LevelInformation *lvinfo;
   struct PlayerInfo *player;
-  long lvnum,bn_lvnum;
+  long lvnum;
+  long bn_lvnum;
   short show_all_sp;
   SYNCDBG(18,"Starting");
   set_all_ensigns_state(LvSt_Hidden);
@@ -225,8 +229,10 @@ void update_net_ensigns_visibility(void)
 
 int compute_sound_good_to_bad_factor(void)
 {
-    unsigned int onscr_bad,onscr_good;
-    LevelNumber sp_lvnum,continue_lvnum;
+    unsigned int onscr_bad;
+    unsigned int onscr_good;
+    LevelNumber sp_lvnum;
+    LevelNumber continue_lvnum;
     short lv_beaten;
     SYNCDBG(18,"Starting");
     onscr_bad = 0;
@@ -395,7 +401,8 @@ void draw_map_level_ensigns(void)
 {
     struct LevelInformation *lvinfo;
     struct TbSprite *spr;
-    long x,y;
+    long x;
+    long y;
     int k;
     SYNCDBG(18,"Starting");
     k = LbTimerClock()/200;
@@ -425,7 +432,8 @@ void set_map_info_screen_shift_raw(long map_x, long map_y)
     map_info.screen_shift_x = map_x;
     map_info.screen_shift_y = map_y;
     // Make sure the hotspot will not be too close to border to not be drawn correctly at full zoom
-    long delta_x, delta_y;
+    long delta_x;
+    long delta_y;
     if ((map_info.fadeflags & MLInfoFlg_Zooming) != 0) {
         delta_x = (lbDisplay.PhysicalScreenWidth*(256 - map_info.fade_pos)*16/units_per_pixel) / 256;
         delta_y = (lbDisplay.PhysicalScreenHeight*(256 - map_info.fade_pos)*16/units_per_pixel) / 256;
@@ -450,7 +458,8 @@ void set_map_info_screen_shift_raw(long map_x, long map_y)
  */
 void set_map_info_screen_shift(long map_x, long map_y)
 {
-    long delta_x, delta_y;
+    long delta_x;
+    long delta_y;
     delta_x = (lbDisplay.PhysicalScreenWidth*16/units_per_pixel) / 2;
     delta_y = (lbDisplay.PhysicalScreenHeight*16/units_per_pixel) / 2;
    set_map_info_screen_shift_raw(map_x - delta_x, map_y - delta_y);
@@ -462,7 +471,8 @@ void set_map_info_screen_shift(long map_x, long map_y)
 
 void step_frontmap_info_screen_shift_zoom(void)
 {
-    long scr_x,scr_y;
+    long scr_x;
+    long scr_y;
     // Count the remaining shift
     scr_x = map_info.hotspot_shift_x - map_info.screen_shift_aimed_x;
     scr_y = map_info.hotspot_shift_y - map_info.screen_shift_aimed_y;
@@ -492,7 +502,8 @@ void set_map_info_visible_hotspot_raw(long map_x,long map_y)
 
 void set_map_info_visible_hotspot(long map_x,long map_y)
 {
-    long delta_x, delta_y;
+    long delta_x;
+    long delta_y;
     delta_x = (lbDisplay.PhysicalScreenWidth*16/units_per_pixel) / 2;
     delta_y = (lbDisplay.PhysicalScreenHeight*16/units_per_pixel) / 2;
     set_map_info_visible_hotspot_raw(map_x - delta_x, map_y - delta_y);
@@ -549,10 +560,12 @@ void frontmap_zoom_out_init(LevelNumber prev_lvnum, LevelNumber next_lvnum)
     {
         // Shift towards next flag, but not too much - old flag pos must be on screen all the time
         // otherwise draw function will clip its coordinates
-        long maxdelta_x, maxdelta_y;
+        long maxdelta_x;
+        long maxdelta_y;
         maxdelta_x = (lbDisplay.PhysicalScreenWidth*16/units_per_pixel) / 2;
         maxdelta_y = (lbDisplay.PhysicalScreenHeight*16/units_per_pixel) / 2;
-        long dt_x, dt_y;
+        long dt_x;
+        long dt_y;
         dt_x = (next_lvinfo->ensign_zoom_x - map_info.hotspot_imgpos_x)/2;
         if (dt_x > maxdelta_x)
             dt_x = maxdelta_x;
@@ -717,12 +730,19 @@ void frontzoom_to_point(long map_x, long map_y, long zoom)
     unsigned char *src_buf;
     unsigned char *dst;
     unsigned char *src;
-    long scr_x,scr_y;
-    long src_delta,bpos_x,bpos_y;
-    long dst_width,dst_height,dst_scanln;
-    long x,y;
+    long scr_x;
+    long scr_y;
+    long src_delta;
+    long bpos_x;
+    long bpos_y;
+    long dst_width;
+    long dst_height;
+    long dst_scanln;
+    long x;
+    long y;
     src_delta = (256 - zoom)*16/units_per_pixel;
-    long smap_x, smap_y;
+    long smap_x;
+    long smap_y;
     smap_x = map_x*units_per_pixel/16;
     smap_y = map_y*units_per_pixel/16;
     // Initializing variables used for all quadres of screen
@@ -809,7 +829,8 @@ void frontzoom_to_point(long map_x, long map_y, long zoom)
 
 void compressed_window_draw(void)
 {
-    long xshift,yshift;
+    long xshift;
+    long yshift;
     SYNCDBG(18,"Starting");
     xshift = map_info.screen_shift_x / 2;
     yshift = map_info.screen_shift_y / 2;
@@ -1169,7 +1190,10 @@ TbBool frontmap_load(void)
 
 TbBool rectangle_intersects(struct TbRect *rcta, struct TbRect *rctb)
 {
-    long left, top, right, bottom;
+    long left;
+    long top;
+    long right;
+    long bottom;
     left = rcta->left;
     if (rcta->left <= rctb->left)
       left = rctb->left;
@@ -1247,15 +1271,16 @@ void frontmap_draw(void)
 
 void check_mouse_scroll(void)
 {
-  long mx,my;
-  mx = GetMouseX();
-  if (mx < 8)
-  {
-    map_info.velocity_x -= 8;
-    if (map_info.velocity_x < -48)
-      map_info.velocity_x = -48;
-    if (map_info.velocity_x > 48)
-      map_info.velocity_x = 48;
+    long mx;
+    long my;
+    mx = GetMouseX();
+    if (mx < 8)
+    {
+        map_info.velocity_x -= 8;
+        if (map_info.velocity_x < -48)
+            map_info.velocity_x = -48;
+        if (map_info.velocity_x > 48)
+            map_info.velocity_x = 48;
   } else
   if (mx >= lbDisplay.PhysicalScreenWidth-8)
   {
@@ -1324,8 +1349,13 @@ void draw_netmap_players_hands(void)
   const char *plyr_nam;
   struct TbSprite *spr;
   TbPixel colr;
-  long x,y,w,h;
-  long i,k,n;
+  long x;
+  long y;
+  long w;
+  long h;
+  long i;
+  long k;
+  long n;
   for (i=0; i < NET_PLAYERS_COUNT; i++)
   {
       nspck = &net_screen_packet[i];
@@ -1386,7 +1416,10 @@ void draw_map_level_descriptions(void)
   struct LevelInformation *lvinfo;
   const char *lv_name;
   LevelNumber lvnum;
-  long x,y,w,h;
+  long x;
+  long y;
+  long w;
+  long h;
   if ((fe_net_level_selected > 0) || (net_level_hilighted > 0))
   {
     lbDisplay.DrawFlags = 0;
@@ -1435,7 +1468,8 @@ void frontmap_input(void)
 {
     SYNCDBG(8,"Starting");
     short zoom_done;
-    long mouse_x,mouse_y;
+    long mouse_x;
+    long mouse_y;
     if ((map_info.fadeflags & MLInfoFlg_SpeechAfterZoom) != 0)
     {
         if ((map_info.fadeflags & MLInfoFlg_Zooming) == 0)

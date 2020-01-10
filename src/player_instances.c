@@ -374,7 +374,9 @@ long pinstfm_control_creature(struct PlayerInfo *player, long *n)
     struct CreatureStats *crstat;
     struct Thing *thing;
     struct Camera *cam;
-    long mv_x,mv_y,mv_a;
+    long mv_x;
+    long mv_y;
+    long mv_a;
     cam = player->acamera;
     if (cam == NULL)
         return 0;
@@ -675,7 +677,8 @@ long pinstfm_zoom_out_of_heart(struct PlayerInfo *player, long *n)
     struct Thing *thing;
     struct Camera *dstcam;
     struct Camera *cam;
-    long deltax,deltay;
+    long deltax;
+    long deltay;
     unsigned long addval;
     if (player->view_mode != PVM_FrontView)
     {
@@ -821,7 +824,8 @@ long pinstfs_zoom_to_position(struct PlayerInfo *player, long *n)
     player->allocflags |= 0x10;
     struct Camera *cam;
     cam = player->acamera;
-    int dt_x, dt_y;
+    int dt_x;
+    int dt_y;
     dt_x = (player->zoom_to_pos_x - (int)cam->mappos.x.val) / 8;
     dt_y = (player->zoom_to_pos_y - (int)cam->mappos.y.val) / 8;
     if (dt_x < 0)
@@ -850,7 +854,8 @@ long pinstfs_zoom_to_position(struct PlayerInfo *player, long *n)
 long pinstfm_zoom_to_position(struct PlayerInfo *player, long *n)
 {
     struct Camera *cam;
-    long x,y;
+    long x;
+    long y;
     cam = player->acamera;
     if (abs(cam->mappos.x.val - player->zoom_to_pos_x) >= abs(player->field_4DB))
       x = player->field_4DB + cam->mappos.x.val;
@@ -939,7 +944,8 @@ void leave_creature_as_controller(struct PlayerInfo *player, struct Thing *thing
 {
     struct CreatureControl *cctrl;
     struct CreatureStats *crstat;
-    long i,k;
+    long i;
+    long k;
     SYNCDBG(7,"Starting for player %d within %s index %d",(int)player->id_number,thing_model_name(thing),(int)thing->index);
     if (((thing->owner != player->id_number) && (player->work_state != PSt_FreeCtrlDirect))
       || (thing->index != player->controlled_thing_idx))
@@ -988,7 +994,8 @@ void leave_creature_as_controller(struct PlayerInfo *player, struct Thing *thing
 void leave_creature_as_passenger(struct PlayerInfo *player, struct Thing *thing)
 {
   struct CreatureStats *crstat;
-  long i,k;
+  long i;
+  long k;
   SYNCDBG(7,"Starting for player %d within %s index %d",(int)player->id_number,thing_model_name(thing),(int)thing->index);
   if (((thing->owner != player->id_number) && (player->work_state != PSt_FreeCtrlPassngr))
     || (thing->index != player->controlled_thing_idx))

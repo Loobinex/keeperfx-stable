@@ -170,7 +170,8 @@ SubtlCodedCoords find_unused_adjacent_position_in_workshop(const struct Coord3d 
     long i;
     for (i=0; i < SMALL_AROUND_LENGTH; i++)
     {
-        MapSlabCoord slb_x, slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = subtile_slab_fast(pos->x.stl.num) + (long)small_around[i].delta_x;
         slb_y = subtile_slab_fast(pos->y.stl.num) + (long)small_around[i].delta_y;
         struct SlabMap *slb;
@@ -178,7 +179,8 @@ SubtlCodedCoords find_unused_adjacent_position_in_workshop(const struct Coord3d 
         if ((slb->kind == SlbT_WORKSHOP) && (slabmap_owner(slb) == owner))
         {
             struct Thing *mnfc_creatng;
-            MapSubtlCoord stl_x, stl_y;
+            MapSubtlCoord stl_x;
+            MapSubtlCoord stl_y;
             stl_x = slab_subtile(slb_x, corners[i].delta_x);
             stl_y = slab_subtile(slb_y, corners[i].delta_y);
             mnfc_creatng = get_other_creature_manufacturing_on_subtile(owner, stl_x, stl_y, INVALID_THING);
@@ -262,7 +264,8 @@ void setup_workshop_search_for_post(struct Thing *creatng)
         if (n <= 0) {
             n = room->slabs_list;
         }
-        MapSlabCoord slb_x, slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(n);
         slb_y = slb_num_decode_y(n);
         struct Thing *objtng;
@@ -301,7 +304,8 @@ long process_creature_in_workshop(struct Thing *creatng, struct Room *room)
         return 1;
     }
     long mvret;
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     SYNCDBG(19,"Work in %s, the %s in state %d",room_code_name(room->kind),thing_model_name(creatng),(int)cctrl->byte_9A);
     switch (cctrl->byte_9A)
     {

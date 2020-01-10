@@ -444,7 +444,8 @@ void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct Pol
     if (point_a->field_4 == point_c->field_4)
         return;
     {
-        long len_x,len_y;
+        long len_x;
+        long len_y;
         len_y = point_c->field_4 - point_a->field_4;
         len_x = point_c->field_0 - point_a->field_0;
         if (len_y != 0)
@@ -707,7 +708,9 @@ void draw_gpoly(struct PolyPoint *point_a, struct PolyPoint *point_b, struct Pol
 
 static void unk_update_gpoly1_tri8a(long * vout0, long * vout1, long vinp2, long vin0, long delta)
 {
-    long tmp1, tmp2, tmp3;
+    long tmp1;
+    long tmp2;
+    long tmp3;
     tmp1 = (vin0 << 16);
     tmp2 = (vin0 >> 16);
     tmp1 += (unsigned char)(vinp2);
@@ -723,7 +726,9 @@ static void unk_update_gpoly1_tri8a(long * vout0, long * vout1, long vinp2, long
 
 static void unk_update_gpoly1_tri16a(long * vout0, long * vout1, long vinp2, long vin0, long delta)
 {
-    long tmp1, tmp2, tmp3;
+    long tmp1;
+    long tmp2;
+    long tmp3;
     tmp1 = (vin0 << 16);
     tmp2 = (vin0 >> 16);
     tmp1 += (unsigned short)(vinp2);

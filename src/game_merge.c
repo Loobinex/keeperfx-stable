@@ -103,13 +103,15 @@ LevelNumber set_selected_level_number(LevelNumber lvnum)
  */
 TbBool is_bonus_level_visible(struct PlayerInfo *player, LevelNumber bn_lvnum)
 {
-  int i,n,k;
-  i = storage_index_for_bonus_level(bn_lvnum);
-  if (i < 0)
-  {
-      // This hapens quite often - status of bonus level is checked even
-      // if there's no such bonus level. So no log message here.
-      return false;
+    int i;
+    int n;
+    int k;
+    i = storage_index_for_bonus_level(bn_lvnum);
+    if (i < 0)
+    {
+        // This hapens quite often - status of bonus level is checked even
+        // if there's no such bonus level. So no log message here.
+        return false;
   }
   n = i/8;
   k = (1 << (i%8));
@@ -126,12 +128,14 @@ TbBool is_bonus_level_visible(struct PlayerInfo *player, LevelNumber bn_lvnum)
  */
 TbBool set_bonus_level_visibility(LevelNumber bn_lvnum, TbBool visible)
 {
-  int i,n,k;
-  i = storage_index_for_bonus_level(bn_lvnum);
-  if (i < 0)
-  {
-      WARNLOG("Can't set state of non-existing bonus level %d.",(int)bn_lvnum);
-      return false;
+    int i;
+    int n;
+    int k;
+    i = storage_index_for_bonus_level(bn_lvnum);
+    if (i < 0)
+    {
+        WARNLOG("Can't set state of non-existing bonus level %d.", (int)bn_lvnum);
+        return false;
   }
   n = i/8;
   k = (1 << (i%8));

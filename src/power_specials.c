@@ -265,7 +265,8 @@ void make_safe(struct PlayerInfo *player)
     //_DK_make_safe(player);
     unsigned char *areamap;
     areamap = (unsigned char *)scratch;
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     // Prepare the array to remember which slabs were already taken care of
     for (slb_y=0; slb_y < map_tiles_y; slb_y++)
     {
@@ -293,7 +294,8 @@ void make_safe(struct PlayerInfo *player)
         areamap[slb_num] |= 0x02;
     }
 
-    unsigned int list_cur, list_len;
+    unsigned int list_cur;
+    unsigned int list_len;
     PlayerNumber plyr_idx;
     plyr_idx = player->id_number;
     SlabCodedCoords *slblist;

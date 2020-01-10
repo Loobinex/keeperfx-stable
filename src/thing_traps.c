@@ -103,7 +103,8 @@ struct Thing *get_trap_for_position(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
 
 struct Thing *get_trap_for_slab_position(MapSlabCoord slb_x, MapSlabCoord slb_y)
 {
-    MapCoord pos_x,pos_y;
+    MapCoord pos_x;
+    MapCoord pos_y;
     pos_x = subtile_coord_center(slab_subtile_center(slb_x));
     pos_y = subtile_coord_center(slab_subtile_center(slb_y));
     return get_trap_around_of_model_and_owned_by(pos_x, pos_y, -1, -1);
@@ -173,10 +174,13 @@ TbBool update_trap_trigger_line_of_sight_90_on_subtile(struct Thing *traptng, Ma
 TbBool update_trap_trigger_line_of_sight_90(struct Thing *traptng)
 {
     static const MapSubtlDelta line_of_sight_90_range = 20;
-    MapSubtlCoord stl_x_beg, stl_x_end;
-    MapSubtlCoord stl_y_beg, stl_y_end;
+    MapSubtlCoord stl_x_beg;
+    MapSubtlCoord stl_x_end;
+    MapSubtlCoord stl_y_beg;
+    MapSubtlCoord stl_y_end;
     {
-        MapCoord coord_x, coord_y;
+        MapCoord coord_x;
+        MapCoord coord_y;
         MapCoordDelta trap_radius;
         trap_radius = traptng->clipbox_size_xy / 2;
         coord_x = traptng->mappos.x.val;
@@ -194,8 +198,10 @@ TbBool update_trap_trigger_line_of_sight_90(struct Thing *traptng)
         if (stl_y_end >= map_subtiles_y)
             stl_y_end = map_subtiles_y;
     }
-    MapSubtlCoord stl_x_pre, stl_x_aft;
-    MapSubtlCoord stl_y_pre, stl_y_aft;
+    MapSubtlCoord stl_x_pre;
+    MapSubtlCoord stl_x_aft;
+    MapSubtlCoord stl_y_pre;
+    MapSubtlCoord stl_y_aft;
     {
         stl_y_pre = stl_y_beg - line_of_sight_90_range;
         if (stl_y_pre <= 0)
@@ -210,7 +216,8 @@ TbBool update_trap_trigger_line_of_sight_90(struct Thing *traptng)
         if (stl_x_aft >= map_subtiles_x+1)
             stl_x_aft = map_subtiles_x+1;
     }
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     // Find a limit of where the trap will fit in negative Y
     for (stl_x=stl_x_beg; stl_x <= stl_x_end; stl_x++)
     {
@@ -320,8 +327,10 @@ void activate_trap_shot_head_for_target90(struct Thing *traptng, struct Thing *c
     if (!thing_is_invalid(shotng))
     {
         {
-            MapCoord crpos_x, crpos_y;
-            MapCoord trpos_x, trpos_y;
+            MapCoord crpos_x;
+            MapCoord crpos_y;
+            MapCoord trpos_x;
+            MapCoord trpos_y;
             trpos_x = traptng->mappos.x.val;
             trpos_y = traptng->mappos.y.val;
             crpos_x = creatng->mappos.x.val;
@@ -400,7 +409,8 @@ void activate_trap_shot_on_trap(struct Thing *traptng, struct Thing *creatng)
 
 void activate_trap_slab_change(struct Thing *traptng, struct Thing *creatng)
 {
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = traptng->mappos.x.stl.num;
     stl_y = traptng->mappos.y.stl.num;
     if (subtile_is_room(stl_x, stl_y)) {
@@ -487,11 +497,14 @@ TbBool find_pressure_trigger_trap_target_passing_by_subtile(const struct Thing *
 
 TbBool update_trap_trigger_pressure(struct Thing *traptng)
 {
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     slb_x = subtile_slab_fast(traptng->mappos.x.stl.num);
     slb_y = subtile_slab_fast(traptng->mappos.y.stl.num);
-    MapSubtlCoord stl_x, stl_y;
-    MapSubtlCoord end_stl_x, end_stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapSubtlCoord end_stl_x;
+    MapSubtlCoord end_stl_y;
     end_stl_x = slab_subtile(slb_x,2);
     end_stl_y = slab_subtile(slb_y,2);
     for (stl_y=slab_subtile(slb_y,0); stl_y <= end_stl_y; stl_y++)
@@ -667,7 +680,8 @@ struct Thing *create_trap(struct Coord3d *pos, ThingModel trpkind, PlayerNumber 
 void init_traps(void)
 {
     struct Thing *thing;
-    int i, k;
+    int i;
+    int k;
     k = 0;
     const struct StructureList *slist;
     slist = get_list_for_thing_class(TCls_Trap);
@@ -708,7 +722,8 @@ void init_traps(void)
  */
 long remove_traps_around_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, long *sell_value)
 {
-    long i,k;
+    long i;
+    long k;
     long total;
     total = 0;
     for (k=0; k < AROUND_TILES_COUNT; k++)
@@ -784,7 +799,8 @@ void external_activate_trap_shot_at_angle(struct Thing *thing, long a2)
 
 TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y)
 {
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     slb_x = subtile_slab_fast(stl_x);
     slb_y = subtile_slab_fast(stl_y);
     struct SlabMap *slb;
@@ -832,7 +848,8 @@ TbBool tag_cursor_blocks_place_trap(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     SYNCDBG(7,"Starting");
     int floor_height;
     TbBool can_place;
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     slb_x = subtile_slab_fast(stl_x);
     slb_y = subtile_slab_fast(stl_y);
     can_place = can_place_trap_on(plyr_idx, stl_x, stl_y);

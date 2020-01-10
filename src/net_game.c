@@ -110,7 +110,8 @@ void setup_exchange_player_number(void)
 {
   struct PlayerInfo *player;
   struct Packet *pckt;
-  int i,k;
+  int i;
+  int k;
   SYNCDBG(6,"Starting");
   clear_packets();
   player = get_my_player();
@@ -143,7 +144,8 @@ short setup_select_player_number(void)
 {
   struct PlayerInfo *player;
   short is_set;
-  int i,k;
+  int i;
+  int k;
   is_set = 0;
   k = 0;
   SYNCDBG(6,"Starting");

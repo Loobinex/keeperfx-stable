@@ -103,7 +103,14 @@ void PhaseOfMoon::FlMoon(const long n, const short nph, long &jd, double &frac)
 {
   const double RAD=PI/180.0;
   int i;
-  double am,as,fml,c,t,t2,t3,xtra;
+  double am;
+  double as;
+  double fml;
+  double c;
+  double t;
+  double t2;
+  double t3;
+  double xtra;
 
   c=n+nph/4.0;
   t=c/1236.85; // time in Julian centuries from 1900 January 0.5
@@ -155,7 +162,8 @@ long PhaseOfMoon::JulDay(const short mm, const short id, const int iyyy)
   const int IGREG=15+31*(10+12*1582);
   long jul;
   int jy=iyyy;
-  int ja,jm;
+  int ja;
+  int jm;
 
   if (jy == 0) pom_error("JulDay: there is no year zero.");
   if (jy < 0) ++jy;

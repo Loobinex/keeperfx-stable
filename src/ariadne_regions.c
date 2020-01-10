@@ -53,7 +53,8 @@ struct RegionT bad_region;
 static unsigned long region_alloc(void)
 {
     struct RegionT * rgn;
-    long reg_id,sreg_id;
+    long reg_id;
+    long sreg_id;
     long i;
     int min_f0;
 
@@ -229,7 +230,8 @@ struct RegionT *get_region(long reg_id)
  */
 TbBool regions_connected(long tree_reg1, long tree_reg2)
 {
-    long reg_id1,reg_id2;
+    long reg_id1;
+    long reg_id2;
     unsigned long intersect;
     //return _DK_regions_connected(tree_reg1, tree_reg2);
     if ((tree_reg1 < 0) || (tree_reg1 >= TRIANLGLES_COUNT))

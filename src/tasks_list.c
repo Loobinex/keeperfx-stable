@@ -72,7 +72,8 @@ void add_task_list_entry(PlayerNumber plyr_idx, unsigned char kind, SubtlCodedCo
         dungeon->field_AF7++;
     }
     // Fill the task
-    MapSubtlCoord taskstl_x, taskstl_y;
+    MapSubtlCoord taskstl_x;
+    MapSubtlCoord taskstl_y;
     taskstl_x = stl_slab_center_subtile(stl_num_decode_x(stl_num));
     taskstl_y = stl_slab_center_subtile(stl_num_decode_y(stl_num));
     mtask = &dungeon->task_list[task_idx];
@@ -85,7 +86,8 @@ long find_from_task_list(PlayerNumber plyr_idx, SubtlCodedCoords srch_tsk)
 {
   struct Dungeon *dungeon;
   struct MapTask *mtask;
-  long i,imax;
+  long i;
+  long imax;
   dungeon = get_dungeon(plyr_idx);
   imax = dungeon->field_AF7;
   if (imax > MAPTASKS_COUNT)
@@ -103,7 +105,8 @@ long find_from_task_list_by_slab(PlayerNumber plyr_idx, MapSlabCoord slb_x, MapS
 {
   struct Dungeon *dungeon;
   struct MapTask *mtask;
-  long i,imax;
+  long i;
+  long imax;
   SubtlCodedCoords srch_tsk;
   srch_tsk = get_subtile_number_at_slab_center(slb_x, slb_y);
   dungeon = get_dungeon(plyr_idx);
@@ -123,7 +126,8 @@ long find_from_task_list_by_subtile(PlayerNumber plyr_idx, MapSlabCoord stl_x, M
 {
   struct Dungeon *dungeon;
   struct MapTask *mtask;
-  long i,imax;
+  long i;
+  long imax;
   SubtlCodedCoords srch_tsk;
   srch_tsk = get_subtile_number(stl_slab_center_subtile(stl_x), stl_slab_center_subtile(stl_y));
   dungeon = get_dungeon(plyr_idx);
@@ -143,7 +147,8 @@ long find_dig_from_task_list(PlayerNumber plyr_idx, SubtlCodedCoords srch_tsk)
 {
     struct Dungeon *dungeon;
     struct MapTask *mtask;
-    long i,imax;
+    long i;
+    long imax;
     dungeon = get_dungeon(plyr_idx);
     imax = dungeon->field_AF7;
     if (imax > MAPTASKS_COUNT)
@@ -160,7 +165,8 @@ long find_dig_from_task_list(PlayerNumber plyr_idx, SubtlCodedCoords srch_tsk)
 long find_next_dig_in_dungeon_task_list(struct Dungeon *dungeon, long last_dig)
 {
     struct MapTask *mtask;
-    long i,mtasks_num;
+    long i;
+    long mtasks_num;
     mtasks_num = dungeon->field_AF7;
     if (mtasks_num > MAPTASKS_COUNT)
         mtasks_num = MAPTASKS_COUNT;

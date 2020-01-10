@@ -305,7 +305,8 @@ void setup_gui_tooltip(struct GuiButton *gbtn)
   struct Dungeon *dungeon;
   struct CreatureData *crdata;
   const char *text;
-  long i,k;
+  long i;
+  long k;
   if (gbtn->tooltip_stridx == GUIStr_Empty)
     return;
   if (!settings.tooltips_on)
@@ -431,7 +432,8 @@ void toggle_tooltips(void)
 void draw_tooltip_slab64k(char *tttext, long pos_x, long pos_y, long ttwidth, long ttheight, long viswidth)
 {
     unsigned int flg_mem;
-    long x,y;
+    long x;
+    long y;
     flg_mem = lbDisplay.DrawFlags;
     if (ttwidth > viswidth)
     {
@@ -522,14 +524,15 @@ void move_characters_forward_and_fill_empty_space(char *str,long move_pos,long s
 
 long find_and_pad_string_width_to_first_character(char *str, char fch)
 {
-  long len,fill_len;
-  len = find_string_length_to_first_character(str, fch);
-  fill_len = 10-len;
-  if (fill_len > 0)
-  {
-    // Moving characters after fch beyond the tooltip box size
-    move_characters_forward_and_fill_empty_space(str,10,fill_len,len,strlen(str)+9,' ');
-    move_characters_forward_and_fill_empty_space(str,fill_len/2,fill_len/2,0,9,' ');
+    long len;
+    long fill_len;
+    len = find_string_length_to_first_character(str, fch);
+    fill_len = 10 - len;
+    if (fill_len > 0)
+    {
+        // Moving characters after fch beyond the tooltip box size
+        move_characters_forward_and_fill_empty_space(str, 10, fill_len, len, strlen(str) + 9, ' ');
+        move_characters_forward_and_fill_empty_space(str, fill_len / 2, fill_len / 2, 0, 9, ' ');
   }
   return find_string_width_to_first_character(str, fch);
 }
@@ -538,8 +541,11 @@ void draw_tooltip_at(long ttpos_x,long ttpos_y,char *tttext)
 {
   struct PlayerInfo *player;
   unsigned int flg_mem;
-  long hdwidth,ttwidth,ttheight;
-  long pos_x,pos_y;
+  long hdwidth;
+  long ttwidth;
+  long ttheight;
+  long pos_x;
+  long pos_y;
   if (tttext == NULL)
     return;
   flg_mem = lbDisplay.DrawFlags;

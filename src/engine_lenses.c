@@ -73,11 +73,16 @@ void perspective_fisheye(struct XYZ *cor, struct PolyPoint *ppt)
 
 void pers_set_transform_matrix(struct EngineCoord *epos, const struct M33 *matx)
 {
-    long px, py, pz;
+    long px;
+    long py;
+    long pz;
     px = epos->x;
     py = epos->y;
     pz = epos->z;
-    long long pxpy, pyr0, pxr1, pzr2;
+    long long pxpy;
+    long long pyr0;
+    long long pxr1;
+    long long pzr2;
     pxpy = px * py;
     pyr0 = py + matx->r[0].v[0];
     pxr1 = px + matx->r[0].v[1];
@@ -117,7 +122,9 @@ void pers_set_view_height(struct EngineCoord *epos, long len)
 
 void rotpers_parallel(struct EngineCoord *epos, const struct M33 *matx)
 {
-    long tx,ty,tz;
+    long tx;
+    long ty;
+    long tz;
     long zoom;
     pers_set_transform_matrix(epos, matx);
     zoom = camera_zoom / pixel_size;
@@ -149,7 +156,9 @@ void rotpers_parallel(struct EngineCoord *epos, const struct M33 *matx)
 
 void rotpers_standard(struct EngineCoord *epos, const struct M33 *matx)
 {
-    long tx,ty,tz;
+    long tx;
+    long ty;
+    long tz;
     pers_set_transform_matrix(epos, matx);
     tx = epos->x;
     ty = epos->y;
@@ -158,7 +167,8 @@ void rotpers_standard(struct EngineCoord *epos, const struct M33 *matx)
     if (tz > fade_max) {
       epos->field_8 |= 0x0080;
     }
-    long long wx, wy;
+    long long wx;
+    long long wy;
     if (tz < 32)
     {
         epos->field_8 |= 0x0100;
@@ -186,7 +196,9 @@ void rotpers_standard(struct EngineCoord *epos, const struct M33 *matx)
 void rotpers_circular(struct EngineCoord *epos, const struct M33 *matx)
 {
     pers_set_transform_matrix(epos, matx);
-    long tx, ty, tz;
+    long tx;
+    long ty;
+    long tz;
     tx = epos->x;
     ty = epos->y;
     tz = epos->z;
@@ -194,7 +206,8 @@ void rotpers_circular(struct EngineCoord *epos, const struct M33 *matx)
     if (tz > fade_max) {
       epos->field_8 |= 0x0080;
     }
-    long long wx, wy;
+    long long wx;
+    long long wy;
     if (tz < 32)
     {
         epos->field_8 |= 0x0100;
@@ -224,7 +237,9 @@ void rotpers_circular(struct EngineCoord *epos, const struct M33 *matx)
 void rotpers_fisheye(struct EngineCoord *epos, const struct M33 *matx)
 {
     pers_set_transform_matrix(epos, matx);
-    long tx, ty, tz;
+    long tx;
+    long ty;
+    long tz;
     tx = epos->x;
     ty = epos->y;
     tz = epos->z;
@@ -234,7 +249,8 @@ void rotpers_fisheye(struct EngineCoord *epos, const struct M33 *matx)
     if (epos->field_C > fade_max) {
         epos->field_8 |= 0x0080;
     }
-    long long wx, wy;
+    long long wx;
+    long long wy;
     if ((tz < 32) || (epos->field_C < 32))
     {
         epos->field_8 |= 0x0100;

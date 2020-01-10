@@ -44,7 +44,9 @@ void setup_texture_block_mem(void)
 {
     unsigned char **dst;
     unsigned char *src;
-    unsigned long i,k,n;
+    unsigned long i;
+    unsigned long k;
+    unsigned long n;
     dst = block_ptrs;
     n = 0;
     for (i=0; i < TEXTURE_BLOCKS_STAT_COUNT/block_count_per_row; i++)

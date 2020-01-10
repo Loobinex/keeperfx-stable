@@ -396,7 +396,8 @@ struct Thing *treasure_room_eats_gold_piles(struct Room *room, MapSlabCoord slb_
     long k;
     for (k=0; k < AROUND_TILES_COUNT; k++)
     {
-        MapSubtlCoord stl_x, stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = slab_subtile(slb_x, around[k].delta_x + 1);
         stl_y = slab_subtile(slb_y, around[k].delta_y + 1);
         struct Thing *gldtng;
@@ -462,7 +463,8 @@ void count_gold_hoardes_in_room(struct Room *room)
     i = room->slabs_list;
     while (i > 0)
     {
-        MapSlabCoord slb_x, slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         struct Coord3d pos;
         slb_x = slb_num_decode_x(i);
         slb_y = slb_num_decode_y(i);
@@ -743,11 +745,13 @@ void count_books_in_room(struct Room *room)
         i = room->slabs_list;
         while (i > 0)
         {
-            MapSubtlCoord slb_x,slb_y;
+            MapSubtlCoord slb_x;
+            MapSubtlCoord slb_y;
             slb_x = slb_num_decode_x(i);
             slb_y = slb_num_decode_y(i);
             // Per-slab code
-            long dx,dy;
+            long dx;
+            long dy;
             for (dy=0; dy < STL_PER_SLB; dy++)
             {
                 for (dx=0; dx < STL_PER_SLB; dx++)
@@ -1030,11 +1034,13 @@ void count_crates_in_room(struct Room *room)
         i = room->slabs_list;
         while (i > 0)
         {
-            MapSubtlCoord slb_x,slb_y;
+            MapSubtlCoord slb_x;
+            MapSubtlCoord slb_y;
             slb_x = slb_num_decode_x(i);
             slb_y = slb_num_decode_y(i);
             // Per-slab code
-            long dx,dy;
+            long dx;
+            long dy;
             for (dy=0; dy < STL_PER_SLB; dy++)
             {
                 for (dx=0; dx < STL_PER_SLB; dx++)
@@ -1242,11 +1248,13 @@ void count_bodies_in_room(struct Room *room)
         i = room->slabs_list;
         while (i > 0)
         {
-            MapSlabCoord slb_x,slb_y;
+            MapSlabCoord slb_x;
+            MapSlabCoord slb_y;
             slb_x = slb_num_decode_x(i);
             slb_y = slb_num_decode_y(i);
             // Per-slab code
-            long dx,dy;
+            long dx;
+            long dy;
             for (dy=0; dy < STL_PER_SLB; dy++)
             {
                 for (dx=0; dx < STL_PER_SLB; dx++)
@@ -1453,11 +1461,13 @@ void count_food_in_room(struct Room *room)
         i = room->slabs_list;
         while (i > 0)
         {
-            MapSubtlCoord slb_x,slb_y;
+            MapSubtlCoord slb_x;
+            MapSubtlCoord slb_y;
             slb_x = slb_num_decode_x(i);
             slb_y = slb_num_decode_y(i);
             // Per-slab code
-            long dx,dy;
+            long dx;
+            long dy;
             for (dy=0; dy < STL_PER_SLB; dy++)
             {
                 for (dx=0; dx < STL_PER_SLB; dx++)
@@ -1489,7 +1499,8 @@ void count_lair_occupants_on_slab(struct Room *room,MapSlabCoord slb_x, MapSlabC
     int n;
     for (n = 0; n < MID_AROUND_LENGTH; n++)
     {
-        MapSubtlDelta ssub_x, ssub_y;
+        MapSubtlDelta ssub_x;
+        MapSubtlDelta ssub_y;
         ssub_x = 1 + start_at_around[n].delta_x;
         ssub_y = 1 + start_at_around[n].delta_y;
         struct Thing *lairtng;
@@ -1527,7 +1538,8 @@ void count_lair_occupants(struct Room *room)
     i = room->slabs_list;
     while (i > 0)
     {
-        MapSubtlCoord slb_x,slb_y;
+        MapSubtlCoord slb_x;
+        MapSubtlCoord slb_y;
         slb_x = slb_num_decode_x(i);
         slb_y = slb_num_decode_y(i);
         struct SlabMap *slb;
@@ -1740,10 +1752,12 @@ struct Room *link_adjacent_rooms_of_type(PlayerNumber owner, MapSubtlCoord x, Ma
 {
     struct Room *linkroom;
     struct Room *room;
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     long n;
     // Central slab coords - we will need it if we'll find adjacent room
-    MapSlabCoord central_slb_x, central_slb_y;
+    MapSlabCoord central_slb_x;
+    MapSlabCoord central_slb_y;
     central_slb_x = subtile_slab_fast(x);
     central_slb_y = subtile_slab_fast(y);
     // Localize the room to be merged with other rooms
@@ -1812,8 +1826,10 @@ struct Room *link_adjacent_rooms_of_type(PlayerNumber owner, MapSubtlCoord x, Ma
 void get_room_mass_centre_coords(long *mass_x, long *mass_y, const struct Room *room)
 {
     struct SlabMap *slb;
-    unsigned long tot_x,tot_y;
-    long slb_x,slb_y;
+    unsigned long tot_x;
+    unsigned long tot_y;
+    long slb_x;
+    long slb_y;
     unsigned long k;
     long i;
     tot_x = 0;
@@ -1859,13 +1875,15 @@ void get_room_mass_centre_coords(long *mass_x, long *mass_y, const struct Room *
 
 void update_room_central_tile_position(struct Room *room)
 {
-    long mass_x,mass_y;
+    long mass_x;
+    long mass_y;
     long i;
     get_room_mass_centre_coords(&mass_x, &mass_y, room);
     for (i=0; i < 16*16; i++)
     {
         struct MapOffset *sstep;
-        MapSubtlCoord cx,cy;
+        MapSubtlCoord cx;
+        MapSubtlCoord cy;
         sstep = &spiral_step[i];
         cx = slab_subtile_center(mass_x + sstep->h);
         cy = slab_subtile_center(mass_y + sstep->v);
@@ -2088,7 +2106,8 @@ void remove_slab_from_room_tiles_list(struct Room *room, MapSlabCoord slb_x, Map
 struct Room *prepare_new_room(PlayerNumber owner, RoomKind rkind, MapSubtlCoord stl_x, MapSubtlCoord stl_y)
 {
     struct Room *room;
-    MapSlabCoord slb_x,slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     if (!subtile_has_slab(stl_x, stl_y))
     {
         ERRORLOG("Attempt to create room on invalid coordinates.");
@@ -2139,7 +2158,8 @@ void create_room_flag(struct Room *room)
 {
     struct Thing *thing;
     struct Coord3d pos;
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = slab_subtile_center(slb_num_decode_x(room->slabs_list));
     stl_y = slab_subtile_center(slb_num_decode_y(room->slabs_list));
     SYNCDBG(7,"Starting for %s at (%d,%d)",room_code_name(room->kind),(int)stl_x,(int)stl_y);
@@ -2165,7 +2185,8 @@ void create_room_flag(struct Room *room)
 void delete_room_flag(struct Room *room)
 {
     struct Thing *thing;
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = slab_subtile_center(slb_num_decode_x(room->slabs_list));
     stl_y = slab_subtile_center(slb_num_decode_y(room->slabs_list));
     if (room_can_have_ensign(room->kind))
@@ -2213,7 +2234,9 @@ long reinitialise_rooms_of_kind(RoomKind rkind, TbBool skip_integration)
 {
     struct Dungeon *dungeon;
     struct Room *room;
-    unsigned int i,k,n;
+    unsigned int i;
+    unsigned int k;
+    unsigned int n;
     k = 0;
     for (n=0; n < DUNGEONS_COUNT; n++)
     {
@@ -2264,7 +2287,8 @@ void reinitialise_map_rooms(void)
  */
 TbBool initialise_map_rooms(void)
 {
-    unsigned long slb_x,slb_y;
+    unsigned long slb_x;
+    unsigned long slb_y;
     SYNCDBG(7,"Starting");
     for (slb_y=0; slb_y < map_tiles_y; slb_y++)
     {
@@ -2341,15 +2365,18 @@ short room_grow_food(struct Room *room)
     }
     for (k = 0; k < room->slabs_count; k++)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(slbnum);
         slb_y = slb_num_decode_y(slbnum);
 
-        int i, m;
+        int i;
+        int m;
         m = ACTION_RANDOM(STL_PER_SLB*STL_PER_SLB);
         for (i = 0; i < STL_PER_SLB*STL_PER_SLB; i++)
         {
-            MapSubtlCoord stl_x, stl_y;
+            MapSubtlCoord stl_x;
+            MapSubtlCoord stl_y;
             stl_x = slab_subtile(slb_x, m % STL_PER_SLB);
             stl_y = slab_subtile(slb_y, m / STL_PER_SLB);
             // Check if there is a food object already
@@ -2379,7 +2406,8 @@ short room_grow_food(struct Room *room)
 
 MapCoordDelta get_distance_to_room(const struct Coord3d *pos, const struct Room *room)
 {
-    MapCoordDelta dist_x, dist_y;
+    MapCoordDelta dist_x;
+    MapCoordDelta dist_y;
     dist_x = abs(pos->x.val - subtile_coord_center(room->central_stl_x));
     dist_y = abs(pos->y.val - subtile_coord_center(room->central_stl_y));
     return max(dist_x,dist_y);
@@ -2392,7 +2420,8 @@ MapCoordDelta get_distance_to_room(const struct Coord3d *pos, const struct Room 
  */
 long calculate_room_widespread_factor(const struct Room *room)
 {
-    long nslabs,npieces;
+    long nslabs;
+    long npieces;
     long i;
     nslabs = room->slabs_count;
     i = nslabs;
@@ -2433,7 +2462,10 @@ long calculate_cummulative_room_slabs_effeciency(const struct Room *room)
 
 long calculate_room_efficiency(const struct Room *room)
 {
-    long nslabs,score,widespread,effic;
+    long nslabs;
+    long score;
+    long widespread;
+    long effic;
     long expected_base;
     nslabs = room->slabs_count;
     if (nslabs <= 0)
@@ -2524,7 +2556,8 @@ void init_room_sparks(struct Room *room)
 {
     struct SlabMap *slb;
     struct SlabMap *sibslb;
-    long slb_x,slb_y;
+    long slb_x;
+    long slb_y;
     unsigned long k;
     long i;
     if (room->kind == RoK_DUNGHEART) {
@@ -2559,7 +2592,8 @@ void init_room_sparks(struct Room *room)
 
 TbBool create_effects_on_room_slabs(struct Room *room, ThingModel effkind, long effrange, PlayerNumber effowner)
 {
-    long slb_x,slb_y;
+    long slb_x;
+    long slb_y;
     unsigned long k;
     long i;
     k = 0;
@@ -2598,7 +2632,8 @@ TbBool create_effects_on_room_slabs(struct Room *room, ThingModel effkind, long 
  */
 TbBool clear_dig_on_room_slabs(struct Room *room, PlayerNumber plyr_idx)
 {
-    long slb_x,slb_y;
+    long slb_x;
+    long slb_y;
     unsigned long k;
     long i;
     k = 0;
@@ -2663,14 +2698,17 @@ TbBool find_random_valid_position_for_thing_in_room(struct Thing *thing, struct 
     }
     for (k = 0; k < room->slabs_count; k++)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(slbnum);
         slb_y = slb_num_decode_y(slbnum);
-        int snum, ssub;
+        int snum;
+        int ssub;
         ssub = ACTION_RANDOM(9);
         for (snum = 0; snum < 9; snum++)
         {
-            MapSubtlCoord stl_x, stl_y;
+            MapSubtlCoord stl_x;
+            MapSubtlCoord stl_y;
             stl_x = slab_subtile(slb_x, ssub % 3);
             stl_y = slab_subtile(slb_y, ssub / 3);
             struct Map *mapblk;
@@ -2717,7 +2755,8 @@ TbBool slab_is_area_outer_border(MapSlabCoord slb_x, MapSlabCoord slb_y)
     long n;
     for (n=0; n < SMALL_AROUND_LENGTH; n++)
     {
-        long aslb_x,aslb_y;
+        long aslb_x;
+        long aslb_y;
         aslb_x = slb_x + (long)small_around[n].delta_x;
         aslb_y = slb_y + (long)small_around[n].delta_y;
         slb = get_slabmap_block(aslb_x,aslb_y);
@@ -2747,7 +2786,8 @@ TbBool slab_is_area_inner_fill(MapSlabCoord slb_x, MapSlabCoord slb_y)
     long n;
     for (n=0; n < AROUND_EIGHT_LENGTH; n++)
     {
-        long aslb_x,aslb_y;
+        long aslb_x;
+        long aslb_y;
         aslb_x = slb_x + (long)my_around_eight[n].delta_x;
         aslb_y = slb_y + (long)my_around_eight[n].delta_y;
         struct SlabMap *slb;
@@ -2779,7 +2819,8 @@ TbBool find_random_position_at_area_of_room(struct Coord3d *pos, const struct Ro
         if (n <= 0) {
             n = room->slabs_list;
         }
-        MapSlabCoord slb_x, slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(n);
         slb_y = slb_num_decode_y(n);
         if  ((room_area == RoArC_ANY)
@@ -2965,7 +3006,9 @@ struct Room *find_nth_room_of_owner_with_spare_item_capacity_starting_with(long 
 
 struct Room *find_room_with_most_spare_capacity_starting_with(long room_idx, long *total_spare_cap)
 {
-    long max_spare_cap,loc_total_spare_cap,delta;
+    long max_spare_cap;
+    long loc_total_spare_cap;
+    long delta;
     struct Room *max_spare_room;
     struct Room *room;
     unsigned long k;
@@ -3038,16 +3081,19 @@ TbBool find_first_valid_position_for_thing_anywhere_in_room(const struct Thing *
     i = room->slabs_list;
     while (i > 0)
     {
-        MapSubtlCoord slb_x,slb_y;
+        MapSubtlCoord slb_x;
+        MapSubtlCoord slb_y;
         slb_x = slb_num_decode_x(i);
         slb_y = slb_num_decode_y(i);
         // Per-slab code
-        long dx,dy;
+        long dx;
+        long dy;
         for (dy=0; dy < 3; dy++)
         {
             for (dx=0; dx < 3; dx++)
             {
-                MapSubtlCoord stl_x,stl_y;
+                MapSubtlCoord stl_x;
+                MapSubtlCoord stl_y;
                 struct Map *mapblk;
                 stl_x = 3*slb_x+dx;
                 stl_y = 3*slb_y+dy;
@@ -3087,7 +3133,8 @@ struct Room *find_nearest_room_for_thing_with_spare_capacity(struct Thing *thing
 {
     struct Dungeon *dungeon;
     struct Room *nearoom;
-    long neardistance,distance;
+    long neardistance;
+    long distance;
     struct Coord3d pos;
 
     struct Room *room;
@@ -3266,7 +3313,8 @@ TbBool creature_can_get_to_any_of_players_rooms(struct Thing *thing, PlayerNumbe
  */
 struct Room *find_random_room_with_used_capacity_creature_can_navigate_to(struct Thing *thing, PlayerNumber owner, RoomKind rkind, unsigned char nav_flags)
 {
-    long count,selected;
+    long count;
+    long selected;
     SYNCDBG(18,"Starting");
     count = count_rooms_with_used_capacity_creature_can_navigate_to(thing, owner, rkind, nav_flags);
     if (count < 1)
@@ -3292,8 +3340,10 @@ struct Room *find_room_nearest_to_position(PlayerNumber plyr_idx, RoomKind rkind
     struct Room *near_room;
     long i;
     unsigned long k;
-    long distance,near_distance;
-    MapCoordDelta delta_x,delta_y;
+    long distance;
+    long near_distance;
+    MapCoordDelta delta_x;
+    MapCoordDelta delta_y;
     dungeon = get_dungeon(plyr_idx);
     near_distance = LONG_MAX;
     near_room = INVALID_ROOM;
@@ -3549,7 +3599,8 @@ struct Room *find_nth_room_for_thing(struct Thing *thing, PlayerNumber owner, Ro
 struct Room *find_random_room_for_thing(struct Thing *thing, PlayerNumber owner, RoomKind rkind, unsigned char nav_flags)
 {
     //return _DK_find_random_room_for_thing(thing, plyr_idx, rkind, a4);
-    long count,selected;
+    long count;
+    long selected;
     SYNCDBG(18,"Starting");
     count = count_rooms_for_thing(thing, owner, rkind, nav_flags);
     if (count < 1)
@@ -3662,7 +3713,8 @@ struct Room *find_nth_room_for_thing_with_spare_room_item_capacity(struct Thing 
 struct Room * find_random_room_for_thing_with_spare_room_item_capacity(struct Thing *thing, PlayerNumber owner, RoomKind rkind, unsigned char nav_flags)
 {
     //return _DK_find_random_room_for_thing_with_spare_room_item_capacity(thing, owner, rkind, nav_flags);
-    long count,selected;
+    long count;
+    long selected;
     SYNCDBG(18,"Starting");
     count = count_rooms_for_thing_with_spare_room_item_capacity(thing, owner, rkind, nav_flags);
     if (count < 1)
@@ -3716,7 +3768,8 @@ long find_random_valid_position_for_item_in_different_room_avoiding_object(struc
     }
     if (matching_rooms <= 0)
         return 0;
-    int chosen_match_idx, curr_match_idx;
+    int chosen_match_idx;
+    int curr_match_idx;
     chosen_match_idx = ACTION_RANDOM(matching_rooms);
     curr_match_idx = 0;
     i = dungeon->room_kind[skip_room->kind];
@@ -4030,7 +4083,8 @@ void kill_room_slab_and_contents(PlayerNumber plyr_idx, MapSlabCoord slb_x, MapS
     slb->room_index = 0;
     SlabCodedCoords slbnum;
     slbnum = get_slab_number(slb_x, slb_y);
-    MapSubtlCoord sstl_x, sstl_y;
+    MapSubtlCoord sstl_x;
+    MapSubtlCoord sstl_y;
     for (sstl_y = slab_subtile(slb_y,0); sstl_y <= slab_subtile(slb_y,2); sstl_y++)
     {
         for (sstl_x = slab_subtile(slb_x,0); sstl_x <= slab_subtile(slb_x,2); sstl_x++)
@@ -4162,7 +4216,8 @@ struct Room *place_room(PlayerNumber owner, RoomKind rkind, MapSubtlCoord stl_x,
     struct RoomData *rdata;
     struct Dungeon *dungeon;
     struct SlabMap *slb;
-    long slb_x, slb_y;
+    long slb_x;
+    long slb_y;
     long i;
     game.field_14EA4B = 1;
     if (subtile_coords_invalid(stl_x, stl_y))
@@ -4435,15 +4490,18 @@ void delete_room_slabbed_objects(SlabCodedCoords slb_num)
 {
     SYNCDBG(17,"Starting");
     //_DK_delete_room_slabbed_objects(slb_num);
-    MapSubtlCoord slb_x,slb_y;
+    MapSubtlCoord slb_x;
+    MapSubtlCoord slb_y;
     slb_x = slb_num_decode_x(slb_num);
     slb_y = slb_num_decode_y(slb_num);
-    int ssub_x, ssub_y;
+    int ssub_x;
+    int ssub_y;
     for (ssub_y=0; ssub_y < STL_PER_SLB; ssub_y++)
     {
         for (ssub_x=0; ssub_x < STL_PER_SLB; ssub_x++)
         {
-            MapSubtlCoord stl_x, stl_y;
+            MapSubtlCoord stl_x;
+            MapSubtlCoord stl_y;
             stl_x = slab_subtile(slb_x,ssub_x);
             stl_y = slab_subtile(slb_y,ssub_y);
             struct Map *mapblk;
@@ -4564,15 +4622,18 @@ void change_room_map_element_ownership(struct Room *room, PlayerNumber plyr_idx)
     i = room->slabs_list;
     while (i > 0)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         struct SlabMap *slb;
         slb = get_slabmap_direct(i);
         slb_x = slb_num_decode_x(i);
         slb_y = slb_num_decode_y(i);
         i = get_next_slab_number_in_room(i);
         // Per-slab code
-        MapSubtlCoord start_stl_x,start_stl_y;
-        MapSubtlCoord end_stl_x,end_stl_y;
+        MapSubtlCoord start_stl_x;
+        MapSubtlCoord start_stl_y;
+        MapSubtlCoord end_stl_x;
+        MapSubtlCoord end_stl_y;
         set_slab_explored(plyr_idx, slb_x, slb_y);
         slabmap_set_owner(slb, plyr_idx);
         start_stl_x = slab_subtile(slb_x,0);
@@ -4580,7 +4641,8 @@ void change_room_map_element_ownership(struct Room *room, PlayerNumber plyr_idx)
         end_stl_x = slab_subtile(slb_x+1,0);
         end_stl_y = slab_subtile(slb_y+1,0);
         // Do the loop
-        MapSubtlCoord stl_x,stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         for (stl_y=start_stl_y; stl_y < end_stl_y; stl_y++)
         {
             for (stl_x=start_stl_x; stl_x < end_stl_x; stl_x++)
@@ -4602,14 +4664,17 @@ void change_room_map_element_ownership(struct Room *room, PlayerNumber plyr_idx)
 void redraw_slab_map_elements(MapSlabCoord slb_x, MapSlabCoord slb_y)
 {
     // Prepare start and end subtiles
-    MapSubtlCoord start_stl_x,start_stl_y;
-    MapSubtlCoord end_stl_x,end_stl_y;
+    MapSubtlCoord start_stl_x;
+    MapSubtlCoord start_stl_y;
+    MapSubtlCoord end_stl_x;
+    MapSubtlCoord end_stl_y;
     start_stl_x = slab_subtile(slb_x,0);
     start_stl_y = slab_subtile(slb_y,0);
     end_stl_x = slab_subtile(slb_x,3);
     end_stl_y = slab_subtile(slb_y,3);
     // Do the loop
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     for (stl_y=start_stl_y; stl_y < end_stl_y; stl_y++)
     {
         for (stl_x=start_stl_x; stl_x < end_stl_x; stl_x++)
@@ -4632,7 +4697,8 @@ void redraw_room_map_elements(struct Room *room)
     i = room->slabs_list;
     while (i > 0)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(i);
         slb_y = slb_num_decode_y(i);
         i = get_next_slab_number_in_room(i);
@@ -4656,7 +4722,8 @@ void do_room_unprettying(struct Room *room, PlayerNumber plyr_idx)
     i = room->slabs_list;
     while (i > 0)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(i);
         slb_y = slb_num_decode_y(i);
         i = get_next_slab_number_in_room(i);
@@ -4770,7 +4837,8 @@ long claim_enemy_room(struct Room *room, struct Thing *claimtng)
  */
 void destroy_room_leaving_unclaimed_ground(struct Room *room)
 {
-    long slb_x, slb_y;
+    long slb_x;
+    long slb_y;
     unsigned long k;
     long i;
     k = 0;

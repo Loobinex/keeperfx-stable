@@ -118,7 +118,8 @@ TbBool computer_player_in_emergency_state(const struct Computer2 *comp)
 
 GoldAmount get_dungeon_money_less_cost(const struct Dungeon *dungeon)
 {
-    GoldAmount money_payday, money_mkdigger;
+    GoldAmount money_payday;
+    GoldAmount money_mkdigger;
     // As payday need, take amount planned for next payday
     money_payday = dungeon->creatures_total_pay;
     // In case payday expenses are low, require enough money to make special digger
@@ -234,7 +235,8 @@ struct ComputerTask *computer_setup_build_room(struct Computer2 *comp, RoomKind 
     struct Dungeon *dungeon;
     dungeon = comp->dungeon;
     long max_slabs;
-    long area_min,area_max;
+    long area_min;
+    long area_max;
     long i;
     max_slabs = height_slabs;
     if (max_slabs < width_slabs)
@@ -296,7 +298,8 @@ long computer_finds_nearest_room_to_gold_lookup(const struct Dungeon *dungeon, c
 {
     struct Room *room;
     long rkind;
-    long distance,min_distance;
+    long distance;
+    long min_distance;
     struct Coord3d gold_pos;
     *nearroom = INVALID_ROOM;
     gold_pos.x.val = 0;
@@ -335,8 +338,10 @@ long computer_finds_nearest_task_to_gold(const struct Computer2 *comp, const str
     long i;
     unsigned long k;
     struct ComputerTask *ctask;
-    long distance,min_distance;
-    MapCoordDelta delta_x,delta_y;
+    long distance;
+    long min_distance;
+    MapCoordDelta delta_x;
+    MapCoordDelta delta_y;
     task_pos.x.val = 0;
     task_pos.y.val = 0;
     task_pos.z.val = 0;
@@ -575,7 +580,8 @@ void get_opponent(struct Computer2 *comp, struct THate hates[])
     // Get position of a possible attack - select one of minimum distance to our heart
     struct Thing *heartng;
     heartng = get_player_soul_container(dungeon->owner);
-    MapSubtlCoord dnstl_x, dnstl_y;
+    MapSubtlCoord dnstl_x;
+    MapSubtlCoord dnstl_y;
     dnstl_x = heartng->mappos.x.stl.num;
     dnstl_y = heartng->mappos.y.stl.num;
     for (i=0; i < PLAYERS_COUNT; i++)
@@ -631,7 +637,8 @@ long setup_computer_attack(struct Computer2 *comp, struct ComputerProcess *cproc
         SYNCDBG(7,"Cannot find owned room near (%d,%d), giving up",(int)pos->x.stl.num,(int)pos->y.stl.num);
         return 0;
     }
-    struct Coord3d startpos, endpos;
+    struct Coord3d startpos;
+    struct Coord3d endpos;
     startpos.x.val = subtile_coord_center(stl_slab_center_subtile(room->central_stl_x));
     startpos.y.val = subtile_coord_center(stl_slab_center_subtile(room->central_stl_y));
     startpos.z.val = subtile_coord(1,0);
@@ -718,7 +725,8 @@ long buildable_traps_amount(struct Dungeon *dungeon, ThingModel trmodel)
  */
 long get_number_of_trap_kinds_with_amount_at_least(struct Dungeon *dungeon, long base_amount)
 {
-    long i,kinds;
+    long i;
+    long kinds;
     kinds = 0;
     for (i=1; i < TRAP_TYPES_COUNT; i++)
     {
@@ -758,7 +766,8 @@ long get_nth_of_trap_kinds_with_amount_at_least(struct Dungeon *dungeon, long ba
  */
 long computer_choose_best_trap_kind_to_place(struct Dungeon *dungeon, long allow_last, ThingModel kind_preselect)
 {
-    long kinds_multiple,kinds_single;
+    long kinds_multiple;
+    long kinds_single;
     // If there are multiple buildable traps of preselected kind
     if ((kind_preselect > 0) && (buildable_traps_amount(dungeon, kind_preselect) >= 2))
         return kind_preselect;
@@ -844,7 +853,8 @@ TbBool computer_get_trap_place_location_and_update_locations(struct Computer2 *c
         // Check if the entry has coords stored
         if ((location->x.val <= 0) && (location->y.val <= 0))
             continue;
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = subtile_slab(location->x.stl.num);
         slb_y = subtile_slab(location->y.stl.num);
         struct SlabMap *slb;
@@ -1095,7 +1105,8 @@ long computer_check_for_money(struct Computer2 *comp, struct ComputerCheck * che
         // content of the hand could be used by wrong task by mistake
         if (!is_task_in_progress_using_hand(comp) && computer_able_to_use_power(comp, PwrK_HAND, 1, num_to_move))
         {
-            MapSubtlCoord stl_x, stl_y;
+            MapSubtlCoord stl_x;
+            MapSubtlCoord stl_y;
             int tsk_id;
             stl_x = -1;
             stl_y = -1;
@@ -1145,15 +1156,18 @@ long count_creatures_for_defend_pickup(struct Computer2 *comp)
 TbBool computer_find_non_solid_block(const struct Computer2 *comp, struct Coord3d *pos)
 {
     //return _DK_computer_find_non_solid_block(comp, pos);
-    unsigned long n,k;
+    unsigned long n;
+    unsigned long k;
     for (n = 0; n < MID_AROUND_LENGTH; n++)
     {
-        MapSubtlCoord arstl_x, arstl_y;
+        MapSubtlCoord arstl_x;
+        MapSubtlCoord arstl_y;
         arstl_x = pos->x.stl.num + STL_PER_SLB*start_at_around[n].delta_x;
         arstl_y = pos->y.stl.num + STL_PER_SLB*start_at_around[n].delta_y;
         for (k = 0; k < MID_AROUND_LENGTH; k++)
         {
-            MapSubtlCoord sstl_x, sstl_y;
+            MapSubtlCoord sstl_x;
+            MapSubtlCoord sstl_y;
             sstl_x = arstl_x + start_at_around[k].delta_x;
             sstl_y = arstl_y + start_at_around[k].delta_y;
             if (can_drop_thing_here(sstl_x, sstl_y, comp->dungeon->owner, 0))
@@ -1187,7 +1201,8 @@ TbBool computer_able_to_use_power(struct Computer2 *comp, PowerKind pwkind, long
         pwlevel = MAGIC_OVERCHARGE_LEVELS;
     if (pwlevel < 0)
         pwlevel = 0;
-    GoldAmount money, price;
+    GoldAmount money;
+    GoldAmount price;
     money = get_computer_money_less_cost(comp);
     price = compute_power_price(dungeon->owner, pwkind, pwlevel);
     if ((price > 0) && (amount * price > money)) {
@@ -1349,7 +1364,8 @@ void computer_check_events(struct Computer2 *comp)
     struct Dungeon * dungeon;
     struct ComputerEvent * cevent;
     struct Event * event;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(17,"Starting");
     dungeon = comp->dungeon;
     for (i=0; i < COMPUTER_EVENTS_COUNT; i++)

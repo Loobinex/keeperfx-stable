@@ -50,7 +50,8 @@ struct NamedCommand creatrstate_desc[CREATURE_STATES_MAX];
 TbBool parse_creaturestates_common_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -119,7 +120,9 @@ TbBool parse_creaturestates_common_blocks(char *buf, long len, const char *confi
 TbBool parse_creaturestates_state_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];

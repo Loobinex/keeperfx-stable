@@ -502,7 +502,8 @@ struct Thing *create_effect_element(const struct Coord3d *pos, unsigned short ee
     struct InitLight ilght;
     struct EffectElementStats *eestat;
     struct Thing *thing;
-    long i,n;
+    long i;
+    long n;
     if (!i_can_allocate_free_thing_structure(FTAF_Default)) {
         return INVALID_THING;
     }
@@ -603,15 +604,18 @@ void process_spells_affected_by_effect_elements(struct Thing *thing)
     struct CreatureControl *cctrl;
     cctrl = creature_control_get_from_thing(thing);
     GameTurnDelta dturn;
-    unsigned short cframe, nframes;
+    unsigned short cframe;
+    unsigned short nframes;
     long angle;
-    MapCoordDelta shift_x, shift_y;
+    MapCoordDelta shift_x;
+    MapCoordDelta shift_y;
     struct Coord3d pos;
     struct Thing *effeltng;
 
     if ((cctrl->spell_flags & CSAfF_Rebound) != 0)
     {
-        int diamtr, radius;
+        int diamtr;
+        int radius;
         GameTurnDelta dtadd;
         MapCoord cor_z_max;
         diamtr = 4 * thing->clipbox_size_xy / 2;
@@ -644,7 +648,8 @@ void process_spells_affected_by_effect_elements(struct Thing *thing)
 
     if ((cctrl->spell_flags & CSAfF_Slow) != 0)
     {
-        int diamtr, radius;
+        int diamtr;
+        int radius;
         MapCoord cor_z_max;
         int vrange;
         int i;
@@ -735,7 +740,8 @@ void process_spells_affected_by_effect_elements(struct Thing *thing)
 void move_effect_blocked(struct Thing *thing, struct Coord3d *prev_pos, struct Coord3d *next_pos)
 {
     struct EffectElementStats *eestat;
-    long cube_id,sample_id;
+    long cube_id;
+    long sample_id;
     unsigned short effmodel;
     unsigned long blocked_flags;
     eestat = get_effect_element_model_stats(thing->model);
@@ -825,7 +831,8 @@ void change_effect_element_into_another(struct Thing *thing, long nmodel)
     //return _DK_change_effect_element_into_another(thing,nmodel);
     struct EffectElementStats *eestat;
     eestat = get_effect_element_model_stats(nmodel);
-    int scale, speed;
+    int scale;
+    int speed;
     speed = eestat->sprite_speed_min + ACTION_RANDOM(eestat->sprite_speed_max - eestat->sprite_speed_min + 1);
     scale = eestat->sprite_size_min + ACTION_RANDOM(eestat->sprite_size_max - eestat->sprite_size_min + 1);
     thing->model = nmodel;
@@ -1014,9 +1021,12 @@ void effect_generate_effect_elements(const struct Thing *thing)
     struct PlayerInfo *player;
     struct Thing *elemtng;
     struct Coord3d pos;
-    long i,k,n;
+    long i;
+    long k;
+    long n;
     long mag;
-    unsigned long arg,argZ;
+    unsigned long arg;
+    unsigned long argZ;
     effnfo = get_effect_info_for_thing(thing);
     SYNCDBG(18,"Preparing Effect, Generation Type %d",(int)effnfo->generation_type);
     switch (effnfo->generation_type)
@@ -1112,8 +1122,10 @@ TngUpdateRet process_effect_generator(struct Thing *thing)
     struct EffectGeneratorStats *egenstat;
     struct Thing *elemtng;
     struct Coord3d pos;
-    long deviation_angle,deviation_mag;
-    long i,k;
+    long deviation_angle;
+    long deviation_mag;
+    long i;
+    long k;
     SYNCDBG(18,"Starting");
     TRACE_THING(thing);
     if (thing->health > 0)
@@ -1167,7 +1179,9 @@ TngUpdateRet process_effect_generator(struct Thing *thing)
         } else
         {
             SYNCDBG(18,"The %s created effect %d/%d, index %d",thing_model_name(thing),(int)i,(int)egenstat->genation_amount,(int)elemtng->index);
-            long acc_x,acc_y,acc_z;
+            long acc_x;
+            long acc_y;
+            long acc_z;
             struct Thing *sectng;
             acc_x = egenstat->acc_x_min + ACTION_RANDOM(egenstat->acc_x_max - egenstat->acc_x_min + 1);
             acc_y = egenstat->acc_y_min + ACTION_RANDOM(egenstat->acc_y_max - egenstat->acc_y_min + 1);
@@ -1298,7 +1312,8 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
         distance = get_2d_distance(pos, &tngdst->mappos);
         if (distance < max_dist)
         {
-            long move_dist,move_angle;
+            long move_dist;
+            long move_angle;
             move_angle = get_angle_xy_to(pos, &tngdst->mappos);
             if (tngdst->class_id == TCls_Creature)
             {
@@ -1399,9 +1414,12 @@ long explosion_effect_affecting_map_block(struct Thing *efftng, struct Thing *tn
  */
 void word_of_power_affecting_area(struct Thing *efftng, struct Thing *owntng, struct Coord3d *pos)
 {
-    long stl_xmin,stl_xmax;
-    long stl_ymin,stl_ymax;
-    long stl_x,stl_y;
+    long stl_xmin;
+    long stl_xmax;
+    long stl_ymin;
+    long stl_ymax;
+    long stl_x;
+    long stl_y;
     // Effect causes area damage only on its birth turn
     if (efftng->creation_turn != game.play_gameturn) {
         return;
@@ -1552,8 +1570,10 @@ long explosion_affecting_area(struct Thing *tngsrc, const struct Coord3d *pos, M
     HitPoints max_damage, long blow_strength, HitTargetFlags hit_targets, DamageType damage_type)
 {
     const struct Map *mapblk;
-    MapSubtlCoord start_x,start_y;
-    MapSubtlCoord end_x,end_y;
+    MapSubtlCoord start_x;
+    MapSubtlCoord start_y;
+    MapSubtlCoord end_x;
+    MapSubtlCoord end_y;
     MapSubtlCoord range_stl;
     if (hit_targets == HitTF_None)
     {
@@ -1579,7 +1599,8 @@ long explosion_affecting_area(struct Thing *tngsrc, const struct Coord3d *pos, M
     if ((start_params.debug_flags & DFlg_ShotsDamage) != 0)
         create_price_effect(pos, my_player_number, max_damage);
 #endif
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     long num_affected;
     num_affected = 0;
     for (stl_y = start_y; stl_y <= end_y; stl_y++)
@@ -1701,7 +1722,10 @@ long poison_cloud_affecting_area(struct Thing *tngsrc, struct Coord3d *pos, long
         effnfo = get_effect_info_for_thing(tngsrc);
         dmg_divider = max(effnfo->start_health,1);
     }
-    MapSubtlCoord start_x,end_x,start_y,end_y;
+    MapSubtlCoord start_x;
+    MapSubtlCoord end_x;
+    MapSubtlCoord start_y;
+    MapSubtlCoord end_y;
     start_x = coord_subtile(pos->x.val - max_dist);
     start_y = coord_subtile(pos->y.val - max_dist);
     end_x = coord_subtile(pos->x.val + max_dist) + 1;
@@ -1730,7 +1754,8 @@ long poison_cloud_affecting_area(struct Thing *tngsrc, struct Coord3d *pos, long
     if (end_y > map_subtiles_y) {
         end_y = map_subtiles_y;
     }
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     long num_affected;
     num_affected = 0;
     for (stl_y = start_y; stl_y <= end_y; stl_y++)

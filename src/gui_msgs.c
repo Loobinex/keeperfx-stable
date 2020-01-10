@@ -30,8 +30,10 @@
 /******************************************************************************/
 void message_draw(void)
 {
-    int i,h;
-    long x,y;
+    int i;
+    int h;
+    long x;
+    long y;
     SYNCDBG(7,"Starting");
     LbTextSetFont(winfont);
     int tx_units_per_px;

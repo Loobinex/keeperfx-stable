@@ -78,8 +78,11 @@ long naviheap_get(long heapid)
  */
 void heap_down(long heapid)
 {
-    unsigned long hpos,hnew,hend;
-    long tree_idb,tree_ids;
+    unsigned long hpos;
+    unsigned long hnew;
+    unsigned long hend;
+    long tree_idb;
+    long tree_ids;
     long tval_idb;
     // Insert dummy value (there is no associated triangle for it)
     Heap[heap_end+1] = TREEVALS_COUNT-1;
@@ -125,8 +128,10 @@ long naviheap_remove(void)
 #define heap_up(heapid) heap_up_f(heapid, __func__)
 void heap_up_f(long heapid, const char *func_name)
 {
-    unsigned long nmask,pmask;
-    long i,k;
+    unsigned long nmask;
+    unsigned long pmask;
+    long i;
+    long k;
     pmask = heapid;
     Heap[0] = TREEVALS_COUNT-1;
     tree_val[TREEVALS_COUNT-1] = -1;

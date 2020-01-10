@@ -386,7 +386,9 @@ short parse_campaign_common_blocks(struct GameCampaign *campgn,char *buf,long le
 {
   static const char config_textname[] = "Campaign config";
   long pos;
-  int i,k,n;
+  int i;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[32];
@@ -664,7 +666,9 @@ short parse_campaign_strings_blocks(struct GameCampaign *campgn,char *buf,long l
 {
   static const char config_textname[] = "Campaign config";
   long pos;
-  int i,k,n;
+  int i;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[32];
@@ -708,7 +712,9 @@ short parse_campaign_speech_blocks(struct GameCampaign *campgn,char *buf,long le
 {
   static const char config_textname[] = "Campaign config";
   long pos;
-  int i,k,n;
+  int i;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[32];
@@ -765,7 +771,8 @@ short parse_campaign_map_block(long lvnum, unsigned long lvoptions, char *buf, l
     static const char config_textname[] = "Campaign config";
     struct LevelInformation *lvinfo;
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[32];
@@ -952,7 +959,8 @@ short parse_campaign_map_block(long lvnum, unsigned long lvoptions, char *buf, l
 short parse_campaign_map_blocks(struct GameCampaign *campgn, char *buf, long len)
 {
     static const char config_textname[] = "Campaign config";
-    long lvnum,bn_lvnum;
+    long lvnum;
+    long bn_lvnum;
     long i;
     SYNCDBG(8,"Starting");
     i = campgn->single_levels_count + campgn->multi_levels_count + campgn->bonus_levels_count
@@ -1191,15 +1199,16 @@ void sort_campaigns_quicksort(struct CampaignsList *clist, int beg, int end)
 {
   if (end > beg + 1)
   {
-    int l = beg + 1, r = end;
-    struct GameCampaign *campiv;
-    campiv = &clist->items[beg];
-    while (l < r)
-    {
-        if (strcasecmp(clist->items[l].name, campiv->name) <= 0)
-        {
-            l++;
-        } else
+      int l = beg + 1;
+      int r = end;
+      struct GameCampaign* campiv;
+      campiv = &clist->items[beg];
+      while (l < r)
+      {
+          if (strcasecmp(clist->items[l].name, campiv->name) <= 0)
+          {
+              l++;
+          } else
         {
             swap_campaigns_in_list(clist, l, --r);
         }
@@ -1235,7 +1244,8 @@ TbBool load_campaigns_list(void)
     struct TbFileFind fileinfo;
     int rc;
     char *fname;
-    long cnum_all,cnum_ok;
+    long cnum_all;
+    long cnum_ok;
     init_campaigns_list_entries(&campaigns_list, CAMPAIGNS_LIST_GROW_DELTA);
     fname = prepare_file_path(FGrp_Campgn,"*.cfg");
     rc = LbFileFindFirst(fname, &fileinfo, 0x21u);

@@ -364,7 +364,8 @@ TbBool attempt_anger_job_persuade(struct Thing *creatng)
 TbBool attempt_anger_job_join_enemy(struct Thing *creatng)
 {
     struct Thing *heartng;
-    int i, n;
+    int i;
+    int n;
     n = ACTION_RANDOM(PLAYERS_COUNT);
     for (i=0; i < PLAYERS_COUNT; i++, n=(n+1)%PLAYERS_COUNT)
     {
@@ -444,7 +445,9 @@ TbBool creature_find_and_perform_anger_job(struct Thing *creatng)
 {
     struct CreatureStats *crstat;
     crstat = creature_stats_get_from_thing(creatng);
-    int i, k, n;
+    int i;
+    int k;
+    int n;
     // Count the amount of jobs set
     i = 0;
     k = crstat->jobs_anger;
@@ -1160,7 +1163,8 @@ TbBool attempt_job_in_state_internal_near_pos(struct Thing *creatng, MapSubtlCoo
  */
 TbBool attempt_job_preference(struct Thing *creatng, long jobpref)
 {
-    long i,n;
+    long i;
+    long n;
     // Start checking at random job
     if (crtr_conf.jobs_count < 1) {
         return false;
@@ -1201,7 +1205,9 @@ TbBool attempt_job_secondary_preference(struct Thing *creatng, long jobpref)
     if (i <= 0) {
         return false;
     }
-    unsigned long select_val,select_curr,select_delta;
+    unsigned long select_val;
+    unsigned long select_curr;
+    unsigned long select_delta;
     select_val = ACTION_RANDOM(512);
     select_delta = 512 / i;
     select_curr = select_delta;

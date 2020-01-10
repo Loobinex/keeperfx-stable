@@ -66,8 +66,10 @@ extern struct StatsData scrolling_stats_data[];
 long calculate_efficiency(PlayerNumber plyr_idx)
 {
     struct Dungeon *dungeon;
-    long i,rkind;
-    long count,efficiency;
+    long i;
+    long rkind;
+    long count;
+    long efficiency;
     unsigned long k;
     count = 0;
     efficiency = 0;
@@ -106,8 +108,10 @@ long calculate_efficiency(PlayerNumber plyr_idx)
 long calculate_style(long plyr_idx)
 {
     struct Dungeon *dungeon;
-    long i,rkind;
-    long area,half_area;
+    long i;
+    long rkind;
+    long area;
+    long half_area;
     unsigned long k;
     area = 0;
     dungeon = get_dungeon(plyr_idx);
@@ -151,7 +155,9 @@ long calculate_style(long plyr_idx)
 long calculate_rating(PlayerNumber plyr_idx)
 {
     struct Dungeon *dungeon;
-    long btlost,btwon,ratio;
+    long btlost;
+    long btwon;
+    long ratio;
     long rating;
     rating = calculate_style(plyr_idx) * calculate_efficiency(plyr_idx) / 100;
     dungeon = get_dungeon(plyr_idx);
@@ -238,7 +244,8 @@ void frontstats_draw_main_stats(struct GuiButton *gbtn)
 {
     struct StatsData *stat;
     int stat_val;
-    int pos_x,pos_y;
+    int pos_x;
+    int pos_y;
     int fs_units_per_px;
     fs_units_per_px = scroll_box_get_units_per_px(gbtn);
     draw_scroll_box(gbtn, fs_units_per_px, 6);
@@ -276,7 +283,8 @@ void frontstats_draw_scrolling_stats(struct GuiButton *gbtn)
 {
     struct StatsData *stat;
     int stat_val;
-    int pos_x,pos_y;
+    int pos_x;
+    int pos_y;
     int fs_units_per_px;
     fs_units_per_px = scroll_box_get_units_per_px(gbtn);
     draw_scroll_box(gbtn, fs_units_per_px, 5);

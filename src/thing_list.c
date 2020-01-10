@@ -1008,7 +1008,8 @@ void update_things(void)
 struct Thing *find_players_dungeon_heart(PlayerNumber plyridx)
 {
     struct Thing *thing;
-    int i,k;
+    int i;
+    int k;
     k = 0;
     i = game.thing_lists[TngList_Objects].index;
     while (i != 0)
@@ -1118,7 +1119,8 @@ void setup_zombie_players(void)
 void init_all_creature_states(void)
 {
     struct Thing *thing;
-    int i,k;
+    int i;
+    int k;
     k = 0;
     const struct StructureList *slist;
     slist = get_list_for_thing_class(TCls_Creature);
@@ -1461,7 +1463,8 @@ struct Thing *get_random_thing_of_class_with_filter(Thing_Maximizer_Filter filte
 long do_to_all_things_of_class_and_model(int tngclass, int tngmodel, Thing_Bool_Modifier do_cb)
 {
     unsigned long k;
-    long i, n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     struct StructureList *slist;
     slist = get_list_for_thing_class(tngclass);
@@ -1677,7 +1680,8 @@ struct Thing *find_gold_laying_in_dungeon(const struct Dungeon *dungeon)
 long creature_of_model_find_first(ThingModel crmodel)
 {
     struct Thing *thing;
-    long i,k;
+    long i;
+    long k;
     const struct StructureList *slist;
     slist = get_list_for_thing_class(TCls_Creature);
     i = slist->index;
@@ -1710,7 +1714,8 @@ long creature_of_model_find_first(ThingModel crmodel)
 long creature_of_model_in_prison_or_tortured(ThingModel crmodel)
 {
     struct Thing *thing;
-    long i,k;
+    long i;
+    long k;
     const struct StructureList *slist;
     slist = get_list_for_thing_class(TCls_Creature);
     i = slist->index;
@@ -1932,7 +1937,8 @@ long do_on_player_list_all_creatures_of_model(long thing_idx, int crmodel,
     struct CreatureControl *cctrl;
     struct Thing *thing;
     unsigned long k;
-    long i, n;
+    long i;
+    long n;
     n = 0;
     i = thing_idx;
     k = 0;
@@ -2063,7 +2069,8 @@ long count_player_list_creatures_of_model_on_territory(long thing_idx, ThingMode
 {
     unsigned long k;
     long i;
-    int count,slbwnr;
+    int count;
+    int slbwnr;
     count = 0;
     i = thing_idx;
     k = 0;
@@ -2145,7 +2152,8 @@ struct Thing *get_player_list_nth_creature_of_model_on_territory(long thing_idx,
     struct Thing *thing;
     unsigned long k;
     long i;
-    int slbwnr,match;
+    int slbwnr;
+    int match;
     i = thing_idx;
     k = 0;
     while (i != 0)
@@ -2251,7 +2259,8 @@ GoldAmount compute_player_payday_total(const struct Dungeon *dungeon)
 struct Thing *get_random_players_creature_of_model(PlayerNumber plyr_idx, ThingModel crmodel)
 {
     struct Dungeon *dungeon;
-    long total_count,crtr_idx;
+    long total_count;
+    long crtr_idx;
     TbBool is_spec_digger;
     is_spec_digger = ((crmodel > 0) && creature_kind_is_for_dungeon_diggers_list(plyr_idx, crmodel));
     dungeon = get_players_num_dungeon(plyr_idx);
@@ -2281,7 +2290,8 @@ struct Thing *get_random_players_creature_of_model(PlayerNumber plyr_idx, ThingM
 struct Thing *get_random_players_creature_of_model_on_territory(PlayerNumber plyr_idx, ThingModel crmodel, int friendly)
 {
     struct Dungeon *dungeon;
-    long total_count,crtr_idx;
+    long total_count;
+    long crtr_idx;
     TbBool is_spec_digger;
     is_spec_digger = ((crmodel > 0) && creature_kind_is_for_dungeon_diggers_list(plyr_idx, crmodel));
     dungeon = get_players_num_dungeon(plyr_idx);
@@ -2320,7 +2330,8 @@ long count_player_list_creatures_with_filter(long thing_idx, Thing_Maximizer_Fil
     long count;
     long maximizer;
     unsigned long k;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(9,"Starting");
     count = 0;
     maximizer = 0;
@@ -2408,7 +2419,8 @@ struct Thing *get_player_list_creature_with_filter(ThingIndex thing_idx, Thing_M
     struct Thing *retng;
     long maximizer;
     unsigned long k;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(9,"Starting");
     retng = INVALID_THING;
     maximizer = 0;
@@ -2465,7 +2477,8 @@ struct Thing *get_player_list_random_creature_with_filter(ThingIndex thing_idx, 
     long maximizer;
     long total_count;
     unsigned long k;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     // Count all creatures in list, so that we can know range for our random index
     total_count = count_player_list_creatures_of_model(thing_idx, 0);
@@ -2522,7 +2535,8 @@ struct Thing *get_thing_on_map_block_with_filter(long thing_idx, Thing_Maximizer
     struct Thing *thing;
     struct Thing *retng;
     unsigned long k;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     retng = INVALID_THING;
     k = 0;
@@ -2560,7 +2574,8 @@ long do_to_things_on_map_block(long thing_idx, Thing_Bool_Modifier do_cb)
 {
     struct Thing *thing;
     unsigned long k;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     n = 0;
     k = 0;
@@ -2592,7 +2607,8 @@ long do_to_things_with_param_on_map_block(ThingIndex thing_idx, Thing_Modifier_F
 {
     struct Thing *thing;
     unsigned long k;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     n = 0;
     k = 0;
@@ -2635,9 +2651,11 @@ struct Thing *get_thing_near_revealed_map_block_with_filter(MapCoord x, MapCoord
     struct Thing *retng;
     long maximizer;
     struct Map *mapblk;
-    MapSubtlCoord sx,sy;
+    MapSubtlCoord sx;
+    MapSubtlCoord sy;
     int around;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     retng = INVALID_THING;
     maximizer = 0;
@@ -2681,7 +2699,8 @@ struct Thing *get_thing_spiral_near_map_block_with_filter(MapCoord x, MapCoord y
     struct Thing *retng;
     long maximizer;
     struct Map *mapblk;
-    MapSubtlCoord sx,sy;
+    MapSubtlCoord sx;
+    MapSubtlCoord sy;
     int around;
     SYNCDBG(19,"Starting");
     retng = INVALID_THING;
@@ -2695,7 +2714,8 @@ struct Thing *get_thing_spiral_near_map_block_with_filter(MapCoord x, MapCoord y
       if (!map_block_invalid(mapblk))
       {
           struct Thing *thing;
-          long i,n;
+          long i;
+          long n;
           i = get_mapwho_thing_index(mapblk);
           n = maximizer;
           thing = get_thing_on_map_block_with_filter(i, filter, param, &n);
@@ -2724,9 +2744,11 @@ long count_things_spiral_near_map_block_with_filter(MapCoord x, MapCoord y, long
     long count;
     long maximizer;
     struct Map *mapblk;
-    MapSubtlCoord sx,sy;
+    MapSubtlCoord sx;
+    MapSubtlCoord sy;
     int around;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     count = 0;
     maximizer = 0;
@@ -2761,7 +2783,8 @@ long do_to_things_spiral_near_map_block(MapCoord x, MapCoord y, long spiral_len,
     struct MapOffset *sstep;
     long count;
     struct Map *mapblk;
-    MapSubtlCoord sx,sy;
+    MapSubtlCoord sx;
+    MapSubtlCoord sy;
     int around;
     long i;
     SYNCDBG(19,"Starting");
@@ -2796,7 +2819,8 @@ long do_to_things_with_param_around_map_block(const struct Coord3d *center_pos, 
     {
         const struct Around *caround;
         caround = &mid_around[around];
-        MapSubtlCoord sx,sy;
+        MapSubtlCoord sx;
+        MapSubtlCoord sy;
         sx = coord_subtile(center_pos->x.val) + caround->delta_x;
         sy = coord_subtile(center_pos->y.val) + caround->delta_y;
         SYNCDBG(18,"Doing on (%d,%d)",(int)sx,(int)sy);
@@ -2828,7 +2852,8 @@ long do_to_things_with_param_spiral_near_map_block(const struct Coord3d *center_
     {
         struct MapOffset *sstep;
         sstep = &spiral_step[around];
-        MapSubtlCoord sx,sy;
+        MapSubtlCoord sx;
+        MapSubtlCoord sy;
         sx = coord_subtile(center_pos->x.val) + sstep->h;
         sy = coord_subtile(center_pos->y.val) + sstep->v;
         SYNCDBG(18,"Doing on (%d,%d)",(int)sx,(int)sy);
@@ -3574,7 +3599,8 @@ struct Thing *get_object_at_subtile_of_model_and_owned_by(MapSubtlCoord stl_x, M
     Thing_Maximizer_Filter filter;
     struct CompoundTngFilterParam param;
     const struct Map *mapblk;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     filter = anywhere_thing_filter_is_of_class_and_model_and_owned_by;
     param.class_id = TCls_Object;
@@ -3595,7 +3621,8 @@ struct Thing *get_cavein_at_subtile_owned_by(MapSubtlCoord stl_x, MapSubtlCoord 
     Thing_Maximizer_Filter filter;
     struct CompoundTngFilterParam param;
     const struct Map *mapblk;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     filter = anywhere_thing_filter_is_of_class_and_model_and_owned_by;
     param.class_id = TCls_CaveIn;
@@ -3616,7 +3643,8 @@ struct Thing *get_food_at_subtile_available_to_eat_and_owned_by(MapSubtlCoord st
     Thing_Maximizer_Filter filter;
     struct CompoundTngFilterParam param;
     const struct Map *mapblk;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     filter = anywhere_thing_filter_is_food_available_to_eat_and_owned_by;
     param.class_id = -1;
@@ -3637,7 +3665,8 @@ struct Thing *get_trap_at_subtile_of_model_and_owned_by(MapSubtlCoord stl_x, Map
     Thing_Maximizer_Filter filter;
     struct CompoundTngFilterParam param;
     const struct Map *mapblk;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     filter = anywhere_thing_filter_is_of_class_and_model_and_owned_by;
     param.class_id = TCls_Trap;
@@ -3679,8 +3708,10 @@ struct Thing *get_door_for_position(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
     Thing_Maximizer_Filter filter;
     struct CompoundTngFilterParam param;
     const struct Map *mapblk;
-    MapSlabCoord slb_x,slb_y;
-    long i,n;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     filter = anywhere_thing_filter_is_of_class_and_model_and_owned_by;
     param.class_id = TCls_Door;
@@ -3710,7 +3741,8 @@ struct Thing *get_creature_of_model_training_at_subtile_and_owned_by(MapSubtlCoo
     Thing_Maximizer_Filter filter;
     struct CompoundTngFilterParam param;
     const struct Map *mapblk;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(19,"Starting");
     filter = anywhere_thing_filter_is_creature_of_model_training_and_owned_by;
     param.class_id = TCls_Creature;
@@ -3734,7 +3766,8 @@ struct Thing *get_nearest_object_at_position(MapSubtlCoord stl_x, MapSubtlCoord 
 
 void remove_dead_creatures_from_slab(MapSlabCoord slb_x, MapSlabCoord slb_y)
 {
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = slab_subtile_center(slb_x);
     stl_y = slab_subtile_center(slb_y);
     do_to_things_spiral_near_map_block(subtile_coord_center(stl_x), subtile_coord_center(stl_y), 9, delete_if_dead_creature);
@@ -3859,7 +3892,8 @@ long count_creatures_in_dungeon_controlled_and_of_model_flags(const struct Dunge
 void break_mapwho_infinite_chain(const struct Map *mapblk)
 {
     SYNCDBG(8,"Starting");
-    long i, i_first;
+    long i;
+    long i_first;
     long i_prev[2];
     i_first = get_mapwho_thing_index(mapblk);
     i_prev[1] = 0;

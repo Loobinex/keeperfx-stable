@@ -314,7 +314,8 @@ TbBool add_item_to_dead_creature_list(struct Dungeon *dungeon, ThingModel crmode
 TbBool remove_item_from_dead_creature_list(struct Dungeon *dungeon, ThingModel crmodel, long crlevel)
 {
     struct CreatureStorage *cstore;
-    long i,rmpos;
+    long i;
+    long rmpos;
     SYNCDBG(18,"Starting");
     if (dungeon_invalid(dungeon))
     {

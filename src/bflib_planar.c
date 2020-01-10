@@ -112,7 +112,8 @@ long distance_with_angle_to_coord_y(long distance, long angle)
 
 long get_distance_xy(long x1, long y1, long x2, long y2)
 {
-    long dx, dy;
+    long dx;
+    long dy;
     dx = abs(x1 - x2);
     dy = abs(y1 - y2);
     return LbDiagonalLength(dx, dy);

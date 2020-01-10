@@ -462,8 +462,10 @@ void turn_off_power_call_to_arms(PlayerNumber plyr_idx)
 void store_backup_explored_flags_for_power_sight(struct PlayerInfo *player, struct Coord3d *soe_pos)
 {
     struct Dungeon *dungeon;
-    MapSubtlCoord stl_x,stl_y;
-    long soe_x,soe_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    long soe_x;
+    long soe_y;
     dungeon = get_players_dungeon(player);
     stl_y = (long)soe_pos->y.stl.num - MAX_SOE_RADIUS;
     for (soe_y=0; soe_y < 2*MAX_SOE_RADIUS; soe_y++,stl_y++)
@@ -492,9 +494,12 @@ void store_backup_explored_flags_for_power_sight(struct PlayerInfo *player, stru
 void update_vertical_explored_flags_for_power_sight(struct PlayerInfo *player, struct Coord3d *soe_pos)
 {
     struct Dungeon *dungeon;
-    MapSubtlCoord stl_x,stl_y;
-    long soe_x,soe_y;
-    long slb_x,slb_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    long soe_x;
+    long soe_y;
+    long slb_x;
+    long slb_y;
     long boundstl_x;
     long delta;
     long i;
@@ -599,10 +604,13 @@ TbBool player_uses_power_hold_audience(PlayerNumber plyr_idx)
 void update_horizonal_explored_flags_for_power_sight(struct PlayerInfo *player, struct Coord3d *soe_pos)
 {
     struct Dungeon *dungeon;
-    long stl_x,stl_y;
-    long soe_x,soe_y;
+    long stl_x;
+    long stl_y;
+    long soe_x;
+    long soe_y;
     long boundstl_y;
-    long slb_x,slb_y;
+    long slb_x;
+    long slb_y;
     long delta;
     long i;
     dungeon = get_players_dungeon(player);

@@ -114,7 +114,9 @@ unsigned long compute_dungeon_rooms_attraction_score(long num_entrance_slbs, lon
  */
 unsigned long compute_dungeon_creature_tactics_score(long battles_won, long battles_lost, long scavenge_gain, long scavenge_lost)
 {
-    long battle_total,battle_efficiency,scavenge_efficiency;
+    long battle_total;
+    long battle_efficiency;
+    long scavenge_efficiency;
     battle_efficiency = battles_won - battles_lost;
     if (battle_efficiency < 0)
         battle_efficiency = 0;
@@ -154,7 +156,10 @@ unsigned long compute_dungeon_rooms_variety_score(long room_types, long total_ar
 
 unsigned long compute_dungeon_train_research_manufctr_wealth_score(long total_train, long total_research, long total_manufctr, long total_wealth)
 {
-    long pt_total_train, pt_total_research, pt_total_manufctr, pt_total_wealth;
+    long pt_total_train;
+    long pt_total_research;
+    long pt_total_manufctr;
+    long pt_total_wealth;
     pt_total_train = total_train / 256;
     if (pt_total_train < 0)
         pt_total_train = 0;
@@ -210,9 +215,11 @@ unsigned long compute_dungeon_creature_mood_score(long survived_creatrs, long an
 TbBool update_dungeon_scores_for_player(struct PlayerInfo *player)
 {
     struct Dungeon *dungeon;
-    int i,k;
+    int i;
+    int k;
     dungeon = get_players_dungeon(player);
-    unsigned long manage_efficiency,max_manage_efficiency;
+    unsigned long manage_efficiency;
+    unsigned long max_manage_efficiency;
     if (dungeon_invalid(dungeon)) {
         return false;
     }
@@ -245,8 +252,10 @@ TbBool update_dungeon_scores_for_player(struct PlayerInfo *player)
             dungeon->total_research_points, dungeon->field_1181, dungeon->total_money_owned);
         max_manage_efficiency += compute_dungeon_train_research_manufctr_wealth_score(LONG_MAX, LONG_MAX, LONG_MAX, LONG_MAX);
     }
-    unsigned long creatures_efficiency, creatures_mood;
-    unsigned long max_creatures_efficiency, max_creatures_mood;
+    unsigned long creatures_efficiency;
+    unsigned long creatures_mood;
+    unsigned long max_creatures_efficiency;
+    unsigned long max_creatures_mood;
     {
         creatures_efficiency = compute_dungeon_creature_amount_score(dungeon->num_active_creatrs);
         max_creatures_efficiency = compute_dungeon_creature_amount_score(LONG_MAX);
@@ -302,7 +311,8 @@ TbBool update_dungeon_scores_for_player(struct PlayerInfo *player)
  */
 long update_dungeons_scores(void)
 {
-    int i,k;
+    int i;
+    int k;
     k = 0;
     for (i=0; i < PLAYERS_COUNT; i++)
     {

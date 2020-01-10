@@ -1036,18 +1036,22 @@ short arrive_at_call_to_arms(struct Thing *creatng)
  */
 TbBool creature_find_safe_position_to_move_within_slab(struct Coord3d *pos, const struct Thing *thing, MapSlabCoord slb_x, MapSlabCoord slb_y, MapSubtlCoord start_stl)
 {
-    MapSubtlCoord base_x,base_y;
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord base_x;
+    MapSubtlCoord base_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     SYNCDBG(7,"Finding at (%d,%d)",(int)slb_x,(int)slb_y);
     stl_x = thing->mappos.x.stl.num;
     stl_y = thing->mappos.y.stl.num;
     base_x = slab_subtile(slb_x,0);
     base_y = slab_subtile(slb_y,0);
-    long i,m;
+    long i;
+    long m;
     m = start_stl;
     for (i=0; i < STL_PER_SLB*STL_PER_SLB; i++)
     {
-        MapSubtlCoord x,y;
+        MapSubtlCoord x;
+        MapSubtlCoord y;
         x = base_x + (m%STL_PER_SLB);
         y = base_y + (m/STL_PER_SLB);
         if ((x != stl_x) || (y != stl_y))
@@ -1084,17 +1088,21 @@ TbBool creature_find_safe_position_to_move_within_slab(struct Coord3d *pos, cons
  */
 TbBool creature_find_any_position_to_move_within_slab(struct Coord3d *pos, const struct Thing *thing, MapSlabCoord slb_x, MapSlabCoord slb_y, MapSubtlCoord start_stl)
 {
-    MapSubtlCoord base_x,base_y;
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord base_x;
+    MapSubtlCoord base_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = thing->mappos.x.stl.num;
     stl_y = thing->mappos.y.stl.num;
     base_x = slab_subtile(slb_x,0);
     base_y = slab_subtile(slb_y,0);
-    long i,m;
+    long i;
+    long m;
     m = start_stl;
     for (i=0; i < STL_PER_SLB*STL_PER_SLB; i++)
     {
-        MapSubtlCoord x,y;
+        MapSubtlCoord x;
+        MapSubtlCoord y;
         x = base_x + (m%STL_PER_SLB);
         y = base_y + (m/STL_PER_SLB);
         if ((x != stl_x) || (y != stl_y))
@@ -1136,10 +1144,12 @@ TbBool fill_moveable_small_around_slabs_array_in_room(TbBool *avail, const struc
     {
         long slab_num;
         slab_num = slab_base + small_around_slab[n];
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(slab_num);
         slb_y = slb_num_decode_y(slab_num);
-        MapSubtlCoord stl_x,stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = slab_subtile_center(slb_x);
         stl_y = slab_subtile_center(slb_y);
         // Per slab code
@@ -1184,10 +1194,13 @@ TbBool set_position_at_slab_for_thing(struct Coord3d *pos, const struct Thing *t
 TbBool person_get_somewhere_adjacent_in_room_f(const struct Thing *thing, const struct Room *room, struct Coord3d *pos, const char *func_name)
 {
     struct Room *aroom;
-    MapSlabCoord slb_x,slb_y;
-    long slab_num,slab_base;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
+    long slab_num;
+    long slab_base;
     int start_stl;
-    long m,n;
+    long m;
+    long n;
     SYNCDBG(17,"%s: Starting for %s index %d",func_name,thing_model_name(thing),(int)thing->index);
     slb_x = subtile_slab_fast(thing->mappos.x.stl.num);
     slb_y = subtile_slab_fast(thing->mappos.y.stl.num);
@@ -1292,7 +1305,8 @@ TbBool person_get_somewhere_adjacent_in_room_around_borders_f(const struct Thing
             {
                 long slab_num;
                 slab_num = slab_base + small_around_slab[arnd];
-                MapSlabCoord slb_x,slb_y;
+                MapSlabCoord slb_x;
+                MapSlabCoord slb_y;
                 slb_x = slb_num_decode_x(slab_num);
                 slb_y = slb_num_decode_y(slab_num);
                 if (set_position_at_slab_for_thing(pos, thing, slb_x, slb_y, start_stl))
@@ -1308,7 +1322,8 @@ TbBool person_get_somewhere_adjacent_in_room_around_borders_f(const struct Thing
     }
     // No position found - at least try to move within the same slab
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(slab_base);
         slb_y = slb_num_decode_y(slab_base);
         if (set_position_at_slab_for_thing(pos, thing, slb_x, slb_y, start_stl))
@@ -1336,7 +1351,8 @@ SubtlCodedCoords find_position_around_in_room(const struct Coord3d *pos, PlayerN
 {
     SubtlCodedCoords stl_num;
     SubtlCodedCoords accepted_stl_num;
-    long m,n;
+    long m;
+    long n;
     long dist;
     m = ACTION_RANDOM(AROUND_MAP_LENGTH);
     for (n = 0; n < AROUND_MAP_LENGTH; n++)
@@ -1356,7 +1372,8 @@ SubtlCodedCoords find_position_around_in_room(const struct Coord3d *pos, PlayerN
             struct Room *room;
             struct Map *mapblk;
             struct SlabMap *slb;
-            MapSubtlCoord stl_x,stl_y;
+            MapSubtlCoord stl_x;
+            MapSubtlCoord stl_y;
             stl_num += around_map[m];
             mapblk = get_map_block_at_pos(stl_num);
             if ( ((mapblk->flags & SlbAtFlg_IsRoom) != 0) && ((mapblk->flags & SlbAtFlg_Blocking) != 0) )
@@ -1386,7 +1403,8 @@ SubtlCodedCoords find_position_around_in_room(const struct Coord3d *pos, PlayerN
         struct Room *room;
         struct Map *mapblk;
         struct SlabMap *slb;
-        MapSubtlCoord stl_x,stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_num = get_subtile_number(pos->x.stl.num,pos->y.stl.num);
         mapblk = get_map_block_at_pos(stl_num);
         if ( ((mapblk->flags & SlbAtFlg_IsRoom) != 0) && ((mapblk->flags & SlbAtFlg_Blocking) != 0) )
@@ -1427,7 +1445,8 @@ short cleanup_seek_the_enemy(struct Thing *creatng)
 short creature_being_dropped(struct Thing *creatng)
 {
     struct CreatureControl *cctrl;
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     struct Thing *leadtng;
     TRACE_THING(creatng);
     SYNCDBG(17,"Starting for %s index %d",thing_model_name(creatng),(long)creatng->index);
@@ -1785,7 +1804,8 @@ short creature_doing_nothing(struct Thing *creatng)
         }
         cctrl->job_primary_check_turn = game.play_gameturn;
     }
-    long i, n;
+    long i;
+    long n;
     n = ACTION_RANDOM(3);
     for (i=0; i < 3; i++)
     {
@@ -1844,7 +1864,8 @@ TbBool slab_is_valid_for_creature_choose_move(const struct Thing *thing, MapSlab
 {
     struct SlabMap *slb;
     struct SlabAttr *slbattr;
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     struct Thing *doortng;
     slb = get_slabmap_block(slb_x, slb_y);
     slbattr = get_slab_attrs(slb);
@@ -1863,10 +1884,13 @@ TbBool slab_is_valid_for_creature_choose_move(const struct Thing *thing, MapSlab
 
 TbBool creature_choose_random_destination_on_valid_adjacent_slab(struct Thing *thing)
 {
-    MapSlabCoord slb_x,slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     MapSubtlCoord start_stl;
-    long slab_num,slab_base;
-    long m,n;
+    long slab_num;
+    long slab_base;
+    long m;
+    long n;
     SYNCDBG(17,"Starting for %s index %d",thing_model_name(thing),(long)thing->index);
     slb_x = subtile_slab_fast(thing->mappos.x.stl.num);
     slb_y = subtile_slab_fast(thing->mappos.y.stl.num);
@@ -2308,7 +2332,8 @@ struct Thing *find_random_creature_for_persuade(PlayerNumber plyr_idx, struct Co
     struct Thing *thing;
     struct CreatureControl *cctrl;
     unsigned long k;
-    int i, n;
+    int i;
+    int n;
     dungeon = get_players_num_dungeon(plyr_idx);
     n = ACTION_RANDOM(dungeon->num_active_creatrs);
     k = 0;
@@ -2508,7 +2533,9 @@ TbBool find_random_valid_position_for_thing_in_room_avoiding_object(struct Thing
     k = 0;
     while (i != 0)
     {
-        MapSubtlCoord stl_x,stl_y,start_stl;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
+        MapSubtlCoord start_stl;
         long nround;
         stl_x = slab_subtile(slb_num_decode_x(i),0);
         stl_y = slab_subtile(slb_num_decode_y(i),0);
@@ -2516,7 +2543,8 @@ TbBool find_random_valid_position_for_thing_in_room_avoiding_object(struct Thing
         start_stl = ACTION_RANDOM(9);
         for (nround=0; nround < 9; nround++)
         {
-            MapSubtlCoord x,y;
+            MapSubtlCoord x;
+            MapSubtlCoord y;
             x = start_stl % 3 + stl_x;
             y = start_stl / 3 + stl_y;
             if (get_floor_filled_subtiles_at(x, y) == 1)
@@ -2689,7 +2717,8 @@ short creature_set_work_room_based_on_position(struct Thing *creatng)
 
 TbBool init_creature_state(struct Thing *creatng)
 {
-    long stl_x, stl_y;
+    long stl_x;
+    long stl_y;
     TRACE_THING(creatng);
     SYNCDBG(17,"Starting for %s index %d",thing_model_name(creatng),(long)creatng->index);
     stl_x = creatng->mappos.x.stl.num;
@@ -2778,7 +2807,8 @@ short creature_steal_gold(struct Thing *creatng)
     struct CreatureStats *crstat;
     struct Room *room;
     struct Thing *hrdtng;
-    long max_amount,amount;
+    long max_amount;
+    long amount;
     TRACE_THING(creatng);
     crstat = creature_stats_get_from_thing(creatng);
     room = get_room_thing_is_on(creatng);
@@ -2868,7 +2898,8 @@ short creature_take_salary(struct Thing *creatng)
         internal_set_thing_state(creatng, CrSt_CreatureWantsSalary);
         return 1;
     }
-    GoldAmount salary, received;
+    GoldAmount salary;
+    GoldAmount received;
     salary = calculate_correct_creature_pay(creatng);
     received = take_money_from_dungeon(creatng->owner, salary, 0);
     if (received < 1) {
@@ -3040,7 +3071,8 @@ TbBool is_creature_other_than_given_waiting_at_closed_door_on_subtile(MapSubtlCo
 short creature_wait_at_treasure_room_door(struct Thing *creatng)
 {
     //return _DK_creature_wait_at_treasure_room_door(creatng);
-    MapSubtlCoord base_stl_x, base_stl_y;
+    MapSubtlCoord base_stl_x;
+    MapSubtlCoord base_stl_y;
     base_stl_x = creatng->mappos.x.stl.num;
     base_stl_y = creatng->mappos.y.stl.num;
     struct CreatureStats *crstat;
@@ -3061,12 +3093,14 @@ short creature_wait_at_treasure_room_door(struct Thing *creatng)
     }
     if (is_creature_other_than_given_waiting_at_closed_door_on_subtile(base_stl_x, base_stl_y, creatng))
     {
-        int i,n;
+        int i;
+        int n;
         i = 0;
         n = ACTION_RANDOM(SMALL_AROUND_SLAB_LENGTH);
         for (i = 0; i < SMALL_AROUND_SLAB_LENGTH; i++)
         {
-            MapSubtlCoord stl_x, stl_y;
+            MapSubtlCoord stl_x;
+            MapSubtlCoord stl_y;
             stl_x = base_stl_x + small_around[n].delta_x;
             stl_y = base_stl_y + small_around[n].delta_y;
             struct Map *mapblk;
@@ -3181,7 +3215,8 @@ void remove_thing_from_creature_controlled_limbo(struct Thing *thing)
 short move_backwards_to_position(struct Thing *creatng)
 {
     struct CreatureControl *cctrl;
-    long move_result,speed;
+    long move_result;
+    long speed;
     TRACE_THING(creatng);
     cctrl = creature_control_get_from_thing(creatng);
     speed = get_creature_speed(creatng);
@@ -3210,7 +3245,8 @@ CrCheckRet move_check_attack_any_door(struct Thing *creatng)
     TRACE_THING(creatng);
     struct CreatureControl *cctrl;
     cctrl = creature_control_get_from_thing(creatng);
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     if (cctrl->collided_door_subtile == 0) {
         SYNCDBG(18,"No door collision with %s",thing_model_name(creatng));
         return 0;
@@ -3236,8 +3272,10 @@ CrCheckRet move_check_can_damage_wall(struct Thing *creatng)
 CrAttackType creature_can_have_combat_with_creature_on_slab(struct Thing *creatng, MapSlabCoord slb_x, MapSlabCoord slb_y, struct Thing ** enemytng)
 {
     struct Map *mapblk;
-    MapSubtlCoord endstl_x,endstl_y;
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord endstl_x;
+    MapSubtlCoord endstl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     endstl_x = slab_subtile(slb_x+1,0);
     endstl_y = slab_subtile(slb_y+1,0);
     for (stl_y = slab_subtile(slb_y,0); stl_y < endstl_y; stl_y++)
@@ -3293,7 +3331,8 @@ CrAttackType creature_can_have_combat_with_creature_on_slab(struct Thing *creatn
 CrCheckRet move_check_kill_creatures(struct Thing *creatng)
 {
     struct Thing * enemytng;
-    MapSlabCoord slb_x,slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     CrAttackType attack_type;
     slb_x = coord_slab(creatng->mappos.x.val);
     slb_y = coord_slab(creatng->mappos.y.val);
@@ -3375,7 +3414,8 @@ TbBool go_to_random_area_near_xy(struct Thing *creatng, MapSubtlCoord bstl_x, Ma
     int i;
     for (i=0; i < 5; i++)
     {
-        MapSubtlCoord stl_x, stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = bstl_x + ACTION_RANDOM(5) - 2;
         stl_y = bstl_y + ACTION_RANDOM(5) - 2;
         if (setup_person_move_to_position(creatng, stl_x, stl_y, 0)) {
@@ -3388,7 +3428,8 @@ TbBool go_to_random_area_near_xy(struct Thing *creatng, MapSubtlCoord bstl_x, Ma
 short patrol_here(struct Thing *creatng)
 {
     //return _DK_patrol_here(creatng);
-    MapSubtlCoord bstl_x, bstl_y;
+    MapSubtlCoord bstl_x;
+    MapSubtlCoord bstl_y;
     bstl_y = creatng->mappos.y.stl.num;
     bstl_x = creatng->mappos.x.stl.num;
     if (!go_to_random_area_near_xy(creatng, bstl_x, bstl_y))
@@ -3415,7 +3456,8 @@ short patrolling(struct Thing *creatng)
         return 0;
     }
     cctrl->patrol.word_89--;
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     // Try random positions near the patrolling point
     stl_x = cctrl->patrol.word_8B;
     stl_y = cctrl->patrol.word_8D;
@@ -3446,7 +3488,8 @@ short person_sulk_at_lair(struct Thing *creatng)
         set_start_state(creatng);
         return 0;
     }
-    MapSubtlDelta dx,dy;
+    MapSubtlDelta dx;
+    MapSubtlDelta dy;
     dx = abs(creatng->mappos.x.stl.num - (MapSubtlDelta)lairtng->mappos.x.stl.num);
     dy = abs(creatng->mappos.y.stl.num - (MapSubtlDelta)lairtng->mappos.y.stl.num);
     if ((dx >= 1) || (dy >= 1)) {
@@ -3515,7 +3558,8 @@ short person_sulking(struct Thing *creatng)
         set_start_state(creatng);
         return 0;
     }
-    MapSubtlDelta dx,dy;
+    MapSubtlDelta dx;
+    MapSubtlDelta dy;
     dx = abs(creatng->mappos.x.stl.num - (MapSubtlDelta)lairtng->mappos.x.stl.num);
     dy = abs(creatng->mappos.y.stl.num - (MapSubtlDelta)lairtng->mappos.y.stl.num);
     if ((dx >= 1) || (dy >= 1)) {
@@ -3632,21 +3676,24 @@ void create_effect_around_thing(struct Thing *thing, long eff_kind)
     //_DK_create_effect_around_thing(thing, eff_kind);
     int tng_radius;
     tng_radius = (thing->clipbox_size_xy >> 1);
-    MapCoord coord_x_beg, coord_x_end;
+    MapCoord coord_x_beg;
+    MapCoord coord_x_end;
     coord_x_beg = (MapCoord)thing->mappos.x.val - tng_radius;
     if (coord_x_beg < 0)
         coord_x_beg = 0;
     coord_x_end = (MapCoord)thing->mappos.x.val + tng_radius;
     if (coord_x_end >= subtile_coord(map_subtiles_x+1, 0) - 1)
         coord_x_end = subtile_coord(map_subtiles_x+1, 0) - 1;
-    MapCoord coord_y_beg, coord_y_end;
+    MapCoord coord_y_beg;
+    MapCoord coord_y_end;
     coord_y_beg = (MapCoord)thing->mappos.y.val - tng_radius;
     if (coord_y_beg < 0)
         coord_y_beg = 0;
     coord_y_end = (MapCoord)thing->mappos.y.val + tng_radius;
     if (coord_y_end >= subtile_coord(map_subtiles_y+1, 0) - 1)
         coord_y_end = subtile_coord(map_subtiles_y+1, 0) - 1;
-    MapCoord coord_z_beg, coord_z_end;
+    MapCoord coord_z_beg;
+    MapCoord coord_z_end;
     coord_z_beg = (MapCoord)thing->mappos.z.val;
     if (coord_z_beg < 0)
         coord_z_beg = 0;
@@ -3694,7 +3741,8 @@ TbBool slab_by_players_land(PlayerNumber plyr_idx, MapSlabCoord slb_x, MapSlabCo
     long n;
     for (n=0; n < SMALL_AROUND_LENGTH; n++)
     {
-        long aslb_x,aslb_y;
+        long aslb_x;
+        long aslb_y;
         aslb_x = slb_x + (long)small_around[n].delta_x;
         aslb_y = slb_y + (long)small_around[n].delta_y;
         struct SlabMap *slb;
@@ -3918,7 +3966,8 @@ TbBool wander_point_get_random_pos(const struct Wander *wandr, const struct Coor
       long i;
       for (i=0; i < 3; i++)
       {
-          MapSubtlCoord stl_x,stl_y;
+          MapSubtlCoord stl_x;
+          MapSubtlCoord stl_y;
           irnd = ACTION_RANDOM(wandr->points_count);
           stl_x = wandr->points[irnd].stl_x;
           stl_y = wandr->points[irnd].stl_y;
@@ -4586,7 +4635,9 @@ long process_creature_needs_to_eat(struct Thing *creatng, const struct CreatureS
         anger_apply_anger_to_creature(creatng, crstat->annoy_no_hatchery, AngR_Hungry, 1);
         return 0;
     }
-    short hunger_fill,hunger_loss,hunger;
+    short hunger_fill;
+    short hunger_loss;
+    short hunger;
     hunger_loss = cctrl->hunger_loss;
     hunger_fill = crstat->hunger_fill;
     if (hunger_loss != 0)

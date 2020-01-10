@@ -96,7 +96,9 @@ TbLocChar *LbLocTextStringConcat(TbLocChar *str,const TbLocChar *catstr, TbSize 
  */
 TbLocChar *LbLocTextStringInsert(TbLocChar *str,const TbLocChar *catstr, TbCharCount pos, TbSize maxlen)
 {
-    TbSize spos,slen,clen;
+    TbSize spos;
+    TbSize slen;
+    TbSize clen;
     spos = LbLocTextPosToLength(str, pos);
     slen = LbLocTextStringSize(str);
     clen = LbLocTextStringSize(catstr);
@@ -122,7 +124,10 @@ TbLocChar *LbLocTextStringInsert(TbLocChar *str,const TbLocChar *catstr, TbCharC
  */
 TbLocChar *LbLocTextStringDelete(TbLocChar *str, TbCharCount pos, TbCharCount count)
 {
-    TbSize spos,slen,clen,lim;
+    TbSize spos;
+    TbSize slen;
+    TbSize clen;
+    TbSize lim;
     spos = LbLocTextPosToLength(str, pos);
     slen = LbLocTextStringSize(str);
     clen = LbLocTextPosToLength(str,pos+count)-spos;

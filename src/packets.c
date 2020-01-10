@@ -309,7 +309,8 @@ struct Room *keeper_build_room(long stl_x,long stl_y,long plyr_idx,long rkind)
     struct Room *room;
     struct RoomStats *rstat;
     struct Coord3d pos;
-    MapCoord x,y;
+    MapCoord x;
+    MapCoord y;
     player = get_player(plyr_idx);
     dungeon = get_players_dungeon(player);
     rstat = room_stats_get_for_kind(rkind);
@@ -418,8 +419,10 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
     struct PlayerInfo *player;
     struct Packet *pckt;
     struct SlabMap *slb;
-    MapSubtlCoord stl_x,stl_y;
-    MapCoord x,y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapCoord x;
+    MapCoord y;
     player = get_player(plyr_idx);
     pckt = get_packet_direct(player->packet_num);
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
@@ -484,8 +487,10 @@ TbBool process_dungeon_power_hand_state(long plyr_idx)
     struct PlayerInfo *player;
     struct Thing *thing;
     struct Packet *pckt;
-    MapSubtlCoord stl_x,stl_y;
-    MapCoord x,y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapCoord x;
+    MapCoord y;
     long i;
     player = get_player(plyr_idx);
     pckt = get_packet_direct(player->packet_num);
@@ -557,8 +562,10 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
 {
     struct PlayerInfo *player;
     struct Packet *pckt;
-    MapSubtlCoord stl_x,stl_y;
-    MapCoord x,y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapCoord x;
+    MapCoord y;
     long i;
     player = get_player(plyr_idx);
     pckt = get_packet_direct(player->packet_num);
@@ -607,8 +614,10 @@ TbBool process_dungeon_control_packet_dungeon_place_trap(long plyr_idx)
 {
     struct PlayerInfo *player;
     struct Packet *pckt;
-    MapSubtlCoord stl_x,stl_y;
-    MapCoord x,y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapCoord x;
+    MapCoord y;
     long i;
     player = get_player(plyr_idx);
     pckt = get_packet_direct(player->packet_num);
@@ -659,9 +668,12 @@ TbBool process_dungeon_control_packet_dungeon_control(long plyr_idx)
     struct Dungeon *dungeon;
     struct Thing *thing;
     struct Packet *pckt;
-    MapSubtlCoord stl_x,stl_y;
-    MapSubtlCoord cx,cy;
-    MapCoord x,y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapSubtlCoord cx;
+    MapSubtlCoord cy;
+    MapCoord x;
+    MapCoord y;
     long i;
     player = get_player(plyr_idx);
     dungeon = get_players_dungeon(player);
@@ -888,12 +900,15 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     struct PlayerInfo *player;
     struct Packet *pckt;
     struct Thing *thing;
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     short influence_own_creatures;
     TbBool ret;
-    MapCoord x,y;
+    MapCoord x;
+    MapCoord y;
     PowerKind pwkind;
-    long i,k;
+    long i;
+    long k;
 
     player = get_player(plyr_idx);
     pckt = get_packet_direct(player->packet_num);
@@ -1491,7 +1506,8 @@ void process_players_dungeon_control_packet_control(long plyr_idx)
     struct PlayerInfo *player;
     struct Packet *pckt;
     struct Camera *cam;
-    unsigned long zoom_min,zoom_max;
+    unsigned long zoom_min;
+    unsigned long zoom_max;
     player = get_player(plyr_idx);
     pckt = get_packet_direct(player->packet_num);
     SYNCDBG(6,"Processing player %d action %d",(int)plyr_idx,(int)pckt->action);
@@ -2191,8 +2207,11 @@ void process_players_creature_control_packet_control(long idx)
     struct InstanceInfo *inst_inf;
     struct CreatureStats *crstat;
     long speed_limit;
-    long angle_limit,angle;
-    long i,k,n;
+    long angle_limit;
+    long angle;
+    long i;
+    long k;
+    long n;
 
     SYNCDBG(6,"Starting");
     player = get_player(idx);
@@ -2327,7 +2346,8 @@ void process_players_creature_control_packet_action(long plyr_idx)
   struct PlayerInfo *player;
   struct Thing *thing;
   struct Packet *pckt;
-  long i,k;
+  long i;
+  long k;
   player = get_player(plyr_idx);
   pckt = get_packet_direct(player->packet_num);
   SYNCDBG(6,"Processing player %d action %d",(int)plyr_idx,(int)pckt->action);
@@ -2485,48 +2505,50 @@ void write_debug_screenpackets(void)
  */
 void process_packets(void)
 {
-  int i,j,k;
-  struct Packet *pckt;
-  struct PlayerInfo *player;
-  SYNCDBG(5,"Starting");
-  // Do the network data exchange
-  lbDisplay.DrawColour = colours[15][15][15];
-  // Exchange packets with the network
-  if (game.game_kind != GKind_LocalGame)
-  {
-    player = get_my_player();
-    j=0;
-    for (i=0; i<4; i++)
+    int i;
+    int j;
+    int k;
+    struct Packet* pckt;
+    struct PlayerInfo* player;
+    SYNCDBG(5, "Starting");
+    // Do the network data exchange
+    lbDisplay.DrawColour = colours[15][15][15];
+    // Exchange packets with the network
+    if (game.game_kind != GKind_LocalGame)
     {
-      if (network_player_active(i))
-        j++;
-    }
-    if ( !game.packet_load_enable || game.numfield_149F47 )
-    {
-      pckt = get_packet_direct(player->packet_num);
-      if (LbNetwork_Exchange(pckt) != 0)
-      {
-        ERRORLOG("LbNetwork_Exchange failed");
-      }
-    }
-    k=0;
-    for (i=0; i<4; i++)
-    {
-      if (network_player_active(i))
-        k++;
-    }
-    if (j != k)
-    {
-      for (i=0; i<4; i++)
-      {
-        player = get_player(i);
-        if (network_player_active(player->packet_num))
+        player = get_my_player();
+        j = 0;
+        for (i = 0; i < 4; i++)
         {
-          player->allocflags |= PlaF_CompCtrl;
-          toggle_computer_player(i);
+            if (network_player_active(i))
+                j++;
         }
-      }
-    }
+        if (!game.packet_load_enable || game.numfield_149F47)
+        {
+            pckt = get_packet_direct(player->packet_num);
+            if (LbNetwork_Exchange(pckt) != 0)
+            {
+                ERRORLOG("LbNetwork_Exchange failed");
+            }
+        }
+        k = 0;
+        for (i = 0; i < 4; i++)
+        {
+            if (network_player_active(i))
+                k++;
+        }
+        if (j != k)
+        {
+            for (i = 0; i < 4; i++)
+            {
+                player = get_player(i);
+                if (network_player_active(player->packet_num))
+                {
+                    player->allocflags |= PlaF_CompCtrl;
+                    toggle_computer_player(i);
+                }
+            }
+        }
   }
   // Setting checksum problem flags
   switch (checksums_different())
@@ -2577,7 +2599,8 @@ void process_frontend_packets(void)
 {
   struct ScreenPacket *nspckt;
   struct PlayerInfo *player;
-  long i,k;
+  long i;
+  long k;
   unsigned short c;
   for (i=0; i < NET_PLAYERS_COUNT; i++)
   {

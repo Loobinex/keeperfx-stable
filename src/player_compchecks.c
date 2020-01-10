@@ -131,7 +131,9 @@ long computer_checks_hates(struct Computer2 *comp, struct ComputerCheck * check)
     SYNCDBG(8,"Starting");
     compdngn = comp->dungeon;
     // Reference values for checking hate
-    int cdngn_creatrs, cdngn_spdiggrs, cdngn_enrancs;
+    int cdngn_creatrs;
+    int cdngn_spdiggrs;
+    int cdngn_enrancs;
     cdngn_creatrs = count_creatures_in_dungeon(compdngn);
     cdngn_spdiggrs = count_diggers_in_dungeon(compdngn);
     cdngn_enrancs = count_entrances(comp, compdngn->owner);
@@ -152,7 +154,9 @@ long computer_checks_hates(struct Computer2 *comp, struct ComputerCheck * check)
             continue;
         if (players_are_mutual_allies(compdngn->owner, i))
             continue;
-        int hdngn_creatrs, hdngn_spdiggrs, hdngn_enrancs;
+        int hdngn_creatrs;
+        int hdngn_spdiggrs;
+        int hdngn_enrancs;
         int hate_reasons;
         hate_reasons = 0;
         hdngn_creatrs = count_creatures_in_dungeon(dungeon);
@@ -335,7 +339,8 @@ static int count_faces_of_indestructible_valuables_marked_for_dig(struct Dungeon
     int num_faces;
     num_faces = 0;
     struct MapTask* mtask;
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     long i;
     SYNCDBG(18,"Starting");
     i = -1;
@@ -454,8 +459,9 @@ long computer_check_sacrifice_for_cheap_diggers(struct Computer2 *comp, struct C
         return CTaskRet_Unk0;
     }
 
-    GoldAmount power_price, lowest_price;
-	power_price = compute_power_price(dungeon->owner, PwrK_MKDIGGER, 0);
+    GoldAmount power_price;
+    GoldAmount lowest_price;
+    power_price = compute_power_price(dungeon->owner, PwrK_MKDIGGER, 0);
 	lowest_price = compute_lowest_power_price(dungeon->owner, PwrK_MKDIGGER, 0);
 	SYNCDBG(18, "Digger creation power price: %d, lowest: %d", power_price, lowest_price);
 
@@ -505,7 +511,8 @@ long computer_check_no_imps(struct Computer2 *comp, struct ComputerCheck * check
     }
     long controlled_diggers;
     controlled_diggers = dungeon->num_active_diggers - count_player_diggers_not_counting_to_total(dungeon->owner);
-    int preferred_imps, minimal_imps;
+    int preferred_imps;
+    int minimal_imps;
     // Compute additional imps from gem faces
     preferred_imps = minimal_imps = check->param3 * count_faces_of_indestructible_valuables_marked_for_dig(dungeon);
     // The additional imps can double the limits, but no more
@@ -535,7 +542,8 @@ long computer_check_no_imps(struct Computer2 *comp, struct ComputerCheck * check
     if (able_to_use_power)
     {
         struct Thing *heartng;
-        MapSubtlCoord stl_x, stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         heartng = get_player_soul_container(dungeon->owner);
         stl_x = heartng->mappos.x.stl.num;
         stl_y = heartng->mappos.y.stl.num;
@@ -635,7 +643,8 @@ long computer_check_for_pretty(struct Computer2 *comp, struct ComputerCheck * ch
     struct Dungeon *dungeon;
     SYNCDBG(8,"Starting");
     dungeon = comp->dungeon;
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     if (!computer_able_to_use_power(comp, PwrK_HAND, 1, 1)) {
         return CTaskRet_Unk4;
     }
@@ -675,7 +684,8 @@ struct Room *get_opponent_room(struct Computer2 *comp, PlayerNumber plyr_idx)
     if (dungeon_invalid(dungeon) || (slab_conf.room_types_count < 1)) {
         return INVALID_ROOM;
     }
-    int i,n;
+    int i;
+    int n;
     n = opponent_room_kinds[ACTION_RANDOM(sizeof(opponent_room_kinds)/sizeof(opponent_room_kinds[0]))];
     for (i=0; i < slab_conf.room_types_count; i++)
     {
@@ -763,7 +773,8 @@ struct Thing *computer_check_creatures_in_room_for_accelerate(struct Computer2 *
     struct CreatureControl *cctrl;
     struct Thing *thing;
     unsigned long k;
-    long i,n;
+    long i;
+    long n;
     dungeon = comp->dungeon;
     i = room->creatures_list;
     k = 0;
@@ -850,7 +861,8 @@ long computer_check_for_accelerate(struct Computer2 *comp, struct ComputerCheck 
 {
     static RoomKind workers_in_rooms[] = {RoK_LIBRARY,RoK_LIBRARY,RoK_WORKSHOP,RoK_TRAINING,RoK_SCAVENGER};
     struct Thing *thing;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(8,"Starting");
     if (!computer_able_to_use_power(comp, PwrK_SPEEDCRTR, 8, 3))
     {
@@ -961,12 +973,14 @@ long computer_check_enemy_entrances(struct Computer2 *comp, struct ComputerCheck
 
 TbBool find_place_to_put_door_around_room(const struct Room *room, struct Coord3d *pos)
 {
-    long m,n;
+    long m;
+    long n;
     m = ACTION_RANDOM(SMALL_AROUND_SLAB_LENGTH);
     for (n = 0; n < SMALL_AROUND_SLAB_LENGTH; n++)
     {
         // Get position containing room center
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = subtile_slab_fast(room->central_stl_x);
         slb_y = subtile_slab_fast(room->central_stl_y);
         // Move the position to edge of the room
@@ -1002,7 +1016,8 @@ TbBool find_place_to_put_door_around_room(const struct Room *room, struct Coord3
         // Now if we were able to move, then the position seem ok. One last check - make sure the corridor is not dead end and doesn't already have a door
         if (i > 0)
         {
-            MapSlabCoord nxslb_x,nxslb_y;
+            MapSlabCoord nxslb_x;
+            MapSlabCoord nxslb_y;
             nxslb_x = slb_x + small_around[m].delta_x;
             nxslb_y = slb_y + small_around[m].delta_y;
             struct SlabMap *nxslb;
@@ -1108,7 +1123,8 @@ long computer_check_neutral_places(struct Computer2 *comp, struct ComputerCheck 
         room = INVALID_ROOM;
         if (computer_finds_nearest_room_to_pos(comp, &room, place))
         {
-            MapSubtlDelta dx,dy;
+            MapSubtlDelta dx;
+            MapSubtlDelta dy;
             dx = abs((int)room->central_stl_x - (MapSubtlDelta)place->x.stl.num);
             dy = abs((int)room->central_stl_y - (MapSubtlDelta)place->y.stl.num);
             if (near_dist > dx+dy)
@@ -1154,7 +1170,8 @@ int count_slabs_around_of_kind(MapSlabCoord slb_x, MapSlabCoord slb_y, SlabKind 
     matched_slabs = 0;
     for (n = 1; n < MID_AROUND_LENGTH; n++)
     {
-        MapSlabCoord arslb_x, arslb_y;
+        MapSlabCoord arslb_x;
+        MapSlabCoord arslb_y;
         arslb_x = slb_x + mid_around[n].delta_x;
         arslb_y = slb_y + mid_around[n].delta_y;
         struct SlabMap *slb;
@@ -1190,14 +1207,16 @@ TbBool computer_check_for_expand_specific_room(struct Computer2 *comp, struct Co
     i = room->slabs_list;
     while (i > 0)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         struct SlabMap *slb;
         slb = get_slabmap_direct(i);
         slb_x = slb_num_decode_x(i);
         slb_y = slb_num_decode_y(i);
         i = get_next_slab_number_in_room(i);
         // Per-slab code
-        int room_around, claimed_around;
+        int room_around;
+        int claimed_around;
         room_around = count_slabs_around_of_kind(slb_x, slb_y, slb->kind, dungeon->owner);
         claimed_around = 0;
         if (room_around < 8) {
@@ -1207,14 +1226,17 @@ TbBool computer_check_for_expand_specific_room(struct Computer2 *comp, struct Co
          || ((room_around >= 4) && (claimed_around >= 2) && (room_around+claimed_around >= 8)) // If we're in open space, don't expand that much
          || ((room_around >= 6) && (claimed_around >= 1))) // Allow fixing one-slab holes inside rooms
         {
-            unsigned long m,n;
+            unsigned long m;
+            unsigned long n;
             m = around_start % SMALL_AROUND_SLAB_LENGTH;
             for (n=0; n < SMALL_AROUND_SLAB_LENGTH; n++)
             {
-                MapSlabCoord arslb_x, arslb_y;
+                MapSlabCoord arslb_x;
+                MapSlabCoord arslb_y;
                 arslb_x = slb_x + small_around[m].delta_x;
                 arslb_y = slb_y + small_around[m].delta_y;
-                MapSubtlCoord arstl_x, arstl_y;
+                MapSubtlCoord arstl_x;
+                MapSubtlCoord arstl_y;
                 arstl_x = slab_subtile_center(arslb_x);
                 arstl_y = slab_subtile_center(arslb_y);
                 long dist;

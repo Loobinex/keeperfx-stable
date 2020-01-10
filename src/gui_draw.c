@@ -44,7 +44,9 @@ char gui_textbuf[TEXT_BUFFER_LENGTH];
 
 int get_bitmap_max_scale(int img_w,int img_h,int rect_w,int rect_h)
 {
-    int w,h,m;
+    int w;
+    int h;
+    int m;
     w = 0;
     h = 0;
     for (m=0; m < 5; m++)
@@ -130,8 +132,10 @@ void draw_lit_bar64k(long pos_x, long pos_y, int units_per_px, long width)
 
 void draw_slab64k_background(long pos_x, long pos_y, long width, long height)
 {
-    long scr_x, scr_y;
-    long scr_w, scr_h;
+    long scr_x;
+    long scr_y;
+    long scr_w;
+    long scr_h;
     long i;
     scr_x = pos_x / pixel_size;
     scr_y = pos_y / pixel_size;
@@ -255,7 +259,8 @@ void draw_ornate_slab64k(long pos_x, long pos_y, int units_per_px, long width, l
 
 void draw_ornate_slab_outline64k(long pos_x, long pos_y, int units_per_px, long width, long height)
 {
-    long x, y;
+    long x;
+    long y;
     struct TbSprite *spr;
     spr = &button_sprite[10];
     int bs_units_per_spr = 128*units_per_px/spr->SWidth;
@@ -305,7 +310,8 @@ void draw_round_slab64k(long pos_x, long pos_y, int units_per_px, long width, lo
     lbDisplay.DrawFlags |= Lb_SPRITE_TRANSPAR4;
     LbDrawBox(pos_x + 4*units_per_px/16, pos_y + 4*units_per_px/16, width - 8*units_per_px/16, height - 8*units_per_px/16, 1);
     lbDisplay.DrawFlags &= ~Lb_SPRITE_TRANSPAR4;
-    int x,y;
+    int x;
+    int y;
     struct TbSprite *spr;
     spr = &gui_panel_sprites[242];
     int ps_units_per_spr = 26*units_per_px/spr->SWidth;
@@ -498,7 +504,8 @@ void draw_button_string(struct GuiButton *gbtn, int base_width, const char *text
     units_per_px = (gbtn->width * 16 + base_width/2) / base_width;
     int tx_units_per_px;
     tx_units_per_px = units_per_px*22/LbTextLineHeight();
-    unsigned long w,h;
+    unsigned long w;
+    unsigned long h;
     w = 4 * units_per_px / 16;
     h = (gbtn->height - text_string_height(tx_units_per_px, dtext))/2 - 3*units_per_px/16;
     LbTextDrawResized(w, h, tx_units_per_px, dtext);
@@ -511,7 +518,8 @@ void draw_button_string(struct GuiButton *gbtn, int base_width, const char *text
 void draw_message_box_at(long startx, long starty, long box_width, long box_height, long spritesx, long spritesy)
 {
     struct TbSprite *spr;
-    long x,y;
+    long x;
+    long y;
     long n;
 
     // Draw top line of sprites
@@ -585,9 +593,12 @@ void draw_message_box_at(long startx, long starty, long box_width, long box_heig
 
 TbBool draw_text_box(const char *text)
 {
-    long spritesy,spritesx;
-    long box_width,box_height;
-    long startx,starty;
+    long spritesy;
+    long spritesx;
+    long box_width;
+    long box_height;
+    long startx;
+    long starty;
     long n;
     LbTextSetFont(frontend_font[1]);
     n = LbTextStringWidth(text);
@@ -641,7 +652,8 @@ int scroll_box_get_units_per_px(struct GuiButton *gbtn)
 void draw_scroll_box(struct GuiButton *gbtn, int units_per_px, int num_rows)
 {
     struct TbSprite *spr;
-    int pos_x,pos_y;
+    int pos_x;
+    int pos_y;
     int spridx;
     int delta;
     int i;
@@ -778,7 +790,8 @@ void draw_string64k(long x, long y, int units_per_px, const char * text)
 
 TbBool frontmenu_copy_background_at(const struct TbRect *bkgnd_area, int units_per_px)
 {
-    int img_width, img_height;
+    int img_width;
+    int img_height;
     img_width = 640;
     img_height = 480;
     const unsigned char *srcbuf = frontend_background;
@@ -794,11 +807,13 @@ TbBool frontmenu_copy_background_at(const struct TbRect *bkgnd_area, int units_p
 
 long get_frontmenu_background_area_rect(int rect_x, int rect_y, int rect_w, int rect_h, struct TbRect *bkgnd_area)
 {
-    int img_width, img_height;
+    int img_width;
+    int img_height;
     img_width = 640;
     img_height = 480;
     // Parchment bitmap scaling
-    int units_per_px, units_per_px_max;
+    int units_per_px;
+    int units_per_px_max;
     units_per_px = max(16*rect_w/img_width, 16*rect_h/img_height);
     units_per_px_max = min(16*7*rect_w/(6*img_width), 16*4*rect_h/(3*img_height));
     if (units_per_px > units_per_px_max)

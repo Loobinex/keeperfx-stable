@@ -320,7 +320,8 @@ struct GuiBox *gui_allocate_box_structure(void)
 long gui_calculate_box_width(struct GuiBox *gbox)
 {
   struct GuiBoxOption *goptn;
-  int w,maxw;
+  int w;
+  int maxw;
   maxw = 0;
   goptn = gbox->optn_list;
   while (goptn->label[0] != '!')
@@ -558,28 +559,31 @@ struct GuiBox *gui_get_box_point_over(long x, long y)
  */
 struct GuiBoxOption *gui_get_box_option_point_over(struct GuiBox *gbox, long x, long y)
 {
-  long sx,sy,lnheight;
-  long width,height;
-  struct GuiBoxOption *gboptn;
-  sx = gbox->pos_x + 8;
-  sy = gbox->pos_y + 8;
-  gboptn = gbox->optn_list;
-  lnheight = LbTextLineHeight()*((long)pixel_size) + 2;
-  while (gboptn->label[0] != '!')
-  {
-    height = LbTextStringHeight(gboptn->label)*((long)pixel_size);
-    if ((y >= sy) && (y < sy+height))
+    long sx;
+    long sy;
+    long lnheight;
+    long width;
+    long height;
+    struct GuiBoxOption* gboptn;
+    sx = gbox->pos_x + 8;
+    sy = gbox->pos_y + 8;
+    gboptn = gbox->optn_list;
+    lnheight = LbTextLineHeight() * ((long)pixel_size) + 2;
+    while (gboptn->label[0] != '!')
     {
-      width = LbTextStringWidth(gboptn->label)*((long)pixel_size);
-      if ((x >= sx) && (x < sx+width))
-      {
-        if ((gboptn->numfield_4 == 2) || (gboptn->field_26 == 0))
-          return NULL;
-        return gboptn;
-      }
-    }
-    gboptn++;
-    sy += lnheight;
+        height = LbTextStringHeight(gboptn->label) * ((long)pixel_size);
+        if ((y >= sy) && (y < sy + height))
+        {
+            width = LbTextStringWidth(gboptn->label) * ((long)pixel_size);
+            if ((x >= sx) && (x < sx + width))
+            {
+                if ((gboptn->numfield_4 == 2) || (gboptn->field_26 == 0))
+                    return NULL;
+                return gboptn;
+            }
+        }
+        gboptn++;
+        sy += lnheight;
   }
   return NULL;
 }
@@ -624,8 +628,10 @@ void gui_draw_box(struct GuiBox *gbox)
     struct GuiBoxOption *goptn_over;
     struct GuiBoxOption *goptn;
     long lnheight;
-    long mouse_x,mouse_y;
-    long pos_x,pos_y;
+    long mouse_x;
+    long mouse_y;
+    long pos_x;
+    long pos_y;
     LbTextSetWindow(0, 0, MyScreenWidth/pixel_size, MyScreenHeight/pixel_size);
     mouse_x = GetMouseX();
     mouse_y = GetMouseY();
@@ -742,7 +748,8 @@ TbBool gui_process_option_inputs(struct GuiBox *gbox, struct GuiBoxOption *goptn
  */
 short gui_process_inputs(void)
 {
-    long mouse_y,mouse_x;
+    long mouse_y;
+    long mouse_x;
     struct GuiBox *gbox;
     struct GuiBox *hpbox;
     struct GuiBoxOption *goptn;

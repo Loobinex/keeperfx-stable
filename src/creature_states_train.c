@@ -88,8 +88,10 @@ void setup_training_move(struct Thing *creatng, SubtlCodedCoords stl_num)
 void setup_training_move_near(struct Thing *creatng, SubtlCodedCoords stl_num)
 {
     SubtlCodedCoords near_stl_num;
-    MapSubtlDelta dist_x,dist_y;
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlDelta dist_x;
+    MapSubtlDelta dist_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = stl_num_decode_x(stl_num);
     stl_y = stl_num_decode_y(stl_num);
     // Select a subtile closer to current position
@@ -218,9 +220,12 @@ void setup_training_search_for_post(struct Thing *creatng)
     struct Thing *traintng;
     struct Thing *thing;
     long start_slab;
-    long min_distance,dist;
-    long slb_x,slb_y;
-    long i,k;
+    long min_distance;
+    long dist;
+    long slb_x;
+    long slb_y;
+    long i;
+    long k;
     room = get_room_thing_is_on(creatng);
     // Let's start from a random slab
     slb_x = -1;
@@ -284,7 +289,8 @@ struct Thing *find_training_post_just_next_to_creature(struct Thing *creatng)
     traintng = INVALID_THING;
     for (i=0; i < 4; i++)
     {
-        long stl_x,stl_y;
+        long stl_x;
+        long stl_y;
         stl_x = creatng->mappos.x.stl.num + (long)small_around[i].delta_x;
         stl_y = creatng->mappos.y.stl.num + (long)small_around[i].delta_y;
         traintng = get_object_at_subtile_of_model_and_owned_by(stl_x, stl_y, 31, creatng->owner);
@@ -308,7 +314,8 @@ void process_creature_in_training_room(struct Thing *thing, struct Room *room)
     struct Thing *crtng;
     struct CreatureControl *cctrl2;
     struct Coord3d pos;
-    long speed,dist;
+    long speed;
+    long dist;
     long i;
     cctrl = creature_control_get_from_thing(thing);
     SYNCDBG(8,"Starting %s mode %d",thing_model_name(thing),(int)cctrl->training.mode);
@@ -354,8 +361,10 @@ void process_creature_in_training_room(struct Thing *thing, struct Room *room)
     case CrTrMd_SelectPositionNearTrainPost:
         for (i=0; i < 4; i++)
         {
-            long slb_x,slb_y;
-            long stl_x,stl_y;
+            long slb_x;
+            long slb_y;
+            long stl_x;
+            long stl_y;
             struct SlabMap *slb;
             slb_x = subtile_slab_fast(thing->mappos.x.stl.num) + (long)small_around[i].delta_x;
             slb_y = subtile_slab_fast(thing->mappos.y.stl.num) + (long)small_around[i].delta_y;

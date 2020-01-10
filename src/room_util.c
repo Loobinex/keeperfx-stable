@@ -57,8 +57,10 @@ struct Thing *create_room_surrounding_flame(struct Room *room, const struct Coor
 void room_update_surrounding_flames(struct Room *room, const struct Coord3d *pos)
 {
     struct Room *curoom;
-    MapSubtlCoord x,y;
-    long i,k;
+    MapSubtlCoord x;
+    MapSubtlCoord y;
+    long i;
+    long k;
     i = room->field_43;
     x = pos->x.stl.num + (MapSubtlCoord)small_around[i].delta_x;
     y = pos->y.stl.num + (MapSubtlCoord)small_around[i].delta_y;
@@ -85,7 +87,8 @@ void room_update_surrounding_flames(struct Room *room, const struct Coord3d *pos
 void process_room_surrounding_flames(struct Room *room)
 {
     struct Coord3d pos;
-    MapSlabCoord x,y;
+    MapSlabCoord x;
+    MapSlabCoord y;
     long i;
     SYNCDBG(19,"Starting");
     x = slb_num_decode_x(room->field_41);
@@ -157,7 +160,8 @@ void process_rooms(void)
 void kill_all_room_slabs_and_contents(struct Room *room)
 {
     struct SlabMap *slb;
-    long slb_x, slb_y;
+    long slb_x;
+    long slb_y;
     unsigned long k;
     long i;
     k = 0;
@@ -203,7 +207,8 @@ void sell_room_slab_when_no_free_room_structures(struct Room *room, long slb_x, 
 void recreate_rooms_from_room_slabs(struct Room *room, unsigned char gnd_slab)
 {
     struct SlabMap *slb;
-    long slb_x, slb_y;
+    long slb_x;
+    long slb_y;
     unsigned long k;
     long i;
     SYNCDBG(7,"Starting for %s index %d",room_code_name(room->kind),(int)room->index);

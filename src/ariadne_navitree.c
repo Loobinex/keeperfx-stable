@@ -76,7 +76,8 @@ void tree_init(void)
  */
 long compute_tree_move_cost(long tag_start_id, long tag_end_id)
 {
-    long ipt,itag;
+    long ipt;
+    long itag;
     long long rcost;
     rcost = 0;
     itag = tag_start_id;
@@ -107,7 +108,8 @@ long compute_tree_move_cost(long tag_start_id, long tag_end_id)
  */
 long copy_tree_to_route(long tag_start_id, long tag_end_id, long *route_pts, long route_len)
 {
-    long ipt,itag;
+    long ipt;
+    long itag;
     itag = tag_start_id;
     ipt = 0;
     while (itag != tag_end_id)
@@ -159,7 +161,8 @@ void tags_init(void)
  */
 long update_border_tags(long tag_id, long *border_pt, long border_len)
 {
-    long ipt,n;
+    long ipt;
+    long n;
     long iset;
     iset = 0;
     for (ipt=0; ipt < border_len; ipt++)
@@ -243,9 +246,12 @@ TbBool delaunay_add_triangle(long tri_idx)
 
 static void delaunay_stack_point(long pt_x, long pt_y)
 {
-    long tri_idx,cor_idx;
-    long dst_tri_idx,dst_cor_idx;
-    long tri_id2, i;
+    long tri_idx;
+    long cor_idx;
+    long dst_tri_idx;
+    long dst_cor_idx;
+    long tri_id2;
+    long i;
     NAVIDBG(19,"Starting");
     //_DK_delaunay_stack_point(pt_x, pt_y); return;
 
@@ -301,8 +307,16 @@ long optimise_heuristic(long tri_id1, long tri_id2)
     struct Triangle *tri1;
     struct Triangle *tri3;
     struct Point *pt;
-    long tri_id3,tri_lnk;
-    long Ax,Ay,Bx,By,Cx,Cy,Dx,Dy;
+    long tri_id3;
+    long tri_lnk;
+    long Ax;
+    long Ay;
+    long Bx;
+    long By;
+    long Cx;
+    long Cy;
+    long Dx;
+    long Dy;
 
     tri1 = get_triangle(tri_id1);
     tri_id3 = tri1->tags[tri_id2];
@@ -343,8 +357,10 @@ long optimise_heuristic(long tri_id1, long tri_id2)
 
 long delaunay_seeded(long start_x, long start_y, long end_x, long end_y)
 {
-    long tri_idx,cor_idx;
-    long tri_id2,cor_id2;
+    long tri_idx;
+    long cor_idx;
+    long tri_id2;
+    long cor_id2;
     long count;
     NAVIDBG(19,"Starting");
     //return _DK_delaunay_seeded(start_x, start_y, end_x, end_y);

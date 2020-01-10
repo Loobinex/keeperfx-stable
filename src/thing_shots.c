@@ -106,7 +106,8 @@ TbBool detonate_shot(struct Thing *shotng)
         // But currently shot do not store its level, so we don't really have a choice
         struct CreatureControl *cctrl;
         cctrl = creature_control_get_from_thing(castng);
-        long dist, damage;
+        long dist;
+        long damage;
         dist = compute_creature_attack_range(shotst->area_range*COORD_PER_STL, crstat->luck, cctrl->explevel);
         damage = compute_creature_attack_spell_damage(shotst->area_damage, crstat->luck, cctrl->explevel);
         HitTargetFlags hit_targets;
@@ -184,21 +185,24 @@ struct Thing *get_shot_collided_with_same_type_on_subtile(struct Thing *shotng, 
 struct Thing *get_shot_collided_with_same_type(struct Thing *shotng, struct Coord3d *nxpos)
 {
     //return _DK_get_shot_collided_with_same_type(thing, nxpos);
-    MapSubtlCoord stl_x_beg, stl_y_beg;
+    MapSubtlCoord stl_x_beg;
+    MapSubtlCoord stl_y_beg;
     stl_x_beg = coord_subtile(nxpos->x.val - 384);
     if (stl_x_beg < 0)
         stl_x_beg = 0;
     stl_y_beg = coord_subtile(nxpos->y.val - 384);
     if (stl_y_beg < 0)
         stl_y_beg = 0;
-    MapSubtlCoord stl_x_end, stl_y_end;
+    MapSubtlCoord stl_x_end;
+    MapSubtlCoord stl_y_end;
     stl_x_end = coord_subtile(nxpos->x.val + 384);
     if (stl_x_end >= map_subtiles_x)
       stl_x_end = map_subtiles_x;
     stl_y_end = coord_subtile(nxpos->y.val + 384);
     if (stl_y_end >= map_subtiles_y)
       stl_y_end = map_subtiles_y;
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     for (stl_y = stl_y_beg; stl_y <= stl_y_end; stl_y++)
     {
         for (stl_x = stl_x_beg; stl_x <= stl_x_end; stl_x++)
@@ -239,7 +243,8 @@ TbBool give_gold_to_creature_or_drop_on_map_when_digging(struct Thing *creatng, 
 
 void process_dig_shot_hit_wall(struct Thing *thing, unsigned long blocked_flags)
 {
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     struct Thing *diggertng;
     unsigned long k;
     diggertng = INVALID_THING;
@@ -487,7 +492,8 @@ long shot_hit_door_at(struct Thing *shotng, struct Coord3d *pos)
     struct ShotConfigStats *shotst;
     struct Thing *doortng;
     long blocked_flags;
-    int i,n;
+    int i;
+    int n;
     TbBool shot_explodes;
     SYNCDBG(18,"Starting for %s index %d",thing_model_name(shotng),(int)shotng->index);
     shot_explodes = false;
@@ -544,7 +550,8 @@ TbBool apply_shot_experience(struct Thing *shooter, long exp_factor, long exp_in
 {
     struct ShotConfigStats *shotst;
     struct CreatureControl *shcctrl;
-    long exp_mag,exp_gained;
+    long exp_mag;
+    long exp_gained;
     if (!creature_can_gain_experience(shooter))
         return false;
     shcctrl = creature_control_get_from_thing(shooter);
@@ -678,7 +685,8 @@ long get_damage_of_melee_shot(const struct Thing *shotng, const struct Thing *ta
 {
     const struct CreatureStats *tgcrstat;
     const struct CreatureControl *tgcctrl;
-    long crdefense,hitchance;
+    long crdefense;
+    long hitchance;
     tgcrstat = creature_stats_get_from_thing(target);
     tgcctrl = creature_control_get_from_thing(target);
     crdefense = compute_creature_max_defense(tgcrstat->defense,tgcctrl->explevel);
@@ -698,7 +706,8 @@ long project_damage_of_melee_shot(long shot_dexterity, long shot_damage, const s
 {
     const struct CreatureStats *tgcrstat;
     const struct CreatureControl *tgcctrl;
-    long crdefense,hitchance;
+    long crdefense;
+    long hitchance;
     tgcrstat = creature_stats_get_from_thing(target);
     tgcctrl = creature_control_get_from_thing(target);
     crdefense = compute_creature_max_defense(tgcrstat->defense,tgcctrl->explevel);
@@ -815,7 +824,8 @@ long melee_shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, stru
     struct Thing *shooter;
     struct ShotConfigStats *shotst;
     struct CreatureControl *tgcctrl;
-    long damage,throw_strength;
+    long damage;
+    long throw_strength;
     shotst = get_shot_model_stats(shotng->model);
     //throw_strength = shotng->field_20; //this seems to be always 0, this is why it didn't work;
 	throw_strength = shotst->old->push_on_hit;
@@ -899,7 +909,9 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
     struct Thing *efftng;
     struct ShotConfigStats *shotst;
     struct Coord3d pos2;
-    long i,n,amp;
+    long i;
+    long n;
+    long amp;
     shotst = get_shot_model_stats(shotng->model);
 	//amp = shotng->field_20;
 	amp = shotst->old->push_on_hit;
@@ -1126,8 +1138,10 @@ struct Thing *get_thing_collided_with_at_satisfying_filter_for_subtile(struct Th
 
 struct Thing *get_thing_collided_with_at_satisfying_filter(struct Thing *shotng, struct Coord3d *pos, Thing_Collide_Func filter, long a4, long a5)
 {
-    MapSubtlCoord stl_x_min, stl_y_min;
-    MapSubtlCoord stl_x_max, stl_y_max;
+    MapSubtlCoord stl_x_min;
+    MapSubtlCoord stl_y_min;
+    MapSubtlCoord stl_x_max;
+    MapSubtlCoord stl_y_max;
     {
         int radius;
         radius = 384;
@@ -1144,7 +1158,8 @@ struct Thing *get_thing_collided_with_at_satisfying_filter(struct Thing *shotng,
         if (stl_y_max > map_subtiles_y)
             stl_y_max = map_subtiles_y;
     }
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     for (stl_y = stl_y_min; stl_y <= stl_y_max; stl_y++)
     {
         for (stl_x = stl_x_min; stl_x <= stl_x_max; stl_x++)

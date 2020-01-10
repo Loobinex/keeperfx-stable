@@ -202,7 +202,8 @@ TbBool parse_creaturemodel_attributes_blocks(long crtr_model,char *buf,long len,
   struct CreatureStats *crstat;
   struct CreatureModelConfig *crconf;
   long pos;
-  int k,n;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -801,7 +802,8 @@ TbBool parse_creaturemodel_attraction_blocks(long crtr_model,char *buf,long len,
 {
   struct CreatureStats *crstat;
   long pos;
-  int k,n;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -945,7 +947,8 @@ TbBool parse_creaturemodel_annoyance_blocks(long crtr_model,char *buf,long len,c
 {
     struct CreatureStats *crstat;
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -1348,7 +1351,8 @@ TbBool parse_creaturemodel_senses_blocks(long crtr_model,char *buf,long len,cons
 {
     struct CreatureStats *crstat;
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -1473,7 +1477,8 @@ TbBool parse_creaturemodel_appearance_blocks(long crtr_model,char *buf,long len,
 {
     struct CreatureStats *crstat;
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -1612,7 +1617,8 @@ TbBool parse_creaturemodel_experience_blocks(long crtr_model,char *buf,long len,
 {
     struct CreatureStats *crstat;
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -1805,7 +1811,8 @@ TbBool parse_creaturemodel_jobs_blocks(long crtr_model,char *buf,long len,const 
 {
     struct CreatureStats *crstat;
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -2019,7 +2026,8 @@ TbBool parse_creaturemodel_jobs_blocks(long crtr_model,char *buf,long len,const 
 TbBool parse_creaturemodel_sprites_blocks(long crtr_model,char *buf,long len,const char *config_textname,unsigned short flags)
 {
   long pos;
-  int k,n;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];

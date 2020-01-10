@@ -178,7 +178,8 @@ EventIndex event_create_event_or_update_old_event(MapCoord map_x, MapCoord map_y
 
 void event_initialise_all(void)
 {
-    int i,k;
+    int i;
+    int k;
     for (i=0; i < DUNGEONS_COUNT; i++)
     {
         struct Dungeon *dungeon;
@@ -199,7 +200,8 @@ struct Event *event_create_event(MapCoord map_x, MapCoord map_y, EventKind evkin
 {
     struct Dungeon *dungeon;
     struct Event *event;
-    long i,k;
+    long i;
+    long k;
     if (dngn_id == game.neutral_player_num) {
         return INVALID_EVENT;
     }
@@ -309,7 +311,8 @@ void event_update_last_use(struct Event *event)
 void event_delete_event(long plyr_idx, EventIndex evidx)
 {
     struct Event *event;
-    long i,k;
+    long i;
+    long k;
     event = &game.event[evidx];
     event_update_last_use(event);
     struct Dungeon *dungeon;
@@ -410,7 +413,8 @@ void event_add_to_event_buttons_list(struct Event *event, struct Dungeon *dungeo
     if (dungeon->owner != event->owner) {
       ERRORLOG("Illegal my_event player allocation");
     }
-    long i,ev_idx;
+    long i;
+    long ev_idx;
     for (i=EVENT_BUTTONS_COUNT; i > 0; i--)
     {
         ev_idx = dungeon->event_button_index[i];
@@ -445,7 +449,8 @@ void go_on_then_activate_the_event_box(PlayerNumber plyr_idx, EventIndex evidx)
     struct Event *event;
     struct Thing *thing;
     char *text;
-    int i,k;
+    int i;
+    int k;
     short other_off;
     dungeon = get_players_num_dungeon(plyr_idx);
     event = &game.event[evidx];
@@ -712,7 +717,8 @@ void kill_oldest_my_event(struct Dungeon *dungeon)
     struct Event *event;
     long old_idx;
     long old_birth;
-    long i,k;
+    long i;
+    long k;
     old_idx = -1;
     old_birth = 2147483647;
     for (i=EVENT_BUTTONS_COUNT; i > 0; i--)

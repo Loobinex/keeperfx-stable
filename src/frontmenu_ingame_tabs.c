@@ -134,7 +134,8 @@ short button_designation_to_tab_designation(short btn_designt_id)
  */
 short get_button_designation(short btn_group, short btn_item)
 {
-    int i, n;
+    int i;
+    int n;
     switch (btn_group)
     {
     case GID_MINIMAP_AREA:
@@ -299,7 +300,8 @@ void gui_area_progress_bar_short(struct GuiButton *gbtn, int units_per_px, int p
             bar_fill = BAR_FULL_WIDTH;
         }
     }
-    int bar_fill_scaled, bar_whole_scaled;
+    int bar_fill_scaled;
+    int bar_whole_scaled;
     bar_fill_scaled = (bar_fill*units_per_px + units_per_px/2) / 16;
     bar_whole_scaled = (BAR_FULL_WIDTH*units_per_px + units_per_px/2) / 16;
     LbDrawBox(gbtn->scr_pos_x + (22*units_per_px + 16/2)/16 + bar_whole_scaled - bar_fill_scaled,
@@ -329,7 +331,8 @@ void gui_area_progress_bar_med1(struct GuiButton *gbtn, int units_per_px, int pr
             bar_fill = BAR_FULL_WIDTH;
         }
     }
-    int bar_fill_scaled, bar_whole_scaled;
+    int bar_fill_scaled;
+    int bar_whole_scaled;
     bar_fill_scaled = (bar_fill*units_per_px + units_per_px/2) / 16;
     bar_whole_scaled = (BAR_FULL_WIDTH*units_per_px + units_per_px/2) / 16;
     LbDrawBox(gbtn->scr_pos_x + (72*units_per_px + 16/2)/16 + bar_whole_scaled - bar_fill_scaled,
@@ -359,7 +362,8 @@ void gui_area_progress_bar_med2(struct GuiButton *gbtn, int units_per_px, int pr
             bar_fill = BAR_FULL_WIDTH;
         }
     }
-    int bar_fill_scaled, bar_whole_scaled;
+    int bar_fill_scaled;
+    int bar_whole_scaled;
     bar_fill_scaled = (bar_fill*units_per_px + units_per_px/2) / 16;
     bar_whole_scaled = (BAR_FULL_WIDTH*units_per_px + units_per_px/2) / 16;
     LbDrawBox(gbtn->scr_pos_x + (4*units_per_px + 16/2)/16 + bar_whole_scaled - bar_fill_scaled,
@@ -389,7 +393,8 @@ void gui_area_progress_bar_wide(struct GuiButton *gbtn, int units_per_px, int pr
             bar_fill = BAR_FULL_WIDTH;
         }
     }
-    int bar_fill_scaled, bar_whole_scaled;
+    int bar_fill_scaled;
+    int bar_whole_scaled;
     bar_fill_scaled = (bar_fill*units_per_px + units_per_px/2) / 16;
     bar_whole_scaled = (BAR_FULL_WIDTH*units_per_px + units_per_px/2) / 16;
     LbDrawBox(gbtn->scr_pos_x + (28*units_per_px + 16/2)/16 + bar_whole_scaled - bar_fill_scaled,
@@ -410,7 +415,8 @@ void gui_remove_area_for_rooms(struct GuiButton *gbtn)
 
 long find_room_type_capacity_total_percentage(PlayerNumber plyr_idx, RoomKind rkind)
 {
-    int used_cap, total_cap;
+    int used_cap;
+    int total_cap;
     struct Dungeon *dungeon;
     long i;
     unsigned long k;
@@ -1215,7 +1221,8 @@ void draw_name_box(long x, long y, int width, struct Thing *thing)
         ctrltng = thing_get(player->controlled_thing_idx);
         struct CreatureControl *cctrl;
         cctrl = creature_control_get_from_thing(ctrltng);
-        HitPoints maxhealth, curhealth;
+        HitPoints maxhealth;
+        HitPoints curhealth;
         maxhealth = cctrl->max_health;
         curhealth = ctrltng->health;
         if (curhealth <= 0) {
@@ -1226,7 +1233,8 @@ void draw_name_box(long x, long y, int width, struct Thing *thing)
         }
         if (maxhealth > 0)
         {
-            long i, bar_fill;
+            long i;
+            long bar_fill;
             i = 63 * curhealth / maxhealth;
             bar_fill = 126 - 2 * i;
             if (bar_fill < 0) {
@@ -1254,7 +1262,8 @@ void gui_creature_query_background1(struct GuiMenu *gmnu)
     struct Thing *ctrltng;
     ctrltng = thing_get(player->controlled_thing_idx);
     draw_name_box(gmnu->pos_x + 4*units_per_px/16, gmnu->pos_y + 262*units_per_px/16, gmnu->width, ctrltng);
-    int portrt_x, portrt_y;
+    int portrt_x;
+    int portrt_y;
     portrt_x = gmnu->pos_x + (  4*units_per_px + 8)/16;
     portrt_y = gmnu->pos_y + (188*units_per_px + 8)/16;
     if (thing_is_creature(ctrltng) && (ctrltng->ccontrol_idx > 0))
@@ -1285,7 +1294,8 @@ void gui_creature_query_background2(struct GuiMenu *gmnu)
     player = get_my_player();
     struct Thing *ctrltng;
     ctrltng = thing_get(player->controlled_thing_idx);
-    int nambox_x, nambox_y;
+    int nambox_x;
+    int nambox_y;
     nambox_x = gmnu->pos_x +   4*units_per_px/16;
     nambox_y = gmnu->pos_y + 200*units_per_px/16;
     draw_name_box(nambox_x, nambox_y, gmnu->width, ctrltng);
@@ -1475,7 +1485,9 @@ void gui_go_to_next_creature(struct GuiButton *gbtn)
 
 void gui_area_anger_button(struct GuiButton *gbtn)
 {
-    long i,job_idx,crmodel;
+    long i;
+    long job_idx;
+    long crmodel;
     SYNCDBG(10,"Starting");
     i = gbtn->btype_value & LbBFeF_IntValueMask;
     // Get index from pointer
@@ -1548,7 +1560,8 @@ long anger_get_creature_highest_anger_type_and_byte_percentage(struct Thing *cre
     struct CreatureStats *crstat;
     crstat = creature_stats_get_from_thing(creatng);
     int angr_typ;
-    long angr_lvl, angr_lmt;
+    long angr_lvl;
+    long angr_lmt;
     angr_lmt = crstat->annoy_level;
     angr_typ = 0;
     angr_lvl = 0;
@@ -1594,7 +1607,8 @@ void gui_area_smiley_anger_button(struct GuiButton *gbtn)
     TRACE_THING(ctrltng);
     if (thing_is_creature(ctrltng))
     {
-        long angr_typ, angr_prct;
+        long angr_typ;
+        long angr_prct;
         anger_get_creature_highest_anger_type_and_byte_percentage(ctrltng, &angr_typ, &angr_prct);
         int angr_pos;
         angr_pos = 5 * angr_prct / 256;
@@ -1636,7 +1650,8 @@ void gui_area_experience_button(struct GuiButton *gbtn)
         crstat = creature_stats_get_from_thing(ctrltng);
         struct CreatureControl *cctrl;
         cctrl = creature_control_get_from_thing(ctrltng);
-        long points_progress, points_required;
+        long points_progress;
+        long points_required;
         points_progress = cctrl->exp_points;
         points_required = (crstat->to_level[cctrl->explevel] << 8);
         gui_area_progress_bar_med2(gbtn, units_per_px, points_progress, points_required);
@@ -1695,7 +1710,8 @@ void gui_area_instance_button(struct GuiButton *gbtn)
     } else
     if (!creature_instance_has_reset(ctrltng, curbtn_inst_id))
     {
-        long turns_progress, turns_required;
+        long turns_progress;
+        long turns_required;
         if ((ctrltng->alloc_flags & TAlF_IsControlled) != 0) {
             turns_required = inst_inf->fp_reset_time - inst_inf->fp_action_time;
 			turns_progress = (long)game.play_gameturn - inst_inf->fp_time - (long)cctrl->instance_use_turn[curbtn_inst_id];
@@ -2192,7 +2208,8 @@ void gui_area_research_bar(struct GuiButton *gbtn)
     units_per_px = (gbtn->width * 16 + 60/2) / 60;
     struct Dungeon *dungeon;
     dungeon = get_players_num_dungeon(my_player_number);
-    int resrch_required, resrch_progress;
+    int resrch_required;
+    int resrch_progress;
     struct ResearchVal *rsrchval;
     rsrchval = get_players_current_research_val(my_player_number);
     if (rsrchval != NULL)
@@ -2217,7 +2234,8 @@ void gui_area_workshop_bar(struct GuiButton *gbtn)
     units_per_px = (gbtn->width * 16 + 60/2) / 60;
     struct Dungeon *dungeon;
     dungeon = get_players_num_dungeon(my_player_number);
-    int manufct_required, manufct_progress;
+    int manufct_required;
+    int manufct_progress;
     if (dungeon->manufacture_class != TCls_Empty)
     {
         manufct_required = manufacture_points_required(dungeon->manufacture_class, dungeon->manufacture_kind);
@@ -2311,7 +2329,8 @@ void draw_gold_total(PlayerNumber plyr_idx, long scr_x, long scr_y, long units_p
 {
     struct TbSprite *spr;
     unsigned int flg_mem;
-    int ndigits,val_width;
+    int ndigits;
+    int val_width;
     long pos_x;
     long long i;
     flg_mem = lbDisplay.DrawFlags;

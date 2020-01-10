@@ -323,7 +323,8 @@ const char *room_code_name(RoomKind rkind)
 TbBool parse_terrain_common_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -406,7 +407,9 @@ TbBool parse_terrain_slab_blocks(char *buf, long len, const char *config_textnam
     struct SlabAttr *slbattr;
     struct SlabConfigStats *slabst;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -569,7 +572,9 @@ TbBool parse_terrain_room_blocks(char *buf, long len, const char *config_textnam
     struct RoomStats *rstat;
     struct RoomConfigStats *roomst;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];

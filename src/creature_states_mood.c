@@ -150,7 +150,8 @@ short mad_killing_psycho(struct Thing *creatng)
     cctrl = creature_control_get_from_thing(creatng);
     // Find a position for killing - use random dungeon
     struct Coord3d pos;
-    int i,n;
+    int i;
+    int n;
     n = ACTION_RANDOM(PLAYERS_COUNT);
     for (i = 0; i < PLAYERS_COUNT; i++)
     {
@@ -468,8 +469,10 @@ TbBool find_combat_target_passing_by_subtile_but_having_unrelated_job(const stru
  */
 TbBool find_combat_target_passing_by_slab_but_having_unrelated_job(const struct Thing *creatng, CreatureJob job_kind, MapSlabCoord slb_x, MapSlabCoord slb_y, unsigned long *found_dist, struct Thing **found_thing)
 {
-    MapSubtlCoord endstl_x,endstl_y;
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord endstl_x;
+    MapSubtlCoord endstl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     endstl_x = 3*slb_x+3;
     endstl_y = 3*slb_y+3;
     for (stl_y = 3*slb_y; stl_y < endstl_y; stl_y++)
@@ -503,7 +506,8 @@ TbBool find_combat_target_passing_by_room_but_having_unrelated_job(const struct 
     i = room->slabs_list;
     while (i > 0)
     {
-        MapSubtlCoord slb_x,slb_y;
+        MapSubtlCoord slb_x;
+        MapSubtlCoord slb_y;
         slb_x = slb_num_decode_x(i);
         slb_y = slb_num_decode_y(i);
         // Per-slab code

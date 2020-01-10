@@ -56,7 +56,8 @@ TbBool sibling_line_of_sight_ignoring_door(const struct Coord3d *prevpos,
     }
     struct Coord3d posmvx;
     struct Coord3d posmvy;
-    MapSubtlDelta subdelta_x, subdelta_y;
+    MapSubtlDelta subdelta_x;
+    MapSubtlDelta subdelta_y;
     subdelta_x = (nextpos->x.stl.num - (MapSubtlDelta)prevpos->x.stl.num);
     subdelta_y = (nextpos->y.stl.num - (MapSubtlDelta)prevpos->y.stl.num);
     switch (subdelta_x + 2 * subdelta_y)
@@ -140,7 +141,9 @@ TbBool sibling_line_of_sight_ignoring_door(const struct Coord3d *prevpos,
 TbBool line_of_sight_3d_ignoring_specific_door(const struct Coord3d *frpos,
     const struct Coord3d *topos, const struct Thing *doortng)
 {
-    MapCoordDelta dx,dy,dz;
+    MapCoordDelta dx;
+    MapCoordDelta dy;
+    MapCoordDelta dz;
     dx = topos->x.val - (MapCoordDelta)frpos->x.val;
     dy = topos->y.val - (MapCoordDelta)frpos->y.val;
     dz = topos->z.val - (MapCoordDelta)frpos->z.val;
@@ -148,7 +151,9 @@ TbBool line_of_sight_3d_ignoring_specific_door(const struct Coord3d *frpos,
         (topos->y.stl.num == frpos->y.stl.num)) {
         return true;
     }
-    MapCoord increase_x, increase_y, increase_z;
+    MapCoord increase_x;
+    MapCoord increase_y;
+    MapCoord increase_z;
     MapSubtlCoord distance;
     if (dx >= 0) {
         increase_x = COORD_PER_STL;
@@ -169,7 +174,8 @@ TbBool line_of_sight_3d_ignoring_specific_door(const struct Coord3d *frpos,
         increase_z = -COORD_PER_STL;
     }
     { // Compute amount of steps for the loop
-        int maxdim1, maxdim2;
+        int maxdim1;
+        int maxdim2;
         if (dy == dx)
         {
             increase_z = increase_z * dz / dx;
@@ -241,7 +247,8 @@ TbBool sibling_line_of_sight_3d_including_lava_check_ignoring_door(const struct 
     }
     struct Coord3d posmvx;
     struct Coord3d posmvy;
-    MapSubtlDelta subdelta_x, subdelta_y;
+    MapSubtlDelta subdelta_x;
+    MapSubtlDelta subdelta_y;
     subdelta_x = (nextpos->x.stl.num - (MapSubtlDelta)prevpos->x.stl.num);
     subdelta_y = (nextpos->y.stl.num - (MapSubtlDelta)prevpos->y.stl.num);
     switch (subdelta_x + 2 * subdelta_y)
@@ -316,7 +323,9 @@ TbBool sibling_line_of_sight_3d_including_lava_check_ignoring_door(const struct 
 TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_specific_door(const struct Coord3d *frpos,
     const struct Coord3d *topos, const struct Thing *doortng)
 {
-    MapCoordDelta dx,dy,dz;
+    MapCoordDelta dx;
+    MapCoordDelta dy;
+    MapCoordDelta dz;
     dx = topos->x.val - (MapCoordDelta)frpos->x.val;
     dy = topos->y.val - (MapCoordDelta)frpos->y.val;
     dz = topos->z.val - (MapCoordDelta)frpos->z.val;
@@ -324,7 +333,9 @@ TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_specific_door(const 
         (topos->y.stl.num == frpos->y.stl.num)) {
         return true;
     }
-    MapCoord increase_x, increase_y, increase_z;
+    MapCoord increase_x;
+    MapCoord increase_y;
+    MapCoord increase_z;
     MapSubtlCoord distance;
     if (dx >= 0) {
         increase_x = COORD_PER_STL;
@@ -345,7 +356,8 @@ TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_specific_door(const 
         increase_z = -COORD_PER_STL;
     }
     { // Compute amount of steps for the loop
-        int maxdim1, maxdim2;
+        int maxdim1;
+        int maxdim2;
         if (dy == dx)
         {
             increase_z = increase_z * dz / dx;
@@ -413,7 +425,8 @@ TbBool sibling_line_of_sight_3d_including_lava_check_ignoring_own_door(const str
     }
     struct Coord3d posmvy;
     struct Coord3d posmvx;
-    int subdelta_x, subdelta_y;
+    int subdelta_x;
+    int subdelta_y;
     subdelta_x = (nextpos->x.stl.num - (MapSubtlDelta)prevpos->x.stl.num);
     subdelta_y = (nextpos->y.stl.num - (MapSubtlDelta)prevpos->y.stl.num);
     switch (subdelta_x + 2 * subdelta_y)
@@ -488,7 +501,9 @@ TbBool sibling_line_of_sight_3d_including_lava_check_ignoring_own_door(const str
 TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_own_door(const struct Coord3d *frpos,
     const struct Coord3d *topos, PlayerNumber plyr_idx)
 {
-    MapCoordDelta dx,dy,dz;
+    MapCoordDelta dx;
+    MapCoordDelta dy;
+    MapCoordDelta dz;
     dx = topos->x.val - (MapCoordDelta)frpos->x.val;
     dy = topos->y.val - (MapCoordDelta)frpos->y.val;
     dz = topos->z.val - (MapCoordDelta)frpos->z.val;
@@ -500,7 +515,9 @@ TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_own_door(const struc
         return true;
     }
     // Initialize increases and do abs() of dx,dy and dz
-    MapCoord increase_x, increase_y, increase_z;
+    MapCoord increase_x;
+    MapCoord increase_y;
+    MapCoord increase_z;
     MapSubtlCoord distance;
     if (dx >= 0) {
         increase_x = COORD_PER_STL;
@@ -521,7 +538,8 @@ TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_own_door(const struc
         increase_z = -COORD_PER_STL;
     }
     { // Compute amount of steps for the loop
-        int maxdim1, maxdim2;
+        int maxdim1;
+        int maxdim2;
         if (dy == dx)
         {
             increase_z = increase_z * dz / dx;
@@ -677,7 +695,9 @@ TbBool line_of_sight_2d(const struct Coord3d *pos1, const struct Coord3d *pos2)
 
 TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos)
 {
-    MapCoordDelta dx,dy,dz;
+    MapCoordDelta dx;
+    MapCoordDelta dy;
+    MapCoordDelta dz;
     dx = topos->x.val - (MapCoordDelta)frpos->x.val;
     dy = topos->y.val - (MapCoordDelta)frpos->y.val;
     dz = topos->z.val - (MapCoordDelta)frpos->z.val;
@@ -686,7 +706,9 @@ TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos
         return true;
     }
 
-    MapCoord increase_x, increase_y, increase_z;
+    MapCoord increase_x;
+    MapCoord increase_y;
+    MapCoord increase_z;
     MapSubtlCoord distance;
     if (dx >= 0) {
         increase_x = COORD_PER_STL;
@@ -707,7 +729,8 @@ TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos
         increase_z = -COORD_PER_STL;
     }
     { // Compute amount of steps for the loop
-        int maxdim1, maxdim2;
+        int maxdim1;
+        int maxdim2;
         if (dy == dx)
         {
             increase_z = increase_z * dz / dx;

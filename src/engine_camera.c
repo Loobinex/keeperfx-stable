@@ -61,17 +61,19 @@ MapCoordDelta get_3d_box_distance(const struct Coord3d *pos1, const struct Coord
 
 MapCoordDelta get_2d_box_distance(const struct Coord3d *pos1, const struct Coord3d *pos2)
 {
-  long dist_x,dist_y;
-  dist_y = abs((long)pos1->y.val - (long)pos2->y.val);
-  dist_x = abs((long)pos1->x.val - (long)pos2->x.val);
-  if (dist_y <= dist_x)
-    return dist_x;
-  return dist_y;
+    long dist_x;
+    long dist_y;
+    dist_y = abs((long)pos1->y.val - (long)pos2->y.val);
+    dist_x = abs((long)pos1->x.val - (long)pos2->x.val);
+    if (dist_y <= dist_x)
+        return dist_x;
+    return dist_y;
 }
 
 MapCoordDelta get_2d_box_distance_xy(long pos1_x, long pos1_y, long pos2_x, long pos2_y)
 {
-    long dist_x,dist_y;
+    long dist_x;
+    long dist_y;
     dist_x = abs((long)pos1_x - (long)pos2_x);
     dist_y = abs((long)pos1_y - (long)pos2_y);
     if (dist_y <= dist_x)
@@ -81,8 +83,13 @@ MapCoordDelta get_2d_box_distance_xy(long pos1_x, long pos1_y, long pos2_x, long
 
 void angles_to_vector(short angle_xy, short angle_yz, long dist, struct ComponentVector *cvect)
 {
-    long long sin_yz,cos_yz,sin_xy,cos_xy;
-    long long lldist,mag,factor;
+    long long sin_yz;
+    long long cos_yz;
+    long long sin_xy;
+    long long cos_xy;
+    long long lldist;
+    long long mag;
+    long long factor;
     cos_yz = LbCosL(angle_yz) >> 2;
     sin_yz = LbSinL(angle_yz) >> 2;
     cos_xy = LbCosL(angle_xy) >> 2;
@@ -124,7 +131,8 @@ long get_angle_yz_to(const struct Coord3d *pos1, const struct Coord3d *pos2)
 // TODO these are actually Coord2d and Coord3d just inherits from it
 MapCoordDelta get_2d_distance(const struct Coord3d *pos1, const struct Coord3d *pos2)
 {
-    long dist_x,dist_y;
+    long dist_x;
+    long dist_y;
     dist_x = (long)pos1->x.val - (long)pos2->x.val;
     dist_y = (long)pos1->y.val - (long)pos2->y.val;
     return LbDiagonalLength(abs(dist_x), abs(dist_y));
@@ -132,7 +140,8 @@ MapCoordDelta get_2d_distance(const struct Coord3d *pos1, const struct Coord3d *
 
 MapCoordDelta get_2d_distance_squared(const struct Coord3d *pos1, const struct Coord3d *pos2)
 {
-    long dist_x,dist_y;
+    long dist_x;
+    long dist_y;
     dist_x = (long)pos1->x.val - (long)pos2->x.val;
     dist_y = (long)pos1->y.val - (long)pos2->y.val;
     return dist_x * dist_x + dist_y * dist_y;
@@ -140,7 +149,9 @@ MapCoordDelta get_2d_distance_squared(const struct Coord3d *pos1, const struct C
 
 void project_point_to_wall_on_angle(const struct Coord3d *pos1, struct Coord3d *pos2, long angle_xy, long angle_z, long distance, long num_steps)
 {
-    long dx,dy,dz;
+    long dx;
+    long dy;
+    long dz;
     long n;
     struct Coord3d pos;
     dx = distance_with_angle_to_coord_x(distance,angle_xy);
@@ -165,7 +176,8 @@ void project_point_to_wall_on_angle(const struct Coord3d *pos1, struct Coord3d *
 
 void view_zoom_camera_in(struct Camera *cam, long limit_max, long limit_min)
 {
-    long new_zoom,old_zoom;
+    long new_zoom;
+    long old_zoom;
     old_zoom = get_camera_zoom(cam);
     switch (cam->view_mode)
     {
@@ -226,7 +238,8 @@ void set_camera_zoom(struct Camera *cam, long new_zoom)
 
 void view_zoom_camera_out(struct Camera *cam, long limit_max, long limit_min)
 {
-    long new_zoom,old_zoom;
+    long new_zoom;
+    long old_zoom;
     old_zoom = get_camera_zoom(cam);
     switch (cam->view_mode)
     {
@@ -311,7 +324,8 @@ long get_camera_zoom(struct Camera *cam)
  */
 unsigned long scale_camera_zoom_to_screen(unsigned long zoom_lvl)
 {
-    unsigned long size_wide,size_narr;
+    unsigned long size_wide;
+    unsigned long size_narr;
     size_narr = ((pixel_size*units_per_pixel_min)<<7)/10;
     size_wide = (pixel_size*units_per_pixel) << 3;
     // Currently, the side menu isn't scaled. We have to take that into account. Side menu takes approx 0.22 of the screen.
@@ -354,7 +368,8 @@ void view_set_camera_x_inertia(struct Camera *cam, long delta, long ilimit)
 void view_set_camera_rotation_inertia(struct Camera *cam, long delta, long ilimit)
 {
     //_DK_view_set_camera_rotation_inertia(cam, delta, ilimit);
-    int limit_val, new_val;
+    int limit_val;
+    int new_val;
     limit_val = abs(ilimit);
     new_val = delta + cam->field_1B;
     cam->field_1B = new_val;

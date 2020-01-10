@@ -994,7 +994,8 @@ long pop_condition(void)
 
 void command_add_to_party(const char *prtname, const char *crtr_name, long crtr_level, long carried_gold, const char *objectv, long countdown)
 {
-    long crtr_id, objctv_id;
+    long crtr_id;
+    long objctv_id;
     if ((crtr_level < 1) || (crtr_level > CREATURE_MAX_LEVEL))
     {
       SCRPTERRLOG("Invalid Creature Level parameter; %ld not in range (%d,%d)",crtr_level,1,CREATURE_MAX_LEVEL);
@@ -1159,7 +1160,8 @@ void command_add_condition(long plr_range_id, long opertr_id, long varib_type, l
 void command_if(long plr_range_id, const char *varib_name, const char *operatr, long value)
 {
     long opertr_id;
-    long varib_type,varib_id;
+    long varib_type;
+    long varib_id;
     if (game.script.conditions_num >= CONDITIONS_COUNT)
     {
       SCRPTERRLOG("Too many (over %d) conditions in script", CONDITIONS_COUNT);
@@ -1213,7 +1215,8 @@ void command_if(long plr_range_id, const char *varib_name, const char *operatr, 
       return;
     }
     { // Warn if using the command for a player without Dungeon struct
-        int plr_start, plr_end;
+        int plr_start;
+        int plr_end;
         if (get_players_range(plr_range_id, &plr_start, &plr_end) >= 0) {
             struct Dungeon *dungeon;
             dungeon = get_dungeon(plr_start);
@@ -1316,26 +1319,29 @@ void player_reveal_map_area(PlayerNumber plyr_idx, long x, long y, long w, long 
 
 void player_reveal_map_location(int plyr_idx, TbMapLocation target, long r)
 {
-  long x,y;
-  SYNCDBG(0,"Revealing location type %d",target);
-  x = 0;
-  y = 0;
-  find_map_location_coords(target, &x, &y, __func__);
-  if ((x == 0) && (y == 0))
-  {
-    WARNLOG("Can't decode location %d",target);
-    return;
+    long x;
+    long y;
+    SYNCDBG(0, "Revealing location type %d", target);
+    x = 0;
+    y = 0;
+    find_map_location_coords(target, &x, &y, __func__);
+    if ((x == 0) && (y == 0))
+    {
+        WARNLOG("Can't decode location %d", target);
+        return;
   }
   reveal_map_area(plyr_idx, x-(r>>1), x+(r>>1)+(r%1), y-(r>>1), y+(r>>1)+(r%1));
 }
 
 void command_set_start_money(long plr_range_id, long gold_val)
 {
-  int plr_start, plr_end;
-  int i;
-  if (get_players_range(plr_range_id, &plr_start, &plr_end) < 0) {
-      SCRPTERRLOG("Given owning player range %d is not supported in this command",(int)plr_range_id);
-      return;
+    int plr_start;
+    int plr_end;
+    int i;
+    if (get_players_range(plr_range_id, &plr_start, &plr_end) < 0)
+    {
+        SCRPTERRLOG("Given owning player range %d is not supported in this command", (int)plr_range_id);
+        return;
   }
   if (script_current_condition != -1)
   {
@@ -1400,7 +1406,8 @@ void command_trap_available(long plr_range_id, const char *trapname, unsigned lo
  */
 void command_research(long plr_range_id, const char *trg_type, const char *trg_name, unsigned long val)
 {
-    long item_type,item_id;
+    long item_type;
+    long item_id;
     item_type = get_rid(research_desc, trg_type);
     item_id = get_research_id(item_type, trg_name, __func__);
     if (item_id < 0)
@@ -1415,8 +1422,10 @@ void command_research(long plr_range_id, const char *trg_type, const char *trg_n
 void command_research_order(long plr_range_id, const char *trg_type, const char *trg_name, unsigned long val)
 {
     struct Dungeon *dungeon;
-    int plr_start, plr_end;
-    long item_type,item_id;
+    int plr_start;
+    int plr_end;
+    long item_type;
+    long item_id;
     long i;
     if (get_players_range(plr_range_id, &plr_start, &plr_end) < 0) {
         SCRPTERRLOG("Given owning player range %d is not supported in this command",(int)plr_range_id);
@@ -1464,7 +1473,8 @@ void command_computer_player(long plr_range_id, long comp_model)
     {
         SCRPTWRNLOG("Computer player setup inside conditional block; condition ignored");
     }
-    int plr_start, plr_end;
+    int plr_start;
+    int plr_end;
     long i;
     if (get_players_range(plr_range_id, &plr_start, &plr_end) < 0) {
         SCRPTERRLOG("Given owning player range %d is not supported in this command",(int)plr_range_id);
@@ -1565,7 +1575,8 @@ void command_display_objective(long msg_num, const char *where, long x, long y)
 void command_add_tunneller_to_level(long plr_range_id, const char *locname, const char *objectv, long target, unsigned char crtr_level, unsigned long carried_gold)
 {
     struct TunnellerTrigger *tn_trig;
-    TbMapLocation location, heading;
+    TbMapLocation location;
+    TbMapLocation heading;
     if ((crtr_level < 1) || (crtr_level > CREATURE_MAX_LEVEL))
     {
         SCRPTERRLOG("Invalid CREATURE LEVEL parameter");
@@ -1614,7 +1625,8 @@ void command_add_tunneller_party_to_level(long plr_range_id, const char *prtname
 {
     struct TunnellerTrigger *tn_trig;
     struct Party *party;
-    TbMapLocation location, heading;
+    TbMapLocation location;
+    TbMapLocation heading;
     long prty_id;
     if ((crtr_level < 1) || (crtr_level > CREATURE_MAX_LEVEL))
     {
@@ -1751,7 +1763,8 @@ void command_set_hate(long trgt_plr_range_id, long enmy_plr_range_id, long hate_
 void command_if_available(long plr_range_id, const char *varib_name, const char *operatr, long value)
 {
     long opertr_id;
-    long varib_type,varib_id;
+    long varib_type;
+    long varib_id;
     if (game.script.conditions_num >= CONDITIONS_COUNT)
     {
       SCRPTERRLOG("Too many (over %d) conditions in script", CONDITIONS_COUNT);
@@ -1797,7 +1810,8 @@ void command_if_available(long plr_range_id, const char *varib_name, const char 
       return;
     }
     { // Warn if using the command for a player without Dungeon struct
-        int plr_start, plr_end;
+        int plr_start;
+        int plr_end;
         if (get_players_range(plr_range_id, &plr_start, &plr_end) >= 0) {
             struct Dungeon *dungeon;
             dungeon = get_dungeon(plr_start);
@@ -1813,7 +1827,8 @@ void command_if_available(long plr_range_id, const char *varib_name, const char 
 void command_if_controls(long plr_range_id, const char *varib_name, const char *operatr, long value)
 {
     long opertr_id;
-    long varib_type,varib_id;
+    long varib_type;
+    long varib_id;
     if (game.script.conditions_num >= CONDITIONS_COUNT)
     {
       SCRPTERRLOG("Too many (over %d) conditions in script", CONDITIONS_COUNT);
@@ -1843,7 +1858,8 @@ void command_if_controls(long plr_range_id, const char *varib_name, const char *
       return;
     }
     { // Warn if using the command for a player without Dungeon struct
-        int plr_start, plr_end;
+        int plr_start;
+        int plr_end;
         if (get_players_range(plr_range_id, &plr_start, &plr_end) >= 0) {
             struct Dungeon *dungeon;
             dungeon = get_dungeon(plr_start);
@@ -1859,7 +1875,8 @@ void command_if_controls(long plr_range_id, const char *varib_name, const char *
 void command_set_computer_globals(long plr_range_id, long val1, long val2, long val3, long val4, long val5, long val6)
 {
   struct Computer2 *comp;
-  int plr_start, plr_end;
+  int plr_start;
+  int plr_end;
   long i;
   if (get_players_range(plr_range_id, &plr_start, &plr_end) < 0) {
       SCRPTERRLOG("Given owning player range %d is not supported in this command",(int)plr_range_id);
@@ -1887,8 +1904,11 @@ void command_set_computer_globals(long plr_range_id, long val1, long val2, long 
 void command_set_computer_checks(long plr_range_id, const char *chkname, long val1, long val2, long val3, long val4, long val5)
 {
   struct ComputerCheck *ccheck;
-  int plr_start, plr_end;
-  long i,k,n;
+  int plr_start;
+  int plr_end;
+  long i;
+  long k;
+  long n;
   if (get_players_range(plr_range_id, &plr_start, &plr_end) < 0) {
       SCRPTERRLOG("Given owning player range %d is not supported in this command",(int)plr_range_id);
       return;
@@ -1934,8 +1954,11 @@ void command_set_computer_checks(long plr_range_id, const char *chkname, long va
 void command_set_computer_events(long plr_range_id, const char *evntname, long val1, long val2)
 {
   struct ComputerEvent *event;
-  int plr_start, plr_end;
-  long i,k,n;
+  int plr_start;
+  int plr_end;
+  long i;
+  long k;
+  long n;
   if (get_players_range(plr_range_id, &plr_start, &plr_end) < 0) {
       SCRPTERRLOG("Given owning player range %d is not supported in this command",(int)plr_range_id);
       return;
@@ -1978,8 +2001,11 @@ void command_set_computer_events(long plr_range_id, const char *evntname, long v
 void command_set_computer_process(long plr_range_id, const char *procname, long val1, long val2, long val3, long val4, long val5)
 {
   struct ComputerProcess *cproc;
-  int plr_start, plr_end;
-  long i,k,n;
+  int plr_start;
+  int plr_end;
+  long i;
+  long k;
+  long n;
   if (get_players_range(plr_range_id, &plr_start, &plr_end) < 0) {
       SCRPTERRLOG("Given owning player range %d is not supported in this command",(int)plr_range_id);
       return;
@@ -2230,12 +2256,13 @@ void command_message(const char *msgtext, unsigned char kind)
 
 void command_swap_creature(const char *ncrt_name, const char *crtr_name)
 {
-  long ncrt_id,crtr_id;
-  ncrt_id = get_rid(newcrtr_desc, ncrt_name);
-  if (ncrt_id == -1)
-  {
-      SCRPTERRLOG("Unknown new creature, '%s'", ncrt_name);
-      return;
+    long ncrt_id;
+    long crtr_id;
+    ncrt_id = get_rid(newcrtr_desc, ncrt_name);
+    if (ncrt_id == -1)
+    {
+        SCRPTERRLOG("Unknown new creature, '%s'", ncrt_name);
+        return;
   }
   crtr_id = get_rid(creature_desc, crtr_name);
   if (crtr_id == -1)
@@ -2261,11 +2288,13 @@ void command_swap_creature(const char *ncrt_name, const char *crtr_name)
 
 void command_kill_creature(long plr_range_id, const char *crtr_name, const char *criteria, int count)
 {
-  long crtr_id,select_id;
-  SCRIPTDBG(11,"Starting");
-  if (count <= 0) {
-    SCRPTERRLOG("Bad creatures count, %d", count);
-    return;
+    long crtr_id;
+    long select_id;
+    SCRIPTDBG(11, "Starting");
+    if (count <= 0)
+    {
+        SCRPTERRLOG("Bad creatures count, %d", count);
+        return;
   }
   crtr_id = get_rid(creature_desc, crtr_name);
   if (crtr_id == -1) {
@@ -2282,11 +2311,13 @@ void command_kill_creature(long plr_range_id, const char *crtr_name, const char 
 
 void command_level_up_creature(long plr_range_id, const char *crtr_name, const char *criteria, int count)
 {
-  long crtr_id,select_id;
-  SCRIPTDBG(11,"Starting");
-  if (count <= 0) {
-    SCRPTERRLOG("Bad creatures count, %d", count);
-    return;
+    long crtr_id;
+    long select_id;
+    SCRIPTDBG(11, "Starting");
+    if (count <= 0)
+    {
+        SCRPTERRLOG("Bad creatures count, %d", count);
+        return;
   }
   crtr_id = get_rid(creature_desc, crtr_name);
   if (crtr_id == -1) {
@@ -2312,12 +2343,14 @@ void command_level_up_creature(long plr_range_id, const char *crtr_name, const c
 
 void command_change_creature_owner(long origin_plyr_idx, const char *crtr_name, const char *criteria, long dest_plyr_idx)
 {
-  long crtr_id,select_id;
-  SCRIPTDBG(11,"Starting");
-  crtr_id = get_rid(creature_desc, crtr_name);
-  if (crtr_id == -1) {
-    SCRPTERRLOG("Unknown creature, '%s'", crtr_name);
-    return;
+    long crtr_id;
+    long select_id;
+    SCRIPTDBG(11, "Starting");
+    crtr_id = get_rid(creature_desc, crtr_name);
+    if (crtr_id == -1)
+    {
+        SCRPTERRLOG("Unknown creature, '%s'", crtr_name);
+        return;
   }
   select_id = get_rid(creature_select_criteria_desc, criteria);
   if (select_id == -1) {
@@ -2829,9 +2862,11 @@ int script_recognize_params(char **line, const struct CommandDesc *cmd_desc, str
             case Cmd_DRAWFROM:{
                 // Create array of value ranges
                 struct MinMax ranges[COMMANDDESC_ARGS_COUNT];
-                long range_total, range_index;
+                long range_total;
+                long range_index;
                 range_total = 0;
-                int fi, ri;
+                int fi;
+                int ri;
                 if (level_file_version > 0)
                 {
                     chr = cmd_desc->args[i];
@@ -3307,7 +3342,9 @@ long script_support_create_thing_at_action_point(long apt_idx, ThingClass tngcla
     struct Thing *thing;
     struct CreatureControl *cctrl;
     struct ActionPoint *apt;
-    long direction,delta_x,delta_y;
+    long direction;
+    long delta_x;
+    long delta_y;
     struct Coord3d pos;
     struct Thing *heartng;
 
@@ -3578,7 +3615,8 @@ struct Thing *script_process_new_party(struct Party *party, PlayerNumber plyr_id
     struct Thing *grptng;
     struct Thing *leadtng;
     struct Thing *thing;
-    long i,k;
+    long i;
+    long k;
     leadtng = INVALID_THING;
     for (i=0; i < copies_num; i++)
     {
@@ -3666,7 +3704,8 @@ void script_process_new_creatures(PlayerNumber plyr_idx, long crmodel, long loca
 struct Thing *get_creature_in_range_around_any_of_enemy_heart(PlayerNumber plyr_idx, ThingModel crmodel, MapSubtlDelta range)
 {
     struct Thing *heartng;
-    int i, n;
+    int i;
+    int n;
     n = ACTION_RANDOM(PLAYERS_COUNT);
     for (i=0; i < PLAYERS_COUNT; i++, n=(n+1)%PLAYERS_COUNT)
     {
@@ -3899,7 +3938,8 @@ TbBool script_level_up_creature(PlayerNumber plyr_idx, long crmodel, long criter
 TbBool process_activation_status(struct Condition *condt)
 {
     TbBool new_status;
-    int plr_start, plr_end;
+    int plr_start;
+    int plr_end;
     long i;
     if (get_players_range(condt->plyr_range, &plr_start, &plr_end) < 0)
     {
@@ -4103,8 +4143,10 @@ TbBool condition_inactive(long cond_idx)
 void process_condition(struct Condition *condt)
 {
     TbBool new_status;
-    int plr_start, plr_end;
-    long i,k;
+    int plr_start;
+    int plr_end;
+    long i;
+    long k;
     SYNCDBG(18,"Starting for type %d, player %d",(int)condt->variabl_type,(int)condt->plyr_range);
     if (condition_inactive(condt->condit_idx))
     {
@@ -4161,7 +4203,8 @@ void process_conditions(void)
 void process_check_new_creature_partys(void)
 {
     struct PartyTrigger *pr_trig;
-    long i,n;
+    long i;
+    long n;
     for (i=0; i < game.script.party_triggers_num; i++)
     {
       pr_trig = &game.script.party_triggers[i];
@@ -4193,7 +4236,9 @@ void process_check_new_tunneller_partys(void)
     struct TunnellerTrigger *tn_trig;
     struct Thing *grptng;
     struct Thing *thing;
-    long i,k,n;
+    long i;
+    long k;
+    long n;
     for (i=0; i < game.script.tunneller_triggers_num; i++)
     {
       tn_trig = &game.script.tunneller_triggers[i];
@@ -4233,7 +4278,8 @@ void process_check_new_tunneller_partys(void)
 void process_win_and_lose_conditions(PlayerNumber plyr_idx)
 {
     struct PlayerInfo *player;
-    long i,k;
+    long i;
+    long k;
     player = get_player(plyr_idx);
     if ((game.system_flags & GSF_NetworkActive) != 0)
       return;
@@ -4284,7 +4330,8 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
   struct CreatureStats *crstat;
   struct PlayerInfo *player;
   struct Dungeon *dungeon;
-  int plr_start, plr_end;
+  int plr_start;
+  int plr_end;
   long i;
   if (get_players_range(plr_range_id, &plr_start, &plr_end) < 0)
   {

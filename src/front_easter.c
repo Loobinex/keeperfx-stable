@@ -173,9 +173,12 @@ void input_eastegg(void)
 void draw_eastegg(void)
 {
   char *text;
-  static long px[2]={0,0},py[2]={0,0};
-  static long vx[2]={0,0},vy[2]={0,0};
-  long i,k;
+  static long px[2] = {0, 0};
+  static long py[2] = {0, 0};
+  static long vx[2] = {0, 0};
+  static long vy[2] = {0, 0};
+  long i;
+  long k;
   SYNCDBG(5,"Starting");
   LbTextSetWindow(0, 0, MyScreenWidth, MyScreenHeight);
   if (eastegg_skeksis_cntr >= eastegg_skeksis_codes.length)

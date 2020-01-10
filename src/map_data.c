@@ -368,7 +368,9 @@ TbBool set_coords_to_slab_center(struct Coord3d *pos, MapSubtlCoord slb_x, MapSu
  */
 TbBool set_coords_to_cylindric_shift(struct Coord3d *pos, const struct Coord3d *source, long radius, long angle, long z)
 {
-    long px,py,pz;
+    long px;
+    long py;
+    long pz;
     px = source->x.val + ((radius * LbSinL(angle)) >> 16);
     py = source->y.val + ((-(radius * LbCosL(angle)) >> 8) >> 8);
     pz = source->z.val + z;
@@ -377,7 +379,9 @@ TbBool set_coords_to_cylindric_shift(struct Coord3d *pos, const struct Coord3d *
 
 TbBool set_coords_add_velocity(struct Coord3d *pos, const struct Coord3d *source, const struct CoordDelta3d *velocity, unsigned short flags)
 {
-    MapCoord sx,sy,sz;
+    MapCoord sx;
+    MapCoord sy;
+    MapCoord sz;
     // Get limited velocity
     sx = velocity->x.val;
     if (sx < -MOVE_VELOCITY_LIMIT) {
@@ -473,7 +477,8 @@ MapSubtlCoord stl_slab_ending_subtile(MapSubtlCoord stl_v)
 void clear_mapwho(void)
 {
   struct Map *mapblk;
-  MapSubtlCoord x,y;
+  MapSubtlCoord x;
+  MapSubtlCoord y;
   for (y=0; y < (map_subtiles_y+1); y++)
   {
       for (x=0; x < (map_subtiles_x+1); x++)
@@ -487,7 +492,8 @@ void clear_mapwho(void)
 void clear_mapmap_soft(void)
 {
     struct Map *mapblk;
-    MapSubtlCoord x,y;
+    MapSubtlCoord x;
+    MapSubtlCoord y;
     for (y=0; y < (map_subtiles_y+1); y++)
     {
         for (x=0; x < (map_subtiles_x+1); x++)
@@ -506,7 +512,8 @@ void clear_mapmap_soft(void)
 void clear_mapmap(void)
 {
     struct Map *mapblk;
-    unsigned long x,y;
+    unsigned long x;
+    unsigned long y;
     unsigned char *flg;
     for (y=0; y < (map_subtiles_y+1); y++)
     {
@@ -544,12 +551,13 @@ void clear_slab_dig(long slb_x, long slb_y, char plyr_idx)
  */
 void clear_dig_for_map_rect(long plyr_idx,long start_x,long end_x,long start_y,long end_y)
 {
-  long x,y;
-  for (y = start_y; y < end_y; y++)
-    for (x = start_x; x < end_x; x++)
-    {
-      clear_slab_dig(x, y, plyr_idx);
-    }
+    long x;
+    long y;
+    for (y = start_y; y < end_y; y++)
+        for (x = start_x; x < end_x; x++)
+        {
+            clear_slab_dig(x, y, plyr_idx);
+        }
 }
 
 /**
@@ -558,12 +566,13 @@ void clear_dig_for_map_rect(long plyr_idx,long start_x,long end_x,long start_y,l
  */
 void reveal_map_rect(PlayerNumber plyr_idx,MapSubtlCoord start_x,MapSubtlCoord end_x,MapSubtlCoord start_y,MapSubtlCoord end_y)
 {
-    MapSubtlCoord x,y;
-  for (y = start_y; y < end_y; y++)
-    for (x = start_x; x < end_x; x++)
-    {
-      reveal_map_subtile(x, y, plyr_idx);
-    }
+    MapSubtlCoord x;
+    MapSubtlCoord y;
+    for (y = start_y; y < end_y; y++)
+        for (x = start_x; x < end_x; x++)
+        {
+            reveal_map_subtile(x, y, plyr_idx);
+        }
 }
 
 /**

@@ -173,8 +173,10 @@ void slabmap_set_owner(struct SlabMap *slb, PlayerNumber owner)
 void set_whole_slab_owner(MapSlabCoord slb_x, MapSlabCoord slb_y, PlayerNumber owner)
 {
     struct SlabMap *slb;
-    MapSubtlCoord stl_x,stl_y;
-    long i,k;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    long i;
+    long k;
     stl_x = STL_PER_SLB * slb_x;
     stl_y = STL_PER_SLB * slb_y;
     for (i = 0; i < STL_PER_SLB; i++)
@@ -287,7 +289,8 @@ TbBool can_build_room_at_slab(PlayerNumber plyr_idx, RoomKind rkind,
 void clear_slabs(void)
 {
     struct SlabMap *slb;
-    unsigned long x,y;
+    unsigned long x;
+    unsigned long y;
     for (y=0; y < map_tiles_y; y++)
     {
         for (x=0; x < map_tiles_x; x++)
@@ -346,7 +349,8 @@ long calculate_effeciency_score_for_room_slab(SlabCodedCoords slab_num, PlayerNu
         round_slb = get_slabmap_direct(round_slab_num);
         if (!slabmap_block_invalid(round_slb))
         {
-            MapSlabCoord slb_x,slb_y;
+            MapSlabCoord slb_x;
+            MapSlabCoord slb_y;
             slb_x = slb_num_decode_x(round_slab_num);
             slb_y = slb_num_decode_y(round_slab_num);
             // Per slab code
@@ -426,8 +430,12 @@ void update_blocks_in_area(MapSubtlCoord sx, MapSubtlCoord sy, MapSubtlCoord ex,
 
 void update_blocks_around_slab(MapSlabCoord slb_x, MapSlabCoord slb_y)
 {
-    MapSubtlCoord stl_x,stl_y;
-    MapSubtlCoord sx,sy,ex,ey;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapSubtlCoord sx;
+    MapSubtlCoord sy;
+    MapSubtlCoord ex;
+    MapSubtlCoord ey;
     SYNCDBG(7,"Starting");
     stl_x = STL_PER_SLB * slb_x;
     stl_y = STL_PER_SLB * slb_y;
@@ -482,7 +490,8 @@ void do_slab_efficiency_alteration(MapSlabCoord slb_x, MapSlabCoord slb_y)
     long n;
     for (n=0; n < SMALL_AROUND_SLAB_LENGTH; n++)
     {
-        MapSlabCoord sslb_x, sslb_y;
+        MapSlabCoord sslb_x;
+        MapSlabCoord sslb_y;
         sslb_x = slb_x + small_around[n].delta_x;
         sslb_y = slb_y + small_around[n].delta_y;
         struct SlabMap *slb;
@@ -541,11 +550,13 @@ SlabKind choose_rock_type(PlayerNumber plyr_idx, MapSlabCoord slb_x, MapSlabCoor
  */
 int count_owned_ground_around(PlayerNumber plyr_idx, MapSlabCoord slb_x, MapSlabCoord slb_y)
 {
-    int i, num_owned;
+    int i;
+    int num_owned;
     num_owned = 0;
     for (i=0; i < SMALL_AROUND_SLAB_LENGTH; i++)
     {
-        MapSlabCoord sslb_x, sslb_y;
+        MapSlabCoord sslb_x;
+        MapSlabCoord sslb_y;
         sslb_x = slb_x + small_around[i].delta_x;
         sslb_y = slb_y + small_around[i].delta_y;
         struct SlabMap *slb;
@@ -572,7 +583,8 @@ void unfill_reinforced_corners(PlayerNumber keep_plyr_idx, MapSlabCoord base_slb
     int i;
     for (i = 0; i < SMALL_AROUND_SLAB_LENGTH; i++)
     {
-        MapSlabCoord slb_x, slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = base_slb_x + small_around[i].delta_x;
         slb_y = base_slb_y + small_around[i].delta_y;
         struct SlabMap *slb;
@@ -605,7 +617,8 @@ void do_unprettying(PlayerNumber keep_plyr_idx, MapSlabCoord slb_x, MapSlabCoord
     long n;
     for (n=0; n < SMALL_AROUND_SLAB_LENGTH; n++)
     {
-        long sslb_x,sslb_y;
+        long sslb_x;
+        long sslb_y;
         struct SlabMap *slb;
         sslb_x = slb_x + (long)small_around[n].delta_x;
         sslb_y = slb_y + (long)small_around[n].delta_y;

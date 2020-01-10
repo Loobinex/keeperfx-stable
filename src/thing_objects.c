@@ -395,7 +395,8 @@ struct Thing *create_object(const struct Coord3d *pos, unsigned short model, uns
     struct Objects *objdat;
     struct InitLight ilight;
     struct Thing *thing;
-    long i,k;
+    long i;
+    long k;
 
     if (!i_can_allocate_free_thing_structure(FTAF_FreeEffectIfNoSlots))
     {
@@ -1051,7 +1052,8 @@ long food_moves(struct Thing *objtng)
     }
     else
     {
-        int vel_x, vel_y;
+        int vel_x;
+        int vel_y;
         vel_x = 32 * LbSinL(objtng->food.word_18) >> 16;
         pos.x.val += vel_x;
         vel_y = -(32 * LbCosL(objtng->food.word_18) >> 8) >> 8;
@@ -1192,7 +1194,8 @@ long gold_being_dropped_at_treasury(struct Thing *thing, struct Room *room)
 {
     GoldAmount gold_store;
     gold_store = thing->valuable.gold_stored;
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     {
         slb_x = coord_slab(thing->mappos.x.val);
         slb_y = coord_slab(thing->mappos.y.val);
@@ -1216,7 +1219,8 @@ long gold_being_dropped_at_treasury(struct Thing *thing, struct Room *room)
     k = 0;
     while (1)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = slb_num_decode_x(slbnum);
         slb_y = slb_num_decode_y(slbnum);
         // Per slab code
@@ -1246,7 +1250,8 @@ TbBool temple_check_for_arachnid_join_dungeon(struct Dungeon *dungeon)
 {
     if ((dungeon->chickens_sacrificed % 16) == 0)
     {
-        ThingModel crmodel, spdigmodel;
+        ThingModel crmodel;
+        ThingModel spdigmodel;
         crmodel = get_creature_model_with_model_flags(CMF_IsArachnid);
         spdigmodel = get_players_special_digger_model(dungeon->owner);
         if ((dungeon->gold_piles_sacrificed == 4) &&
@@ -2048,7 +2053,8 @@ long add_gold_to_hoarde(struct Thing *gldtng, struct Room *room, GoldAmount amou
     // Set visual appearance
     struct Objects *objdat;
     objdat = get_objects_data_for_thing(gldtng);
-    unsigned short i, n;
+    unsigned short i;
+    unsigned short n;
     i = objdat->sprite_anim_idx;
     n = convert_td_iso(i);
     if ((n & 0x8000u) == 0) {
@@ -2105,7 +2111,8 @@ long remove_gold_from_hoarde(struct Thing *gldtng, struct Room *room, GoldAmount
     // Set visual appearance
     struct Objects *objdat;
     objdat = get_objects_data_for_thing(gldtng);
-    unsigned short i, n;
+    unsigned short i;
+    unsigned short n;
     i = objdat->sprite_anim_idx;
     n = convert_td_iso(i);
     if ((n & 0x8000u) == 0) {

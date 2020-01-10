@@ -230,13 +230,18 @@ TbBool lights_stats_debug_dump(void)
     long lights[LIGHTS_COUNT];
     long lgh_things[THING_CLASSES_COUNT];
     long shadowcs[SHADOW_CACHE_COUNT];
-    long shdc_used,shdc_linked,shdc_free;
-    long lgh_used,lgh_free;
-    long lgh_sttc,lgh_dynm;
+    long shdc_used;
+    long shdc_linked;
+    long shdc_free;
+    long lgh_used;
+    long lgh_free;
+    long lgh_sttc;
+    long lgh_dynm;
     struct Thing * thing;
     struct Light *lgt;
     struct ShadowCache *shdc;
-    long i,n;
+    long i;
+    long n;
     for (i=0; i < SHADOW_CACHE_COUNT; i++)
     {
         shdc = &game.lish.shadow_cache[i];
@@ -392,8 +397,10 @@ void light_signal_update_in_area(long sx, long sy, long ex, long ey)
 
 void light_signal_stat_light_update_in_own_radius(struct Light *lgt)
 {
-    long start_x,end_x;
-    long start_y,end_y;
+    long start_x;
+    long end_x;
+    long start_y;
+    long end_y;
     long radius;
     radius = lgt->range;
     end_y = (long)lgt->mappos.y.stl.num + radius;
@@ -480,7 +487,9 @@ long light_set_light_intensity(long a1, long a2)
 
 void clear_stat_light_map(void)
 {
-    unsigned long x,y,i;
+    unsigned long x;
+    unsigned long y;
+    unsigned long i;
     game.lish.field_46149 = 32;
     game.lish.field_4614D = 0;
     game.lish.field_4614F = 0;
@@ -586,9 +595,14 @@ void light_render_area(int startx, int starty, int endx, int endy)
 
 void update_light_render_area(void)
 {
-    int subtile_x,subtile_y;
-    int delta_x,delta_y;
-    int startx,endx,starty,endy;
+    int subtile_x;
+    int subtile_y;
+    int delta_x;
+    int delta_y;
+    int startx;
+    int endx;
+    int starty;
+    int endy;
     struct PlayerInfo *player;
     SYNCDBG(6,"Starting");
     player=get_my_player();

@@ -74,9 +74,14 @@ void frontend_draw_high_score_table(struct GuiButton *gbtn)
 {
     struct TbSprite *spr;
     struct TbSprite *swpspr;
-    long pos_x,pos_y;
-    long col1_width,col2_width,col3_width,col4_width;
-    long i,k;
+    long pos_x;
+    long pos_y;
+    long col1_width;
+    long col2_width;
+    long col3_width;
+    long col4_width;
+    long i;
+    long k;
     // Detect scaling factor is quite complicated for this item
     int fs_units_per_px;
     {

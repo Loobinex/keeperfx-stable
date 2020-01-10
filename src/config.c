@@ -290,7 +290,8 @@ short find_conf_block(const char *buf,long *pos,long buflen,const char *blocknam
  */
 int recognize_conf_command(const char *buf,long *pos,long buflen,const struct NamedCommand commands[])
 {
-    int i,cmdname_len;
+    int i;
+    int cmdname_len;
     SYNCDBG(19,"Starting");
     if ((*pos) >= buflen) return -1;
     // Skipping starting spaces
@@ -539,11 +540,13 @@ short load_configuration(void)
   static const char config_textname[] = "Config";
   const char *fname;
   char *buf;
-  long len,pos;
+  long len;
+  long pos;
   int cmd_num;
   // Variables to use when recognizing parameters
   char word_buf[32];
-  int i,k;
+  int i;
+  int k;
   SYNCDBG(4,"Starting");
   // Preparing config file name and checking the file
   strcpy(install_info.inst_path,"");
@@ -1399,7 +1402,8 @@ TbBool reset_credits(struct CreditsItem *credits)
 TbBool parse_credits_block(struct CreditsItem *credits,char *buf,char *buf_end)
 {
   long pos;
-  int k,n;
+  int k;
+  int n;
   long len;
   // Block name and parameter word store variables
   char block_buf[32];
@@ -1573,15 +1577,17 @@ short is_extra_level(LevelNumber lvnum)
  */
 int storage_index_for_bonus_level(LevelNumber bn_lvnum)
 {
-  int i,k;
-  if (bn_lvnum < 1) return -1;
-  k=0;
-  for (i=0; i < CAMPAIGN_LEVELS_COUNT; i++)
-  {
-    if (campaign.bonus_levels[i] == bn_lvnum)
-        return k;
-    if (campaign.bonus_levels[i] != 0)
-        k++;
+    int i;
+    int k;
+    if (bn_lvnum < 1)
+        return -1;
+    k = 0;
+    for (i = 0; i < CAMPAIGN_LEVELS_COUNT; i++)
+    {
+        if (campaign.bonus_levels[i] == bn_lvnum)
+            return k;
+        if (campaign.bonus_levels[i] != 0)
+            k++;
   }
   return -1;
 }

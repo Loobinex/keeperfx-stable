@@ -117,19 +117,21 @@ unsigned char palette_buf[PALETTE_SIZE];
 TbBool copy_raw8_image_buffer(unsigned char *dst_buf,const int scanline,const int nlines,const int dst_width,const int dst_height,
     const int spw,const int sph,const unsigned char *src_buf,const int src_width,const int src_height)
 {
-  int i,k;
-  unsigned char *dst;
-  const unsigned char *src;
-  SYNCDBG(18,"Starting; screen buf %d,%d screen size %d,%d dst pos %d,%d src %d,%d",(int)scanline,(int)nlines,(int)dst_width,(int)dst_height,(int)spw,(int)sph,(int)src_width,(int)src_height);
-  // Source pixel coords
-  int sw,sh;
-  sw=0;
-  sh=0;
-  // Clearing top of the canvas
-  for (sh=0; sh<sph; sh++)
-  {
-    dst = dst_buf + (sh)*scanline;
-    LbMemorySet(dst, 0, scanline);
+    int i;
+    int k;
+    unsigned char* dst;
+    const unsigned char* src;
+    SYNCDBG(18, "Starting; screen buf %d,%d screen size %d,%d dst pos %d,%d src %d,%d", (int)scanline, (int)nlines, (int)dst_width, (int)dst_height, (int)spw, (int)sph, (int)src_width, (int)src_height);
+    // Source pixel coords
+    int sw;
+    int sh;
+    sw = 0;
+    sh = 0;
+    // Clearing top of the canvas
+    for (sh = 0; sh < sph; sh++)
+    {
+        dst = dst_buf + (sh)*scanline;
+        LbMemorySet(dst, 0, scanline);
   }
   // Clearing bottom of the canvas
   // (Note: it must be done before drawing, to make sure we won't overwrite last line)
@@ -147,7 +149,8 @@ TbBool copy_raw8_image_buffer(unsigned char *dst_buf,const int scanline,const in
       dhend = sph + (dst_height*(sh+1)/src_height);
       src = src_buf + sh*src_width;
       // make for(k=0;k<dhend-dhstart;k++) but restrict k to draw area
-      int mhmin, mhmax;
+      int mhmin;
+      int mhmax;
       mhmin = max(0, -dhstart);
       mhmax = min(dhend - dhstart, nlines - dhstart);
       for (k=mhmin; k<mhmax; k++)
@@ -163,7 +166,8 @@ TbBool copy_raw8_image_buffer(unsigned char *dst_buf,const int scanline,const in
               int dwend;
               dwend = spw + (dst_width*(sw+1)/src_width);
               // make for(i=0;i<dwend-dwstart;i++) but restrict i to draw area
-              int mwmin, mwmax;
+              int mwmin;
+              int mwmax;
               mwmin = max(0,-dwstart);
               mwmax = min(dwend - dwstart, scanline - dwstart);
               for (i=mwmin;i<mwmax;i++) {
@@ -193,7 +197,8 @@ TbBool copy_raw8_image_to_screen_center(const unsigned char *buf,const int img_w
     // Compute scaling ratio
     int units_per_px;
     {
-        int width,height;
+        int width;
+        int height;
         width = LbScreenWidth();
         height = LbScreenHeight();
         units_per_px = (width>height?width:height)/((img_width>img_height?img_width:img_height)/16);
@@ -203,7 +208,8 @@ TbBool copy_raw8_image_to_screen_center(const unsigned char *buf,const int img_w
     if (LbScreenLock() != Lb_SUCCESS)
       return false;
     // Starting point coords
-    int spx,spy;
+    int spx;
+    int spy;
     spx = (LbScreenWidth()-img_width*units_per_px/16)>>1;
     spy = (LbScreenHeight()-img_height*units_per_px/16)>>1;
     copy_raw8_image_buffer(lbDisplay.WScreen,LbGraphicsScreenWidth(),LbGraphicsScreenHeight(),

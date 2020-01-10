@@ -318,7 +318,8 @@ TbBool wander_to_specific_possible_target_in_list(long first_thing_idx, struct T
  */
 TbBool setup_wanderer_move_to_random_creature_from_list(long first_thing_idx, struct Thing *wanderer)
 {
-    long possible_targets,target_match;
+    long possible_targets;
+    long target_match;
     possible_targets = get_wanderer_possible_targets_count_in_list(first_thing_idx,wanderer);
     // Select random target
     if (possible_targets < 1) {
@@ -379,7 +380,8 @@ short good_arrived_at_attack_room(struct Thing *thing)
     if (room_exists(room) && !players_creatures_tolerate_each_other(thing->owner, room->owner) && !room_cannot_vandalise(room->kind))
     {
         internal_set_thing_state(thing, CrSt_GoodAttackRoom1);
-        MapCoord ev_coord_x,ev_coord_y;
+        MapCoord ev_coord_x;
+        MapCoord ev_coord_y;
         ev_coord_x = subtile_coord_center(room->central_stl_x);
         ev_coord_y = subtile_coord_center(room->central_stl_y);
         event_create_event_or_update_nearby_existing_event(ev_coord_x, ev_coord_y, EvKind_RoomUnderAttack, room->owner, 0);
@@ -400,7 +402,8 @@ short good_attack_room(struct Thing *thing)
         set_start_state(thing);
         return 0;
     }
-    MapSlabCoord base_slb_x,base_slb_y;
+    MapSlabCoord base_slb_x;
+    MapSlabCoord base_slb_y;
     base_slb_x = subtile_slab_fast(thing->mappos.x.stl.num);
     base_slb_y = subtile_slab_fast(thing->mappos.y.stl.num);
     struct Room *room;
@@ -413,7 +416,8 @@ short good_attack_room(struct Thing *thing)
         if (cctrl->instance_id == CrInst_NULL)
         {
             set_creature_instance(thing, CrInst_ATTACK_ROOM_SLAB, 1, 0, 0);
-            MapCoord ev_coord_x,ev_coord_y;
+            MapCoord ev_coord_x;
+            MapCoord ev_coord_y;
             ev_coord_x = subtile_coord_center(room->central_stl_x);
             ev_coord_y = subtile_coord_center(room->central_stl_y);
             event_create_event_or_update_nearby_existing_event(ev_coord_x, ev_coord_y, EvKind_RoomUnderAttack, room->owner, 0);
@@ -423,11 +427,13 @@ short good_attack_room(struct Thing *thing)
         return 1;
     }
     // Otherwise, search around for a tile to destroy
-    long m,n;
+    long m;
+    long n;
     m = ACTION_RANDOM(SMALL_AROUND_SLAB_LENGTH);
     for (n=0; n < SMALL_AROUND_SLAB_LENGTH; n++)
     {
-        MapSlabCoord slb_x,slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = base_slb_x + (long)small_around[m].delta_x;
         slb_y = base_slb_y + (long)small_around[m].delta_y;
         room = slab_room_get(slb_x, slb_y);
@@ -460,7 +466,8 @@ short good_back_at_start(struct Thing *thing)
         return 1;
     }
     SubtlCodedCoords stl_num;
-    long m,n;
+    long m;
+    long n;
     stl_num = get_subtile_number(thing->mappos.x.stl.num,thing->mappos.y.stl.num);
     m = ACTION_RANDOM(AROUND_MAP_LENGTH);
     for (n=0; n < AROUND_MAP_LENGTH; n++)
@@ -470,7 +477,8 @@ short good_back_at_start(struct Thing *thing)
         // Per-block code
         if ((mapblk->flags & SlbAtFlg_Blocking) == 0)
         {
-            MapSubtlCoord stl_x, stl_y;
+            MapSubtlCoord stl_x;
+            MapSubtlCoord stl_y;
             stl_x = stl_num_decode_x(stl_num+around_map[m]);
             stl_y = stl_num_decode_y(stl_num+around_map[m]);
             if (setup_person_move_to_position(thing, stl_x, stl_y, NavRtF_Default)) {

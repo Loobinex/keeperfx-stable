@@ -279,7 +279,8 @@ TbBool level_lof_file_parse(char *fname, char *buf, long len)
     char word_buf[32];
     long lvnum;
     int cmd_num;
-    int k,n;
+    int k;
+    int n;
     SYNCDBG(8,"Starting for \"%s\"",fname);
     if (buf == NULL)
         return false;
@@ -626,7 +627,8 @@ TbBool load_column_file(LevelNumber lv_num)
 TbBool load_map_data_file(LevelNumber lv_num)
 {
     struct Map *mapblk;
-    unsigned long x,y;
+    unsigned long x;
+    unsigned long y;
     unsigned char *buf;
     unsigned long i;
     unsigned long n;
@@ -749,7 +751,9 @@ TbBool load_slabdat_file(struct SlabSet *slbset, long *scount)
   long total;
   unsigned char *buf;
   long fsize;
-  long i,k,n;
+  long i;
+  long k;
+  long n;
   SYNCDBG(5,"Starting");
   fsize = 2;
   buf = load_data_file_to_buffer(&fsize, FGrp_StdData, "slabs.dat");
@@ -785,11 +789,12 @@ TbBool load_slabdat_file(struct SlabSet *slbset, long *scount)
  */
 TbBool update_columns_use(struct Column *cols,long ccount,struct SlabSet *sset,long scount)
 {
-  long i,k;
-  long ncol;
-  for (i=0; i < ccount; i++)
-  {
-    cols[i].use = 0;
+    long i;
+    long k;
+    long ncol;
+    for (i = 0; i < ccount; i++)
+    {
+        cols[i].use = 0;
   }
   for (i=0; i < scount; i++)
     for (k=0; k < 9; k++)
@@ -806,7 +811,8 @@ TbBool load_slabclm_file(struct Column *cols, long *ccount)
   long total;
   unsigned char *buf;
   long fsize;
-  long i,k;
+  long i;
+  long k;
   SYNCDBG(18,"Starting");
   fsize = 4;
   buf = load_data_file_to_buffer(&fsize, FGrp_StdData, "slabs.clm");
@@ -843,7 +849,8 @@ TbBool columns_add_static_entries(void)
     short *wptr;
     short c[3];
     long ncol;
-    long i,k;
+    long i;
+    long k;
 
     for (i=0; i < 3; i++)
       c[i] = 0;
@@ -875,7 +882,9 @@ TbBool update_slabset_column_indices(struct Column *cols, long ccount)
     struct Column lcolmn;
     struct SlabSet *sset;
     long ncol;
-    long i,k,n;
+    long i;
+    long k;
+    long n;
     LbMemorySet(&lcolmn,0,sizeof(struct Column));
     for (i=0; i < game.slabset_num; i++)
     {
@@ -1010,9 +1019,11 @@ TbBool load_slab_file(void)
 long load_map_wibble_file(unsigned long lv_num)
 {
     struct Map *mapblk;
-    unsigned long stl_x,stl_y;
+    unsigned long stl_x;
+    unsigned long stl_y;
     unsigned char *buf;
-    unsigned long i,k;
+    unsigned long i;
+    unsigned long k;
     long fsize;
     fsize = (map_subtiles_y+1)*(map_subtiles_x+1);
     buf = load_single_map_file_to_buffer(lv_num,"wib",&fsize,LMFF_None);
@@ -1034,7 +1045,8 @@ long load_map_wibble_file(unsigned long lv_num)
 short load_map_ownership_file(LevelNumber lv_num)
 {
     struct SlabMap *slb;
-    unsigned long x,y;
+    unsigned long x;
+    unsigned long y;
     unsigned char *buf;
     unsigned long i;
     long fsize;
@@ -1061,8 +1073,10 @@ TbBool initialise_map_wlb_auto(void)
 {
     struct SlabMap *slb;
     struct SlabAttr *slbattr;
-    unsigned long x,y;
-    unsigned long n,nbridge;
+    unsigned long x;
+    unsigned long y;
+    unsigned long n;
+    unsigned long nbridge;
     nbridge = 0;
     for (y=0; y < map_tiles_y; y++)
       for (x=0; x < map_tiles_x; x++)
@@ -1090,7 +1104,8 @@ TbBool initialise_map_wlb_auto(void)
 TbBool load_map_wlb_file(unsigned long lv_num)
 {
     struct SlabMap *slb;
-    unsigned long x,y;
+    unsigned long x;
+    unsigned long y;
     unsigned char *buf;
     unsigned long i;
     unsigned long n;
@@ -1142,7 +1157,8 @@ short load_map_slab_file(unsigned long lv_num)
 {
     SYNCDBG(7,"Starting");
     struct SlabMap *slb;
-    unsigned long x,y;
+    unsigned long x;
+    unsigned long y;
     unsigned char *buf;
     unsigned long i;
     unsigned long n;
@@ -1176,7 +1192,8 @@ short load_map_flag_file(unsigned long lv_num)
 {
     SYNCDBG(5,"Starting");
     struct Map *mapblk;
-    unsigned long stl_x,stl_y;
+    unsigned long stl_x;
+    unsigned long stl_y;
     unsigned char *buf;
     unsigned long i;
     long fsize;

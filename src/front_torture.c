@@ -102,8 +102,10 @@ long torture_door_over_point(long x,long y)
     units_per_px = min(units_per_pixel,units_per_pixel_min*16/10);
     const int img_width = 640;
     const int img_height = 480;
-    int w,h;
-    int spx,spy;
+    int w;
+    int h;
+    int spx;
+    int spy;
     w = img_width * units_per_px / 16;
     h = img_height * units_per_px / 16;
     // Starting point coords
@@ -141,7 +143,8 @@ void fronttorture_load(void)
     struct PlayerInfo *player;
     char *fname;
     unsigned char *ptr;
-    long i,k;
+    long i;
+    long k;
     wait_for_cd_to_be_available();
     frontend_load_data_from_cd();
     memcpy(frontend_backup_palette, &frontend_palette, PALETTE_SIZE);
@@ -228,8 +231,11 @@ TbBool fronttorture_draw(void)
   struct TbSprite *spr;
   const int img_width = 640;
   const int img_height = 480;
-  int w,h,i;
-  int spx,spy;
+  int w;
+  int h;
+  int i;
+  int spx;
+  int spy;
   // Only 8bpp supported for now
   if (LbGraphicsScreenBPP() != 8)
     return false;
@@ -267,7 +273,8 @@ void fronttorture_input(void)
 {
     struct PlayerInfo *player;
     struct Packet *pckt;
-    long x,y;
+    long x;
+    long y;
     PlayerNumber plyr_idx;
     long door_id;
     clear_packets();

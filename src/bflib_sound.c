@@ -365,7 +365,9 @@ short sound_emitter_in_use(SoundEmitterID eidx)
 
 long get_sound_distance(const struct SoundCoord3d *pos1, const struct SoundCoord3d *pos2)
 {
-    long dist_x,dist_y,dist_z;
+    long dist_x;
+    long dist_y;
+    long dist_z;
     dist_x = abs(pos1->val_x - (long)pos2->val_x);
     dist_y = abs(pos1->val_y - (long)pos2->val_y);
     dist_z = abs(pos1->val_z - (long)pos2->val_z);
@@ -381,7 +383,9 @@ long get_sound_distance(const struct SoundCoord3d *pos1, const struct SoundCoord
 
 long get_sound_squareedge_distance(const struct SoundCoord3d *pos1, const struct SoundCoord3d *pos2)
 {
-    long dist_x,dist_y,dist_z;
+    long dist_x;
+    long dist_y;
+    long dist_z;
     dist_x = abs(pos1->val_x - (long)pos2->val_x);
     dist_y = abs(pos1->val_y - (long)pos2->val_y);
     dist_z = abs(pos1->val_z - (long)pos2->val_z);
@@ -413,8 +417,10 @@ long get_emitter_sight(struct SoundReceiver *recv, struct SoundEmitter *emit)
 
 long get_emitter_volume(const struct SoundReceiver *recv, const struct SoundEmitter *emit, long dist)
 {
-    long long sens,vol;
-    long i,n;
+    long long sens;
+    long long vol;
+    long i;
+    long n;
     i = dist - deadzone_radius;
     if (i < 0) i = 0;
     n = MaxSoundDistance - deadzone_radius;
@@ -425,10 +431,14 @@ long get_emitter_volume(const struct SoundReceiver *recv, const struct SoundEmit
 
 long get_emitter_pan(const struct SoundReceiver *recv, const struct SoundEmitter *emit)
 {
-    long diff_x,diff_y;
-    long angle_a, angle_b;
-    long angdiff,angsign;
-    long radius,pan;
+    long diff_x;
+    long diff_y;
+    long angle_a;
+    long angle_b;
+    long angdiff;
+    long angsign;
+    long radius;
+    long pan;
     long i;
     if ((recv->flags & Emi_IsAllocated) != 0) {
       return 64;
@@ -456,7 +466,8 @@ long get_emitter_pan(const struct SoundReceiver *recv, const struct SoundEmitter
 long get_emitter_pitch_from_doppler(const struct SoundReceiver *recv, struct SoundEmitter *emit)
 {
     long doppler_distance;
-    long target_pitch, next_pitch;
+    long target_pitch;
+    long next_pitch;
     long delta;
     doppler_distance = get_sound_squareedge_distance(&emit->pos, &recv->pos);
     delta = doppler_distance - emit->pitch_doppler;
@@ -543,7 +554,9 @@ long set_emitter_pan_volume_pitch(struct SoundEmitter *emit, long pan, long volu
 TbBool process_sound_emitters(void)
 {
     struct SoundEmitter *emit;
-    long pan, volume, pitch;
+    long pan;
+    long volume;
+    long pitch;
     long i;
     for (i=1; i < NoSoundEmitters; i++)
     {
@@ -1131,7 +1144,9 @@ long start_emitter_playing(struct SoundEmitter *emit, SoundSmplTblID smptbl_id, 
 {
     struct S3DSample *sample;
     struct SampleInfo *smpinfo;
-    long pan, volume, pitch;
+    long pan;
+    long volume;
+    long pitch;
     long smpl_idx;
     get_emitter_pan_volume_pitch(&Receiver, emit, &pan, &volume, &pitch);
     smpl_idx = find_slot(smptbl_id, bank_id, emit, ctype, fild0);

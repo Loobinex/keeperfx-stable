@@ -69,7 +69,8 @@ unsigned char get_nearest_valid_position_for_creature_at(struct Thing *thing, st
 static void get_nearest_navigable_point_for_thing(struct Thing *thing, struct Coord3d *pos1, struct Coord3d *pos2, NaviRouteFlags flags)
 {
     long nav_sizexy;
-    long px, py;
+    long px;
+    long py;
     nav_thing_can_travel_over_lava = creature_can_travel_over_lava(thing);
     if ((flags & AridRtF_NoOwner) != 0)
         owner_player_navigating = -1;
@@ -340,7 +341,9 @@ long creature_turn_to_face(struct Thing *thing, const struct Coord3d *pos)
     crstat = creature_stats_get_from_thing(thing);
     long angle;
     angle = get_angle_xy_to(&thing->mappos, pos);
-    long angle_diff, angle_sign, angle_delta;
+    long angle_diff;
+    long angle_sign;
+    long angle_delta;
     angle_diff = get_angle_difference(thing->move_angle_xy, angle);
     angle_sign = get_angle_sign(thing->move_angle_xy, angle);
     angle_delta = crstat->max_angle_change;

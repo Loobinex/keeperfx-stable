@@ -523,7 +523,8 @@ TbBool output_message_room_related_from_computer_or_player_action(PlayerNumber p
     }
     const struct RoomConfigStats *roomst;
     roomst = get_room_kind_stats(rkind);
-    long delay, msg_idx;
+    long delay;
+    long msg_idx;
     switch (msg_kind)
     {
     case OMsg_RoomNeeded:

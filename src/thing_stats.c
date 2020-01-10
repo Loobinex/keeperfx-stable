@@ -154,7 +154,9 @@ TbBool things_stats_debug_dump(void)
     struct Thing * thing;
     int count[THING_CLASSES_COUNT];
     int realcnt[THING_CLASSES_COUNT];
-    int total,rltotal,rldiffers;
+    int total;
+    int rltotal;
+    int rldiffers;
     int i;
     for (i=0; i < THING_CLASSES_COUNT; i++) {
         count[i] = 0;

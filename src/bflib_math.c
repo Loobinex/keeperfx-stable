@@ -616,7 +616,8 @@ long LbArcTanL(long arg)
  */
 long LbArcTanAngle(long x,long y)
 {
-    long ux,uy;
+    long ux;
+    long uy;
     unsigned long index;
     if ((x == 0) && (y == 0))
         return 0;
@@ -751,7 +752,8 @@ unsigned long LbRandomSeries(unsigned long range, unsigned long *seed, const cha
 
 TbBool LbNumberSignsSame(long num_a, long num_b)
 {
-    int sign_a,sign_b;
+    int sign_a;
+    int sign_b;
     if (num_a >= 0)
         sign_a = (num_a != 0);
     else
@@ -765,14 +767,15 @@ TbBool LbNumberSignsSame(long num_a, long num_b)
 
 char LbCompareMultiplications(long mul1a, long mul1b, long mul2a, long mul2b)
 {
-  long long mul1,mul2;
-  mul1 = (long long)mul1a * (long long)mul1b;
-  mul2 = (long long)mul2a * (long long)mul2b;
-  if (mul1 > mul2)
-      return 1;
-  if (mul1 < mul2)
-      return -1;
-  return 0;
+    long long mul1;
+    long long mul2;
+    mul1 = (long long)mul1a * (long long)mul1b;
+    mul2 = (long long)mul2a * (long long)mul2b;
+    if (mul1 > mul2)
+        return 1;
+    if (mul1 < mul2)
+        return -1;
+    return 0;
 }
 
 /**

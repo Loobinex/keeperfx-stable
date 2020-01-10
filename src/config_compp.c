@@ -255,7 +255,8 @@ short init_computer_process_lists(void)
 TbBool parse_computer_player_common_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -396,7 +397,9 @@ short parse_computer_player_process_blocks(char *buf, long len, const char *conf
 {
     struct ComputerProcess *cproc;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variable
     char block_buf[32];
@@ -577,7 +580,9 @@ short parse_computer_player_check_blocks(char *buf, long len, const char *config
 {
     struct ComputerCheck *ccheck;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[32];
@@ -720,7 +725,9 @@ short parse_computer_player_event_blocks(char *buf, long len, const char *config
 {
     struct ComputerEvent *cevent;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[32];
@@ -911,7 +918,9 @@ short parse_computer_player_computer_blocks(char *buf, long len, const char *con
 {
     struct ComputerProcessTypes *cpt;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variable
     char block_buf[32];

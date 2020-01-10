@@ -144,18 +144,22 @@ void load_engine_window(TbGraphicsWindow *ewnd)
 void map_fade(unsigned char *outbuf, unsigned char *srcbuf1, unsigned char *srcbuf2, unsigned char *fade_tbl, unsigned char *ghost_tbl, long a6, long const xmax, long const ymax, long a9)
 {
     //_DK_map_fade(outbuf, srcbuf1, srcbuf2, fade_tbl, ghost_tbl, a6, xmax, ymax, a9); return;
-    long ix, iy;
-    long x0base, x1base;
+    long ix;
+    long iy;
+    long x0base;
+    long x1base;
     x1base = 4 * a6;
     x0base = 4 * (32 - a6);
     long * xt;
     xt = xtab[0];
-    int vx0, vx1;
+    int vx0;
+    int vx1;
     vx0 = 0;
     vx1 = 0;
     for (ix = xmax; ix > 0; ix--)
     {
-        long m, val;
+        long m;
+        long val;
         val = x1base + vx1 / xmax;
         if (val >= 0) {
             m = min(xmax,val);
@@ -175,17 +179,20 @@ void map_fade(unsigned char *outbuf, unsigned char *srcbuf1, unsigned char *srcb
         vx1 += xmax - 8 * a6;
     }
 
-    long y0base, y1base;
+    long y0base;
+    long y1base;
     y1base = 8 * ymax / xmax * x1base / 8;
     y0base = 8 * ymax / xmax * x0base / 8;
     long * yt;
     yt = ytab[0];
-    int vy0, vy1;
+    int vy0;
+    int vy1;
     vy1 = 0;
     vy0 = 0;
     for (iy = ymax; iy > 0; iy--)
     {
-        long m, val;
+        long m;
+        long val;
         val = y1base + vy1 / ymax;
         if (val >= 0) {
             m = min(ymax,val);
@@ -221,7 +228,8 @@ void map_fade(unsigned char *outbuf, unsigned char *srcbuf1, unsigned char *srcb
         xt = xtab[0];
         for (ix = xmax; ix > 0; ix--)
         {
-            int px1, px2;
+            int px1;
+            int px2;
             px1 = fade_tbl[x0base + sbuf1[xt[0]]];
             px2 = fade_tbl[y0base + sbuf2[xt[1]]];
             *out = ghost_tbl[256 * px2 + px1];
@@ -249,7 +257,9 @@ void generate_map_fade_ghost_table(const char *fname, unsigned char *palette, un
             {
                 unsigned char *spal;
                 spal = &palette[3*n];
-                unsigned char r,g,b;
+                unsigned char r;
+                unsigned char g;
+                unsigned char b;
                 r = bpal[0] + spal[0];
                 g = bpal[1] + spal[1];
                 b = bpal[2] + spal[2];
@@ -489,15 +499,18 @@ void draw_overlay_compass(long base_x, long base_y)
     units_per_px = (16*status_panel_width + 140/2) / 140;
     int tx_units_per_px;
     tx_units_per_px = (22 * units_per_px) / LbTextLineHeight();
-    int w,h;
+    int w;
+    int h;
     w = (LbSprFontCharWidth(lbFontPtr,'/')*tx_units_per_px/16) / 2;
     h = (LbSprFontCharHeight(lbFontPtr,'/')*tx_units_per_px/16) / 2 + 2*units_per_px/16;
     struct PlayerInfo *player;
     player = get_my_player();
     const struct Camera *cam;
     cam = player->acamera;
-    int center_x, center_y;
-    int shift_x, shift_y;
+    int center_x;
+    int center_y;
+    int shift_x;
+    int shift_y;
     center_x = base_x*units_per_px/16 + MapDiagonalLength/2;
     center_y = base_y*units_per_px/16 + MapDiagonalLength/2;
     shift_x = (-(MapDiagonalLength*7/16) * LbSinL(cam->orient_a)) >> LbFPMath_TrigmBits;
@@ -560,7 +573,8 @@ void redraw_creature_view(void)
 void smooth_screen_area(unsigned char *scrbuf, long x, long y, long w, long h, long scanln)
 {
     SYNCDBG(7,"Starting");
-    long i,k;
+    long i;
+    long k;
     unsigned char *buf;
     unsigned char *lnbuf;
     unsigned int ghpos;
@@ -581,7 +595,8 @@ void smooth_screen_area(unsigned char *scrbuf, long x, long y, long w, long h, l
 
 void make_camera_deviations(struct PlayerInfo *player,struct Dungeon *dungeon)
 {
-    long x,y;
+    long x;
+    long y;
     x = player->acamera->mappos.x.val;
     y = player->acamera->mappos.y.val;
     if (dungeon->camera_deviate_quake != 0)
@@ -674,7 +689,8 @@ void redraw_frontview(void)
 {
     SYNCDBG(6,"Starting");
     struct PlayerInfo *player;
-    long w,h;
+    long w;
+    long h;
     player = get_my_player();
     update_explored_flags_for_power_sight(player);
     if ((game.flags_font & FFlg_unk08) != 0)
@@ -1018,7 +1034,8 @@ void redraw_display(void)
     }
     if ( draw_spell_cost )
     {
-        long pos_x,pos_y;
+        long pos_x;
+        long pos_y;
         unsigned short drwflags_mem;
         drwflags_mem = lbDisplay.DrawFlags;
         LbTextSetWindow(0, 0, MyScreenWidth, MyScreenHeight);
@@ -1037,8 +1054,10 @@ void redraw_display(void)
     {
           LbTextSetFont(winfont);
           text = get_string(GUIStr_PausedMsg);
-          long pos_x,pos_y;
-          long w,h;
+          long pos_x;
+          long pos_y;
+          long w;
+          long h;
           int i;
           i = LbTextCharWidth(' ')*units_per_pixel/16;
           w = (LbTextStringWidth(text)*units_per_pixel/16 + 2*i);
@@ -1058,14 +1077,16 @@ void redraw_display(void)
     }
     if (game.armageddon_cast_turn != 0)
     {
-      long pos_x,pos_y;
-      long w,h;
-      int i;
-      if (game.armageddon.count_down+game.armageddon_cast_turn <= game.play_gameturn)
-      {
-        i = 0;
-        if ( game.armageddon_field_15035A - game.armageddon.duration <= game.play_gameturn )
-          i = game.armageddon_field_15035A - game.play_gameturn;
+        long pos_x;
+        long pos_y;
+        long w;
+        long h;
+        int i;
+        if (game.armageddon.count_down + game.armageddon_cast_turn <= game.play_gameturn)
+        {
+            i = 0;
+            if (game.armageddon_field_15035A - game.armageddon.duration <= game.play_gameturn)
+                i = game.armageddon_field_15035A - game.play_gameturn;
       } else
       {
         i = game.play_gameturn - game.armageddon_cast_turn - game.armageddon.count_down;

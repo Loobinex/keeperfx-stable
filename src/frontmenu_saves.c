@@ -41,7 +41,8 @@ int frontend_load_game_button_to_index(struct GuiButton *gbtn)
 {
   struct CatalogueEntry *centry;
   long gbidx;
-  int i,k;
+  int i;
+  int k;
   gbidx = (unsigned long)gbtn->content;
   k = -1;
   for (i=gbidx+load_game_scroll_offset-45; i >= 0; i--)

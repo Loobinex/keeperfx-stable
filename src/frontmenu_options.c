@@ -142,7 +142,8 @@ void frontend_draw_define_key_scroll_tab(struct GuiButton *gbtn)
 
 void frontend_draw_define_key(struct GuiButton *gbtn)
 {
-    long content, key_id;
+    long content;
+    long key_id;
     content = (long)gbtn->content;
     key_id = define_key_scroll_offset - content - 1;
     if (key_id >= GAME_KEYS_COUNT) {

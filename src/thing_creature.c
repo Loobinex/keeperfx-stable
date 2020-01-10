@@ -145,7 +145,8 @@ int get_creature_health_permil(const struct Thing *thing)
 {
     struct CreatureControl *cctrl;
     cctrl = creature_control_get_from_thing(thing);
-    HitPoints health,max_health;
+    HitPoints health;
+    HitPoints max_health;
     health = thing->health * 1000;
     max_health = cctrl->max_health;
     if (max_health < 1)
@@ -220,7 +221,8 @@ long check_for_first_person_barrack_party(struct Thing *grthing)
     struct CreatureControl *cctrl;
     struct Thing *thing;
     unsigned long k;
-    long i, n;
+    long i;
+    long n;
     n = 0;
     i = room->creatures_list;
     k = 0;
@@ -420,7 +422,8 @@ void draw_swipe_graphic(void)
             struct TbSprite *endspr;
             struct TbSprite *sprlist;
             long allwidth;
-            long i,n;
+            long i;
+            long n;
             lbDisplay.DrawFlags = Lb_SPRITE_TRANSPAR4;
             n = (int)cctrl->inst_turn * (5 << 8) / cctrl->inst_total_turns;
             allwidth = 0;
@@ -437,7 +440,8 @@ void draw_swipe_graphic(void)
             }
             int units_per_px;
             units_per_px = (LbScreenWidth()*59/64) * 16 / allwidth;
-            int scrpos_x, scrpos_y;
+            int scrpos_x;
+            int scrpos_y;
             scrpos_y = (MyScreenHeight * 16 / units_per_px - (startspr->SHeight + endspr->SHeight)) / 2;
             struct TbSprite *spr;
             if ((myplyr->field_1 & 4) != 0)
@@ -827,8 +831,10 @@ long get_free_spell_slot(struct Thing *creatng)
     TRACE_THING(creatng);
     struct CreatureControl *cctrl;
     struct CastedSpellData *cspell;
-    long ci,cval;
-    long i,k;
+    long ci;
+    long cval;
+    long i;
+    long k;
     cctrl = creature_control_get_from_thing(creatng);
     cval = LONG_MAX;
     ci = -1;
@@ -920,7 +926,9 @@ void first_apply_spell_effect_to_thing(struct Thing *thing, SpellKind spell_idx,
     struct ComponentVector cvect;
     struct Coord3d pos;
     struct Thing *ntng;
-    long i,k,n;
+    long i;
+    long k;
+    long n;
     cctrl = creature_control_get_from_thing(thing);
     if (spell_lev > SPELL_MAX_LEVEL)
         spell_lev = SPELL_MAX_LEVEL;
@@ -1589,7 +1597,8 @@ struct Thing *find_interesting_object_laying_around_thing(struct Thing *creatng)
     for (k=0; k < AROUND_TILES_COUNT; k++)
     {
         struct Map *mapblk;
-        long stl_x,stl_y;
+        long stl_x;
+        long stl_y;
         stl_x = creatng->mappos.x.stl.num + around[k].delta_x;
         stl_y = creatng->mappos.y.stl.num + around[k].delta_y;
         mapblk = get_map_block_at(stl_x,stl_y);
@@ -1667,7 +1676,8 @@ TngUpdateRet process_creature_state(struct Thing *thing)
 {
     struct CreatureControl *cctrl;
     unsigned long model_flags;
-    long x,y;
+    long x;
+    long y;
     SYNCDBG(19,"Starting for %s index %d owned by player %d",thing_model_name(thing),(int)thing->index,(int)thing->owner);
     TRACE_THING(thing);
     //return _DK_process_creature_state(thing);
@@ -1786,7 +1796,8 @@ TbBool update_kills_counters(struct Thing *victim, struct Thing *killer,
 long creature_is_ambulating(struct Thing *thing)
 {
     //return _DK_creature_is_ambulating(thing);
-    int n, i;
+    int n;
+    int i;
     n = get_creature_model_graphics(thing->model, CGI_Ambulate);
     i = convert_td_iso(n);
     if (i != thing->anim_sprite)
@@ -1800,12 +1811,16 @@ TbBool check_for_door_collision_at(struct Thing *thing, struct Coord3d *pos, uns
     //_DK_check_for_door_collision_at(thing, pos, a3); return;
     int nav_sizexy;
     nav_sizexy = thing_nav_sizexy(thing)/2;
-    MapSubtlCoord start_x, end_x, start_y, end_y;
+    MapSubtlCoord start_x;
+    MapSubtlCoord end_x;
+    MapSubtlCoord start_y;
+    MapSubtlCoord end_y;
     start_x = coord_subtile(pos->x.val - nav_sizexy);
     end_x = coord_subtile(pos->x.val + nav_sizexy);
     start_y = coord_subtile(pos->y.val - nav_sizexy);
     end_y = coord_subtile(pos->y.val + nav_sizexy);
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     if ((blocked_flags & 0x01) != 0)
     {
         stl_x = end_x;
@@ -1929,7 +1944,9 @@ long move_creature(struct Thing *thing)
     cctrl = creature_control_get_from_thing(thing);
     struct Coord3d *tngpos;
     struct Coord3d pvpos;
-    int velo_x,velo_y,velo_z;
+    int velo_x;
+    int velo_y;
+    int velo_z;
     tngpos = &thing->mappos;
     pvpos.x.val = tngpos->x.val;
     pvpos.y.val = tngpos->y.val;
@@ -2104,8 +2121,10 @@ void throw_out_gold(struct Thing *thing)
         if (thing_is_invalid(gldtng))
             break;
         // Update its position and acceleration
-        long angle,radius;
-        long x,y;
+        long angle;
+        long radius;
+        long x;
+        long y;
         angle = ACTION_RANDOM(2*LbFPMath_PI);
         radius = ACTION_RANDOM(128);
         x = (radius * LbSinL(angle)) / 256;
@@ -2435,7 +2454,8 @@ void delete_effects_attached_to_creature(struct Thing *creatng)
 {
     struct CreatureControl *cctrl;
     struct Thing *efftng;
-    long i,k;
+    long i;
+    long k;
     cctrl = creature_control_get_from_thing(creatng);
     if (creature_control_invalid(cctrl)) {
         return;
@@ -2720,9 +2740,11 @@ void creature_fire_shot(struct Thing *firing, struct Thing *target, ThingModel s
     struct ComponentVector cvect;
     struct Thing *shotng;
     struct Thing *tmptng;
-    short angle_xy,angle_yz;
+    short angle_xy;
+    short angle_yz;
     long damage;
-    long target_idx,i;
+    long target_idx;
+    long i;
     TbBool flag1;
     //_DK_creature_fire_shot(firing,target,shot_model,shot_lvl,a3); return;
     cctrl = creature_control_get_from_thing(firing);
@@ -2872,7 +2894,8 @@ void set_creature_level(struct Thing *thing, long nlvl)
     //_DK_set_creature_level(thing, nlvl); return;
     struct CreatureStats *crstat;
     struct CreatureControl *cctrl;
-    long old_max_health,max_health;
+    long old_max_health;
+    long max_health;
     crstat = creature_stats_get_from_thing(thing);
     cctrl = creature_control_get_from_thing(thing);
     if (creature_control_invalid(cctrl))
@@ -2972,7 +2995,8 @@ long creature_instance_has_reset(const struct Thing *thing, long inst_idx)
 void get_creature_instance_times(const struct Thing *thing, long inst_idx, long *ritime, long *raitime)
 {
     struct InstanceInfo *inst_inf;
-    long itime,aitime;
+    long itime;
+    long aitime;
     inst_inf = creature_instance_info_get(inst_idx);
     if ((thing->alloc_flags & TAlF_IsControlled) != 0)
     {
@@ -3019,7 +3043,8 @@ void set_creature_instance(struct Thing *thing, CrInstance inst_idx, long a2, lo
     struct InstanceInfo *inst_inf;
     struct CreatureControl *cctrl;
     long i;
-    long itime,aitime;
+    long itime;
+    long aitime;
     //_DK_set_creature_instance(thing, inst_idx, a2, a3, pos); return;
     if (inst_idx == 0)
         return;
@@ -4698,7 +4723,8 @@ TbBool update_controlled_creature_movement(struct Thing *thing)
 TbBool update_flight_altitude_towards_typical(struct Thing *thing)
 {
     struct CreatureControl *cctrl;
-    MapCoordDelta thing_curr_alt, i;
+    MapCoordDelta thing_curr_alt;
+    MapCoordDelta i;
     cctrl = creature_control_get_from_thing(thing);
     struct Coord3d nxpos;
     nxpos.x.val = thing->mappos.x.val + cctrl->moveaccel.x.val;
@@ -4959,8 +4985,10 @@ TbBool remove_creature_score_from_owner(struct Thing *thing)
 
 void init_creature_scores(void)
 {
-    long i,k;
-    long score,max_score;
+    long i;
+    long k;
+    long score;
+    long max_score;
     // compute maximum score
     max_score = 0;
     for (i=0; i < CREATURE_TYPES_COUNT; i++)
@@ -5001,7 +5029,8 @@ void init_creature_scores(void)
 long get_creature_thing_score(const struct Thing *thing)
 {
     struct CreatureControl *cctrl;
-    long crmodel,exp;
+    long crmodel;
+    long exp;
     cctrl = creature_control_get_from_thing(thing);
     crmodel = thing->model;
     if (crmodel >= CREATURE_TYPES_COUNT)
@@ -5255,9 +5284,11 @@ TbBool creature_can_see_invisible(const struct Thing *thing)
 
 int claim_neutral_creatures_in_sight(struct Thing *creatng, struct Coord3d *pos, int can_see_slabs)
 {
-    long i,n;
+    long i;
+    long n;
     unsigned long k;
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     slb_x = subtile_slab_fast(pos->x.stl.num);
     slb_y = subtile_slab_fast(pos->y.stl.num);
     n = 0;
@@ -5271,7 +5302,8 @@ int claim_neutral_creatures_in_sight(struct Thing *creatng, struct Coord3d *pos,
         cctrl = creature_control_get_from_thing(thing);
         i = cctrl->players_next_creature_idx;
         // Per thing code starts
-        int dx, dy;
+        int dx;
+        int dy;
         dx = abs(slb_x - subtile_slab_fast(thing->mappos.x.stl.num));
         dy = abs(slb_y - subtile_slab_fast(thing->mappos.y.stl.num));
         if ((dx <= can_see_slabs) && (dy <= can_see_slabs))

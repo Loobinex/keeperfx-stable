@@ -138,10 +138,15 @@ void process_network_error(long errcode)
 
 void draw_out_of_sync_box(long a1, long a2, long box_width)
 {
-    long min_width,max_width;
-    long ornate_width,ornate_height;
-    long x,y;
-    long text_x,text_y,text_h;
+    long min_width;
+    long max_width;
+    long ornate_width;
+    long ornate_height;
+    long x;
+    long y;
+    long text_x;
+    long text_y;
+    long text_h;
     min_width = 2*a1;
     max_width = 2*a2;
     if (min_width > max_width)
@@ -414,7 +419,8 @@ void frontnet_rewite_net_messages(void)
 {
     struct NetMessage lmsg[NET_MESSAGES_COUNT];
     struct NetMessage *nmsg;
-    long i,k;
+    long i;
+    long k;
     k = 0;
     i = net_number_of_messages;
     for (i=0; i < NET_MESSAGES_COUNT; i++)

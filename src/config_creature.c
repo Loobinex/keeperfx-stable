@@ -329,7 +329,8 @@ void check_and_auto_fix_stats(void)
 {
     struct CreatureStats *crstat;
     long model;
-    long i,n;
+    long i;
+    long n;
     SYNCDBG(8,"Starting for %d models",(int)crtr_conf.model_count);
     //_DK_check_and_auto_fix_stats();
     for (model=0; model < crtr_conf.model_count; model++)
@@ -453,7 +454,9 @@ long creature_model_id(const char * name)
 TbBool parse_creaturetypes_common_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -609,7 +612,8 @@ TbBool parse_creaturetypes_common_blocks(char *buf, long len, const char *config
 TbBool parse_creaturetype_experience_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -802,7 +806,9 @@ TbBool parse_creaturetype_instance_blocks(char *buf, long len, const char *confi
 {
     struct InstanceInfo *inst_inf;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -1094,7 +1100,9 @@ TbBool parse_creaturetype_job_blocks(char *buf, long len, const char *config_tex
 {
     struct CreatureJobConfig *jobcfg;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -1352,7 +1360,9 @@ TbBool parse_creaturetype_angerjob_blocks(char *buf, long len, const char *confi
 {
     struct CreatureAngerJobConfig *agjobcfg;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -1439,7 +1449,9 @@ TbBool parse_creaturetype_angerjob_blocks(char *buf, long len, const char *confi
 TbBool parse_creaturetype_attackpref_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];

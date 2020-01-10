@@ -639,7 +639,8 @@ long computer_check_dig_to_entrance(struct Computer2 *comp, struct ComputerProce
         return CProcRet_Wait;
     }
     long turns;
-    int trn_mul, trn_div;
+    int trn_mul;
+    int trn_div;
     trn_mul = cproc->confval_2;
     turns = game.play_gameturn - (GameTurnDelta)cproc->param_2;
     if (turns >= trn_mul)
@@ -688,7 +689,8 @@ long computer_finds_nearest_entrance2(struct Computer2 *comp, struct Coord3d *st
         else
             i = entroom->next_of_owner;
         // Per-room code
-        MapSubtlCoord from_stl_x, from_stl_y;
+        MapSubtlCoord from_stl_x;
+        MapSubtlCoord from_stl_y;
         from_stl_x = entroom->central_stl_x;
         from_stl_y = entroom->central_stl_y;
         if ((entroom->owner == from_plyr_idx) && ((entroom->player_interested[dungeon->owner] & 3) == 0))
@@ -893,7 +895,8 @@ long move_imp_to_mine_here(struct Computer2 *comp, struct Coord3d *pos, long max
 
 TbBool right_time_to_choose_target_entrance(struct ComputerProcess *cproc, long neutral_entrances, long own_entrances, long targplyr_entrances)
 {
-    GameTurnDelta turns_to_capture, turns_delta;
+    GameTurnDelta turns_to_capture;
+    GameTurnDelta turns_delta;
     turns_to_capture = cproc->confval_2;
     turns_delta = game.play_gameturn - (GameTurnDelta)cproc->param_2;
     if (turns_delta >= turns_to_capture)
@@ -962,7 +965,8 @@ long computer_setup_dig_to_entrance(struct Computer2 *comp, struct ComputerProce
       }
     }
     // Count our own entrance rooms, and neutral ones
-    long own_entrances, neutral_entrances;
+    long own_entrances;
+    long neutral_entrances;
     own_entrances = count_entrances(comp, dungeon->owner);
     neutral_entrances = count_entrances(comp, game.neutral_player_num);
     // Prepare for selecting entrance
@@ -1254,16 +1258,19 @@ long computer_process_sight_of_evil(struct Computer2 *comp, struct ComputerProce
     // Compute range from power level
     range = 12 * cproc->confval_2;
 
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     {
 #define GRID COMPUTER_SOE_GRID_SIZE
-        MapSlabCoord slb_x, slb_y;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
         slb_x = map_tiles_x/2;
         slb_y = map_tiles_y/2;
         struct SlabMap *slb;
         int n;
         n = ACTION_RANDOM(GRID*GRID);
-        unsigned int grid_x, grid_y;
+        unsigned int grid_x;
+        unsigned int grid_y;
         int i;
         for (i=0; i < GRID*GRID; i++)
         {

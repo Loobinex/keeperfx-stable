@@ -96,7 +96,8 @@ void play_thing_walking(struct Thing *thing)
     struct Camera *cam;
     cam = myplyr->acamera;
     { // Skip the thing if its distance to camera is too big
-        MapSubtlDelta dist_x, dist_y;
+        MapSubtlDelta dist_x;
+        MapSubtlDelta dist_y;
         dist_x = coord_subtile(abs(cam->mappos.x.val - (MapCoordDelta)thing->mappos.x.val));
         dist_y = coord_subtile(abs(cam->mappos.y.val - (MapCoordDelta)thing->mappos.y.val));
         if (dist_x <= dist_y)
@@ -212,9 +213,12 @@ void find_nearest_rooms_for_ambient_sound(void)
     struct Room *room;
     struct MapOffset *sstep;
     struct Coord3d pos;
-    long slb_x,slb_y;
-    MapSubtlCoord stl_x,stl_y;
-    long i,k;
+    long slb_x;
+    long slb_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    long i;
+    long k;
     SYNCDBG(8,"Starting");
     if ((SoundDisabled) || (GetCurrentSoundMasterVolume() <= 0))
         return;
@@ -426,7 +430,8 @@ long parse_sound_file(TbFileHandle fileh, unsigned char *buf, long *nsamples, lo
     struct SampleTable *smpl;
     struct SoundBankEntry *bentry;
     long fsize;
-    long i,k;
+    long i;
+    long k;
 
     // TODO SOUND use rewritten version when sound routines are rewritten
 

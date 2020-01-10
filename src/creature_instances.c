@@ -198,7 +198,8 @@ TbBool creature_choose_first_available_instance(struct Thing *thing)
     struct CreatureControl *cctrl;
     cctrl = creature_control_get_from_thing(thing);
     crstat = creature_stats_get_from_thing(thing);
-    long i,k;
+    long i;
+    long k;
     for (i=0; i < LEARNED_INSTANCES_COUNT; i++)
     {
         k = crstat->learned_instance_id[i];
@@ -220,7 +221,8 @@ void creature_increase_available_instances(struct Thing *thing)
     struct CreatureControl *cctrl;
     crstat = creature_stats_get_from_thing(thing);
     cctrl = creature_control_get_from_thing(thing);
-    int i,k;
+    int i;
+    int k;
     for (i=0; i < LEARNED_INSTANCES_COUNT; i++)
     {
         k = crstat->learned_instance_id[i];
@@ -553,9 +555,12 @@ long instf_dig(struct Thing *creatng, long *param)
     struct CreatureControl *cctrl;
     struct Dungeon *dungeon;
     struct SlabMap *slb;
-    long stl_x,stl_y;
-    long task_idx,taskkind;
-    long dig_damage,gold;
+    long stl_x;
+    long stl_y;
+    long task_idx;
+    long taskkind;
+    long dig_damage;
+    long gold;
     SYNCDBG(16,"Starting");
     TRACE_THING(creatng);
     cctrl = creature_control_get_from_thing(creatng);
@@ -631,7 +636,8 @@ long instf_destroy(struct Thing *creatng, long *param)
     struct Dungeon *dungeon;
     struct Room *room;
     struct SlabMap *slb;
-    MapSlabCoord slb_x,slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     long prev_owner;
 
     TRACE_THING(creatng);
@@ -655,7 +661,8 @@ long instf_destroy(struct Thing *creatng, long *param)
             claim_room(room, creatng);
         } else
         {
-            MapCoord ccor_x,ccor_y;
+            MapCoord ccor_x;
+            MapCoord ccor_y;
             ccor_x = subtile_coord_center(room->central_stl_x);
             ccor_y = subtile_coord_center(room->central_stl_y);
             event_create_event_or_update_nearby_existing_event(ccor_x, ccor_y, EvKind_RoomLost, room->owner, 0);
@@ -724,7 +731,8 @@ long instf_damage_wall(struct Thing *creatng, long *param)
     SYNCDBG(16,"Starting");
     TRACE_THING(creatng);
     //return _DK_instf_damage_wall(creatng, param);
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     {
         struct CreatureControl *cctrl;
         cctrl = creature_control_get_from_thing(creatng);
@@ -776,7 +784,8 @@ long instf_fart(struct Thing *creatng, long *param)
 
 long instf_first_person_do_imp_task(struct Thing *creatng, long *param)
 {
-    MapSlabCoord slb_x,slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     long locparam;
     TRACE_THING(creatng);
     slb_x = subtile_slab_fast(creatng->mappos.x.stl.num);
@@ -799,7 +808,8 @@ long instf_pretty_path(struct Thing *creatng, long *param)
     TRACE_THING(creatng);
     SYNCDBG(16,"Starting");
     dungeon = get_dungeon(creatng->owner);
-    MapSlabCoord slb_x,slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     slb_x = subtile_slab_fast(creatng->mappos.x.stl.num);
     slb_y = subtile_slab_fast(creatng->mappos.y.stl.num);
     create_effect(&creatng->mappos, imp_spangle_effects[creatng->owner], creatng->owner);
@@ -819,8 +829,10 @@ long instf_reinforce(struct Thing *creatng, long *param)
     SYNCDBG(16,"Starting");
     TRACE_THING(creatng);
     cctrl = creature_control_get_from_thing(creatng);
-    MapSubtlCoord stl_x,stl_y;
-    MapSlabCoord slb_x,slb_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     stl_x = stl_num_decode_x(cctrl->digger.working_stl);
     stl_y = stl_num_decode_y(cctrl->digger.working_stl);
     slb_x = subtile_slab_fast(stl_x);
@@ -872,7 +884,8 @@ long instf_tunnel(struct Thing *creatng, long *param)
     SYNCDBG(16,"Starting");
     TRACE_THING(creatng);
     cctrl = creature_control_get_from_thing(creatng);
-    MapSubtlCoord stl_x,stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     stl_x = stl_num_decode_x(cctrl->navi.field_15);
     stl_y = stl_num_decode_y(cctrl->navi.field_15);
     slb = get_slabmap_for_subtile(stl_x, stl_y);

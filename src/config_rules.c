@@ -236,26 +236,27 @@ void clear_sacrifice_recipes(void)
 
 TbBool add_sacrifice_victim(struct SacrificeRecipe *sac, long crtr_idx)
 {
-  long i,k;
-  // If all slots are taken, then just drop it.
-  if (sac->victims[MAX_SACRIFICE_VICTIMS-1] != 0)
-    return false;
-  // Otherwise, find place for our item (array is sorted)
-  for (i=0; i < MAX_SACRIFICE_VICTIMS; i++)
-  {
-    if ((sac->victims[i] == 0) || (sac->victims[i] > crtr_idx))
+    long i;
+    long k;
+    // If all slots are taken, then just drop it.
+    if (sac->victims[MAX_SACRIFICE_VICTIMS - 1] != 0)
+        return false;
+    // Otherwise, find place for our item (array is sorted)
+    for (i = 0; i < MAX_SACRIFICE_VICTIMS; i++)
     {
-      // Move the entries to make place
-      for (k=MAX_SACRIFICE_VICTIMS-1; k > i; k--)
-        sac->victims[k] = sac->victims[k-1];
-      if (i > 0)
-      {
-        sac->victims[i] = sac->victims[i-1];
-        i--;
-      }
-      sac->victims[i] = crtr_idx;
-      return true;
-    }
+        if ((sac->victims[i] == 0) || (sac->victims[i] > crtr_idx))
+        {
+            // Move the entries to make place
+            for (k = MAX_SACRIFICE_VICTIMS - 1; k > i; k--)
+                sac->victims[k] = sac->victims[k - 1];
+            if (i > 0)
+            {
+                sac->victims[i] = sac->victims[i - 1];
+                i--;
+            }
+            sac->victims[i] = crtr_idx;
+            return true;
+        }
   }
   return false;
 }
@@ -263,7 +264,8 @@ TbBool add_sacrifice_victim(struct SacrificeRecipe *sac, long crtr_idx)
 TbBool parse_rules_game_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -649,7 +651,8 @@ TbBool parse_rules_game_blocks(char *buf, long len, const char *config_textname,
 TbBool parse_rules_computer_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -755,7 +758,8 @@ TbBool parse_rules_computer_blocks(char *buf, long len, const char *config_textn
 TbBool parse_rules_creatures_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
   long pos;
-  int k,n;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -942,7 +946,8 @@ TbBool parse_rules_creatures_blocks(char *buf, long len, const char *config_text
 TbBool parse_rules_magic_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
   long pos;
-  int k,n;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -1199,7 +1204,8 @@ TbBool parse_rules_magic_blocks(char *buf, long len, const char *config_textname
 TbBool parse_rules_rooms_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
   long pos;
-  int k,n;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -1486,7 +1492,8 @@ TbBool parse_rules_rooms_blocks(char *buf, long len, const char *config_textname
 TbBool parse_rules_workers_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
   long pos;
-  int k,n;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -1601,7 +1608,8 @@ TbBool parse_rules_workers_blocks(char *buf, long len, const char *config_textna
 TbBool parse_rules_health_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
   long pos;
-  int k,n;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -1773,7 +1781,10 @@ const char *player_code_name(PlayerNumber plyr_idx)
 TbBool parse_rules_research_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
   long pos;
-  int i,k,l,n;
+  int i;
+  int k;
+  int l;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -1873,7 +1884,9 @@ static void mark_cheaper_diggers_sacrifice(void)
 TbBool parse_rules_sacrifices_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];

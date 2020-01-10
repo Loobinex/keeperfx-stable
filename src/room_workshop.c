@@ -197,7 +197,8 @@ TbBool set_manufacture_level(struct Dungeon *dungeon)
 struct Thing *get_workshop_box_thing(PlayerNumber owner, ThingModel objmodel)
 {
     struct Thing *thing;
-    int i,k;
+    int i;
+    int k;
     k = 0;
     i = game.thing_lists[TngList_Objects].index;
     while (i > 0)
@@ -522,7 +523,10 @@ TbBool remove_workshop_object_from_player(PlayerNumber owner, ThingModel objmode
  */
 long get_doable_manufacture_with_minimal_amount_available(const struct Dungeon *dungeon, int * mnfctr_class, int * mnfctr_kind)
 {
-    int chosen_class,chosen_kind,chosen_amount,chosen_level;
+    int chosen_class;
+    int chosen_kind;
+    int chosen_amount;
+    int chosen_level;
     struct ManfctrConfig *mconf;
     int tngmodel;
     long amount;
@@ -576,7 +580,9 @@ long get_doable_manufacture_with_minimal_amount_available(const struct Dungeon *
 
 TbBool get_next_manufacture(struct Dungeon *dungeon)
 {
-    int chosen_class,chosen_kind,chosen_amount;
+    int chosen_class;
+    int chosen_kind;
+    int chosen_amount;
     set_manufacture_level(dungeon);
     chosen_class = TCls_Empty;
     chosen_kind = 0;

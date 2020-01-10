@@ -435,7 +435,8 @@ long setup_player_battlers(struct PlayerInfo *player, struct CreatureBattle *bat
 {
     long i;
     unsigned long k;
-    short friendly_pos, enemy_pos;
+    short friendly_pos;
+    short enemy_pos;
     friendly_pos = 0;
     enemy_pos = 0;
     i = battle->first_creatr;
@@ -505,7 +506,8 @@ void maintain_my_battle_list(void)
     struct PlayerInfo *player;
     struct Dungeon *dungeon;
     BattleIndex battle_id;
-    long i,n;
+    long i;
+    long n;
     // Find battle index
     player = get_my_player();
     dungeon = get_players_dungeon(player);

@@ -355,8 +355,10 @@ void kill_all_players_chickens(PlayerNumber plyr_idx)
 short creature_being_summoned(struct Thing *thing)
 {
     struct CreatureControl *cctrl;
-    short orig_w, orig_h;
-    short unsc_w, unsc_h;
+    short orig_w;
+    short orig_h;
+    short unsc_w;
+    short unsc_h;
     cctrl = creature_control_get_from_thing(thing);
     if (creature_control_invalid(cctrl)) {
         return 0;
@@ -468,17 +470,19 @@ long sacrifice_victim_model_count(struct SacrificeRecipe *sac, long model)
 
 TbBool sacrifice_victim_conditions_met(struct Dungeon *dungeon, struct SacrificeRecipe *sac)
 {
-  long i,required;
-  long model;
-  // Some models may be checked more than once; dut we don't really care...
-  for (i=0; i < MAX_SACRIFICE_VICTIMS; i++)
-  {
-    model = sac->victims[i];
-    if (model < 1) continue;
-    required = sacrifice_victim_model_count(sac, model);
-    SYNCDBG(6,"Model %d exists %d times",(int)model,(int)required);
-    if (dungeon->creature_sacrifice[model] < required)
-      return false;
+    long i;
+    long required;
+    long model;
+    // Some models may be checked more than once; dut we don't really care...
+    for (i = 0; i < MAX_SACRIFICE_VICTIMS; i++)
+    {
+        model = sac->victims[i];
+        if (model < 1)
+            continue;
+        required = sacrifice_victim_model_count(sac, model);
+        SYNCDBG(6, "Model %d exists %d times", (int)model, (int)required);
+        if (dungeon->creature_sacrifice[model] < required)
+            return false;
   }
   return true;
 }
@@ -570,7 +574,9 @@ short creature_being_sacrificed(struct Thing *thing)
     struct CreatureControl *cctrl;
     struct SlabMap *slb;
     struct Coord3d pos;
-    long owner,model,award;
+    long owner;
+    long model;
+    long award;
     SYNCDBG(6,"Starting");
 
     cctrl = creature_control_get_from_thing(thing);

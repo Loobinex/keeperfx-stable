@@ -42,7 +42,9 @@ DLLIMPORT struct Room *_DK_get_best_new_lair_for_creature(struct Thing *creatng)
 /******************************************************************************/
 long calculate_free_lair_space(struct Dungeon * dungeon)
 {
-    long cap_total, cap_used, cap_required;
+    long cap_total;
+    long cap_used;
+    long cap_required;
     long i;
     unsigned long k;
     SYNCDBG(9,"Starting");

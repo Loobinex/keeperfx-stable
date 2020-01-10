@@ -36,7 +36,8 @@ long get_subtile_lightness(const struct LightsShadows * lish, MapSubtlCoord stl_
 
 void clear_subtiles_lightness(struct LightsShadows * lish)
 {
-    MapSubtlCoord x,y;
+    MapSubtlCoord x;
+    MapSubtlCoord y;
     unsigned short *wptr;
     for (y=0; y < (map_subtiles_y+1); y++)
     {

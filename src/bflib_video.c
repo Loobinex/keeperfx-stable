@@ -205,7 +205,9 @@ TbScreenCoord LbScreenHeight(void)
 
 TbResult LbPaletteFadeStep(unsigned char *from_pal,unsigned char *to_pal,long fade_steps)
 {
-    int i,c1,c2;
+    int i;
+    int c1;
+    int c2;
     unsigned char palette[PALETTE_SIZE];
     for (i=0; i < 3*PALETTE_COLORS; i+=3)
     {
@@ -313,15 +315,17 @@ static TbBool LbHwCheckIsModeAvailable(TbScreenMode mode)
 
 TbResult LbScreenFindVideoModes(void)
 {
-  int i,avail_num;
-  avail_num = 0;
-  lbScreenModeInfo[0].Available = false;
-  for (i=1; i < lbScreenModeInfoNum; i++)
-  {
-      if (LbHwCheckIsModeAvailable(i)) {
-          lbScreenModeInfo[i].Available = true;
-          avail_num++;
-      } else {
+    int i;
+    int avail_num;
+    avail_num = 0;
+    lbScreenModeInfo[0].Available = false;
+    for (i = 1; i < lbScreenModeInfoNum; i++)
+    {
+        if (LbHwCheckIsModeAvailable(i))
+        {
+            lbScreenModeInfo[i].Available = true;
+            avail_num++;
+        } else {
           lbScreenModeInfo[i].Available = false;
       }
   }
@@ -460,7 +464,8 @@ TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord hei
     unsigned char *palette, short buffers_count, TbBool wscreen_vid)
 {
     SDL_Surface * prevScreenSurf;
-    long hot_x,hot_y;
+    long hot_x;
+    long hot_y;
     struct TbSprite *msspr;
     TbScreenModeInfo *mdinfo;
     unsigned long sdlFlags;
@@ -762,15 +767,16 @@ TbResult LbScreenLoadGraphicsWindow(TbGraphicsWindow *grwnd)
 
 TbResult LbScreenSetGraphicsWindow(long x, long y, long width, long height)
 {
-  long x2,y2;
-  long i;
-  x2 = x + width;
-  y2 = y + height;
-  if (x2 < x)
-  {
-    i = (x^x2);
-    x = x^i;
-    x2 = x^i^i;
+    long x2;
+    long y2;
+    long i;
+    x2 = x + width;
+    y2 = y + height;
+    if (x2 < x)
+    {
+        i = (x ^ x2);
+        x = x ^ i;
+        x2 = x ^ i ^ i;
   }
   if (y2 < y)
   {
@@ -909,7 +915,8 @@ TbScreenMode LbRegisterVideoMode(const char *desc, TbScreenCoord width, TbScreen
  */
 TbScreenMode LbRegisterVideoModeString(const char *desc)
 {
-    int width, height;
+    int width;
+    int height;
     int bpp;
     unsigned long flags;
     int ret;
@@ -954,7 +961,9 @@ TbPixel LbPaletteFindColour(const unsigned char *pal, unsigned char r, unsigned 
     c = pal;
     for (i = 0; i < 256; i++)
     {
-        int dr,dg,db;
+        int dr;
+        int dg;
+        int db;
         dr = (r - c[0]) * (r - c[0]);
         dg = (g - c[1]) * (g - c[1]);
         db = (b - c[2]) * (b - c[2]);
@@ -976,7 +985,9 @@ TbPixel LbPaletteFindColour(const unsigned char *pal, unsigned char r, unsigned 
     c = pal;
     for (i = 0; i < 256; i++)
     {
-        int dr,dg,db;
+        int dr;
+        int dg;
+        int db;
         dr = (r - c[0]) * (r - c[0]);
         dg = (g - c[1]) * (g - c[1]);
         db = (b - c[2]) * (b - c[2]);
@@ -996,7 +1007,9 @@ TbPixel LbPaletteFindColour(const unsigned char *pal, unsigned char r, unsigned 
     min_delta = 999999;
     for (i = 0; i < n; i++)
     {
-        int dr,dg,db;
+        int dr;
+        int dg;
+        int db;
         c = &pal[3 * tmcol[i]];
         dr = abs(r - c[0]);
         dg = abs(g - c[1]);
@@ -1012,7 +1025,9 @@ TbPixel LbPaletteFindColour(const unsigned char *pal, unsigned char r, unsigned 
     o = tmcol;
     for (i = 0; i < n; i++)
     {
-        int dr,dg,db;
+        int dr;
+        int dg;
+        int db;
         c = &pal[3 * tmcol[i]];
         dr = abs(r - c[0]);
         dg = abs(g - c[1]);
@@ -1033,7 +1048,9 @@ TbPixel LbPaletteFindColour(const unsigned char *pal, unsigned char r, unsigned 
     o = &tmcol[0];
     for (i = 0; i < m; i++)
     {
-        int dr,dg,db;
+        int dr;
+        int dg;
+        int db;
         c = &pal[3 * tmcol[i]];
         dr = (c[0] * c[0]);
         dg = (c[1] * c[1]);

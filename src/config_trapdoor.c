@@ -129,7 +129,8 @@ int get_manufacture_data_index_for_thing(ThingClass tngclass, ThingModel tngmode
 TbBool parse_trapdoor_common_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -140,7 +141,8 @@ TbBool parse_trapdoor_common_blocks(char *buf, long len, const char *config_text
     {
         trapdoor_conf.trap_types_count = 1;
         trapdoor_conf.door_types_count = 1;
-        int arr_size, i;
+        int arr_size;
+        int i;
         arr_size = sizeof(object_conf.object_to_door_or_trap)/sizeof(object_conf.object_to_door_or_trap[0]);
         for (i=0; i < arr_size; i++) {
             object_conf.object_to_door_or_trap[i] = 0;
@@ -218,7 +220,9 @@ TbBool parse_trapdoor_trap_blocks(char *buf, long len, const char *config_textna
   struct ManfctrConfig *mconf;
   struct TrapConfigStats *trapst;
   long pos;
-  int i,k,n;
+  int i;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];
@@ -493,7 +497,9 @@ TbBool parse_trapdoor_door_blocks(char *buf, long len, const char *config_textna
   struct ManfctrConfig *mconf;
   struct DoorConfigStats *doorst;
   long pos;
-  int i,k,n;
+  int i;
+  int k;
+  int n;
   int cmd_num;
   // Block name and parameter word store variables
   char block_buf[COMMAND_WORD_LEN];

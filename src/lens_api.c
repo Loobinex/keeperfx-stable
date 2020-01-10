@@ -43,14 +43,21 @@ void draw_displacement_lens(unsigned char *dstbuf, unsigned char *srcbuf, unsign
 
 void init_lens(unsigned long *lens_mem, int width, int height, int pitch, int nlens, int mag, int period)
 {
-    long w,h;
-    long shift_w,shift_h;
+    long w;
+    long h;
+    long shift_w;
+    long shift_h;
     unsigned long *mem;
-    double flwidth,flheight;
-    double center_w,center_h;
-    double flpos_w,flpos_h;
-    double flmag,flperiod;
-    double fldist,fldivs;
+    double flwidth;
+    double flheight;
+    double center_w;
+    double center_h;
+    double flpos_w;
+    double flpos_h;
+    double flmag;
+    double flperiod;
+    double fldist;
+    double fldivs;
     switch (nlens)
     {
     case 0:
@@ -283,7 +290,8 @@ void reinitialise_eye_lens(long nlens)
 
 void draw_displacement_lens(unsigned char *dstbuf, unsigned char *srcbuf, unsigned long *lens_mem, int width, int height, int dstpitch)
 {
-    int w,h;
+    int w;
+    int h;
     long pos_map;
     unsigned char *dst;
     unsigned long *mem;

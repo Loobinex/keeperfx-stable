@@ -516,7 +516,8 @@ TbBool get_free_position_behind_leader(struct Thing *leadtng, struct Coord3d *po
 {
     struct CreatureControl *leadctrl;
     leadctrl = creature_control_get_from_thing(leadtng);
-    int i, group_len;
+    int i;
+    int group_len;
     group_len = (leadctrl->group_info >> 12);
     for (i = 0; i < group_len; i++)
     {
@@ -627,23 +628,32 @@ void leader_find_positions_for_followers(struct Thing *leadtng)
     cctrl->group_info = (group_len << 12) | (cctrl->group_info & ~TngGroup_MemberCount);
     memset(cctrl->followers_pos, 0, sizeof(cctrl->followers_pos));
 
-    int len_xv, len_yv;
-    int len_xh, len_yh;
+    int len_xv;
+    int len_yv;
+    int len_xh;
+    int len_yh;
     len_xv = LbSinL(leadtng->move_angle_xy + LbFPMath_PI) << 8 >> 16;
     len_yv = -((LbCosL(leadtng->move_angle_xy + LbFPMath_PI) << 8) >> 8) >> 8;
     len_xh = LbSinL(leadtng->move_angle_xy - LbFPMath_PI/2) << 8 >> 16;
     len_yh = -((LbCosL(leadtng->move_angle_xy - LbFPMath_PI/2) << 8) >> 8) >> 8;
 
-    int ih, iv, ivmax;
+    int ih;
+    int iv;
+    int ivmax;
     ivmax = 2 * group_len;
     int ifollow;
     ifollow = 0;
 
-    int shift_xh, shift_yh;
-    int shift_xv, shift_yv;
-    int shift_xh_beg, shift_yh_beg;
-    int delta_xh, delta_yh;
-    int delta_xv, delta_yv;
+    int shift_xh;
+    int shift_yh;
+    int shift_xv;
+    int shift_yv;
+    int shift_xh_beg;
+    int shift_yh_beg;
+    int delta_xh;
+    int delta_yh;
+    int delta_xv;
+    int delta_yv;
 
     delta_yh = 2 * len_yh;
     delta_xh = 2 * len_xh;
@@ -659,7 +669,8 @@ void leader_find_positions_for_followers(struct Thing *leadtng)
         shift_xh = shift_xh_beg;
         for (ih = -2; ih <= 2; ih += 2)
         {
-            int mcor_x, mcor_y;
+            int mcor_x;
+            int mcor_y;
             mcor_x = leadtng->mappos.x.val + shift_xh + shift_xv;
             mcor_y = leadtng->mappos.y.val + shift_yv + shift_yh;
             if ((coord_slab(mcor_x) > 0) && (coord_slab(mcor_x) < map_tiles_x))
@@ -703,7 +714,8 @@ void leader_find_positions_for_followers(struct Thing *leadtng)
         shift_xh = shift_xh_beg;
         for (ih = -1; ih <= 2; ih += 2)
         {
-            int mcor_x, mcor_y;
+            int mcor_x;
+            int mcor_y;
             mcor_x = leadtng->mappos.x.val + shift_xh + shift_xv;
             mcor_y = leadtng->mappos.y.val + shift_yv + shift_yh;
             if ((coord_slab(mcor_x) > 0) && (coord_slab(mcor_x) < map_tiles_x))

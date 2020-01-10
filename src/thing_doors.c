@@ -103,7 +103,8 @@ void unlock_door(struct Thing *thing)
 void lock_door(struct Thing *doortng)
 {
     struct DoorStats *dostat;
-    long stl_x,stl_y;
+    long stl_x;
+    long stl_y;
     dostat = &door_stats[doortng->model][doortng->door.orientation];
     stl_x = doortng->mappos.x.stl.num;
     stl_y = doortng->mappos.y.stl.num;
@@ -122,7 +123,8 @@ void lock_door(struct Thing *doortng)
 long destroy_door(struct Thing *doortng)
 {
     SYNCDBG(18,"Starting for %s index %d owned by player %d",thing_model_name(doortng),(int)doortng->index,(int)doortng->owner);
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     PlayerNumber plyr_idx;
     struct Coord3d pos;
     pos.x.val = doortng->mappos.x.val;
@@ -158,7 +160,8 @@ long destroy_door(struct Thing *doortng)
         }
     }
     delete_thing_structure(doortng, 0);
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     struct SlabMap *slb;
     slb_x = subtile_slab_fast(stl_x);
     slb_y = subtile_slab_fast(stl_y);
@@ -173,7 +176,8 @@ long destroy_door(struct Thing *doortng)
         if (!player_exists(player))
             continue;
         struct Thing *thing;
-        long dist, sight_stl;
+        long dist;
+        long sight_stl;
         thing = thing_get(player->controlled_thing_idx);
         dist = get_2d_box_distance(&pos, &thing->mappos);
         sight_stl = slab_subtile(get_explore_sight_distance_in_slabs(thing),0);
@@ -212,7 +216,8 @@ TbBool door_can_stand(struct Thing *thing)
     struct SlabMap *slb;
     struct SlabAttr *slbattr;
     unsigned int wall_flags;
-    long slb_x,slb_y;
+    long slb_x;
+    long slb_y;
     int i;
     wall_flags = 0;
     for (i = 0; i < 4; i++)
@@ -279,7 +284,9 @@ long process_door_closed(struct Thing *thing)
 long process_door_opening(struct Thing *thing)
 {
     struct DoorStats *dostat;
-    int new_frame,old_frame,delta_h;
+    int new_frame;
+    int old_frame;
+    int delta_h;
     int slbparam;
     dostat = &door_stats[thing->model][thing->door.orientation];
     old_frame = (thing->door.word_16d / 256);
@@ -303,7 +310,9 @@ long process_door_opening(struct Thing *thing)
 long process_door_closing(struct Thing *thing)
 {
     struct DoorStats *dostat;
-    int new_frame,old_frame,delta_h;
+    int new_frame;
+    int old_frame;
+    int delta_h;
     int slbparam;
     old_frame = (thing->door.word_16d / 256);
     dostat = &door_stats[thing->model][thing->door.orientation];
@@ -369,7 +378,8 @@ TngUpdateRet process_door(struct Thing *thing)
 long count_player_deployed_doors_of_model(PlayerNumber owner, int model)
 {
     struct Thing *thing;
-    long i, n;
+    long i;
+    long n;
     n = 0;
     unsigned long k;
     k = 0;
@@ -438,7 +448,8 @@ TbBool player_has_deployed_door_of_model(PlayerNumber owner, int model, short lo
 long count_player_deployed_traps_of_model(PlayerNumber owner, int model)
 {
     struct Thing *thing;
-    long i, n;
+    long i;
+    long n;
     n = 0;
     unsigned long k;
     k = 0;

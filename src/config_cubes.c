@@ -62,7 +62,8 @@ struct CubeConfigStats *get_cube_model_stats(long cumodel)
 TbBool parse_cubes_common_blocks(char *buf, long len, const char *config_textname, unsigned short flags)
 {
     long pos;
-    int k,n;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -128,7 +129,9 @@ TbBool parse_cubes_cube_blocks(char *buf, long len, const char *config_textname,
     struct CubeConfigStats *objst;
     struct CubeAttribs * cubed;
     long pos;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     int cmd_num;
     // Block name and parameter word store variables
     char block_buf[COMMAND_WORD_LEN];
@@ -395,7 +398,8 @@ long load_cube_file(void)
     // Parse the config file
     if (result)
     {
-        long i,count;
+        long i;
+        long count;
         count = *(long *)&buf[0];
         if (count > len/sizeof(struct CubeAttribs)) {
             count = len/sizeof(struct CubeAttribs);
