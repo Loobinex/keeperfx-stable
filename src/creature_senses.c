@@ -141,12 +141,9 @@ TbBool sibling_line_of_sight_ignoring_door(const struct Coord3d *prevpos,
 TbBool line_of_sight_3d_ignoring_specific_door(const struct Coord3d *frpos,
     const struct Coord3d *topos, const struct Thing *doortng)
 {
-    MapCoordDelta dx;
-    MapCoordDelta dy;
-    MapCoordDelta dz;
-    dx = topos->x.val - (MapCoordDelta)frpos->x.val;
-    dy = topos->y.val - (MapCoordDelta)frpos->y.val;
-    dz = topos->z.val - (MapCoordDelta)frpos->z.val;
+    MapCoordDelta dx = topos->x.val - (MapCoordDelta)frpos->x.val;
+    MapCoordDelta dy = topos->y.val - (MapCoordDelta)frpos->y.val;
+    MapCoordDelta dz = topos->z.val - (MapCoordDelta)frpos->z.val;
     if ((topos->x.stl.num == frpos->x.stl.num) &&
         (topos->y.stl.num == frpos->y.stl.num)) {
         return true;
@@ -200,10 +197,10 @@ TbBool line_of_sight_3d_ignoring_specific_door(const struct Coord3d *frpos,
     }
     // Go through the distance with given increases
     struct Coord3d prevpos;
-    struct Coord3d nextpos;
     prevpos.x.val = frpos->x.val;
     prevpos.y.val = frpos->y.val;
     prevpos.z.val = frpos->z.val;
+    struct Coord3d nextpos;
     nextpos.x.val = prevpos.x.val + increase_x;
     nextpos.y.val = prevpos.y.val + increase_y;
     nextpos.z.val = prevpos.z.val + increase_z;
@@ -323,12 +320,9 @@ TbBool sibling_line_of_sight_3d_including_lava_check_ignoring_door(const struct 
 TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_specific_door(const struct Coord3d *frpos,
     const struct Coord3d *topos, const struct Thing *doortng)
 {
-    MapCoordDelta dx;
-    MapCoordDelta dy;
-    MapCoordDelta dz;
-    dx = topos->x.val - (MapCoordDelta)frpos->x.val;
-    dy = topos->y.val - (MapCoordDelta)frpos->y.val;
-    dz = topos->z.val - (MapCoordDelta)frpos->z.val;
+    MapCoordDelta dx = topos->x.val - (MapCoordDelta)frpos->x.val;
+    MapCoordDelta dy = topos->y.val - (MapCoordDelta)frpos->y.val;
+    MapCoordDelta dz = topos->z.val - (MapCoordDelta)frpos->z.val;
     if ((topos->x.stl.num == frpos->x.stl.num) &&
         (topos->y.stl.num == frpos->y.stl.num)) {
         return true;
@@ -382,10 +376,10 @@ TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_specific_door(const 
     }
     // Go through the distance with given increases
     struct Coord3d prevpos;
-    struct Coord3d nextpos;
     prevpos.x.val = frpos->x.val;
     prevpos.y.val = frpos->y.val;
     prevpos.z.val = frpos->z.val;
+    struct Coord3d nextpos;
     nextpos.x.val = prevpos.x.val + increase_x;
     nextpos.y.val = prevpos.y.val + increase_y;
     nextpos.z.val = prevpos.z.val + increase_z;
@@ -501,12 +495,9 @@ TbBool sibling_line_of_sight_3d_including_lava_check_ignoring_own_door(const str
 TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_own_door(const struct Coord3d *frpos,
     const struct Coord3d *topos, PlayerNumber plyr_idx)
 {
-    MapCoordDelta dx;
-    MapCoordDelta dy;
-    MapCoordDelta dz;
-    dx = topos->x.val - (MapCoordDelta)frpos->x.val;
-    dy = topos->y.val - (MapCoordDelta)frpos->y.val;
-    dz = topos->z.val - (MapCoordDelta)frpos->z.val;
+    MapCoordDelta dx = topos->x.val - (MapCoordDelta)frpos->x.val;
+    MapCoordDelta dy = topos->y.val - (MapCoordDelta)frpos->y.val;
+    MapCoordDelta dz = topos->z.val - (MapCoordDelta)frpos->z.val;
     // Allow the travel to the same subtile
     if ((topos->x.stl.num == frpos->x.stl.num) &&
         (topos->y.stl.num == frpos->y.stl.num)) {
@@ -564,10 +555,10 @@ TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_own_door(const struc
     }
     // Go through the distance with given increases
     struct Coord3d prevpos;
-    struct Coord3d nextpos;
     prevpos.x.val = frpos->x.val;
     prevpos.y.val = frpos->y.val;
     prevpos.z.val = frpos->z.val;
+    struct Coord3d nextpos;
     nextpos.x.val = prevpos.x.val + increase_x;
     nextpos.y.val = prevpos.y.val + increase_y;
     nextpos.z.val = prevpos.z.val + increase_z;
@@ -600,15 +591,13 @@ TbBool jonty_line_of_sight_3d_including_lava_check_ignoring_own_door(const struc
 
 TbBool jonty_creature_can_see_thing_including_lava_check(const struct Thing *creatng, const struct Thing *thing)
 {
-    struct CreatureStats *crstat;
-    const struct Coord3d *srcpos;
+    struct CreatureStats* crstat = creature_stats_get_from_thing(creatng);
+    const struct Coord3d* srcpos = &creatng->mappos;
     struct Coord3d eyepos;
-    struct Coord3d tgtpos;
-    crstat = creature_stats_get_from_thing(creatng);
-    srcpos = &creatng->mappos;
     eyepos.x.val = srcpos->x.val;
     eyepos.y.val = srcpos->y.val;
     eyepos.z.val = srcpos->z.val;
+    struct Coord3d tgtpos;
     tgtpos.x.val = thing->mappos.x.val;
     tgtpos.y.val = thing->mappos.y.val;
     tgtpos.z.val = thing->mappos.z.val;
@@ -669,8 +658,7 @@ TbBool jonty_creature_can_see_thing_including_lava_check(const struct Thing *cre
                 return true;
             // Check both sides at middle of thing height
             tgtpos.z.val -= thing->clipbox_size_yz / 2;
-            long angle;
-            angle = get_angle_xy_to(&tgtpos, &eyepos);
+            long angle = get_angle_xy_to(&tgtpos, &eyepos);
             // Check left side
             // We're checking point at 60 degrees left; could use 90 deg, but making even slim edge visible might not be a good idea
             // Also 60 deg will shorten distance to the check point, which may better describe real visibility
@@ -695,12 +683,9 @@ TbBool line_of_sight_2d(const struct Coord3d *pos1, const struct Coord3d *pos2)
 
 TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos)
 {
-    MapCoordDelta dx;
-    MapCoordDelta dy;
-    MapCoordDelta dz;
-    dx = topos->x.val - (MapCoordDelta)frpos->x.val;
-    dy = topos->y.val - (MapCoordDelta)frpos->y.val;
-    dz = topos->z.val - (MapCoordDelta)frpos->z.val;
+    MapCoordDelta dx = topos->x.val - (MapCoordDelta)frpos->x.val;
+    MapCoordDelta dy = topos->y.val - (MapCoordDelta)frpos->y.val;
+    MapCoordDelta dz = topos->z.val - (MapCoordDelta)frpos->z.val;
     if ((topos->x.stl.num == frpos->x.stl.num) &&
         (topos->y.stl.num == frpos->y.stl.num)) {
         return true;
@@ -755,10 +740,10 @@ TbBool line_of_sight_3d(const struct Coord3d *frpos, const struct Coord3d *topos
     }
     // Go through the distance with given increases
     struct Coord3d prevpos;
-    struct Coord3d nextpos;
     prevpos.x.val = frpos->x.val;
     prevpos.y.val = frpos->y.val;
     prevpos.z.val = frpos->z.val;
+    struct Coord3d nextpos;
     nextpos.x.val = prevpos.x.val + increase_x;
     nextpos.y.val = prevpos.y.val + increase_y;
     nextpos.z.val = prevpos.z.val + increase_z;

@@ -679,16 +679,16 @@ long LbArcTanAngle(long x,long y)
 
 long LbSqrL(long x)
 {
-  long y;
   if (x <= 0)
     return 0;
   //
-  asm ("bsrl     %1, %%eax;\n"
-       "movl %%eax, %0;\n"
-       :"=r"(y)  // output
-       :"r"(x)   // input
-       :"%eax"   // clobbered register
-       );
+  long y;
+  asm("bsrl     %1, %%eax;\n"
+      "movl %%eax, %0;\n"
+      : "=r"(y) // output
+      : "r"(x)  // input
+      : "%eax"  // clobbered register
+  );
   y = lbSqrTable[y];
   while ((x/y) < y)
     y = ((x/y) + y) >> 1;
@@ -742,8 +742,7 @@ unsigned long LbRandomSeries(unsigned long range, unsigned long *seed, const cha
 {
   if (range == 0)
     return 0;
-  unsigned long i;
-  i = 9377 * (*seed) + 9439;
+  unsigned long i = 9377 * (*seed) + 9439;
   *seed = _lrotr(i, 13);
   i = (*seed) % range;
 //  SYNCMSG("%s: at %d, random val %d", func_name, place, i);
@@ -767,10 +766,8 @@ TbBool LbNumberSignsSame(long num_a, long num_b)
 
 char LbCompareMultiplications(long mul1a, long mul1b, long mul2a, long mul2b)
 {
-    long long mul1;
-    long long mul2;
-    mul1 = (long long)mul1a * (long long)mul1b;
-    mul2 = (long long)mul2a * (long long)mul2b;
+    long long mul1 = (long long)mul1a * (long long)mul1b;
+    long long mul2 = (long long)mul2a * (long long)mul2b;
     if (mul1 > mul2)
         return 1;
     if (mul1 < mul2)
