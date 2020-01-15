@@ -985,17 +985,45 @@ long creature_tunnel_to(struct Thing *creatng, struct Coord3d *pos, short speed)
         }
     }
     MapCoordDelta dist = get_2d_distance(&creatng->mappos, &cctrl->navi.pos_next);
+    JUSTMSG("TESTLOG: dist = %d, creature = %d",dist,creatng->index);
     if (dist <= 16)
     {
+        JUSTMSG("TESTLOG: turn turn turn");
         creature_turn_to_face_angle(creatng, cctrl->navi.field_D);
         creature_set_speed(creatng, 0);
         return 0;
     }
-    if (dist > 768)
+    long move_result;
+    move_result = creature_move_to(creatng, &cctrl->navi.pos_next, speed, cctrl->move_flags, 0);
+    // We could switch to move state; but without it we can easier react on being close to target but not exactly on it
+    // not to mention our moveto_pos is not a target move position but target dig position
+    if (move_result == -1) //todo fix move result, can never be -1
     {
-        ERRORLOG("Move %s index %d to (%d,%d) reset - wallhug distance %d too large",thing_model_name(creatng),(int)creatng->index,(int)pos->x.stl.num,(int)pos->y.stl.num,(int)dist);
+        ERRORLOG("Move %s index %d to (%d,%d) reset - no route",thing_model_name(creatng),(int)creatng->index,(int)pos->x.stl.num,(int)pos->y.stl.num);
         clear_wallhugging_path(&cctrl->navi);
         creature_set_speed(creatng, speed);
+        return 0;
+    }
+    struct TunnelDistance tundist;
+    tundist.creatid = creatng->index;
+    tundist.newdist = dist;
+    JUSTMSG("TESTLOG: old is %d and new is %d",tundist.olddist, tundist.newdist); // old is always 0, but why??
+    if (tundist.olddist == tundist.newdist)
+    {
+        JUSTMSG("TESTLOG: The same, so stuck plus 1 ");
+        stuck += 1;
+    }
+    else {
+        JUSTMSG("TESTLOG: different old is %d and new is %d",tundist.olddist,tundist.newdist);
+        tundist.olddist = tundist.newdist;
+        JUSTMSG("TESTLOG: So now made the same: new = %d, old = %d",tundist.newdist,tundist.olddist);
+        stuck = 0;
+    }
+    JUSTMSG("TESTLOG: stuck = %d",stuck);
+    if ( stuck >= 100)//This is the whole point of this commit. If the distance is the same for x amount of time, assume the tunneler is stuck and unstuck him.
+    {
+        JUSTMSG("TESTLOG: RESET, on stuck = %d",stuck);
+        setup_combat_flee_position(creatng);
         return 0;
     }
     if (creature_turn_to_face(creatng, &cctrl->navi.pos_next) > 0)
