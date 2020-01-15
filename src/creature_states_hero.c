@@ -985,10 +985,8 @@ long creature_tunnel_to(struct Thing *creatng, struct Coord3d *pos, short speed)
         }
     }
     MapCoordDelta dist = get_2d_distance(&creatng->mappos, &cctrl->navi.pos_next);
-    JUSTMSG("TESTLOG: dist = %d, creature = %d",dist,creatng->index);
     if (dist <= 16)
     {
-        JUSTMSG("TESTLOG: turn turn turn");
         creature_turn_to_face_angle(creatng, cctrl->navi.field_D);
         creature_set_speed(creatng, 0);
         return 0;
@@ -1004,26 +1002,27 @@ long creature_tunnel_to(struct Thing *creatng, struct Coord3d *pos, short speed)
         creature_set_speed(creatng, speed);
         return 0;
     }
-    struct TunnelDistance tundist;
+    static struct TunnelDistance tundist;
     tundist.creatid = creatng->index;
     tundist.newdist = dist;
-    JUSTMSG("TESTLOG: old is %d and new is %d",tundist.olddist, tundist.newdist); // old is always 0, but why??
+    static struct TunnelerStuck tunstuck;
+    tunstuck.creatid = creatng->index;
     if (tundist.olddist == tundist.newdist)
     {
-        JUSTMSG("TESTLOG: The same, so stuck plus 1 ");
-        stuck += 1;
+        tunstuck.stuck += 1;
+        JUSTMSG("TESTLOG: old is %d and new is %d, so stuck now %d",tundist.olddist, tundist.newdist,tunstuck.stuck);
+        JUSTMSG("TESTLOG: for struct id = %d, index = %d",tunstuck.creatid,creatng->index);
     }
     else {
-        JUSTMSG("TESTLOG: different old is %d and new is %d",tundist.olddist,tundist.newdist);
+        JUSTMSG("TESTLOG: different - old = %d and new = %d. So stuck = 0",tundist.olddist,tundist.newdist);
         tundist.olddist = tundist.newdist;
-        JUSTMSG("TESTLOG: So now made the same: new = %d, old = %d",tundist.newdist,tundist.olddist);
-        stuck = 0;
+        tunstuck.stuck = 0;
     }
-    JUSTMSG("TESTLOG: stuck = %d",stuck);
-    if ( stuck >= 100)//This is the whole point of this commit. If the distance is the same for x amount of time, assume the tunneler is stuck and unstuck him.
+    JUSTMSG("TESTLOG: Unit %d stuck = %d",tunstuck.creatid,tunstuck.stuck);
+    if ( tunstuck.stuck >= 500)
     {
-        JUSTMSG("TESTLOG: RESET, on stuck = %d",stuck);
-        setup_combat_flee_position(creatng);
+        JUSTMSG("TESTLOG: RESET, on stuck = %d",tunstuck.stuck);
+        creature_choose_random_destination_on_valid_adjacent_slab(creatng);
         return 0;
     }
     if (creature_turn_to_face(creatng, &cctrl->navi.pos_next) > 0)
