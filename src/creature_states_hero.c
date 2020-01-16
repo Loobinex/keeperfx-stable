@@ -995,7 +995,7 @@ long creature_tunnel_to(struct Thing *creatng, struct Coord3d *pos, short speed)
     move_result = creature_move_to(creatng, &cctrl->navi.pos_next, speed, cctrl->move_flags, 0);
     // We could switch to move state; but without it we can easier react on being close to target but not exactly on it
     // not to mention our moveto_pos is not a target move position but target dig position
-    if (move_result == -1) //todo fix move result, can never be -1
+    if (move_result == -1)
     {
         ERRORLOG("Move %s index %d to (%d,%d) reset - no route",thing_model_name(creatng),(int)creatng->index,(int)pos->x.stl.num,(int)pos->y.stl.num);
         clear_wallhugging_path(&cctrl->navi);
@@ -1005,23 +1005,26 @@ long creature_tunnel_to(struct Thing *creatng, struct Coord3d *pos, short speed)
     static struct TunnelDistance tundist;
     tundist.creatid = creatng->index;
     tundist.newdist = dist;
-    static struct TunnelerStuck tunstuck;
-    tunstuck.creatid = creatng->index;
+    //static struct TunnelerStuck tunstuck;
+    static unsigned long stuck[CREATURES_COUNT];
+    //tunstuck.creatid = creatng->index;
     if (tundist.olddist == tundist.newdist)
     {
-        tunstuck.stuck += 1;
-        JUSTMSG("TESTLOG: old is %d and new is %d, so stuck now %d",tundist.olddist, tundist.newdist,tunstuck.stuck);
-        JUSTMSG("TESTLOG: for struct id = %d, index = %d",tunstuck.creatid,creatng->index);
+        //tunstuck.stuck += 1;
+        stuck[creatng->ccontrol_idx] +=1;
+        JUSTMSG("TESTLOG: old is %d and new is %d, so stuck now %d",tundist.olddist, tundist.newdist,stuck[creatng->ccontrol_idx]);
+        JUSTMSG("TESTLOG: for struct id = %d, index = %d",stuck[creatng->ccontrol_idx],creatng->ccontrol_idx);
     }
     else {
         JUSTMSG("TESTLOG: different - old = %d and new = %d. So stuck = 0",tundist.olddist,tundist.newdist);
         tundist.olddist = tundist.newdist;
-        tunstuck.stuck = 0;
+        //tunstuck.stuck = 0;
+        stuck[creatng->ccontrol_idx] = 0;
     }
-    JUSTMSG("TESTLOG: Unit %d stuck = %d",tunstuck.creatid,tunstuck.stuck);
-    if ( tunstuck.stuck >= 500)
+    JUSTMSG("TESTLOG: Unit %d stuck = %d",creatng->ccontrol_idx,stuck[creatng->ccontrol_idx]);
+    if ( stuck[creatng->ccontrol_idx] >= 500)
     {
-        JUSTMSG("TESTLOG: RESET, on stuck = %d",tunstuck.stuck);
+        JUSTMSG("TESTLOG: RESET, on stuck = %d",stuck[creatng->ccontrol_idx]);
         creature_choose_random_destination_on_valid_adjacent_slab(creatng);
         return 0;
     }
