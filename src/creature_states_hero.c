@@ -991,15 +991,13 @@ long creature_tunnel_to(struct Thing *creatng, struct Coord3d *pos, short speed)
         creature_set_speed(creatng, 0);
         return 0;
     }
-    long move_result;
-    move_result = creature_move_to(creatng, &cctrl->navi.pos_next, speed, cctrl->move_flags, 0);
-    // We could switch to move state; but without it we can easier react on being close to target but not exactly on it
-    // not to mention our moveto_pos is not a target move position but target dig position
-    if (move_result == -1)
+    if (dist > 768)
     {
-        ERRORLOG("Move %s index %d to (%d,%d) reset - no route",thing_model_name(creatng),(int)creatng->index,(int)pos->x.stl.num,(int)pos->y.stl.num);
-        clear_wallhugging_path(&cctrl->navi);
-        creature_set_speed(creatng, speed);
+        if (creature_choose_random_destination_on_valid_adjacent_slab(creatng))
+        {
+            creatng->continue_state = CrSt_TunnellerDoingNothing;
+        }
+        ERRORLOG("Move %s index %d to (%d,%d) reset - wallhug distance %d too large",thing_model_name(creatng),(int)creatng->index,(int)pos->x.stl.num,(int)pos->y.stl.num,(int)dist);
         return 0;
     }
     // If the tunneler tries to tunnel the same distance for 150 times, he must be stuck. So push him.
@@ -1021,8 +1019,8 @@ long creature_tunnel_to(struct Thing *creatng, struct Coord3d *pos, short speed)
         if (creature_choose_random_destination_on_valid_adjacent_slab(creatng))
         {
             creatng->continue_state = CrSt_TunnellerDoingNothing;
+            ERRORLOG("%s index %d stuck - attempt %d to unlodge",thing_model_name(creatng),(int)creatng->index,identical[creatng->ccontrol_idx]-149);
         }
-        ERRORLOG("%s index %d stuck - attempt %d to unlodge",thing_model_name(creatng),(int)creatng->index,identical[creatng->ccontrol_idx]-149);
         return 0;
     }
     if (creature_turn_to_face(creatng, &cctrl->navi.pos_next) > 0)
