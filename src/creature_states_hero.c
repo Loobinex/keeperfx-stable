@@ -1002,30 +1002,27 @@ long creature_tunnel_to(struct Thing *creatng, struct Coord3d *pos, short speed)
         creature_set_speed(creatng, speed);
         return 0;
     }
-    static struct TunnelDistance tundist;
-    tundist.creatid = creatng->index;
-    tundist.newdist = dist;
-    //static struct TunnelerStuck tunstuck;
-    static unsigned long stuck[CREATURES_COUNT];
-    //tunstuck.creatid = creatng->index;
-    if (tundist.olddist == tundist.newdist)
+    // If the tunneler tries to tunnel the same distance for 150 times, he must be stuck. So push him.
+    static struct TunnelDistance tunnel;
+    tunnel.creatid = creatng->index;
+    tunnel.newdist = dist;
+    static unsigned long identical[CREATURES_COUNT];
+    if (tunnel.olddist == tunnel.newdist)
     {
-        //tunstuck.stuck += 1;
-        stuck[creatng->ccontrol_idx] +=1;
-        JUSTMSG("TESTLOG: old is %d and new is %d, so stuck now %d",tundist.olddist, tundist.newdist,stuck[creatng->ccontrol_idx]);
-        JUSTMSG("TESTLOG: for struct id = %d, index = %d",stuck[creatng->ccontrol_idx],creatng->ccontrol_idx);
+        identical[creatng->ccontrol_idx] += 1;
     }
-    else {
-        JUSTMSG("TESTLOG: different - old = %d and new = %d. So stuck = 0",tundist.olddist,tundist.newdist);
-        tundist.olddist = tundist.newdist;
-        //tunstuck.stuck = 0;
-        stuck[creatng->ccontrol_idx] = 0;
-    }
-    JUSTMSG("TESTLOG: Unit %d stuck = %d",creatng->ccontrol_idx,stuck[creatng->ccontrol_idx]);
-    if ( stuck[creatng->ccontrol_idx] >= 500)
+    else
     {
-        JUSTMSG("TESTLOG: RESET, on stuck = %d",stuck[creatng->ccontrol_idx]);
-        creature_choose_random_destination_on_valid_adjacent_slab(creatng);
+        tunnel.olddist = tunnel.newdist;
+        identical[creatng->ccontrol_idx] = 0;
+    }
+    if ( identical[creatng->ccontrol_idx] >= 150)
+    {
+        if (creature_choose_random_destination_on_valid_adjacent_slab(creatng))
+        {
+            creatng->continue_state = CrSt_TunnellerDoingNothing;
+        }
+        ERRORLOG("%s index %d stuck - attempt %d to unlodge",thing_model_name(creatng),(int)creatng->index,identical[creatng->ccontrol_idx]-149);
         return 0;
     }
     if (creature_turn_to_face(creatng, &cctrl->navi.pos_next) > 0)

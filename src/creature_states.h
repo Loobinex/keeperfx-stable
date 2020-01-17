@@ -298,10 +298,6 @@ struct TunnelDistance{
     unsigned long olddist;
     unsigned long newdist;
 };
-/**struct TunnelerStuck{
-    unsigned int creatid;
-    unsigned long stuck;
-};**/
 
 TbBool state_info_invalid(struct StateInfo *stati);
 TbBool can_change_from_state_to(const struct Thing *thing, CrtrStateId curr_state, CrtrStateId next_state);
