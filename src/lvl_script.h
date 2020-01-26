@@ -120,6 +120,7 @@ enum TbScriptCommands {
     Cmd_RUN_AFTER_VICTORY                 = 100,
     Cmd_LEVEL_UP_CREATURE                 = 101,
     Cmd_CHANGE_CREATURE_OWNER             = 102,
+    Cmd_SET_ROOM_VARIABLE                 = 103,
 };
 
 enum ScriptVariables {
@@ -180,6 +181,11 @@ enum MapLocationTypes {
     MLoc_APPROPRTDUNGEON,
     MLoc_DOORKIND,
     MLoc_TRAPKIND,
+};
+
+enum RoomVariables {
+    RVar_NONE = 0,
+    RVar_VAMPIREBODIES,
 };
 
 /******************************************************************************/

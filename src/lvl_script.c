@@ -140,6 +140,7 @@ const struct CommandDesc command_desc[] = {
   {"RUN_AFTER_VICTORY",                 "N       ", Cmd_RUN_AFTER_VICTORY},
   {"LEVEL_UP_CREATURE",                 "PCAN    ", Cmd_LEVEL_UP_CREATURE},
   {"CHANGE_CREATURE_OWNER",             "PCAP    ", Cmd_CHANGE_CREATURE_OWNER},
+  {"SET_ROOM_VARIABLE",                 "NN      ", Cmd_SET_ROOM_VARIABLE}, //AN
   {NULL,                                "        ", Cmd_NONE},
 };
 
@@ -375,6 +376,11 @@ const struct NamedCommand creature_select_criteria_desc[] = {
   {"ON_ENEMY_GROUND",      CSelCrit_OnEnemyGround},
   {"ON_FRIENDLY_GROUND",   CSelCrit_OnFriendlyGround},
   {"ANYWHERE",             CSelCrit_Any},
+  {NULL,                   0},
+};
+
+const struct NamedCommand room_variable_desc[] = {
+  {"VAMPIRE_BODIES",       1}, //RVar_VAMPIREBODIES
   {NULL,                   0},
 };
 
@@ -2425,6 +2431,21 @@ void command_export_variable(long plr_range_id, const char *varib_name, const ch
     command_add_value(Cmd_EXPORT_VARIABLE, plr_range_id, varib_type, varib_id, flg_id);
 }
 
+void command_set_room_variable(int objectv, unsigned long roomvar) //const char *objectv
+{
+    JUSTMSG("TESTLOG: Roomvar, %d",objectv);
+  switch (objectv)
+    {
+    case 1:
+    JUSTMSG("TESTLOG: object %d",objectv);
+    game.bodies_for_vampire = objectv;
+        break;
+    default:
+    JUSTMSG("TESTLOG: default object");
+        break;
+    }
+}
+
 /** Adds a script command to in-game structures.
  *
  * @param cmd_desc
@@ -2662,6 +2683,9 @@ void script_add_command(const struct CommandDesc *cmd_desc, const struct ScriptL
         {
             game.system_flags |= GSF_RunAfterVictory;
         }
+        break;
+    case Cmd_SET_ROOM_VARIABLE:
+        command_set_room_variable(scline->np[0], scline->np[1]);
         break;
     default:
         SCRPTERRLOG("Unhandled SCRIPT command '%s'", scline->tcmnd);
