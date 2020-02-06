@@ -453,7 +453,7 @@ TbBool parse_magic_spell_blocks(char *buf, long len, const char *config_textname
       arr_size = magic_conf.spell_types_count;
       for (i=0; i < arr_size; i++)
       {
-          splconf = &game.spells_config[i];
+          splconf = &gameadd.spells_config[i];
           splconf->duration = 0;
           spinfo = get_magic_info(i);
           spinfo->caster_affected = 0;
@@ -482,7 +482,7 @@ TbBool parse_magic_spell_blocks(char *buf, long len, const char *config_textname
           }
           continue;
     }
-    splconf = &game.spells_config[i];
+    splconf = &gameadd.spells_config[i];
     spinfo = get_magic_info(i);
     spellst = get_spell_model_stats(i);
 #define COMMAND_TEXT(cmd_num) get_conf_parameter_text(magic_spell_commands,cmd_num)

@@ -681,7 +681,7 @@ void process_spells_affected_by_effect_elements(struct Thing *thing)
     if ((cctrl->stateblock_flags & CCSpl_Teleport) != 0)
     {
         dturn = get_spell_duration_left_on_thing(thing, SplK_Teleport);
-        struct SpellConfig* splconf = &game.spells_config[SplK_Teleport];
+        struct SpellConfig* splconf = &gameadd.spells_config[SplK_Teleport];
         if (splconf->duration / 2 < dturn)
         {
             effeltng = create_effect_element(&thing->mappos, 0x12u, thing->owner);

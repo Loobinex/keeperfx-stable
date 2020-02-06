@@ -871,7 +871,7 @@ void first_apply_spell_effect_to_thing(struct Thing *thing, SpellKind spell_idx,
     if (spell_lev > SPELL_MAX_LEVEL)
         spell_lev = SPELL_MAX_LEVEL;
     // This pointer may be invalid if spell_idx is incorrect. But we're using it only when correct.
-    struct SpellConfig* splconf = &game.spells_config[spell_idx];
+    struct SpellConfig* splconf = &gameadd.spells_config[spell_idx];
     long n;
     switch (spell_idx)
     {
@@ -1054,7 +1054,7 @@ void reapply_spell_effect_to_thing(struct Thing *thing, long spell_idx, long spe
         spell_lev = SPELL_MAX_LEVEL;
     struct CastedSpellData* cspell = &cctrl->casted_spells[idx];
     // This pointer may be invalid if spell_idx is incorrect. But we're using it only when correct.
-    struct SpellConfig* splconf = &game.spells_config[spell_idx];
+    struct SpellConfig* splconf = &gameadd.spells_config[spell_idx];
     const struct MagicStats* pwrdynst;
     switch (spell_idx)
     {
@@ -1231,7 +1231,7 @@ void terminate_thing_spell_effect(struct Thing *thing, SpellKind spkind)
 void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpellData *cspell)
 {
     struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
-    struct SpellConfig* splconf = &game.spells_config[SplK_Teleport];
+    struct SpellConfig* splconf = &gameadd.spells_config[SplK_Teleport];
     if (cspell->duration == splconf->duration / 2)
     {
         struct Coord3d pos;
