@@ -644,6 +644,9 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
           shotst = get_shot_model_stats(i);
           LbMemorySet(shotst->code_name, 0, COMMAND_WORD_LEN);
           shotst->model_flags = 0;
+          if (i == 18)
+              shotst->old = &shot_stats[11];
+          else
           if (i < 30)
               shotst->old = &shot_stats[i];
           else
