@@ -124,18 +124,19 @@ const struct CombatWeapon melee_object_offensive_weapon[] = {
 };
 
 const struct CombatWeapon ranged_object_offensive_weapon[] = {
-    {CrInst_LIGHTNING,         768, LONG_MAX},
-    {CrInst_HAILSTORM,         156, LONG_MAX},
-    {CrInst_DRAIN,             156, LONG_MAX},
-    {CrInst_NAVIGATING_MISSILE,156, LONG_MAX},
-    {CrInst_MISSILE,           156, LONG_MAX},
-    {CrInst_FIREBALL,          156, LONG_MAX},
-    {CrInst_FIRE_ARROW,        156, LONG_MAX},
-    {CrInst_WORD_OF_POWER,       0, 284},
-    {CrInst_FLAME_BREATH,      156, 284},
-    {CrInst_SWING_WEAPON_SWORD,  0, 284},
-    {CrInst_SWING_WEAPON_FIST,   0, 284},
-    {CrInst_NULL,                0,   0},
+    {CrInst_LIGHTNING,              768, LONG_MAX},
+    {CrInst_HAILSTORM,              156, LONG_MAX},
+    {CrInst_DRAIN,                  156, LONG_MAX},
+    {CrInst_NAVIGATING_MISSILE,     156, LONG_MAX},
+    {CrInst_MISSILE,                156, LONG_MAX},
+    {CrInst_FIREBALL,               156, LONG_MAX},
+    {CrInst_CAST_SPELL_TIME_BOMB,   768, LONG_MAX},
+    {CrInst_FIRE_ARROW,             156, LONG_MAX},
+    {CrInst_WORD_OF_POWER,            0, 284},
+    {CrInst_FLAME_BREATH,           156, 284},
+    {CrInst_SWING_WEAPON_SWORD,       0, 284},
+    {CrInst_SWING_WEAPON_FIST,        0, 284},
+    {CrInst_NULL,                     0,   0},
 };
 
 const signed char pos_calcs[][2] = {
