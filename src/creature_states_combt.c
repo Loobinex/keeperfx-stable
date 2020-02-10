@@ -2295,9 +2295,9 @@ long change_creature_with_existing_attacker(struct Thing *fighter, struct Thing 
           if (cctrl->opponents_ranged[i] > 0)
           {
               creatng = thing_get(cctrl->opponents_ranged[i]);
-              struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+              struct CreatureControl* crctrl = creature_control_get_from_thing(creatng);
               dist = get_2d_box_distance(&creatng->mappos, &enemy->mappos) - (enemy->clipbox_size_xy + creatng->clipbox_size_xy) / 2;
-              score = get_combat_score(creatng, enemy, cctrl->combat.attack_type, dist);
+              score = get_combat_score(creatng, enemy, crctrl->combat.attack_type, dist);
               if (creature_is_actually_scared(creatng, enemy)) {
                   score -= 512;
               }
@@ -2317,9 +2317,9 @@ long change_creature_with_existing_attacker(struct Thing *fighter, struct Thing 
             if (cctrl->opponents_melee[i] > 0)
             {
                 creatng = thing_get(cctrl->opponents_melee[i]);
-                struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+                struct CreatureControl* csctrl = creature_control_get_from_thing(creatng);
                 dist = get_2d_box_distance(&creatng->mappos, &enemy->mappos) - (enemy->clipbox_size_xy + creatng->clipbox_size_xy) / 2;
-                score = get_combat_score(creatng, enemy, cctrl->combat.attack_type, dist);
+                score = get_combat_score(creatng, enemy, csctrl->combat.attack_type, dist);
                 if (creature_is_actually_scared(creatng, enemy)) {
                     score -= 512;
                 }
