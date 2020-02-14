@@ -75,6 +75,30 @@ const CombatState combat_door_state[] = {
     combat_door_state_ranged_combat,
 };
 
+const struct CombatWeapon offensive_weapon[] = {
+    {CrInst_FREEZE,                 156,  LONG_MAX},
+    {CrInst_FEAR,                   156,  LONG_MAX},
+    {CrInst_CAST_SPELL_DISEASE,     156,  LONG_MAX},
+    {CrInst_CAST_SPELL_CHICKEN,     156,  LONG_MAX},
+    {CrInst_CAST_SPELL_TIME_BOMB,   768,  LONG_MAX},
+    {CrInst_FIRE_BOMB,              768,  LONG_MAX},
+    {CrInst_LIGHTNING,              768,  LONG_MAX},
+    {CrInst_HAILSTORM,              156,  LONG_MAX},
+    {CrInst_POISON_CLOUD,           156,  LONG_MAX},
+    {CrInst_DRAIN,                  156,  LONG_MAX},
+    {CrInst_SLOW,                   156, LONG_MAX},
+    {CrInst_NAVIGATING_MISSILE,     156, LONG_MAX},
+    {CrInst_MISSILE,                156, LONG_MAX},
+    {CrInst_FIREBALL,               156, LONG_MAX},
+    {CrInst_FIRE_ARROW,             156, LONG_MAX},
+    {CrInst_WORD_OF_POWER,            0, 284},
+    {CrInst_FART,                     0, 284},
+    {CrInst_FLAME_BREATH,           156, 284},
+    {CrInst_SWING_WEAPON_SWORD,       0, 284},
+    {CrInst_SWING_WEAPON_FIST,        0, 284},
+    {CrInst_NULL,                     0,   0},
+};
+
 const struct CombatWeapon ranged_offensive_weapon[] = {
     {CrInst_FREEZE,                 156, LONG_MAX},
     {CrInst_FEAR,                   156, LONG_MAX},
@@ -1856,6 +1880,32 @@ CrInstance get_best_combat_weapon_instance_to_use(const struct Thing *thing, con
     return inst_id;
 }
 
+CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thing *thing, const struct CombatWeapon * cweapons, long dist)
+{
+    CrInstance inst_id = CrInst_NULL;
+    struct InstanceInfo* inst_inf;
+    for (const struct CombatWeapon* cweapon = cweapons; cweapon->inst_id != CrInst_NULL; cweapon++)
+    {
+        inst_inf = creature_instance_info_get(cweapon->inst_id);
+        if ((inst_inf->flags & InstPF_MeleeAttack) != 0)
+        {
+            if (creature_instance_is_available(thing, cweapon->inst_id))
+            {
+                if (creature_instance_has_reset(thing, cweapon->inst_id))
+                {
+                    if ((cweapon->range_min <= dist) && (cweapon->range_max >= dist)) {
+                        return cweapon->inst_id;
+                    }
+                }
+                if (inst_id == CrInst_NULL) {
+                    inst_id = -(cweapon->inst_id);
+                }
+            }
+        }
+    }
+    return inst_id;
+}
+
 CrInstance get_best_ranged_offensive_weapon(const struct Thing *thing, long dist)
 {
     CrInstance inst_id = get_best_self_preservation_instance_to_use(thing);
@@ -1869,7 +1919,7 @@ CrInstance get_best_melee_offensive_weapon(const struct Thing *thing, long dist)
 {
     CrInstance inst_id = get_best_self_preservation_instance_to_use(thing);
     if (inst_id == CrInst_NULL) {
-        inst_id = get_best_combat_weapon_instance_to_use(thing, melee_offensive_weapon, dist);
+        inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist); //todo add additional property InstancePropertiesFlags 
     }
     return inst_id;
 }
