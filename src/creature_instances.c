@@ -314,6 +314,7 @@ TbBool instance_is_ranged_weapon(CrInstance inum)
     case CrInst_MISSILE:
     case CrInst_NAVIGATING_MISSILE:
     case CrInst_HAILSTORM:
+    case CrInst_LIZARD:
         return true;
     }
     return false;

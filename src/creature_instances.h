@@ -77,6 +77,7 @@ enum CreatureInstances {
     CrInst_TORTURED,
     CrInst_TOKING,
     CrInst_RELAXING,
+    CrInst_LIZARD,
 };
 
 /******************************************************************************/
