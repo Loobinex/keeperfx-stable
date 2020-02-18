@@ -1897,7 +1897,7 @@ CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thin
     for (const struct CombatWeapon* cweapon = cweapons; cweapon->inst_id != CrInst_NULL; cweapon++)
     {
         inst_inf = creature_instance_info_get(cweapon->inst_id);
-        if (type == 34)
+        if (type == 34) // ranged attack against object
         {
             if (((inst_inf->flags & InstPF_RangedAttack) != 0) && ((inst_inf->flags & InstPF_Dangerous) == 0) && ((inst_inf->flags & InstPF_Destructive) != 0))
             {
@@ -1915,9 +1915,9 @@ CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thin
                 }
             }
         } else
-        if (type == 4)//(((inst_inf->flags & InstPF_MeleeAttack) != 0) && (type = 4))
+        if (type == 4)// melee attack
         {
-            if ((inst_inf->flags & InstPF_MeleeAttack) != 0)
+            if (((inst_inf->flags & InstPF_MeleeAttack) != 0) || ((inst_inf->flags & InstPF_RangedDebuff) != 0 )) 
             {
                 if (creature_instance_is_available(thing, cweapon->inst_id))
                 {
@@ -1933,9 +1933,9 @@ CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thin
                 }
             }
         } else
-        if (type == 2)//(((inst_inf->flags & InstPF_RangedAttack) != 0) && (type = 2))
+        if (type == 2)// Ranged attack
         {
-            if ((inst_inf->flags & InstPF_RangedAttack) != 0)
+            if (((inst_inf->flags & InstPF_RangedAttack) != 0) || ((inst_inf->flags & InstPF_RangedDebuff) != 0 )) 
             {
                 if (creature_instance_is_available(thing, cweapon->inst_id))
                 {
