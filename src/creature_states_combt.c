@@ -1901,8 +1901,8 @@ CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thin
         {
             if ( ( (((inst_inf->flags & InstPF_RangedAttack) || (inst_inf->flags & InstPF_RangedDebuff)) && (type & 1<<1)) ||       // Ranged attack uses ranged instance or ranged debuff
                    (((inst_inf->flags & InstPF_MeleeAttack)  || (inst_inf->flags & InstPF_RangedDebuff)) && (type & 1<<2))   ) &&   // Melee attack uses melee instance or ranged debuff
-                    (( !(inst_inf->flags & InstPF_Dangerous) || (type & 1<<5) == 0 ) )                                         &&   // Non-Dangerous instances are used when asked for dangerous attacks
-                    ((inst_inf->flags & InstPF_Destructive) >= (type & 1<<6))                                                     ) // Destructive instances used against objects
+                    (!(inst_inf->flags & InstPF_Dangerous)   || !(type & 1<<5))                                            &&   // Non-Dangerous instances are used when asked for dangerous attacks
+                    ((inst_inf->flags & InstPF_Destructive)  >= (type & 1<<6))                                                     ) // Destructive instances used against objects
             {
                 if (creature_instance_has_reset(thing, cweapon->inst_id))
                 {
