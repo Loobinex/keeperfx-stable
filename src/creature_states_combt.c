@@ -1897,57 +1897,21 @@ CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thin
     for (const struct CombatWeapon* cweapon = cweapons; cweapon->inst_id != CrInst_NULL; cweapon++)
     {
         inst_inf = creature_instance_info_get(cweapon->inst_id);
-        if (type == 34) // ranged attack against object
+        if (creature_instance_is_available(thing, cweapon->inst_id))
         {
-            if (((inst_inf->flags & InstPF_RangedAttack) != 0) && ((inst_inf->flags & InstPF_Dangerous) == 0) && ((inst_inf->flags & InstPF_Destructive) != 0))
+            if ( ( (((inst_inf->flags & InstPF_RangedAttack) || (inst_inf->flags & InstPF_RangedDebuff)) && (type & 1<<1)) ||       // Ranged attack uses ranged instance or ranged debuff
+                   (((inst_inf->flags & InstPF_MeleeAttack)  || (inst_inf->flags & InstPF_RangedDebuff)) && (type & 1<<2))   ) &&   // Melee attack uses melee instance or ranged debuff
+                    (( !(inst_inf->flags & InstPF_Dangerous) || (type & 1<<5) == 0 ) )                                         &&   // Non-Dangerous instances are used when asked for dangerous attacks
+                    ((inst_inf->flags & InstPF_Destructive) >= (type & 1<<6))                                                     ) // Destructive instances used against objects
             {
-                if (creature_instance_is_available(thing, cweapon->inst_id))
+                if (creature_instance_has_reset(thing, cweapon->inst_id))
                 {
-                    if (creature_instance_has_reset(thing, cweapon->inst_id))
-                    {
-                        if ((cweapon->range_min <= dist) && (cweapon->range_max >= dist)) {
-                            return cweapon->inst_id;
-                        }
-                    }
-                    if (inst_id == CrInst_NULL) {
-                        inst_id = -(cweapon->inst_id);
+                    if ((cweapon->range_min <= dist) && (cweapon->range_max >= dist)) {
+                        return cweapon->inst_id;
                     }
                 }
-            }
-        } else
-        if (type == 4)// melee attack
-        {
-            if (((inst_inf->flags & InstPF_MeleeAttack) != 0) || ((inst_inf->flags & InstPF_RangedDebuff) != 0 )) 
-            {
-                if (creature_instance_is_available(thing, cweapon->inst_id))
-                {
-                    if (creature_instance_has_reset(thing, cweapon->inst_id))
-                    {
-                        if ((cweapon->range_min <= dist) && (cweapon->range_max >= dist)) {
-                            return cweapon->inst_id;
-                        }
-                    }
-                    if (inst_id == CrInst_NULL) {
-                        inst_id = -(cweapon->inst_id);
-                    }
-                }
-            }
-        } else
-        if (type == 2)// Ranged attack
-        {
-            if (((inst_inf->flags & InstPF_RangedAttack) != 0) || ((inst_inf->flags & InstPF_RangedDebuff) != 0 )) 
-            {
-                if (creature_instance_is_available(thing, cweapon->inst_id))
-                {
-                    if (creature_instance_has_reset(thing, cweapon->inst_id))
-                    {
-                        if ((cweapon->range_min <= dist) && (cweapon->range_max >= dist)) {
-                            return cweapon->inst_id;
-                        }
-                    }
-                    if (inst_id == CrInst_NULL) {
-                        inst_id = -(cweapon->inst_id);
-                    }
+                if (inst_id == CrInst_NULL) {
+                    inst_id = -(cweapon->inst_id);
                 }
             }
         }
@@ -1975,13 +1939,13 @@ CrInstance get_best_melee_offensive_weapon(const struct Thing *thing, long dist)
 
 long get_best_melee_object_offensive_weapon(const struct Thing *thing, long dist)
 {
-    CrInstance inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, 36);
+    CrInstance inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, 100);
     return inst_id;
 }
 
 long get_best_ranged_object_offensive_weapon(const struct Thing *thing, long dist)
 {
-    CrInstance inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist,34);
+    CrInstance inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist,98);
     return inst_id;
 }
 
