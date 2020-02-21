@@ -76,22 +76,23 @@ const CombatState combat_door_state[] = {
 };
 
 const struct CombatWeapon offensive_weapon[] = {
-    {CrInst_FREEZE,                 156,  LONG_MAX},
-    {CrInst_FEAR,                   156,  LONG_MAX},
-    {CrInst_CAST_SPELL_DISEASE,     156,  LONG_MAX},
-    {CrInst_CAST_SPELL_CHICKEN,     156,  LONG_MAX},
-    {CrInst_CAST_SPELL_TIME_BOMB,   768,  LONG_MAX},
-    {CrInst_LIZARD,                1000,  LONG_MAX},
-    {CrInst_FIRE_BOMB,              768,  LONG_MAX},
-    {CrInst_LIGHTNING,              768,  LONG_MAX},
-    {CrInst_HAILSTORM,              156,  LONG_MAX},
-    {CrInst_POISON_CLOUD,           156,  LONG_MAX},
-    {CrInst_DRAIN,                  156,  LONG_MAX},
+    {CrInst_FREEZE,                 156, LONG_MAX},
+    {CrInst_FEAR,                   156, LONG_MAX},
+    {CrInst_CAST_SPELL_DISEASE,     156, LONG_MAX},
+    {CrInst_CAST_SPELL_CHICKEN,     156, LONG_MAX},
+    {CrInst_CAST_SPELL_TIME_BOMB,   768, LONG_MAX},
+    {CrInst_LIZARD,                1000, LONG_MAX},
+    {CrInst_FIRE_BOMB,              768, LONG_MAX},
+    {CrInst_LIGHTNING,              768, LONG_MAX},
+    {CrInst_HAILSTORM,              156, LONG_MAX},
+    {CrInst_POISON_CLOUD,           156, LONG_MAX},
+    {CrInst_DRAIN,                  156, LONG_MAX},
     {CrInst_SLOW,                   156, LONG_MAX},
     {CrInst_NAVIGATING_MISSILE,     156, LONG_MAX},
     {CrInst_MISSILE,                156, LONG_MAX},
     {CrInst_FIREBALL,               156, LONG_MAX},
     {CrInst_FIRE_ARROW,             156, LONG_MAX},
+    {CrInst_WIND,                     0, LONG_MAX},
     {CrInst_WORD_OF_POWER,            0, 284},
     {CrInst_FART,                     0, 284},
     {CrInst_FLAME_BREATH,           156, 284},
@@ -1890,7 +1891,7 @@ CrInstance get_best_combat_weapon_instance_to_use(const struct Thing *thing, con
     return inst_id;
 }
 
-CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thing *thing, const struct CombatWeapon * cweapons, long dist, int type)
+CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thing *thing, const struct CombatWeapon * cweapons, long dist, int atktype)
 {
     CrInstance inst_id = CrInst_NULL;
     struct InstanceInfo* inst_inf;
@@ -1922,8 +1923,10 @@ CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thin
 CrInstance get_best_ranged_offensive_weapon(const struct Thing *thing, long dist)
 {
     CrInstance inst_id = get_best_self_preservation_instance_to_use(thing);
-    if (inst_id == CrInst_NULL) {
-        inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, 2);
+    if (inst_id == CrInst_NULL)
+    {
+        atktyp = InstPF_RangedAttack;
+        inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, atktyp);
     }
     return inst_id;
 }
@@ -1931,21 +1934,29 @@ CrInstance get_best_ranged_offensive_weapon(const struct Thing *thing, long dist
 CrInstance get_best_melee_offensive_weapon(const struct Thing *thing, long dist)
 {
     CrInstance inst_id = get_best_self_preservation_instance_to_use(thing);
-    if (inst_id == CrInst_NULL) {
-        inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, 4);
+    if (inst_id == CrInst_NULL)
+    {
+        atktyp = InstPF_MeleeAttack;
+        inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, atktyp);
     }
     return inst_id;
 }
 
 long get_best_melee_object_offensive_weapon(const struct Thing *thing, long dist)
 {
-    CrInstance inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, 100);
+    atktyp = InstPF_MeleeAttack;
+    atktyp += InstPF_Destructive;
+    atktyp += InstPF_Dangerous;
+    CrInstance inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, atktyp);
     return inst_id;
 }
 
 long get_best_ranged_object_offensive_weapon(const struct Thing *thing, long dist)
 {
-    CrInstance inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist,98);
+    atktyp = InstPF_RangedAttack;
+    atktyp += InstPF_Destructive;
+    atktyp += InstPF_Dangerous;
+    CrInstance inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist,atktyp);
     return inst_id;
 }
 
