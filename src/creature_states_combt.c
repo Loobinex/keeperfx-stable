@@ -1899,10 +1899,10 @@ CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thin
         inst_inf = creature_instance_info_get(cweapon->inst_id);
         if (creature_instance_is_available(thing, cweapon->inst_id))
         {
-            if ( ( (((inst_inf->flags & InstPF_RangedAttack) || (inst_inf->flags & InstPF_RangedDebuff)) && (type & 1<<1)) ||       // Ranged attack uses ranged instance or ranged debuff
-                   (((inst_inf->flags & InstPF_MeleeAttack)  || (inst_inf->flags & InstPF_RangedDebuff)) && (type & 1<<2))   ) &&   // Melee attack uses melee instance or ranged debuff
-                    (!(inst_inf->flags & InstPF_Dangerous)   || !(type & 1<<5))                                            &&   // Non-Dangerous instances are used when asked for dangerous attacks
-                    ((inst_inf->flags & InstPF_Destructive)  >= (type & 1<<6))                                                     ) // Destructive instances used against objects
+            if ( ( (((inst_inf->flags & InstPF_RangedAttack) ||  (inst_inf->flags & InstPF_RangedDebuff)) && (atktype & InstPF_RangedAttack)) ||
+                   (((inst_inf->flags & InstPF_MeleeAttack)  ||  (inst_inf->flags & InstPF_RangedDebuff)) && (atktype & InstPF_MeleeAttack))    )&&
+                    (!(inst_inf->flags & InstPF_Dangerous)   || !(atktype & InstPF_Dangerous))                                                   &&
+                    ((inst_inf->flags & InstPF_Destructive)  >=  (atktype & InstPF_Destructive))                                                    )
             {
                 if (creature_instance_has_reset(thing, cweapon->inst_id))
                 {
