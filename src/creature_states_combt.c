@@ -1868,30 +1868,11 @@ CrInstance get_best_quick_range_instance_to_use(const struct Thing *thing)
  * @param thing The creature for which the instance is selected.
  * @param cweapons Pointer to the first element of 0-terminated array of weapons.
  * @param dist The distance which needs to be matched.
+ * @param atktype The required properties of the attack
  * @return
  */
-CrInstance get_best_combat_weapon_instance_to_use(const struct Thing *thing, const struct CombatWeapon * cweapons, long dist)
-{
-    CrInstance inst_id = CrInst_NULL;
-    for (const struct CombatWeapon* cweapon = cweapons; cweapon->inst_id != CrInst_NULL; cweapon++)
-    {
-        if (creature_instance_is_available(thing, cweapon->inst_id))
-        {
-            if (creature_instance_has_reset(thing, cweapon->inst_id))
-            {
-                if ((cweapon->range_min <= dist) && (cweapon->range_max >= dist)) {
-                    return cweapon->inst_id;
-                }
-            }
-            if (inst_id == CrInst_NULL) {
-                inst_id = -(cweapon->inst_id);
-            }
-        }
-    }
-    return inst_id;
-}
 
-CrInstance get_best_combat_weapon_instance_to_use_configurable(const struct Thing *thing, const struct CombatWeapon * cweapons, long dist, int atktype)
+CrInstance get_best_combat_weapon_instance_to_use(const struct Thing *thing, const struct CombatWeapon * cweapons, long dist, int atktype)
 {
     CrInstance inst_id = CrInst_NULL;
     struct InstanceInfo* inst_inf;
@@ -1926,7 +1907,7 @@ CrInstance get_best_ranged_offensive_weapon(const struct Thing *thing, long dist
     if (inst_id == CrInst_NULL)
     {
         atktyp = InstPF_RangedAttack;
-        inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, atktyp);
+        inst_id = get_best_combat_weapon_instance_to_use(thing, offensive_weapon, dist, atktyp);
     }
     return inst_id;
 }
@@ -1937,7 +1918,7 @@ CrInstance get_best_melee_offensive_weapon(const struct Thing *thing, long dist)
     if (inst_id == CrInst_NULL)
     {
         atktyp = InstPF_MeleeAttack;
-        inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, atktyp);
+        inst_id = get_best_combat_weapon_instance_to_use(thing, offensive_weapon, dist, atktyp);
     }
     return inst_id;
 }
@@ -1947,7 +1928,7 @@ long get_best_melee_object_offensive_weapon(const struct Thing *thing, long dist
     atktyp = InstPF_MeleeAttack;
     atktyp += InstPF_Destructive;
     atktyp += InstPF_Dangerous;
-    CrInstance inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist, atktyp);
+    CrInstance inst_id = get_best_combat_weapon_instance_to_use(thing, offensive_weapon, dist, atktyp);
     return inst_id;
 }
 
@@ -1956,7 +1937,7 @@ long get_best_ranged_object_offensive_weapon(const struct Thing *thing, long dis
     atktyp = InstPF_RangedAttack;
     atktyp += InstPF_Destructive;
     atktyp += InstPF_Dangerous;
-    CrInstance inst_id = get_best_combat_weapon_instance_to_use_configurable(thing, offensive_weapon, dist,atktyp);
+    CrInstance inst_id = get_best_combat_weapon_instance_to_use(thing, offensive_weapon, dist,atktyp);
     return inst_id;
 }
 
@@ -3076,14 +3057,14 @@ long project_creature_attack_target_damage(const struct Thing *firing, const str
     long dist = get_combat_distance(firing, target);
     struct CreatureStats* crstat = creature_stats_get_from_thing(firing);
     if (crstat->attack_preference == AttckT_Ranged) {
-        inst_id = get_best_combat_weapon_instance_to_use_configurable(firing, offensive_weapon, dist,2);
+        inst_id = get_best_combat_weapon_instance_to_use(firing, offensive_weapon, dist,2);
         if (inst_id == CrInst_NULL) {
-            inst_id = get_best_combat_weapon_instance_to_use_configurable(firing, offensive_weapon, dist,4);
+            inst_id = get_best_combat_weapon_instance_to_use(firing, offensive_weapon, dist,4);
         }
     } else {
-        inst_id = get_best_combat_weapon_instance_to_use_configurable(firing, offensive_weapon, dist,4);
+        inst_id = get_best_combat_weapon_instance_to_use(firing, offensive_weapon, dist,4);
         if (inst_id == CrInst_NULL) {
-            inst_id = get_best_combat_weapon_instance_to_use_configurable(firing, offensive_weapon, dist,2);
+            inst_id = get_best_combat_weapon_instance_to_use(firing, offensive_weapon, dist,2);
         }
     }
     if (inst_id == CrInst_NULL) {
