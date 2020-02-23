@@ -104,7 +104,8 @@ Creature_Instf_Func creature_instances_func_list[] = {
   NULL,
 };
 
-/** struct InstanceInfo instance_info[] = {
+/* 
+struct InstanceInfo instance_info[] = {
     {0,  0,  0,  0,  0,   0,   0,  0,  0,  0,  0, NULL,                       0,  0}, //0
     {0,  8,  4,  4,  2,   8,   4,  3,  0,  1,  3, instf_creature_fire_shot,  21,  0},
     {0,  8,  4,  4,  2,   8,   4,  3,  0,  1,  3, instf_creature_fire_shot,  22,  0},
@@ -153,7 +154,7 @@ Creature_Instf_Func creature_instances_func_list[] = {
     {0, 16,  8,  8,  4,   1,   1, 14,  0,  0,  3, instf_tortured,     0,  0}, // 45
     {0, 16,  4,  4,  2,   1,   1,  5,  0,  0,  3, NULL,               0,  0},
     {0,  8,  4,  4,  2,   1,   1,  6,  0,  0,  3, NULL,               0,  0},
-};**/
+};*/
 
 /******************************************************************************/
 #ifdef __cplusplus

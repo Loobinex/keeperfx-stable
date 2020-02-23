@@ -1806,7 +1806,6 @@ CrInstance get_best_quick_range_instance_to_use(const struct Thing *thing)
  * @param atktype The required properties of the attack
  * @return
  */
-
 CrInstance get_best_combat_weapon_instance_to_use(const struct Thing *thing, const struct CombatWeapon * cweapons, long dist, int atktype)
 {
     CrInstance inst_id = CrInst_NULL;
@@ -1860,18 +1859,14 @@ CrInstance get_best_melee_offensive_weapon(const struct Thing *thing, long dist)
 
 long get_best_melee_object_offensive_weapon(const struct Thing *thing, long dist)
 {
-    atktyp = InstPF_MeleeAttack;
-    atktyp += InstPF_Destructive;
-    atktyp += InstPF_Dangerous;
+    atktyp = (InstPF_MeleeAttack | InstPF_Destructive | InstPF_Dangerous);
     CrInstance inst_id = get_best_combat_weapon_instance_to_use(thing, offensive_weapon, dist, atktyp);
     return inst_id;
 }
 
 long get_best_ranged_object_offensive_weapon(const struct Thing *thing, long dist)
 {
-    atktyp = InstPF_RangedAttack;
-    atktyp += InstPF_Destructive;
-    atktyp += InstPF_Dangerous;
+    atktyp = (InstPF_RangedAttack | InstPF_Destructive | InstPF_Dangerous);
     CrInstance inst_id = get_best_combat_weapon_instance_to_use(thing, offensive_weapon, dist,atktyp);
     return inst_id;
 }
