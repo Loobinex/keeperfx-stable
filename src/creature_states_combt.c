@@ -81,7 +81,6 @@ const struct CombatWeapon offensive_weapon[] = {
     {CrInst_CAST_SPELL_DISEASE,     156, LONG_MAX},
     {CrInst_CAST_SPELL_CHICKEN,     156, LONG_MAX},
     {CrInst_CAST_SPELL_TIME_BOMB,   768, LONG_MAX},
-    {CrInst_LIZARD,                1000, LONG_MAX},
     {CrInst_FIRE_BOMB,              768, LONG_MAX},
     {CrInst_LIGHTNING,              768, LONG_MAX},
     {CrInst_HAILSTORM,              156, LONG_MAX},
@@ -95,71 +94,6 @@ const struct CombatWeapon offensive_weapon[] = {
     {CrInst_WIND,                     0, LONG_MAX},
     {CrInst_WORD_OF_POWER,            0, 284},
     {CrInst_FART,                     0, 284},
-    {CrInst_FLAME_BREATH,           156, 284},
-    {CrInst_SWING_WEAPON_SWORD,       0, 284},
-    {CrInst_SWING_WEAPON_FIST,        0, 284},
-    {CrInst_NULL,                     0,   0},
-};
-
-const struct CombatWeapon ranged_offensive_weapon[] = {
-    {CrInst_FREEZE,                 156, LONG_MAX},
-    {CrInst_FEAR,                   156, LONG_MAX},
-    {CrInst_CAST_SPELL_DISEASE,     156, LONG_MAX},
-    {CrInst_CAST_SPELL_CHICKEN,     156, LONG_MAX},
-    {CrInst_CAST_SPELL_TIME_BOMB,   768, LONG_MAX},
-    {CrInst_LIZARD,                1000, LONG_MAX},
-    {CrInst_FIRE_BOMB,              768, LONG_MAX},
-    {CrInst_LIGHTNING,              768, LONG_MAX},
-    {CrInst_HAILSTORM,              156, LONG_MAX},
-    {CrInst_POISON_CLOUD,           156, LONG_MAX},
-    {CrInst_DRAIN,                  156, LONG_MAX},
-    {CrInst_SLOW,                   156, LONG_MAX},
-    {CrInst_NAVIGATING_MISSILE,     156, LONG_MAX},
-    {CrInst_MISSILE,                156, LONG_MAX},
-    {CrInst_FIREBALL,               156, LONG_MAX},
-    {CrInst_FIRE_ARROW,             156, LONG_MAX},
-    {CrInst_WORD_OF_POWER,            0, 284},
-    {CrInst_FART,                     0, 284},
-    {CrInst_FLAME_BREATH,           156, 284},
-    {CrInst_SWING_WEAPON_SWORD,       0, 284},
-    {CrInst_SWING_WEAPON_FIST,        0, 284},
-    {CrInst_NULL,                     0,   0},
-};
-
-const struct CombatWeapon melee_offensive_weapon[] = {
-    {CrInst_HAILSTORM,         156, LONG_MAX},
-    {CrInst_FREEZE,            156, LONG_MAX},
-    {CrInst_FEAR,              156, LONG_MAX},
-    {CrInst_CAST_SPELL_DISEASE,156, LONG_MAX},
-    {CrInst_CAST_SPELL_CHICKEN,156, LONG_MAX},
-    {CrInst_SLOW,              156, LONG_MAX},
-    {CrInst_WORD_OF_POWER,       0, 284},
-    {CrInst_FART,                0, 284},
-    {CrInst_FLAME_BREATH,      156, 284},
-    {CrInst_SWING_WEAPON_SWORD,  0, 284},
-    {CrInst_SWING_WEAPON_FIST,   0, 284},
-    {CrInst_NULL,                0,   0},
-};
-
-const struct CombatWeapon melee_object_offensive_weapon[] = {
-    {CrInst_HAILSTORM,         156, LONG_MAX},
-    {CrInst_WORD_OF_POWER,       0, 284},
-    {CrInst_FLAME_BREATH,      156, 284},
-    {CrInst_SWING_WEAPON_SWORD,  0, 284},
-    {CrInst_SWING_WEAPON_FIST,   0, 284},
-    {CrInst_NULL,                0,   0},
-};
-
-const struct CombatWeapon ranged_object_offensive_weapon[] = {
-    {CrInst_LIGHTNING,              768, LONG_MAX},
-    {CrInst_HAILSTORM,              156, LONG_MAX},
-    {CrInst_DRAIN,                  156, LONG_MAX},
-    {CrInst_NAVIGATING_MISSILE,     156, LONG_MAX},
-    {CrInst_MISSILE,                156, LONG_MAX},
-    {CrInst_FIREBALL,               156, LONG_MAX},
-    {CrInst_CAST_SPELL_TIME_BOMB,   768, LONG_MAX},
-    {CrInst_FIRE_ARROW,             156, LONG_MAX},
-    {CrInst_WORD_OF_POWER,            0, 284},
     {CrInst_FLAME_BREATH,           156, 284},
     {CrInst_SWING_WEAPON_SWORD,       0, 284},
     {CrInst_SWING_WEAPON_FIST,        0, 284},
@@ -1882,9 +1816,9 @@ CrInstance get_best_combat_weapon_instance_to_use(const struct Thing *thing, con
         if (creature_instance_is_available(thing, cweapon->inst_id))
         {
             if ( ( ((inst_inf->flags & (InstPF_RangedAttack | InstPF_RangedDebuff | InstPF_MeleeAttack)) && (atktype & InstPF_RangedAttack)) ||
-                   ((inst_inf->flags & (InstPF_MeleeAttack | InstPF_RangedDebuff))  && (atktype & InstPF_MeleeAttack))    )  &&
-                 (!(inst_inf->flags & InstPF_Dangerous)   || !(atktype & InstPF_Dangerous))                                  &&
-                 ((inst_inf->flags & InstPF_Destructive)  >=  (atktype & InstPF_Destructive))                                   )
+                   ((inst_inf->flags & (InstPF_MeleeAttack | InstPF_RangedDebuff))  && (atktype & InstPF_MeleeAttack)) ) &&
+                 (!(inst_inf->flags & InstPF_Dangerous)   || !(atktype & InstPF_Dangerous)) &&
+                 ((inst_inf->flags & InstPF_Destructive)  >=  (atktype & InstPF_Destructive)) )
             {
                 if (creature_instance_has_reset(thing, cweapon->inst_id))
                 {
