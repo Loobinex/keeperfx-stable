@@ -93,6 +93,7 @@ const struct NamedCommand creaturetype_instance_properties[] = {
   {"SELF_BUFF",            InstPF_SelfBuff},
   {"DANGEROUS",            InstPF_Dangerous},
   {"DESTRUCTIVE",          InstPF_Destructive},
+  {"QUICK",                InstPF_Quick},
   {NULL,                     0},
   };
 

@@ -303,17 +303,10 @@ CrInstance creature_instance_get_available_id_for_pos(struct Thing *thing, int r
 
 TbBool instance_is_ranged_weapon(CrInstance inum)
 {
-    switch (inum)
+    struct InstanceInfo* inst_inf;
+    inst_inf = creature_instance_info_get(inum);
+    if (inst_inf->flags & InstPF_RangedAttack)
     {
-    case CrInst_FIRE_ARROW:
-    case CrInst_FIREBALL:
-    case CrInst_FIRE_BOMB:
-    case CrInst_LIGHTNING:
-    case CrInst_POISON_CLOUD:
-    case CrInst_DRAIN:
-    case CrInst_MISSILE:
-    case CrInst_NAVIGATING_MISSILE:
-    case CrInst_HAILSTORM:
         return true;
     }
     return false;
@@ -321,16 +314,10 @@ TbBool instance_is_ranged_weapon(CrInstance inum)
 
 TbBool instance_is_ranged_weapon_vs_objects(CrInstance inum)
 {
-    switch (inum)
+    struct InstanceInfo* inst_inf;
+    inst_inf = creature_instance_info_get(inum);
+    if ((inst_inf->flags & InstPF_RangedAttack) && (inst_inf->flags & InstPF_Destructive) && !(inst_inf->flags & InstPF_Dangerous))
     {
-    case CrInst_FIRE_ARROW:
-    case CrInst_FIREBALL:
-    case CrInst_FIRE_BOMB:
-    case CrInst_LIGHTNING:
-    case CrInst_DRAIN:
-    case CrInst_MISSILE:
-    case CrInst_NAVIGATING_MISSILE:
-    case CrInst_HAILSTORM:
         return true;
     }
     return false;
@@ -338,16 +325,10 @@ TbBool instance_is_ranged_weapon_vs_objects(CrInstance inum)
 
 TbBool instance_is_quick_range_weapon(CrInstance inum)
 {
-    switch (inum)
+    struct InstanceInfo* inst_inf;
+    inst_inf = creature_instance_info_get(inum);
+    if ((inst_inf->flags & InstPF_RangedAttack) && (inst_inf->flags & InstPF_Quick))
     {
-    case CrInst_FIREBALL:
-    case CrInst_FIRE_ARROW:
-    case CrInst_MISSILE:
-    case CrInst_NAVIGATING_MISSILE:
-    case CrInst_LIGHTNING:
-    case CrInst_HAILSTORM:
-    case CrInst_GRENADE:
-    case CrInst_POISON_CLOUD:
         return true;
     }
     return false;

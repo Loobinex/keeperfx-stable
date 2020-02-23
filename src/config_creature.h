@@ -136,6 +136,7 @@ enum InstancePropertiesFlags {
     InstPF_RangedDebuff       = 0x10,
     InstPF_Dangerous          = 0x20,
     InstPF_Destructive        = 0x40,
+    InstPF_Quick              = 0x80,
 };
 
 enum CreatureDeathKind {

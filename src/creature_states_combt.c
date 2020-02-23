@@ -1881,10 +1881,10 @@ CrInstance get_best_combat_weapon_instance_to_use(const struct Thing *thing, con
         inst_inf = creature_instance_info_get(cweapon->inst_id);
         if (creature_instance_is_available(thing, cweapon->inst_id))
         {
-            if ( ( (((inst_inf->flags & InstPF_RangedAttack) ||  (inst_inf->flags & InstPF_RangedDebuff)) && (atktype & InstPF_RangedAttack)) ||
-                   (((inst_inf->flags & InstPF_MeleeAttack)  ||  (inst_inf->flags & InstPF_RangedDebuff)) && (atktype & InstPF_MeleeAttack))    )&&
-                    (!(inst_inf->flags & InstPF_Dangerous)   || !(atktype & InstPF_Dangerous))                                                   &&
-                    ((inst_inf->flags & InstPF_Destructive)  >=  (atktype & InstPF_Destructive))                                                    )
+            if ( ( ((inst_inf->flags & (InstPF_RangedAttack | InstPF_RangedDebuff | InstPF_MeleeAttack)) && (atktype & InstPF_RangedAttack)) ||
+                   ((inst_inf->flags & (InstPF_MeleeAttack | InstPF_RangedDebuff))  && (atktype & InstPF_MeleeAttack))    )  &&
+                 (!(inst_inf->flags & InstPF_Dangerous)   || !(atktype & InstPF_Dangerous))                                  &&
+                 ((inst_inf->flags & InstPF_Destructive)  >=  (atktype & InstPF_Destructive))                                   )
             {
                 if (creature_instance_has_reset(thing, cweapon->inst_id))
                 {
