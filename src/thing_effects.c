@@ -40,6 +40,7 @@
 #include "game_legacy.h"
 #include "engine_redraw.h"
 #include "keeperfx.hpp"
+#include "gui_soundmsgs.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -1268,17 +1269,38 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
         MapCoordDelta distance = get_2d_distance(pos, &tngdst->mappos);
         if (distance < max_dist)
         {
-            long move_angle = get_angle_xy_to(pos, &tngdst->mappos);
             if (tngdst->class_id == TCls_Creature)
             {
                 HitPoints damage = get_radially_decaying_value(max_damage, max_dist / 4, 3 * max_dist / 4, distance) + 1;
                 SYNCDBG(7,"Causing %d damage to %s at distance %d",(int)damage,thing_model_name(tngdst),(int)distance);
                 apply_damage_to_thing_and_display_health(tngdst, damage, damage_type, owner);
                 affected = true;
+                if (tngdst->health < 0)
+                {
+                    CrDeathFlags dieflags = CrDed_DiedInBattle;
+                    // Explosions kill rather than only stun friendly creatures when imprison is on
+                    if (tngsrc->owner == tngdst->owner)
+                    {
+                        dieflags |= CrDed_NoUnconscious;
+                    }
+                    kill_creature(tngdst, tngsrc, -1, dieflags);
+                    affected = true;
+                }
             }
-            // If the thing isn't dying, move it
-            if ((tngdst->class_id != TCls_Creature) || (tngdst->health >= 0))
+            if (thing_is_dungeon_heart(tngdst))
             {
+                HitPoints damage = get_radially_decaying_value(max_damage, max_dist / 4, 3 * max_dist / 4, distance) + 1;
+                SYNCDBG(7,"Causing %d damage to %s at distance %d",(int)damage,thing_model_name(tngdst),(int)distance);
+                apply_damage_to_thing(tngdst, damage, damage_type, -1);
+                affected = true;
+                event_create_event_or_update_nearby_existing_event(tngdst->mappos.x.val, tngdst->mappos.y.val,EvKind_HeartAttacked, tngdst->owner, 0);
+                if (is_my_player_number(tngdst->owner))
+                {
+                    output_message(SMsg_HeartUnderAttack, 400, true);
+                }
+            } else // Explosions move creatures and other things
+            {
+                long move_angle = get_angle_xy_to(pos, &tngdst->mappos);
                 long move_dist = get_radially_decaying_value(blow_strength, max_dist / 4, 3 * max_dist / 4, distance);
                 if (move_dist > 0)
                 {
@@ -1287,17 +1309,7 @@ TbBool explosion_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, con
                     tngdst->state_flags |= TF1_PushAdd;
                     affected = true;
                 }
-            } else
-            {
-                CrDeathFlags dieflags = CrDed_DiedInBattle;
-                // Explosions kill rather than only stun friendly creatures when imprison is on
-                if (tngsrc->owner == tngdst->owner)
-                {
-                    dieflags |= CrDed_NoUnconscious;
-                }
-                kill_creature(tngdst, tngsrc, -1, dieflags);
-                affected = true;
-            }
+            } 
         }
     }
     return affected;
@@ -1317,7 +1329,6 @@ TbBool explosion_affecting_door(struct Thing *tngsrc, struct Thing *tngdst, cons
         MapCoordDelta distance = get_2d_distance(pos, &tngdst->mappos);
         if (distance < max_dist)
         {
-            long move_angle = get_angle_xy_to(pos, &tngdst->mappos);
             HitPoints damage = get_radially_decaying_value(max_damage, max_dist / 4, 3 * max_dist / 4, distance) + 1;
             SYNCDBG(7,"Causing %d damage to %s at distance %d",(int)damage,thing_model_name(tngdst),(int)distance);
             apply_damage_to_thing(tngdst, damage, damage_type, -1);
