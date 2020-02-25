@@ -78,7 +78,6 @@ const CombatState combat_door_state[] = {
 const struct CombatWeapon offensive_weapon[] = {
     {CrInst_FREEZE,                 156, LONG_MAX},
     {CrInst_FEAR,                   156, LONG_MAX},
-    {CrInst_CAST_SPELL_GROUP,       156, LONG_MAX},
     {CrInst_CAST_SPELL_DISEASE,     156, LONG_MAX},
     {CrInst_CAST_SPELL_CHICKEN,     156, LONG_MAX},
     {CrInst_CAST_SPELL_TIME_BOMB,   768, LONG_MAX},
