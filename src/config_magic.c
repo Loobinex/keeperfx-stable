@@ -107,6 +107,8 @@ const struct NamedCommand shotmodel_properties_commands[] = {
   {"SLAPPABLE",         1},
   {"NAVIGABLE",         2},
   {"BOULDER",           3},
+  {"REBOUND_IMMUNE",    4},
+  {"DIGGING",           5},
   {NULL,                0},
   };
 
@@ -825,6 +827,14 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
                 break;
             case 3: // BOULDER
                 shotst->model_flags |= ShMF_Boulder;
+                n++;
+                break;
+            case 4: // REBOUND_IMMUNE
+                shotst->model_flags |= ShMF_ReboundImmune;
+                n++;
+                break;
+            case 5: // DIGGING
+                shotst->model_flags |= ShMF_Digging;
                 n++;
                 break;
             default:

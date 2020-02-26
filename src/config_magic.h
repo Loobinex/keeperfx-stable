@@ -118,9 +118,11 @@ enum PowerKinds {
  */
 enum ShotModelFlags {
     /** Set if the shot can be slapped with hand of evil of owning player. */
-    ShMF_Slappable  = 0x0001,
-    ShMF_Navigable  = 0x0002,
-    ShMF_Boulder    = 0x0004,
+    ShMF_Slappable      = 0x0001,
+    ShMF_Navigable      = 0x0002,
+    ShMF_Boulder        = 0x0004,
+    ShMF_ReboundImmune  = 0x0008,
+    ShMF_Digging        = 0x0010,
 };
 
 enum PowerCanCastFlags {
@@ -316,7 +318,7 @@ struct ShotStats // sizeof = 101
   short cast_spell_kind;
   unsigned char health_drain;
   unsigned char cannot_hit_thing;
-  unsigned char field_29;
+  unsigned char rebound_immune_UNUSED;
   unsigned char push_on_hit;
   struct ShotHitConfig hit_generic;
   struct ShotHitConfig hit_door;
@@ -331,15 +333,15 @@ struct ShotStats // sizeof = 101
   short is_boulder;
   unsigned char field_47;
   unsigned char is_melee;
-  unsigned char field_49;
+  unsigned char is_digging_UNUSED;
   unsigned char area_hit_type_UNUSED;
   unsigned char group_with_shooter;
   unsigned char deals_magic_damage;
   unsigned char cannot_make_target_unconscious;
   short experience_given_to_shooter;
-  short field_50;
-  unsigned char field_52;
-  unsigned char field_53;
+  short lightf_50;
+  unsigned char lightf_52;
+  unsigned char lightf_53;
   unsigned char field_54[4];
   unsigned char field_58[8];
   unsigned char field_60[4];

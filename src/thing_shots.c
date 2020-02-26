@@ -76,9 +76,10 @@ TbBool shot_model_is_navigable(long tngmodel)
     return ((shotst->model_flags & ShMF_Navigable) != 0);
 }
 
-TbBool shot_is_boulder(const struct Thing *thing)
+TbBool shot_is_boulder(const struct Thing *shotng)
 {
-    return (thing->model == ShM_Boulder); //TODO CONFIG shot model dependency, make config option instead
+    struct ShotConfigStats* shotst = get_shot_model_stats(shotng->model);
+    return ((shotst->model_flags & ShM_Boulder) != 0);
 }
 
 TbBool detonate_shot(struct Thing *shotng)
@@ -364,7 +365,8 @@ TbBool shot_hit_wall_at(struct Thing *shotng, struct Coord3d *pos)
     TbBool shot_explodes = 0;
     struct ShotConfigStats* shotst = get_shot_model_stats(shotng->model);
     unsigned long blocked_flags = get_thing_blocked_flags_at(shotng, pos);
-    if ( shotst->old->field_49 ) {
+    if (shotst->model_flags & ShMF_Digging)
+    {
         process_dig_shot_hit_wall(shotng, blocked_flags);
     }
 
@@ -868,7 +870,7 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
     if ((shotst->old->cannot_hit_thing != 0) || (trgtng->health < 0)) {
         return 0;
     }
-    if (creature_affected_by_spell(trgtng, SplK_Rebound) && (shotst->old->field_29 == 0))
+    if (creature_affected_by_spell(trgtng, SplK_Rebound) && !(shotst->model_flags & ShMF_ReboundImmune))
     {
         struct Thing* killertng = INVALID_THING;
         if (shotng->index != shotng->parent_idx) {
@@ -1366,15 +1368,15 @@ struct Thing *create_shot(struct Coord3d *pos, unsigned short model, unsigned sh
     thing->shot.damage = shotst->old->damage;
     thing->shot.dexterity = 255;
     thing->health = shotst->health;
-    if (shotst->old->field_50)
+    if (shotst->old->lightf_50)
     {
         struct InitLight ilght;
         LbMemorySet(&ilght, 0, sizeof(struct InitLight));
         memcpy(&ilght.mappos,&thing->mappos,sizeof(struct Coord3d));
-        ilght.field_0 = shotst->old->field_50;
-        ilght.field_2 = shotst->old->field_52;
+        ilght.field_0 = shotst->old->lightf_50;
+        ilght.field_2 = shotst->old->lightf_52;
         ilght.is_dynamic = 1;
-        ilght.field_3 = shotst->old->field_53;
+        ilght.field_3 = shotst->old->lightf_53;
         thing->light_id = light_create_light(&ilght);
         if (thing->light_id == 0) {
             // Being out of free lights is quite common - so info instead of warning here
