@@ -123,6 +123,7 @@ enum ShotModelFlags {
     ShMF_Boulder        = 0x0004,
     ShMF_ReboundImmune  = 0x0008,
     ShMF_Digging        = 0x0010,
+    ShMF_LifeDrain      = 0x0020,
 };
 
 enum PowerCanCastFlags {
@@ -316,7 +317,7 @@ struct ShotStats // sizeof = 101
   short hit_sound;
   unsigned char field_24;
   short cast_spell_kind;
-  unsigned char health_drain;
+  unsigned char health_drain_UNUSED;
   unsigned char cannot_hit_thing;
   unsigned char rebound_immune_UNUSED;
   unsigned char push_on_hit;

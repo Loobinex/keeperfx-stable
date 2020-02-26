@@ -109,6 +109,7 @@ const struct NamedCommand shotmodel_properties_commands[] = {
   {"BOULDER",           3},
   {"REBOUND_IMMUNE",    4},
   {"DIGGING",           5},
+  {"LIFE_DRAIN",        6},
   {NULL,                0},
   };
 
@@ -835,6 +836,10 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
                 break;
             case 5: // DIGGING
                 shotst->model_flags |= ShMF_Digging;
+                n++;
+                break;
+            case 6: // LIFE_DRAIN
+                shotst->model_flags |= ShMF_LifeDrain;
                 n++;
                 break;
             default:
