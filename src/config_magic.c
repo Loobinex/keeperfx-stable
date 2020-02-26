@@ -755,8 +755,8 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
           }
           if (n < 1)
           {
-              CONFWRNLOG("Incorrect shot model \"%s\" in [%s] block of %s file.",
-                  word_buf,block_buf,config_textname);
+              //CONFWRNLOG("Incorrect shot model \"%s\" in [%s] block of %s file.",word_buf,block_buf,config_textname);
+              shotst->damage_type = 0; //Default damage type to "none", to allow empty values in config.
               break;
           }
           break;
