@@ -594,7 +594,7 @@ long shot_hit_object_at(struct Thing *shotng, struct Thing *target, struct Coord
         return 0;
     }
     struct ObjectConfig* objconf = get_object_model_stats2(target->model);
-    if (objconf->resistant_to_nonmagic && !shotst->old->deals_magic_damage) {
+    if (objconf->resistant_to_nonmagic && !(shotst->damage_type == DmgT_Magical)) {
         return 0;
     }
     struct Thing* creatng = INVALID_THING;
@@ -603,7 +603,7 @@ long shot_hit_object_at(struct Thing *shotng, struct Thing *target, struct Coord
     }
     if (thing_is_dungeon_heart(target))
     {
-        if (shotng->model == 21) //TODO CONFIG shot model dependency, make config option instead
+        if (shotng->model == 21) //TODO CONFIG shot model dependency, make config option instead //give property!
         {
             thing_play_sample(target, 134+UNSYNC_RANDOM(3), NORMAL_PITCH, 0, 3, 0, 3, FULL_LOUDNESS);
         } else

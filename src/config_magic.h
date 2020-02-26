@@ -336,7 +336,7 @@ struct ShotStats // sizeof = 101
   unsigned char is_digging_UNUSED;
   unsigned char area_hit_type_UNUSED;
   unsigned char group_with_shooter;
-  unsigned char deals_magic_damage;
+  unsigned char deals_magic_damage_UNUSED;
   unsigned char cannot_make_target_unconscious;
   short experience_given_to_shooter;
   short lightf_50;
