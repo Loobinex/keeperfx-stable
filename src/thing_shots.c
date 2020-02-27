@@ -1184,35 +1184,7 @@ TngUpdateRet update_shot(struct Thing *thing)
     } else
     {
         long i;
-        switch (thing->model)
-        {
-        case ShM_Firebomb:
-            for (i = 2; i > 0; i--)
-            {
-              pos1.x.val = thing->mappos.x.val - ACTION_RANDOM(127) + 63;
-              pos1.y.val = thing->mappos.y.val - ACTION_RANDOM(127) + 63;
-              pos1.z.val = thing->mappos.z.val - ACTION_RANDOM(127) + 63;
-              create_thing(&pos1, TCls_EffectElem, 1, thing->owner, -1);
-            }
-            break;
-        case ShM_Lightning:
-        {
-            struct PlayerInfo* player;
-            if (lightning_is_close_to_player(myplyr, &thing->mappos))
-            {
-              if (is_my_player_number(thing->owner))
-              {
-                  player = get_player(thing->owner);
-                  if ((thing->parent_idx != 0) && (myplyr->controlled_thing_idx == thing->parent_idx))
-                  {
-                      PaletteSetPlayerPalette(player, lightning_palette);
-                      myplyr->field_3 |= Pf3F_Unkn08;
-                  }
-              }
-            }
-            break;
-        }
-        case ShM_NaviMissile:
+        if (shotst->model_flags & ShMF_Navigable) //Navigable shot property combines with other shots.
         {
             target = thing_get(thing->shot.target_idx);
             struct ComponentVector cvect;
@@ -1245,6 +1217,33 @@ TngUpdateRet update_shot(struct Thing *thing)
                 thing->veloc_push_add.y.val += cvect.y;
                 thing->veloc_push_add.z.val += cvect.z;
                 thing->state_flags |= TF1_PushAdd;
+            }
+        }
+        switch (thing->model)
+        {
+        case ShM_Firebomb:
+            for (i = 2; i > 0; i--)
+            {
+              pos1.x.val = thing->mappos.x.val - ACTION_RANDOM(127) + 63;
+              pos1.y.val = thing->mappos.y.val - ACTION_RANDOM(127) + 63;
+              pos1.z.val = thing->mappos.z.val - ACTION_RANDOM(127) + 63;
+              create_thing(&pos1, TCls_EffectElem, 1, thing->owner, -1);
+            }
+            break;
+        case ShM_Lightning:
+        {
+            struct PlayerInfo* player;
+            if (lightning_is_close_to_player(myplyr, &thing->mappos))
+            {
+              if (is_my_player_number(thing->owner))
+              {
+                  player = get_player(thing->owner);
+                  if ((thing->parent_idx != 0) && (myplyr->controlled_thing_idx == thing->parent_idx))
+                  {
+                      PaletteSetPlayerPalette(player, lightning_palette);
+                      myplyr->field_3 |= Pf3F_Unkn08;
+                  }
+              }
             }
             break;
         }
