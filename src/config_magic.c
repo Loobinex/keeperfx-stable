@@ -72,6 +72,8 @@ const struct NamedCommand magic_shot_commands[] = {
   {"SPEED",           7},
   {"PROPERTIES",      8},
   {"PUSHONHIT",       9},
+  {"FIRINGSOUND",     10},
+  {"SHOTSOUND",       11},
   {NULL,              0},
   };
 
@@ -846,7 +848,32 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
 				  COMMAND_TEXT(cmd_num), block_buf, config_textname);
 		  }
 		  break;
-          break;
+       case 10: //FIRINGSOUND
+       		  if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+		  {
+			  k = atoi(word_buf);
+			  shotst->old->firing_sound = k;
+			  n++;
+		  }
+		  if (n < 1)
+		  {
+			  CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
+				  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+		  }
+                   break;
+       case 11: //SHOTSOUND
+       		  if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+		  {
+			  k = atoi(word_buf);
+			  shotst->old->shot_sound = k;
+			  n++;
+		  }
+		  if (n < 1)
+		  {
+			  CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
+				  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+		  }
+                   break;
       case 0: // comment
           break;
       case -1: // end of buffer
