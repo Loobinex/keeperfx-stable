@@ -587,7 +587,7 @@ long shot_hit_object_at(struct Thing *shotng, struct Thing *target, struct Coord
     if (!thing_is_object(target)) {
         return 0;
     }
-    if (shotst->old->cannot_hit_thing) {
+    if (shotst->model_flags & ShMF_NoHit) {
         return 0;
     }
     if (target->health < 0) {
@@ -603,7 +603,7 @@ long shot_hit_object_at(struct Thing *shotng, struct Thing *target, struct Coord
     }
     if (thing_is_dungeon_heart(target))
     {
-        if (shotng->model == 21) //TODO CONFIG shot model dependency, make config option instead //give property!
+        if (shotng->model == 21) //TODO CONFIG shot model dependency, make config option instead
         {
             thing_play_sample(target, 134+UNSYNC_RANDOM(3), NORMAL_PITCH, 0, 3, 0, 3, FULL_LOUDNESS);
         } else
@@ -760,7 +760,7 @@ TbBool shot_kill_creature(struct Thing *shotng, struct Thing *creatng)
         dieflags = CrDed_DiedInBattle;
     } else {
         killertng = thing_get(shotng->parent_idx);
-        dieflags = CrDed_DiedInBattle | (shotst->old->cannot_make_target_unconscious?CrDed_NoUnconscious:0);
+        dieflags = CrDed_DiedInBattle | ((shotst->model_flags & ShMF_NoStun)?CrDed_NoUnconscious:0);
     }
     // Friendly fire should kill the creature, not knock out
     if (shotng->owner == creatng->owner) {
@@ -868,7 +868,7 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
     {
         return melee_shot_hit_creature_at(shotng, trgtng, pos);
     }
-    if ((shotst->old->cannot_hit_thing != 0) || (trgtng->health < 0)) {
+    if (((shotst->model_flags & ShMF_NoHit) != 0) || (trgtng->health < 0)) {
         return 0;
     }
     if (creature_affected_by_spell(trgtng, SplK_Rebound) && !(shotst->model_flags & ShMF_ReboundImmune))
@@ -948,7 +948,7 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
         }
         apply_spell_effect_to_thing(trgtng, shotst->old->cast_spell_kind, n);
     }
-    if (shotst->old->group_with_shooter)
+    if (shotst->model_flags & ShMF_GroupUp)
     {
         if (thing_is_creature(shooter))
         {
@@ -1135,7 +1135,7 @@ TngUpdateRet move_shot(struct Thing *shotng)
     struct Coord3d pos;
     TbBool move_allowed = get_thing_next_position(&pos, shotng);
     struct ShotConfigStats* shotst = get_shot_model_stats(shotng->model);
-    if (!shotst->old->cannot_hit_thing)
+    if (!(shotst->model_flags & ShMF_NoHit))
     {
         if (shot_hit_something_while_moving(shotng, &pos)) {
             return TUFRet_Deleted;

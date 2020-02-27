@@ -110,6 +110,9 @@ const struct NamedCommand shotmodel_properties_commands[] = {
   {"REBOUND_IMMUNE",    4},
   {"DIGGING",           5},
   {"LIFE_DRAIN",        6},
+  {"GROUP_UP",          7},
+  {"NO_STUN",           8},
+  {"NO_HIT",            9},
   {NULL,                0},
   };
 
@@ -840,6 +843,18 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
                 break;
             case 6: // LIFE_DRAIN
                 shotst->model_flags |= ShMF_LifeDrain;
+                n++;
+                break;
+            case 7: // GROUP_UP
+                shotst->model_flags |= ShMF_GroupUp;
+                n++;
+                break;
+            case 8: // NO_STUN
+                shotst->model_flags |= ShMF_NoStun;
+                n++;
+                break;
+            case 9: // NO_HIT
+                shotst->model_flags |= ShMF_NoHit;
                 n++;
                 break;
             default:

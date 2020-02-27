@@ -124,6 +124,9 @@ enum ShotModelFlags {
     ShMF_ReboundImmune  = 0x0008,
     ShMF_Digging        = 0x0010,
     ShMF_LifeDrain      = 0x0020,
+    ShMF_GroupUp        = 0x0040,
+    ShMF_NoStun         = 0x0080,
+    ShMF_NoHit          = 0x0100,
 };
 
 enum PowerCanCastFlags {
@@ -318,7 +321,7 @@ struct ShotStats // sizeof = 101
   unsigned char field_24;
   short cast_spell_kind;
   unsigned char health_drain_UNUSED;
-  unsigned char cannot_hit_thing;
+  unsigned char cannot_hit_thing_UNUSED;
   unsigned char rebound_immune_UNUSED;
   unsigned char push_on_hit;
   struct ShotHitConfig hit_generic;
@@ -336,9 +339,9 @@ struct ShotStats // sizeof = 101
   unsigned char is_melee;
   unsigned char is_digging_UNUSED;
   unsigned char area_hit_type_UNUSED;
-  unsigned char group_with_shooter;
+  unsigned char group_with_shooter_UNUSED;
   unsigned char deals_magic_damage_UNUSED;
-  unsigned char cannot_make_target_unconscious;
+  unsigned char cannot_make_target_unconscious_UNUSED;
   short experience_given_to_shooter;
   short lightf_50;
   unsigned char lightf_52;
