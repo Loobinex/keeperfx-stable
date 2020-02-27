@@ -229,6 +229,7 @@ struct ShotConfigStats {
     struct ShotStats *old;
     short firing_sound;
     short shot_sound;
+    unsigned char firing_sound_variants;
 };
 
 typedef unsigned char (*Expand_Check_Func)(void);
