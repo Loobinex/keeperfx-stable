@@ -79,7 +79,7 @@ TbBool shot_model_is_navigable(long tngmodel)
 TbBool shot_is_boulder(const struct Thing *shotng)
 {
     struct ShotConfigStats* shotst = get_shot_model_stats(shotng->model);
-    return ((shotst->model_flags & ShM_Boulder) != 0);
+    return ((shotst->model_flags & ShMF_Boulder) != 0);
 }
 
 TbBool detonate_shot(struct Thing *shotng)
