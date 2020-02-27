@@ -334,12 +334,12 @@ void activate_trap_shot_head_for_target90(struct Thing *traptng, struct Thing *c
         shotng->veloc_push_add.z.val += cvect.z;
         shotng->state_flags |= TF1_PushAdd;
         shotng->byte_16 = trapstat->field_1B;
-        if (shotst->old->firing_sound > 0) {
-            thing_play_sample(traptng, shotst->old->firing_sound+UNSYNC_RANDOM(shotst->old->firing_sound_variants),
+        if (shotst->firing_sound > 0) {
+            thing_play_sample(traptng, shotst->firing_sound+UNSYNC_RANDOM(shotst->firing_sound_variants),
                 NORMAL_PITCH, 0, 3, 0, 6, FULL_LOUDNESS);
         }
-        if (shotst->old->shot_sound > 0) {
-            thing_play_sample(shotng, shotst->old->shot_sound, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+        if (shotst->shot_sound > 0) {
+            thing_play_sample(shotng, shotst->shot_sound, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
         }
     }
 }

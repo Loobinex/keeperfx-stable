@@ -852,7 +852,7 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
        		  if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
 		  {
 			  k = atoi(word_buf);
-			  shotst->old->firing_sound = k;
+			  shotst->firing_sound = k;
 			  n++;
 		  }
 		  if (n < 1)
@@ -865,7 +865,7 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
        		  if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
 		  {
 			  k = atoi(word_buf);
-			  shotst->old->shot_sound = k;
+			  shotst->shot_sound = k;
 			  n++;
 		  }
 		  if (n < 1)
