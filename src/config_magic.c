@@ -833,9 +833,9 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
             default:
                 CONFWRNLOG("Incorrect value of \"%s\" parameter \"%s\" in [%s] block of %s file.",
                     COMMAND_TEXT(cmd_num),word_buf,block_buf,config_textname);
-                break;
             }
           }
+          break;
       case 9: // PUSHONHIT
           if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
           {
