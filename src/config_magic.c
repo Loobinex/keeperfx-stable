@@ -63,19 +63,19 @@ const struct NamedCommand magic_spell_commands[] = {
   };
 
 const struct NamedCommand magic_shot_commands[] = {
-  {"NAME",            1},
-  {"HEALTH",          2},
-  {"DAMAGE",          3},
-  {"DAMAGETYPE",      4},
-  {"HITTYPE",         5},
-  {"AREADAMAGE",      6},
-  {"SPEED",           7},
-  {"PROPERTIES",      8},
-  {"PUSHONHIT",       9},
-  {"FIRINGSOUND",     10},
-  {"SHOTSOUND",       11},
-  {"FIRINGSOUNDVARIANTS",       12},
-  {NULL,              0},
+  {"NAME",                 1},
+  {"HEALTH",               2},
+  {"DAMAGE",               3},
+  {"DAMAGETYPE",           4},
+  {"HITTYPE",              5},
+  {"AREADAMAGE",           6},
+  {"SPEED",                7},
+  {"PROPERTIES",           8},
+  {"PUSHONHIT",            9},
+  {"FIRINGSOUND",         10},
+  {"SHOTSOUND",           11},
+  {"FIRINGSOUNDVARIANTS", 12},
+  {NULL,                   0},
   };
 
 const struct NamedCommand magic_power_commands[] = {
