@@ -836,57 +836,56 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
                 break;
             }
           }
-	  case 9: // PUSHONHIT
-		  if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
-		  {
-			  k = atoi(word_buf);
-			  shotst->old->push_on_hit = k;
-			  n++;
-		  }
-		  if (n < 1)
-		  {
-			  CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
-				  COMMAND_TEXT(cmd_num), block_buf, config_textname);
-		  }
-		  break;
+      case 9: // PUSHONHIT
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              shotst->old->push_on_hit = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+          }
+          break;
        case 10: //FIRINGSOUND
-       		  if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
-		  {
-			  k = atoi(word_buf);
-			  shotst->firing_sound = k;
-			  n++;
-		  }
-		  if (n < 1)
-		  {
-			  CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
-				  COMMAND_TEXT(cmd_num), block_buf, config_textname);
-		  }
+                 if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              shotst->firing_sound = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+          }
                    break;
        case 11: //SHOTSOUND
-       		  if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
-		  {
-			  k = atoi(word_buf);
-			  shotst->shot_sound = k;
-			  n++;
-		  }
-		  if (n < 1)
-		  {
-			  CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
-				  COMMAND_TEXT(cmd_num), block_buf, config_textname);
-		  }
+                 if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              shotst->shot_sound = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+          }
                    break;
        case 12: //FIRINGSOUNDVARIANTS
-       		  if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
-		  {
-			  k = atoi(word_buf);
-			  shotst->firing_sound_variants = k;
-			  n++;
-		  }
-		  if (n < 1)
-		  {
-			  CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
-				  COMMAND_TEXT(cmd_num), block_buf, config_textname);
-		  }
+                 if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              shotst->firing_sound_variants = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              shotst->firing_sound_variants = 1;
+          }
                    break;
       case 0: // comment
           break;
@@ -931,7 +930,7 @@ TbBool parse_magic_power_blocks(char *buf, long len, const char *config_textname
           powerst->select_sample_idx = 0;
           powerst->pointer_sprite_idx = 0;
           powerst->panel_tab_idx = 0;
-		  powerst->select_sound_idx = 0;
+          powerst->select_sound_idx = 0;
           if (i < magic_conf.power_types_count)
           {
               power_desc[i].name = powerst->code_name;
@@ -1234,7 +1233,7 @@ TbBool parse_magic_power_blocks(char *buf, long len, const char *config_textname
               break;
           }
           break;
-		  case 18: //SOUNDPLAYED
+          case 18: //SOUNDPLAYED
           if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
           {
             k = atoi(word_buf);
