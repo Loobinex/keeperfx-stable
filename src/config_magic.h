@@ -127,6 +127,7 @@ enum ShotModelFlags {
     ShMF_GroupUp        = 0x0040,
     ShMF_NoStun         = 0x0080,
     ShMF_NoHit          = 0x0100,
+    ShMF_StrengthBased  = 0x0200,
 };
 
 enum PowerCanCastFlags {
@@ -339,7 +340,7 @@ struct ShotStats // sizeof = 101
   short area_damage_UNUSED;
   short is_boulder;
   unsigned char field_47;
-  unsigned char is_melee;
+  unsigned char is_melee_UNUSED;
   unsigned char is_digging_UNUSED;
   unsigned char area_hit_type_UNUSED;
   unsigned char group_with_shooter_UNUSED;

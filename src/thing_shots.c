@@ -864,7 +864,7 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
     {
         apply_shot_experience_from_hitting_creature(shooter, trgtng, shotng->model);
     }
-    if (shotst->old->is_melee != 0)
+    if ((shotst->model_flags & ShMF_StrengthBased) != 0)
     {
         return melee_shot_hit_creature_at(shotng, trgtng, pos);
     }
@@ -1143,7 +1143,7 @@ TngUpdateRet move_shot(struct Thing *shotng)
     }
     if ((shotng->movement_flags & TMvF_Unknown10) != 0)
     {
-      if ((shotst->old->is_melee) && thing_in_wall_at(shotng, &pos)) {
+      if ((shotst->model_flags & ShMF_StrengthBased) && thing_in_wall_at(shotng, &pos)) {
           if (shot_hit_door_at(shotng, &pos)) {
               return TUFRet_Deleted;
           }
