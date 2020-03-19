@@ -43,6 +43,17 @@
 extern "C" {
 #endif
 /******************************************************************************/
+
+struct TrapStats trap_stats[] = {
+{0  , 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, 0, 0, 0},
+{128, 861, 384, 1,   0, 0, 0, 1, 640, 512, 1, 1, 15, 9, 0, 0, 0, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, 0, 0, 0}, //Boulder
+{1  , 844, 256, 0, 256, 0, 0, 1,   0,   0, 2, 3, 19, 2, 0, 0, 0, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, 0, 0, 0}, //Alarm
+{1  , 845, 256, 0, 256, 0, 0, 1,   0,   0, 2, 2, 13, 4, 0, 0, 0, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, 0, 0, 0}, //Gas
+{1  , 846, 256, 0, 256, 0, 0, 1,   0,   0, 2, 3, 29, 4, 0, 0, 0, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, 0, 0, 0}, //Lightning
+{1  , 844, 256, 0, 256, 0, 0, 1,   0,   0, 2, 2, 14, 4, 0, 0, 0, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, 0, 0, 0}, //Word or Power
+{1  , 845, 256, 0, 256, 0, 0, 1,   0,   0, 2, 4, 12, 4, 0, 0, 0, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, 0, 0, 0}, //Lava
+};
+
 TbBool destroy_trap(struct Thing *traptng)
 {
     if ((traptng->trap.num_shots == 0) && !is_neutral_thing(traptng) && !is_hero_thing(traptng)) {
@@ -408,6 +419,9 @@ void activate_trap(struct Thing *traptng, struct Thing *creatng)
 {
     traptng->trap.revealed = 1;
     const struct TrapStats* trapstat = &trap_stats[traptng->model];
+    //const struct TrapConfigStats* trapst = &trap_stats[traptng->model];
+   //  struct TrapConfigStats* trapst = get_trap_model_stats(traptng->model);
+    //struct TrapConfigStats *trapst;
     //TODO CONFIG trap model dependency, make config option instead
     if (traptng->model == 2) {
         event_create_event(traptng->mappos.x.val, traptng->mappos.y.val, EvKind_AlarmTriggered, traptng->owner, 0);

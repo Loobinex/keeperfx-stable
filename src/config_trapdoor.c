@@ -507,7 +507,9 @@ TbBool parse_trapdoor_trap_blocks(char *buf, long len, const char *config_textna
             k = atoi(word_buf);
             if (k >= 0)
             {
+                JUSTMSG("TESTLOG: Model %d will by %d",trap_stats[i].created_itm_model,k);
                 trap_stats[i].created_itm_model = k;
+                //trapst->created_itm_model = k;
                 n++;
             }
           }
