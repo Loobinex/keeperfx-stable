@@ -54,7 +54,7 @@ TbBool destroy_trap(struct Thing *traptng)
 
 TbBool trap_is_active(const struct Thing *thing)
 {
-    return ((thing->trap.num_shots > 0) && (thing->trap.long_14t <= game.play_gameturn));
+    return ((thing->trap.num_shots > 0) && (thing->trap.rearm_turn <= game.play_gameturn));
 }
 
 TbBool trap_is_slappable(const struct Thing *thing, PlayerNumber plyr_idx)
@@ -521,7 +521,7 @@ TngUpdateRet update_trap_trigger(struct Thing *traptng)
     if (do_trig)
     {
         const struct ManfctrConfig* mconf = &game.traps_config[traptng->model];
-        traptng->trap.long_14t = game.play_gameturn + mconf->shots_delay;
+        traptng->trap.rearm_turn = game.play_gameturn + mconf->shots_delay;
         int n = traptng->trap.num_shots;
         if ((n > 0) && (n != 255))
         {
