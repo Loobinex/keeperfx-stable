@@ -406,7 +406,7 @@ void activate_trap_slab_change(struct Thing *traptng, struct Thing *creatng)
 
 void activate_trap(struct Thing *traptng, struct Thing *creatng)
 {
-    traptng->trap.byte_18t = 1;
+    traptng->trap.revealed = 1;
     const struct TrapStats* trapstat = &trap_stats[traptng->model];
     //TODO CONFIG trap model dependency, make config option instead
     if (traptng->model == 2) {

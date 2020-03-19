@@ -5726,7 +5726,7 @@ void draw_jonty_mapwho(struct JontySpr *jspr)
             break;
         case TCls_Trap:
             //TODO CONFIG trap model dependency, make config option instead
-            if ((thing->model != 1) && (player->id_number != thing->owner) && (thing->trap.byte_18t == 0))
+            if ((thing->model != 1) && (player->id_number != thing->owner) && (thing->trap.revealed == 0))
             {
                 break;
             }

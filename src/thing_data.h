@@ -117,7 +117,7 @@ struct Thing {
       struct {
         unsigned char num_shots;
         long long_14t;
-        unsigned char byte_18t;
+        unsigned char revealed;
         unsigned char byte_19t;
       } trap;
       struct {
