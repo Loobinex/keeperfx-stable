@@ -44,35 +44,38 @@ const struct NamedCommand trapdoor_common_commands[] = {
 };
 
 const struct NamedCommand trapdoor_door_commands[] = {
-  {"NAME",            1},
-  {"MANUFACTURELEVEL",2},
-  {"MANUFACTUREREQUIRED",3},
-  {"UNUSEDUNUSED",    4},// replace by any command later; this is just to keep same indexing below
-  {"HEALTH",          5},
-  {"SELLINGVALUE",    6},
-  {"NAMETEXTID",      7},
-  {"TOOLTIPTEXTID",   8},
-  {"CRATE",           9},
-  {"SYMBOLSPRITES",  10},
-  {"POINTERSPRITES", 11},
-  {"PANELTABINDEX",  12},
-  {NULL,              0},
+  {"NAME",                  1},
+  {"MANUFACTURELEVEL",      2},
+  {"MANUFACTUREREQUIRED",   3},
+  {"UNUSEDUNUSED",          4},// replace by any command later; this is just to keep same indexing below
+  {"HEALTH",                5},
+  {"SELLINGVALUE",          6},
+  {"NAMETEXTID",            7},
+  {"TOOLTIPTEXTID",         8},
+  {"CRATE",                 9},
+  {"SYMBOLSPRITES",        10},
+  {"POINTERSPRITES",       11},
+  {"PANELTABINDEX",        12},
+  {NULL,                    0},
 };
 
 const struct NamedCommand trapdoor_trap_commands[] = {
-  {"NAME",            1},
-  {"MANUFACTURELEVEL",2},
-  {"MANUFACTUREREQUIRED",3},
-  {"SHOTS",           4},
-  {"TIMEBETWEENSHOTS",5},
-  {"SELLINGVALUE",    6},
-  {"NAMETEXTID",      7},
-  {"TOOLTIPTEXTID",   8},
-  {"CRATE",           9},
-  {"SYMBOLSPRITES",  10},
-  {"POINTERSPRITES", 11},
-  {"PANELTABINDEX",  12},
-  {NULL,              0},
+  {"NAME",                  1},
+  {"MANUFACTURELEVEL",      2},
+  {"MANUFACTUREREQUIRED",   3},
+  {"SHOTS",                 4},
+  {"TIMEBETWEENSHOTS",      5},
+  {"SELLINGVALUE",          6},
+  {"NAMETEXTID",            7},
+  {"TOOLTIPTEXTID",         8},
+  {"CRATE",                 9},
+  {"SYMBOLSPRITES",        10},
+  {"POINTERSPRITES",       11},
+  {"PANELTABINDEX",        12},
+  {"TRIGGERTYPE",          13},
+  {"ACTIVATIONTYPE",       14},
+  {"TRAPEFFECT",           15},
+  {NULL,                    0},
 };
 /******************************************************************************/
 struct TrapDoorConfig trapdoor_conf;
@@ -457,6 +460,57 @@ TbBool parse_trapdoor_trap_blocks(char *buf, long len, const char *config_textna
             if (k >= 0)
             {
                 trapst->panel_tab_idx = k;
+                n++;
+            }
+          }
+          if (n < 1)
+          {
+            CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 13: // TRIGGERTYPE
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            k = atoi(word_buf);
+            if (k >= 0)
+            {
+                JUSTMSG("TESTLOG: Trigger type %d will by %d",trap_stats[i].trigger_type,k);
+                trap_stats[i].trigger_type = k;
+                n++;
+            }
+          }
+          if (n < 1)
+          {
+            CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 14: // ACTIVATIONTYPE
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            k = atoi(word_buf);
+            if (k >= 0)
+            {
+                JUSTMSG("TESTLOG: Activation type %d will by %d",trap_stats[i].activation_type,k);
+                trap_stats[i].activation_type = k;
+                n++;
+            }
+          }
+          if (n < 1)
+          {
+            CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 15: // TRAPEFFECT
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            k = atoi(word_buf);
+            if (k >= 0)
+            {
+                JUSTMSG("TESTLOG: Model %d will by %d",trap_stats[i].created_itm_model,k);
+                trap_stats[i].created_itm_model = k;
                 n++;
             }
           }

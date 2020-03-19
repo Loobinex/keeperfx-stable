@@ -427,6 +427,9 @@ void activate_trap(struct Thing *traptng, struct Thing *creatng)
     case 4:
         activate_trap_slab_change(traptng, creatng);
         break;
+    case 5:
+        creature_fire_shot(traptng, creatng,trapstat->created_itm_model,1,1);
+        break;
     default:
         ERRORLOG("Illegal trap activation type %d",(int)trapstat->activation_type);
         break;
