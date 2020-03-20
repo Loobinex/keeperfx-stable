@@ -79,6 +79,9 @@ const struct NamedCommand trapdoor_trap_commands[] = {
   {"MODELSIZE",            17},
   {"ANIMATIONSPEED",       18},
   {"UNANIMATED",           19},
+  {"HIDDEN",               20},
+  {"SLAPPABLE",            21},
+  {"TRIGGERALARM",         22},
   {NULL,                    0},
 };
 /******************************************************************************/
@@ -237,6 +240,9 @@ TbBool parse_trapdoor_trap_blocks(char *buf, long len, const char *config_textna
           trapst->medsym_sprite_idx = 0;
           trapst->pointer_sprite_idx = 0;
           trapst->panel_tab_idx = 0;
+          trapst->hidden = 0;
+          trapst->slappable = 0;
+          trapst->notify = 0;
           if (i < trapdoor_conf.trap_types_count)
           {
               trap_desc[i].name = trapst->code_name;
@@ -577,6 +583,54 @@ TbBool parse_trapdoor_trap_blocks(char *buf, long len, const char *config_textna
             if (k >= 0)
             {
                 trap_stats[i].unanimated = k;
+                n++;
+            }
+          }
+          if (n < 1)
+          {
+            CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 20: // HIDDEN
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            k = atoi(word_buf);
+            if (k >= 0)
+            {
+                trapst->hidden = k;
+                n++;
+            }
+          }
+          if (n < 1)
+          {
+            CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 21: // SLAPPABLE
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            k = atoi(word_buf);
+            if (k >= 0)
+            {
+                trapst->slappable = k;
+                n++;
+            }
+          }
+          if (n < 1)
+          {
+            CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 22: // TRIGGERALARM
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            k = atoi(word_buf);
+            if (k >= 0)
+            {
+                trapst->notify = k;
                 n++;
             }
           }

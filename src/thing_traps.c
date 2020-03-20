@@ -71,9 +71,11 @@ TbBool trap_is_active(const struct Thing *thing)
 
 TbBool trap_is_slappable(const struct Thing *thing, PlayerNumber plyr_idx)
 {
+    struct TrapConfigStats *trapst;
     if (thing->owner == plyr_idx)
     {
-        return (thing->model == 1) && trap_is_active(thing);
+        trapst = &trapdoor_conf.trap_cfgstats[thing->model];
+        return (trapst->slappable == 1) && trap_is_active(thing);
     }
     return false;
 }
@@ -419,12 +421,10 @@ void activate_trap_slab_change(struct Thing *traptng, struct Thing *creatng)
 void activate_trap(struct Thing *traptng, struct Thing *creatng)
 {
     traptng->trap.revealed = 1;
-    const struct TrapStats* trapstat = &trap_stats[traptng->model];
-    //const struct TrapConfigStats* trapst = &trap_stats[traptng->model];
-   //  struct TrapConfigStats* trapst = get_trap_model_stats(traptng->model);
-    //struct TrapConfigStats *trapst;
-    //TODO CONFIG trap model dependency, make config option instead
-    if (traptng->model == 2) {
+    const struct TrapStats *trapstat = &trap_stats[traptng->model];
+    struct TrapConfigStats *trapst = &trapdoor_conf.trap_cfgstats[traptng->model];
+    if (trapst->notify == 1)
+    {
         event_create_event(traptng->mappos.x.val, traptng->mappos.y.val, EvKind_AlarmTriggered, traptng->owner, 0);
     }
     thing_play_sample(traptng, 176, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);

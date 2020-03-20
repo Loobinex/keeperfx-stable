@@ -224,6 +224,7 @@ long pinstfe_hand_whip(struct PlayerInfo *player, long *n)
 {
     struct PowerConfigStats* powerst = get_power_model_stats(PwrK_SLAP);
     struct Thing* thing = thing_get(player->influenced_thing_idx);
+    struct TrapConfigStats *trapst;
     if (!thing_exists(thing) || (thing->creation_turn != player->influenced_thing_creation) || (!thing_slappable(thing, player->id_number)))
     {
         player->influenced_thing_creation = 0;
@@ -271,8 +272,11 @@ long pinstfe_hand_whip(struct PlayerInfo *player, long *n)
       }
       break;
   case TCls_Trap:
-      if (thing->model == 1) //TODO CONFIG trap model dependency, make config option instead
-        external_activate_trap_shot_at_angle(thing, player->acamera->orient_a);
+      trapst = &trapdoor_conf.trap_cfgstats[thing->model];
+      if ((trapst->slappable == 1) && trap_is_active(thing))
+      {
+          external_activate_trap_shot_at_angle(thing, player->acamera->orient_a);
+      }
       break;
   case TCls_Object:
   {
