@@ -75,6 +75,7 @@ const struct NamedCommand trapdoor_trap_commands[] = {
   {"TRIGGERTYPE",          13},
   {"ACTIVATIONTYPE",       14},
   {"TRAPEFFECT",           15},
+  {"TRAPANIMATION",        16},
   {NULL,                    0},
 };
 /******************************************************************************/
@@ -509,7 +510,22 @@ TbBool parse_trapdoor_trap_blocks(char *buf, long len, const char *config_textna
             {
                 JUSTMSG("TESTLOG: Model %d will by %d",trap_stats[i].created_itm_model,k);
                 trap_stats[i].created_itm_model = k;
-                //trapst->created_itm_model = k;
+                n++;
+            }
+          }
+          if (n < 1)
+          {
+            CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 16: // TRAPANIMATION
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            k = atoi(word_buf);
+            if (k >= 0)
+            {
+                trap_stats[i].sprite_anim_idx = k;
                 n++;
             }
           }
