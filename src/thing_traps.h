@@ -50,7 +50,7 @@ struct TrapStats {  // sizeof=54
 unsigned long field_0;
   unsigned long sprite_anim_idx;
   unsigned long sprite_size_max;
-unsigned char non_animated;
+unsigned char unanimated;
   unsigned long anim_speed;
 unsigned char field_11;
   unsigned char field_12;

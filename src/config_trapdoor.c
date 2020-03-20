@@ -74,8 +74,11 @@ const struct NamedCommand trapdoor_trap_commands[] = {
   {"PANELTABINDEX",        12},
   {"TRIGGERTYPE",          13},
   {"ACTIVATIONTYPE",       14},
-  {"TRAPEFFECT",           15},
-  {"TRAPANIMATION",        16},
+  {"EFFECTTYPE",           15},
+  {"MODEL",                16},
+  {"MODELSIZE",            17},
+  {"ANIMATIONSPEED",       18},
+  {"UNANIMATED",           19},
   {NULL,                    0},
 };
 /******************************************************************************/
@@ -502,7 +505,7 @@ TbBool parse_trapdoor_trap_blocks(char *buf, long len, const char *config_textna
                 COMMAND_TEXT(cmd_num),block_buf,config_textname);
           }
           break;
-      case 15: // TRAPEFFECT
+      case 15: // EFFECTTYPE
           if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
           {
             k = atoi(word_buf);
@@ -519,13 +522,61 @@ TbBool parse_trapdoor_trap_blocks(char *buf, long len, const char *config_textna
                 COMMAND_TEXT(cmd_num),block_buf,config_textname);
           }
           break;
-      case 16: // TRAPANIMATION
+      case 16: // MODEL
           if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
           {
             k = atoi(word_buf);
             if (k >= 0)
             {
                 trap_stats[i].sprite_anim_idx = k;
+                n++;
+            }
+          }
+          if (n < 1)
+          {
+            CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 17: // MODELSIZE
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            k = atoi(word_buf);
+            if (k >= 0)
+            {
+                trap_stats[i].sprite_size_max = k;
+                n++;
+            }
+          }
+          if (n < 1)
+          {
+            CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 18: // ANIMATIONSPEED
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            k = atoi(word_buf);
+            if (k >= 0)
+            {
+                trap_stats[i].anim_speed = k;
+                n++;
+            }
+          }
+          if (n < 1)
+          {
+            CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 19: // UNANIMATED
+          if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
+          {
+            k = atoi(word_buf);
+            if (k >= 0)
+            {
+                trap_stats[i].unanimated = k;
                 n++;
             }
           }

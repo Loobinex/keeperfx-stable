@@ -44,7 +44,7 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-//field_0; sprite_anim_idx; sprite_size_max; non_animated; anim_speed; field_11; field_12; field_13; size_xy; field_16; trigger_type; activation_type; created_itm_model;  field_1B; etc
+//field_0; sprite_anim_idx; sprite_size_max; unanimated; anim_speed; field_11; field_12; field_13; size_xy; field_16; trigger_type; activation_type; created_itm_model;  field_1B; etc
 struct TrapStats trap_stats[] = {
 {0,           0,              0,                0,            0,        0,          0,      0,          0,      0,          0,          0,               0, 0, 0, 0, 0, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, 0, 0, 0},
 {128,       861,            384,                1,            0,        0,          0,      1,        640,    512,          1,          1,              15, 9, 0, 0, 0, {0,0,0,0,0,0,0,0}, {0,0,0,0,0,0,0,0}, 0, 0, 0}, //Boulder
@@ -620,13 +620,13 @@ struct Thing *create_trap(struct Coord3d *pos, ThingModel trpkind, PlayerNumber 
     } else {
         start_frame = 0;
     }
-    set_thing_draw(thing, trapstat->sprite_anim_idx, trapstat->anim_speed, trapstat->sprite_size_max, trapstat->non_animated, start_frame, 2);
+    set_thing_draw(thing, trapstat->sprite_anim_idx, trapstat->anim_speed, trapstat->sprite_size_max, trapstat->unanimated, start_frame, 2);
     if (trapstat->field_11) {
         thing->field_4F |= TF4F_Unknown02;
     } else {
         thing->field_4F &= ~TF4F_Unknown02;
     }
-    if (trapstat->non_animated) {
+    if (trapstat->unanimated) {
         thing->field_4F |= TF4F_Unknown40;
     } else {
         thing->field_4F &= ~TF4F_Unknown40;
