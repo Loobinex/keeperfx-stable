@@ -5713,12 +5713,12 @@ void draw_jonty_mapwho(struct JontySpr *jspr)
         ERRORLOG("Invalid graphic Id %d from model %d, class %d", (int)thing->anim_sprite, (int)thing->model, (int)thing->class_id);
     } else
     {
-                    struct TrapConfigStats *trapst;
+        struct TrapConfigStats *trapst;
         switch (thing->class_id)
         {
         case TCls_Object:
             //TODO CONFIG object model dependency, move to config
-            if ((thing->model == 2) || (thing->model == 4) || (thing->model == 28))
+            if ((thing->model == 2) || (thing->model == 4) || (thing->model == 28)) //torchflames
             {
                 process_keeper_speedup_sprite(jspr, angle, scale);
                 break;
