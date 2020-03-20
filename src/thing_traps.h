@@ -50,7 +50,7 @@ struct TrapStats {  // sizeof=54
 unsigned long field_0;
   unsigned long sprite_anim_idx;
   unsigned long sprite_size_max;
-unsigned char field_C;
+unsigned char non_animated;
   unsigned long anim_speed;
 unsigned char field_11;
   unsigned char field_12;
@@ -73,9 +73,7 @@ short field_34;
 
 /******************************************************************************/
 DLLIMPORT extern unsigned char _DK_trap_to_object[8];
-DLLIMPORT struct TrapStats _DK_trap_stats[7]; //not sure - maybe it's 8?
-#define trap_stats _DK_trap_stats
-//DLLIMPORT struct TrapStats _DK_trap_stats[7]; //not sure - maybe it's 8?
+//DLLIMPORT struct TrapStats _DK_trap_stats[7];
 //#define trap_stats _DK_trap_stats
 
 #pragma pack()
