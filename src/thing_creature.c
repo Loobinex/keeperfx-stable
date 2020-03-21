@@ -253,6 +253,7 @@ TbBool control_creature_as_controller(struct PlayerInfo *player, struct Thing *t
 {
     struct CreatureStats *crstat;
     struct Camera *cam;
+    struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
     //return _DK_control_creature_as_controller(player, thing);
     if (((thing->owner != player->id_number) && (player->work_state != PSt_FreeCtrlDirect))
       || !thing_can_be_controlled_as_controller(thing))
@@ -261,10 +262,9 @@ TbBool control_creature_as_controller(struct PlayerInfo *player, struct Thing *t
         return false;
       cam = player->acamera;
       crstat = creature_stats_get(get_players_special_digger_model(player->id_number));
-      cam->mappos.z.val += crstat->eye_height;
+      cam->mappos.z.val += (crstat->eye_height+(crstat->eye_height / 20 * cctrl->explevel));
       return true;
     }
-    struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
     cctrl->moveto_pos.x.val = 0;
     cctrl->moveto_pos.y.val = 0;
     cctrl->moveto_pos.z.val = 0;

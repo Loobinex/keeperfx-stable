@@ -478,7 +478,7 @@ struct CreatureStatsOLD { // sizeof = 230
   unsigned char grow_up_level;
   unsigned char entrance_force;
   short max_angle_change;
-  short eye_height;
+  short eye_height_Bla;
 short field_57[14];
 short field_73;
   unsigned short size_xy;
