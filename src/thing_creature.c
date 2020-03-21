@@ -2564,11 +2564,11 @@ void creature_fire_shot(struct Thing *firing, struct Thing *target, ThingModel s
     pos1.x.val = firing->mappos.x.val;
     pos1.y.val = firing->mappos.y.val;
     pos1.z.val = firing->mappos.z.val;
-    pos1.x.val += distance_with_angle_to_coord_x(cctrl->shot_shift_x, firing->move_angle_xy+LbFPMath_PI/2);
-    pos1.y.val += distance_with_angle_to_coord_y(cctrl->shot_shift_x, firing->move_angle_xy+LbFPMath_PI/2);
-    pos1.x.val += distance_with_angle_to_coord_x(cctrl->shot_shift_y, firing->move_angle_xy);
-    pos1.y.val += distance_with_angle_to_coord_y(cctrl->shot_shift_y, firing->move_angle_xy);
-    pos1.z.val += (cctrl->shot_shift_z);
+    pos1.x.val += distance_with_angle_to_coord_x((cctrl->shot_shift_x +(cctrl->shot_shift_x /20 * cctrl->explevel)), firing->move_angle_xy+LbFPMath_PI/2);
+    pos1.y.val += distance_with_angle_to_coord_y((cctrl->shot_shift_x +(cctrl->shot_shift_x /20 * cctrl->explevel)), firing->move_angle_xy+LbFPMath_PI/2);
+    pos1.x.val += distance_with_angle_to_coord_x((cctrl->shot_shift_y +(cctrl->shot_shift_y /20 * cctrl->explevel)), firing->move_angle_xy);
+    pos1.y.val += distance_with_angle_to_coord_y((cctrl->shot_shift_y +(cctrl->shot_shift_y /20 * cctrl->explevel)), firing->move_angle_xy);
+    pos1.z.val += ((cctrl->shot_shift_z +(cctrl->shot_shift_z /20 * cctrl->explevel)));
     // Compute launch angles
     if (thing_is_invalid(target))
     {
