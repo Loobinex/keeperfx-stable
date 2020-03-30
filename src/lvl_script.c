@@ -35,6 +35,7 @@
 #include "config_lenses.h"
 #include "config_magic.h"
 #include "config_creature.h"
+#include "config_effects.h"
 #include "gui_soundmsgs.h"
 #include "frontmenu_ingame_tabs.h"
 #include "player_instances.h"
@@ -1885,31 +1886,95 @@ void command_set_computer_checks(long plr_range_id, const char *chkname, long va
 }
 
                                                  // Name, Shots, TimeBetweenShots, Model, TriggerType, ActivationType, EffectType, Hidden
-void command_set_trap_configuration(const char* trapname, long val1, long val2, long val3, long val4, long val5, long val6,long val7)
+void command_set_trap_configuration(const char* trapname, long val1, long val2, long val3, long val4, long val5, long val6, long val7)
 {
-    //todo: trapname
-    long trap_id = get_rid(trap_desc, trapname);
-    if (trap_id == -1)
-    {
-        SCRPTERRLOG("Unknown trap, '%s'", trapname);
-        return;
-    }
     if (script_current_condition != -1)
     {
         SCRPTWRNLOG("Trap configured inside conditional block; condition ignored");
     }
-    struct TrapConfigStats* trapst;
-    struct ManfctrConfig* mconf;
-    trapst = &trapdoor_conf.trap_cfgstats[trap_id];
-    mconf = &game.traps_config[trap_id];
-    mconf->shots = val1;
-    mconf->shots_delay = val2;
-    trap_stats[trap_id].sprite_anim_idx = val3;
-    trap_stats[trap_id].trigger_type = val4;
-    trap_stats[trap_id].activation_type = val5;
-    trap_stats[trap_id].created_itm_model = val6;
-    trapst->hidden = val7;
-}
+    long trap_id = get_rid(trap_desc, trapname);
+    if (trap_id == -1)
+    {
+        SCRPTERRLOG("Unknown trap, '%s'", trapname);
+    }
+    int validval1 = 1;
+    if (val1 <= 0)
+    {
+        validval1 = 0;
+        SCRPTERRLOG("Shots '%d' out of range", val1);
+    }
+    int validval2 = 1;
+    if (val2 <= 0)
+    {
+        validval2 = 0;
+        SCRPTERRLOG("Model '%d' out of range", val2);
+    }
+    int validval3 = 1;
+    if (val3 <= 0)
+    {
+        validval3 = 0;
+        SCRPTERRLOG("Model '%d' out of range", val3);
+    }
+    int validval4 = 0;
+    switch (val4) {
+    case TrpTrg_LineOfSight90:
+    case TrpTrg_Pressure:
+    case TrpTrg_LineOfSight:
+        validval4 = 1;
+        break;
+    default:
+        SCRPTERRLOG("No TriggerType '%d' found", val4);
+    }
+    int validval5 = 0;
+    switch (val5) {
+    case TrpAcT_HeadforTarget90:
+    case TrpAcT_EffectonTrap:
+    case TrpAcT_ShotonTrap:
+    case TrpAcT_SlapChange:
+    case TrpAcT_CreatureShot:
+        validval5 = 1;
+        break;
+    default: 
+        SCRPTERRLOG("No ActivationType '%d' found", val5);
+    }
+    int validval6 = 1;
+    if ((val6 <= 0) || 
+        ((val6 > magic_conf.shot_types_count) && (val5 == (TrpAcT_HeadforTarget90 || TrpAcT_ShotonTrap || TrpAcT_CreatureShot))) ||
+        ((val6 > slab_conf.slab_types_count ) && (val5 == TrpAcT_SlapChange)) ||
+        ((val6 > effects_conf.effect_types_count) && (val5 == TrpAcT_EffectonTrap)))
+    {
+        validval6 = 0;
+        SCRPTERRLOG("EffectType '%d' out of range", val6);
+    }
+    int validval7 = 1;
+    if ((val7 < 0) || (val7 > 1))
+    {
+        validval7 = 0;
+        SCRPTERRLOG("TriggerAlarm '%d' out of range", val7);
+    }
+
+    if (validval1 && validval2 && validval3 && validval4 && validval5 && validval6 && validval7)
+    {
+        struct TrapConfigStats* trapst;
+        struct ManfctrConfig* mconf;
+        trapst = &trapdoor_conf.trap_cfgstats[trap_id];   
+        mconf = &game.traps_config[trap_id];
+        SCRIPTDBG(7, "Changing trap %d configuration from (%d,%d,%d,%d,%d,%d,%d)", trap_id, mconf->shots, mconf->shots_delay, trap_stats[trap_id].sprite_anim_idx, trap_stats[trap_id].trigger_type, trap_stats[trap_id].activation_type, trap_stats[trap_id].created_itm_model,trapst->hidden);
+        SCRIPTDBG(7, "Changing trap %d configuration to (%d,%d,%d,%d,%d,%d,%d)", trap_id, val1, val2, val3, val4, val5, val6, val7);
+        mconf->shots = val1;
+        mconf->shots_delay = val2;
+        trap_stats[trap_id].sprite_anim_idx = val3;
+        trap_stats[trap_id].trigger_type = val4;
+        trap_stats[trap_id].activation_type = val5;
+        trap_stats[trap_id].created_itm_model = val6;
+        trapst->hidden = val7;
+        //trapst->notify = val8; cannot fit 9 variables
+    } else
+    {
+        return;
+    }
+   }
+
 
 void command_set_computer_events(long plr_range_id, const char *evntname, long val1, long val2, long val3, long val4, long val5)
 {
