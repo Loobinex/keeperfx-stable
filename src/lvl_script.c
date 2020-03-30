@@ -140,6 +140,7 @@ const struct CommandDesc command_desc[] = {
   {"RUN_AFTER_VICTORY",                 "N       ", Cmd_RUN_AFTER_VICTORY},
   {"LEVEL_UP_CREATURE",                 "PCAN    ", Cmd_LEVEL_UP_CREATURE},
   {"CHANGE_CREATURE_OWNER",             "PCAP    ", Cmd_CHANGE_CREATURE_OWNER},
+  {"SET_TRAP_CONFIGURATION",            "ANNNNNNN", Cmd_SET_TRAP_CONFIGURATION}, // Name, Shots, TimeBetweenShots, Model, TriggerType, ActivationType, EffectType, Hidden
   {NULL,                                "        ", Cmd_NONE},
 };
 
@@ -227,7 +228,7 @@ const struct NamedCommand variable_desc[] = {
     {"MONEY",                       SVar_MONEY},
     {"GAME_TURN",                   SVar_GAME_TURN},
     {"BREAK_IN",                    SVar_BREAK_IN},
-    //{"CREATURE_NUM",                SVar_CREATURE_NUM},
+    //{"CREATURE_NUM",              SVar_CREATURE_NUM},
     {"TOTAL_DIGGERS",               SVar_TOTAL_DIGGERS},
     {"TOTAL_CREATURES",             SVar_TOTAL_CREATURES},
     {"TOTAL_RESEARCH",              SVar_TOTAL_RESEARCH},
@@ -1883,6 +1884,33 @@ void command_set_computer_checks(long plr_range_id, const char *chkname, long va
   SCRIPTDBG(6,"Altered %d checks named '%s'",n,chkname);
 }
 
+                                                 // Name, Shots, TimeBetweenShots, Model, TriggerType, ActivationType, EffectType, Hidden
+void command_set_trap_configuration(const char* trapname, long val1, long val2, long val3, long val4, long val5, long val6,long val7)
+{
+    //todo: trapname
+    long trap_id = get_rid(trap_desc, trapname);
+    if (trap_id == -1)
+    {
+        SCRPTERRLOG("Unknown trap, '%s'", trapname);
+        return;
+    }
+    if (script_current_condition != -1)
+    {
+        SCRPTWRNLOG("Trap configured inside conditional block; condition ignored");
+    }
+    struct TrapConfigStats* trapst;
+    struct ManfctrConfig* mconf;
+    trapst = &trapdoor_conf.trap_cfgstats[trap_id];
+    mconf = &game.traps_config[trap_id];
+    mconf->shots = val1;
+    mconf->shots_delay = val2;
+    trap_stats[trap_id].sprite_anim_idx = val3;
+    trap_stats[trap_id].trigger_type = val4;
+    trap_stats[trap_id].activation_type = val5;
+    trap_stats[trap_id].created_itm_model = val6;
+    trapst->hidden = val7;
+}
+
 void command_set_computer_events(long plr_range_id, const char *evntname, long val1, long val2, long val3, long val4, long val5)
 {
   int plr_start;
@@ -2609,6 +2637,9 @@ void script_add_command(const struct CommandDesc *cmd_desc, const struct ScriptL
         {
             game.system_flags |= GSF_RunAfterVictory;
         }
+        break;
+    case Cmd_SET_TRAP_CONFIGURATION:
+        command_set_trap_configuration(scline->tp[0], scline->np[1], scline->np[2], scline->np[3], scline->np[4], scline->np[5], scline->np[6], scline->np[7]);
         break;
     default:
         SCRPTERRLOG("Unhandled SCRIPT command '%s'", scline->tcmnd);
