@@ -2955,13 +2955,11 @@ short creature_wants_salary(struct Thing *creatng)
 
 long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
 {
-    //return _DK_setup_head_for_empty_treasure_space(thing, room);
-    unsigned long k;
+    // _DK_setup_head_for_empty_treasure_space(thing, room);
     SlabCodedCoords start_slbnum = room->slabs_list;
-    //long wealth_size_holds = gold_per_hoard / get_wealth_size_types_count();
-    //GoldAmount max_hoard_size_in_room = wealth_size_holds * room->total_capacity / room->slabs_count;
-    
-    //Random start slab
+   
+    //Find a random slab to start out with
+    unsigned long k;
     long n = ACTION_RANDOM(room->slabs_count);
     for (k = n; k > 0; k--)
     {
@@ -2979,7 +2977,8 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
     MapSlabCoord slb_y = slb_num_decode_y(slbnum);
     struct Thing* gldtng = find_gold_hoarde_at(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
 
-    if (gldtng->valuable.gold_stored <= 0) // If we find an empty slab, don't bother continuing
+    // If the random slab is empty, don't bother continuing and just go there
+    if (gldtng->valuable.gold_stored <= 0)
     {
         slb_x = slb_num_decode_x(slbnum);
         slb_y = slb_num_decode_y(slbnum);
@@ -2991,7 +2990,7 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
         }
     }
 
-    //Find a slab with the lowest amount
+    //Find a slab with the lowest amount of gold
     GoldAmount gold_amount = gldtng->valuable.gold_stored;
     GoldAmount gold_low_amount = gldtng->valuable.gold_stored;
     SlabCodedCoords slblow = start_slbnum;
@@ -3001,7 +3000,7 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
         slb_y = slb_num_decode_y(slbnum);
         gldtng = find_gold_hoarde_at(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
         gold_amount = gldtng->valuable.gold_stored;
-        if (gold_amount <= 0)
+        if (gold_amount <= 0) //Any empty slab will do
         {
             slblow = slbnum;
             break;
@@ -3019,13 +3018,11 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
         
     }
     
-    //TODO: ERROR if slablow holds max value or more
-
+    //Send imp to slab with lowest amount on it
     slb_x = slb_num_decode_x(slblow);
     slb_y = slb_num_decode_y(slblow);
     long stl_x = slab_subtile_center(slb_x);
     long stl_y = slab_subtile_center(slb_y);
-    //Send imp to slab with lowest amount on it
     if (setup_person_move_to_position(thing, stl_x, stl_y, NavRtF_Default))
     {
         return 1;
