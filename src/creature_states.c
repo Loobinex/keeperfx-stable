@@ -2955,7 +2955,77 @@ short creature_wants_salary(struct Thing *creatng)
 
 long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
 {
-    return _DK_setup_head_for_empty_treasure_space(thing, room);
+    //return _DK_setup_head_for_empty_treasure_space(thing, room);
+    unsigned long k;
+    SlabCodedCoords start_slbnum = room->slabs_list;
+    long wealth_size_holds = gold_per_hoard / get_wealth_size_types_count();
+    GoldAmount max_hoard_size_in_room = wealth_size_holds * room->total_capacity / room->slabs_count;
+    
+    //Random start slab
+    long n = ACTION_RANDOM(room->slabs_count);
+    for (k = n; k > 0; k--)
+    {
+        if (start_slbnum == 0)
+            break;
+        start_slbnum = get_next_slab_number_in_room(start_slbnum);
+    }
+    if (start_slbnum == 0) {
+        ERRORLOG("Taking random slab (%d/%d) in %s index %d failed - internal inconsistency.", (int)n, (int)room->slabs_count, room_code_name(room->kind), (int)room->index);
+        start_slbnum = room->slabs_list;
+    }
+    
+    SlabCodedCoords slbnum = start_slbnum;
+    MapSlabCoord slb_x = slb_num_decode_x(slbnum);
+    MapSlabCoord slb_y = slb_num_decode_y(slbnum);
+    struct Thing* gldtng = find_gold_hoarde_at(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
+
+    if (gldtng->valuable.gold_stored <= 0) // If we find an empty slab, don't bother continuing
+    {
+        slb_x = slb_num_decode_x(slbnum);
+        slb_y = slb_num_decode_y(slbnum);
+        long stl_x = slab_subtile_center(slb_x);
+        long stl_y = slab_subtile_center(slb_y);
+        if (setup_person_move_to_position(thing, stl_x, stl_y, NavRtF_Default))
+        {
+            return 1;
+        }
+    }
+
+    //Find a slab with the lowest amount
+    GoldAmount gold_amount = gldtng->valuable.gold_stored;
+    GoldAmount gold_low_amount = gldtng->valuable.gold_stored;
+    SlabCodedCoords slblow = start_slbnum;
+    for (long i = room->slabs_count; i > 0; i--)
+    { 
+        slb_x = slb_num_decode_x(slbnum);
+        slb_y = slb_num_decode_y(slbnum);
+        gldtng = find_gold_hoarde_at(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
+        gold_amount = gldtng->valuable.gold_stored;
+        if (gold_amount <= 0)
+        {
+            slblow = slbnum;
+            break;
+        }
+        if (gold_amount <= gold_low_amount)
+        { 
+            gold_low_amount = gold_amount;
+            slblow = slbnum;
+        }
+        slbnum = get_next_slab_number_in_room(slbnum);
+    }
+    
+    //TODO: ERROR if slablow holds max value or more
+
+    slb_x = slb_num_decode_x(slblow);
+    slb_y = slb_num_decode_y(slblow);
+    long stl_x = slab_subtile_center(slb_x);
+    long stl_y = slab_subtile_center(slb_y);
+    //Send imp to slab with lowest amount on it
+    if (setup_person_move_to_position(thing, stl_x, stl_y, NavRtF_Default))
+    {
+        return 1;
+    }
+    return 0;
 }
 
 void place_thing_in_creature_controlled_limbo(struct Thing *thing)
