@@ -2958,8 +2958,8 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
     //return _DK_setup_head_for_empty_treasure_space(thing, room);
     unsigned long k;
     SlabCodedCoords start_slbnum = room->slabs_list;
-    long wealth_size_holds = gold_per_hoard / get_wealth_size_types_count();
-    GoldAmount max_hoard_size_in_room = wealth_size_holds * room->total_capacity / room->slabs_count;
+    //long wealth_size_holds = gold_per_hoard / get_wealth_size_types_count();
+    //GoldAmount max_hoard_size_in_room = wealth_size_holds * room->total_capacity / room->slabs_count;
     
     //Random start slab
     long n = ACTION_RANDOM(room->slabs_count);
@@ -3012,6 +3012,11 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
             slblow = slbnum;
         }
         slbnum = get_next_slab_number_in_room(slbnum);
+        if (slbnum == 0) 
+        {
+            slbnum = room->slabs_list;
+        }
+        
     }
     
     //TODO: ERROR if slablow holds max value or more
