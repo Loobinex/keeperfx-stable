@@ -2957,16 +2957,17 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
     SlabCodedCoords start_slbnum = room->slabs_list;
    
     //Find a random slab to start out with
-    unsigned long k;
     long n = ACTION_RANDOM(room->slabs_count);
-    for (k = n; k > 0; k--)
+    for (unsigned long k = n; k > 0; k--)
     {
         if (start_slbnum == 0)
+        {
             break;
+        }
         start_slbnum = get_next_slab_number_in_room(start_slbnum);
     }
     if (start_slbnum == 0) {
-        ERRORLOG("Taking random slab (%d/%d) in %s index %d failed - internal inconsistency.", (int)n, (int)room->slabs_count, room_code_name(room->kind), (int)room->index);
+        ERRORLOG("Taking random slab (%d/%u) in %s index %u failed - internal inconsistency.", n, room->slabs_count, room_code_name(room->kind), room->index);
         start_slbnum = room->slabs_list;
     }
     
