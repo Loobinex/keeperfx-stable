@@ -92,7 +92,6 @@ DLLIMPORT long _DK_move_check_can_damage_wall(struct Thing *creatng);
 DLLIMPORT long _DK_move_check_on_head_for_room(struct Thing *creatng);
 DLLIMPORT long _DK_move_check_persuade(struct Thing *creatng);
 DLLIMPORT long _DK_move_check_wait_at_door_for_wage(struct Thing *creatng);
-DLLIMPORT long _DK_setup_head_for_empty_treasure_space(struct Thing *creatng, struct Room *room);
 DLLIMPORT long _DK_get_best_position_outside_room(struct Thing *creatng, struct Coord3d *pos, struct Room *room);
 /******************************************************************************/
 short already_at_call_to_arms(struct Thing *creatng);
@@ -2955,7 +2954,6 @@ short creature_wants_salary(struct Thing *creatng)
 
 long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
 {
-    // return _DK_setup_head_for_empty_treasure_space(thing, room);
     SlabCodedCoords start_slbnum = room->slabs_list;
    
     //Find a random slab to start out with
@@ -2982,8 +2980,6 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
     GoldAmount max_hoard_size_in_room = wealth_size_holds * room->total_capacity / room->slabs_count;
     if((max_hoard_size_in_room - gldtng->valuable.gold_stored) >= thing->creature.gold_carried)
     {
-        slb_x = slb_num_decode_x(slbnum);
-        slb_y = slb_num_decode_y(slbnum);
         if (setup_person_move_to_position(thing, slab_subtile_center(slb_x), slab_subtile_center(slb_y), NavRtF_Default))
         {
             return 1;
@@ -2992,7 +2988,7 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
 
     //If not, find a slab with the lowest amount of gold
     GoldAmount gold_amount = gldtng->valuable.gold_stored;
-    GoldAmount gold_low_amount = gldtng->valuable.gold_stored;
+    GoldAmount min_gold_amount = gldtng->valuable.gold_stored;
     SlabCodedCoords slblow = start_slbnum;
     for (long i = room->slabs_count; i > 0; i--)
     { 
@@ -3005,9 +3001,9 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
             slblow = slbnum;
             break;
         }
-        if (gold_amount <= gold_low_amount)
+        if (gold_amount <= min_gold_amount)
         { 
-            gold_low_amount = gold_amount;
+            min_gold_amount = gold_amount;
             slblow = slbnum;
         }
         slbnum = get_next_slab_number_in_room(slbnum);
