@@ -2990,7 +2990,7 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
     //If not, find a slab with the lowest amount of gold
     GoldAmount gold_amount = gldtng->valuable.gold_stored;
     GoldAmount min_gold_amount = gldtng->valuable.gold_stored;
-    SlabCodedCoords slblow = start_slbnum;
+    SlabCodedCoords slbmin = start_slbnum;
     for (long i = room->slabs_count; i > 0; i--)
     { 
         slb_x = slb_num_decode_x(slbnum);
@@ -2999,13 +2999,13 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
         gold_amount = gldtng->valuable.gold_stored;
         if (gold_amount <= 0) //Any empty slab will do
         {
-            slblow = slbnum;
+            slbmin = slbnum;
             break;
         }
         if (gold_amount <= min_gold_amount)
         { 
             min_gold_amount = gold_amount;
-            slblow = slbnum;
+            slbmin = slbnum;
         }
         slbnum = get_next_slab_number_in_room(slbnum);
         if (slbnum == 0) 
@@ -3016,8 +3016,8 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
     }
     
     //Send imp to slab with lowest amount on it
-    slb_x = slb_num_decode_x(slblow);
-    slb_y = slb_num_decode_y(slblow);
+    slb_x = slb_num_decode_x(slbmin);
+    slb_y = slb_num_decode_y(slbmin);
     if (setup_person_move_to_position(thing, slab_subtile_center(slb_x), slab_subtile_center(slb_y), NavRtF_Default))
     {
         return 1;
