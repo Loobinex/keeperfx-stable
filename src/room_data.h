@@ -196,6 +196,7 @@ TbBool thing_is_on_any_room_tile(const struct Thing *thing);
 TbBool thing_is_on_own_room_tile(const struct Thing *thing);
 struct Room *get_room_thing_is_on(const struct Thing *thing);
 void reinitialise_map_rooms(void);
+struct Thing *find_gold_hoarde_at(MapSubtlCoord stl_x, MapSubtlCoord stl_y);
 
 // Finding position within room
 TbBool find_random_valid_position_for_thing_in_room(struct Thing *thing, struct Room *room, struct Coord3d *pos);
@@ -214,7 +215,6 @@ struct Room *find_room_nearest_to_position(PlayerNumber plyr_idx, RoomKind rkind
 struct Room *find_room_for_thing_with_used_capacity(const struct Thing *creatng, PlayerNumber plyr_idx, RoomKind rkind, unsigned char nav_flags, long min_used_cap);
 struct Room *find_random_room_with_used_capacity_creature_can_navigate_to(struct Thing *thing, PlayerNumber owner, RoomKind rkind, unsigned char nav_flags);
 struct Room *find_nearest_room_for_thing_with_spare_capacity(struct Thing *thing, signed char owner, RoomKind rkind, unsigned char nav_flags, long spare);
-extern struct Thing* find_gold_hoarde_at(MapSubtlCoord stl_x, MapSubtlCoord stl_y);
 
 void create_room_flag(struct Room *room);
 void delete_room_flag(struct Room *room);

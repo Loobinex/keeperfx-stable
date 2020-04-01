@@ -2955,7 +2955,7 @@ short creature_wants_salary(struct Thing *creatng)
 
 long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
 {
-    // _DK_setup_head_for_empty_treasure_space(thing, room);
+    // return _DK_setup_head_for_empty_treasure_space(thing, room);
     SlabCodedCoords start_slbnum = room->slabs_list;
    
     //Find a random slab to start out with
@@ -2982,9 +2982,7 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
     {
         slb_x = slb_num_decode_x(slbnum);
         slb_y = slb_num_decode_y(slbnum);
-        long stl_x = slab_subtile_center(slb_x);
-        long stl_y = slab_subtile_center(slb_y);
-        if (setup_person_move_to_position(thing, stl_x, stl_y, NavRtF_Default))
+        if (setup_person_move_to_position(thing, slab_subtile_center(slb_x), slab_subtile_center(slb_y), NavRtF_Default))
         {
             return 1;
         }
@@ -3021,9 +3019,7 @@ long setup_head_for_empty_treasure_space(struct Thing *thing, struct Room *room)
     //Send imp to slab with lowest amount on it
     slb_x = slb_num_decode_x(slblow);
     slb_y = slb_num_decode_y(slblow);
-    long stl_x = slab_subtile_center(slb_x);
-    long stl_y = slab_subtile_center(slb_y);
-    if (setup_person_move_to_position(thing, stl_x, stl_y, NavRtF_Default))
+    if (setup_person_move_to_position(thing, slab_subtile_center(slb_x), slab_subtile_center(slb_y), NavRtF_Default))
     {
         return 1;
     }
