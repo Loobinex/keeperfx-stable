@@ -1457,9 +1457,7 @@ TbBool parse_rules_rooms_blocks(char *buf, long len, const char *config_textname
           if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
           {
               k = atoi(word_buf);
-              JUSTMSG("TESTLOG: death chance before = %d", gameadd.torture_death_chance);
               gameadd.torture_death_chance = k;
-              JUSTMSG("TESTLOG: death chance after = %d", gameadd.torture_death_chance);
               n++;
           }
           if (n < 1)

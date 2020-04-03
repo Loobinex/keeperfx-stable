@@ -120,7 +120,7 @@ enum TbScriptCommands {
     Cmd_RUN_AFTER_VICTORY                 = 100,
     Cmd_LEVEL_UP_CREATURE                 = 101,
     Cmd_CHANGE_CREATURE_OWNER             = 102,
-    Cmd_SET_ROOM_VARIABLE                 = 103,
+    Cmd_SET_GAME_RULE                     = 103,
     Cmd_SET_TRAP_CONFIGURATION            = 104,
     Cmd_SET_DOOR_CONFIGURATION            = 105,
 };

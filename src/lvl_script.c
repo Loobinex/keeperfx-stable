@@ -141,7 +141,7 @@ const struct CommandDesc command_desc[] = {
   {"RUN_AFTER_VICTORY",                 "N       ", Cmd_RUN_AFTER_VICTORY},
   {"LEVEL_UP_CREATURE",                 "PCAN    ", Cmd_LEVEL_UP_CREATURE},
   {"CHANGE_CREATURE_OWNER",             "PCAP    ", Cmd_CHANGE_CREATURE_OWNER},
-  {"SET_ROOM_VARIABLE",                 "AN      ", Cmd_SET_ROOM_VARIABLE},
+  {"SET_GAME_RULE",                     "AN      ", Cmd_SET_GAME_RULE},
   {"SET_TRAP_CONFIGURATION",            "ANNNNNNN", Cmd_SET_TRAP_CONFIGURATION},
   {"SET_DOOR_CONFIGURATION",            "ANNNN   ", Cmd_SET_DOOR_CONFIGURATION},
   {NULL,                                "        ", Cmd_NONE},
@@ -382,7 +382,7 @@ const struct NamedCommand creature_select_criteria_desc[] = {
   {NULL,                   0},
 };
 
-const struct NamedCommand room_variable_desc[] = {
+const struct NamedCommand game_rule_desc[] = {
   {"BodiesForVampire",     1},
   {"PrisonSkeletonChance", 2},
   {"GhostConvertChance",   3},
@@ -2506,38 +2506,33 @@ void command_export_variable(long plr_range_id, const char *varib_name, const ch
     command_add_value(Cmd_EXPORT_VARIABLE, plr_range_id, varib_type, varib_id, flg_id);
 }
 
-void command_set_room_variable(const char *objectv, unsigned long roomvar)
+void command_set_game_rule(const char *objectv, unsigned long roomvar)
 {
-    long roomdesc = get_id(room_variable_desc, objectv);
-    if (roomdesc == -1)
+    long ruledesc = get_id(game_rule_desc, objectv);
+    if (ruledesc == -1)
     {
         SCRPTERRLOG("Unknown room variable");
         return;
     }
-  switch (roomdesc)
+    JUSTMSG("TESTLOG: Roomvar, %d", ruledesc);
+  switch (ruledesc)
     {
     case 1: //BodiesForVampire
-        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
         game.bodies_for_vampire = roomvar;
         break;
     case 2: //PrisonSkeletonChance
-        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
         game.prison_skeleton_chance = roomvar;
         break;
     case 3: //GhostConvertChance
-        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
         game.ghost_convert_chance = roomvar;
         break;
     case 4: //TortureConvertChance
-        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
         gameadd.torture_convert_chance = roomvar;
         break;
     case 5: //TortureDeathChance
-        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
         gameadd.torture_death_chance = roomvar;
         break;
     case 6: //FoodGenerationSpeed
-        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
         game.food_generation_speed = roomvar;
         break;
     default:
@@ -2785,8 +2780,8 @@ void script_add_command(const struct CommandDesc *cmd_desc, const struct ScriptL
             game.system_flags |= GSF_RunAfterVictory;
         }
         break;
-    case Cmd_SET_ROOM_VARIABLE:
-        command_set_room_variable(scline->tp[0], scline->np[1]);
+    case Cmd_SET_GAME_RULE:
+        command_set_game_rule(scline->tp[0], scline->np[1]);
         break;
     case Cmd_SET_TRAP_CONFIGURATION:
         command_set_trap_configuration(scline->tp[0], scline->np[1], scline->np[2], scline->np[3], scline->np[4], scline->np[5], scline->np[6], scline->np[7]);
