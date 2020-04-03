@@ -185,11 +185,6 @@ enum MapLocationTypes {
     MLoc_TRAPKIND,
 };
 
-enum RoomVariables {
-    RVar_NONE = 0,
-    RVar_VAMPIREBODIES,
-};
-
 /******************************************************************************/
 #pragma pack(1)
 

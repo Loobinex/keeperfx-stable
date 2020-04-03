@@ -383,7 +383,10 @@ const struct NamedCommand creature_select_criteria_desc[] = {
 };
 
 const struct NamedCommand room_variable_desc[] = {
-  {"VAMPIRE_BODIES",       1}, //RVar_VAMPIREBODIES
+  {"BodiesForVampire",     1},
+  {"PrisonSkeletonChance", 2},
+  {"GhostConvertChance",   3},
+  {"TortureConvertChance", 4},
   {NULL,                   0},
 };
 
@@ -2506,14 +2509,29 @@ void command_set_room_variable(const char *objectv, unsigned long roomvar)
     long roomdesc = get_id(room_variable_desc, objectv);
     if (roomdesc == -1)
     {
-        SCRPTERRLOG("Unknown door, '%s'", roomdesc);
-}
-
-
+        SCRPTERRLOG("Unknown room variable");
+        return;
+    }
   switch (roomdesc)
     {
-    case 1:
     game.bodies_for_vampire = roomvar;
+    case 1: //BodiesForVampire
+        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
+        game.bodies_for_vampire = roomvar;
+        break;
+    case 2: //PrisonSkeletonChance
+        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
+        game.prison_skeleton_chance = roomvar;
+        break;
+    case 3: //GhostConvertChance
+        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
+        game.ghost_convert_chance = roomvar;
+        break;
+    case 4: //TortureConvertChance
+        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
+        JUSTMSG("TESTLOG: before = %d", gameadd.torture_convert_chance); //todo replace with proper script
+        gameadd.torture_convert_chance = roomvar;
+        JUSTMSG("TESTLOG: after = %d", gameadd.torture_convert_chance); //todo replace with proper script
         break;
     default:
     JUSTMSG("TESTLOG: default object");
@@ -2753,6 +2771,7 @@ void script_add_command(const struct CommandDesc *cmd_desc, const struct ScriptL
         break;
     case Cmd_EXPORT_VARIABLE:
         command_export_variable(scline->np[0], scline->tp[1], scline->tp[2]);
+        break;
     case Cmd_RUN_AFTER_VICTORY:
         if (scline->np[0] == 1)
         {
