@@ -387,6 +387,7 @@ const struct NamedCommand room_variable_desc[] = {
   {"PrisonSkeletonChance", 2},
   {"GhostConvertChance",   3},
   {"TortureConvertChance", 4},
+  {"FoodGenerationSpeed",  5},
   {NULL,                   0},
 };
 
@@ -2528,9 +2529,11 @@ void command_set_room_variable(const char *objectv, unsigned long roomvar)
         break;
     case 4: //TortureConvertChance
         JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
-        JUSTMSG("TESTLOG: before = %d", gameadd.torture_convert_chance); //todo replace with proper script
         gameadd.torture_convert_chance = roomvar;
-        JUSTMSG("TESTLOG: after = %d", gameadd.torture_convert_chance); //todo replace with proper script
+        break;
+    case 5: //FoodGenerationSpeed
+        JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
+        game.food_generation_speed = roomvar;
         break;
     default:
     JUSTMSG("TESTLOG: default object");
