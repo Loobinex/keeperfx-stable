@@ -141,7 +141,7 @@ const struct CommandDesc command_desc[] = {
   {"RUN_AFTER_VICTORY",                 "N       ", Cmd_RUN_AFTER_VICTORY},
   {"LEVEL_UP_CREATURE",                 "PCAN    ", Cmd_LEVEL_UP_CREATURE},
   {"CHANGE_CREATURE_OWNER",             "PCAP    ", Cmd_CHANGE_CREATURE_OWNER},
-  {"SET_ROOM_VARIABLE",                 "NN      ", Cmd_SET_ROOM_VARIABLE}, //AN
+  {"SET_ROOM_VARIABLE",                 "AN      ", Cmd_SET_ROOM_VARIABLE},
   {"SET_TRAP_CONFIGURATION",            "ANNNNNNN", Cmd_SET_TRAP_CONFIGURATION},
   {"SET_DOOR_CONFIGURATION",            "ANNNN   ", Cmd_SET_DOOR_CONFIGURATION},
   {NULL,                                "        ", Cmd_NONE},
@@ -417,6 +417,7 @@ const struct NamedCommand campaign_flag_desc[] = {
   {"CAMPAIGN_FLAG7",  7},
   {NULL,     0},
 };
+
 
 /******************************************************************************/
 DLLIMPORT long _DK_script_support_send_tunneller_to_appropriate_dungeon(struct Thing *creatng);
@@ -2500,14 +2501,19 @@ void command_export_variable(long plr_range_id, const char *varib_name, const ch
     command_add_value(Cmd_EXPORT_VARIABLE, plr_range_id, varib_type, varib_id, flg_id);
 }
 
-void command_set_room_variable(int objectv, unsigned long roomvar) //const char *objectv
+void command_set_room_variable(const char *objectv, unsigned long roomvar)
 {
-    JUSTMSG("TESTLOG: Roomvar, %d",objectv);
-  switch (objectv)
+    long roomdesc = get_id(room_variable_desc, objectv);
+    if (roomdesc == -1)
+    {
+        SCRPTERRLOG("Unknown door, '%s'", roomdesc);
+}
+
+
+  switch (roomdesc)
     {
     case 1:
-    JUSTMSG("TESTLOG: object %d",objectv);
-    game.bodies_for_vampire = objectv;
+    game.bodies_for_vampire = roomvar;
         break;
     default:
     JUSTMSG("TESTLOG: default object");
@@ -2754,7 +2760,8 @@ void script_add_command(const struct CommandDesc *cmd_desc, const struct ScriptL
         }
         break;
     case Cmd_SET_ROOM_VARIABLE:
-        command_set_room_variable(scline->np[0], scline->np[1]);
+        command_set_room_variable(scline->tp[0], scline->np[1]);
+        break;
     case Cmd_SET_TRAP_CONFIGURATION:
         command_set_trap_configuration(scline->tp[0], scline->np[1], scline->np[2], scline->np[3], scline->np[4], scline->np[5], scline->np[6], scline->np[7]);
         break;
