@@ -389,6 +389,8 @@ const struct NamedCommand game_rule_desc[] = {
   {"TortureConvertChance", 4},
   {"TortureDeathChance",   5},
   {"FoodGenerationSpeed",  6},
+  {"StunEvilEnemyChance",  7},
+  {"StunGoodEnemyChance",  8},
   {NULL,                   0},
 };
 
@@ -2534,6 +2536,12 @@ void command_set_game_rule(const char *objectv, unsigned long roomvar)
         break;
     case 6: //FoodGenerationSpeed
         game.food_generation_speed = roomvar;
+        break;
+    case 7: //StunEvilEnemyChance
+        gameadd.stun_enemy_chance_evil = roomvar;
+        break;
+    case 8: //StunGoodEnemyChance
+        gameadd.stun_enemy_chance_good = roomvar;
         break;
     default:
     JUSTMSG("TESTLOG: default object");

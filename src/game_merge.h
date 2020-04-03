@@ -106,6 +106,8 @@ struct GameAdd {
     unsigned long time_in_prison_without_break;
     unsigned char prison_break_chance;
     unsigned short game_turns_unconscious;
+    unsigned char stun_enemy_chance_evil;
+    unsigned char stun_enemy_chance_good;
     long critical_health_permil;
     long friendly_fight_area_damage_permil;
     long friendly_fight_area_range_permil;

@@ -148,6 +148,8 @@ const struct NamedCommand rules_rooms_commands[] = {
   {"TIMEBETWEENPRISONBREAK",              21},
   {"PRISONBREAKCHANCE",                   22},
   {"TORTUREDEATHCHANCE",                  23},
+  {"STUNEVILENEMYCHANCE",                 24},
+  {"STUNGOODENEMYCHANCE",                 25},
   {NULL,                                   0},
   };
 
@@ -1458,6 +1460,32 @@ TbBool parse_rules_rooms_blocks(char *buf, long len, const char *config_textname
           {
               k = atoi(word_buf);
               gameadd.torture_death_chance = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+          }
+          break;
+      case 24: // STUNEVILENEMYCHANCE
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              gameadd.stun_enemy_chance_evil = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+          }
+          break;
+      case 25: // STUNGOODENEMYCHANCE
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              gameadd.stun_enemy_chance_good = k;
               n++;
           }
           if (n < 1)
