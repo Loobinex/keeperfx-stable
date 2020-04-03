@@ -125,29 +125,30 @@ const struct NamedCommand rules_magic_commands[] = {
   };
 
 const struct NamedCommand rules_rooms_commands[] = {
-  {"SCAVENGECOSTFREQUENCY",      1},
-  {"TEMPLESCAVENGEPROTECTIONTIME",2},
-  {"TRAINCOSTFREQUENCY",         3},
-  {"TORTURECONVERTCHANCE",       4},
-  {"TIMESPENTINPRISONWITHOUTBREAK", 5},
-  {"GHOSTCONVERTCHANCE",         6},
-  {"ARMORYTIME",                 7},
-  {"WORKSHOPTIME",               8},
-  {"OBSERVATORYTIME",            9},
-  {"OBSERVATORYGENERATE",       10},
-  {"DEFAULTGENERATESPEED",      11},
+  {"SCAVENGECOSTFREQUENCY",                1},
+  {"TEMPLESCAVENGEPROTECTIONTIME",         2},
+  {"TRAINCOSTFREQUENCY",                   3},
+  {"TORTURECONVERTCHANCE",                 4},
+  {"TIMESPENTINPRISONWITHOUTBREAK",        5},
+  {"GHOSTCONVERTCHANCE",                   6},
+  {"ARMORYTIME",                           7},
+  {"WORKSHOPTIME",                         8},
+  {"OBSERVATORYTIME",                      9},
+  {"OBSERVATORYGENERATE",                 10},
+  {"DEFAULTGENERATESPEED",                11},
   {"DEFAULTMAXCREATURESGENERATEENTRANCE", 12},
-  {"DEFAULTNEUTRALENTRANCELEVEL", 13},
-  {"BARRACKTIME",               14},
-  {"FOODGENERATIONSPEED",       15},
-  {"PRISONSKELETONCHANCE",      16},
-  {"BODIESFORVAMPIRE",          17},
-  {"GRAVEYARDCONVERTTIME",      18},
-  {"SCAVENGEGOODALLOWED",       19},
-  {"SCAVENGENEUTRALALLOWED",    20},
-  {"TIMEBETWEENPRISONBREAK",    21},
-  {"PRISONBREAKCHANCE",         22},
-  {NULL,                         0},
+  {"DEFAULTNEUTRALENTRANCELEVEL",         13},
+  {"BARRACKTIME",                         14},
+  {"FOODGENERATIONSPEED",                 15},
+  {"PRISONSKELETONCHANCE",                16},
+  {"BODIESFORVAMPIRE",                    17},
+  {"GRAVEYARDCONVERTTIME",                18},
+  {"SCAVENGEGOODALLOWED",                 19},
+  {"SCAVENGENEUTRALALLOWED",              20},
+  {"TIMEBETWEENPRISONBREAK",              21},
+  {"PRISONBREAKCHANCE",                   22},
+  {"TORTUREDEATHCHANCE",                  23},
+  {NULL,                                   0},
   };
 
 const struct NamedCommand rules_workers_commands[] = {
@@ -1450,6 +1451,21 @@ TbBool parse_rules_rooms_blocks(char *buf, long len, const char *config_textname
           {
             CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
                 COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 23: // TORTUREDEATHCHANCE
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              JUSTMSG("TESTLOG: death chance before = %d", gameadd.torture_death_chance);
+              gameadd.torture_death_chance = k;
+              JUSTMSG("TESTLOG: death chance after = %d", gameadd.torture_death_chance);
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
           }
           break;
       case 0: // comment
