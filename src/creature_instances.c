@@ -50,8 +50,8 @@ extern "C" {
 #endif
 /******************************************************************************/
 
-DLLIMPORT struct InstanceInfo _DK_instance_info[48];
-#define instance_info _DK_instance_info
+// DLLIMPORT struct InstanceInfo _DK_instance_info[48];
+// #define instance_info _DK_instance_info
 /******************************************************************************/
 long instf_attack_room_slab(struct Thing *creatng, long *param);
 long instf_creature_cast_spell(struct Thing *creatng, long *param);
@@ -104,57 +104,58 @@ Creature_Instf_Func creature_instances_func_list[] = {
   NULL,
 };
 
-/*
+//field_0,time,fp_time,action_time,fp_action_time,long reset_time,fp_reset_time,graphics_idx,flags,force_visibility,field_1D,func_cb,func_params[2];
 struct InstanceInfo instance_info[] = {
-    {0,  0,  0,  0,  0,   0,   0,  0,  0,  0,  0, NULL,                       0,  0},
-    {0,  8,  4,  4,  2,   8,   4,  3,  0,  1,  3, instf_creature_fire_shot,  21,  0},
-    {0,  8,  4,  4,  2,   8,   4,  3,  0,  1,  3, instf_creature_fire_shot,  22,  0},
-    {0,  0,  0,  0,  0,   0,   0,  3,  0,  0,  3, NULL,                       0,  0},
-    {0, 10,  5,  5,  2,  16,   8,  3,  0,  1,  3, instf_creature_fire_shot,  14,  0},
-    {0, 10,  4,  6,  2,  32,   4,  3,  0,  1,  3, instf_creature_cast_spell,  1,  0},
-    {0, 10,  5,  6,  3, 100,  16,  3,  0,  1,  3, instf_creature_cast_spell,  2,  0},
-    {0, 10,  5,  6,  3, 100,  16,  3,  0,  1,  3, instf_creature_cast_spell,  3,  0},
-    {1, 10,  5,  6,  3, 400, 200,  3,  0,  1,  3, instf_creature_cast_spell,  4,  0},
-    {0, 10,  5,  6,  3,   4,   1,  3,  0,  1,  3, instf_creature_cast_spell,  5,  0},
-    {1, 10,  5,  6,  3, 400, 200,  3,  0,  1,  3, instf_creature_cast_spell,  6,  0},
-    {1, 10,  5,  6,  3, 400, 200,  3,  0,  1,  3, instf_creature_cast_spell,  7,  0},
-    {0, 10,  5,  6,  3,  80,  20,  3,  0,  1,  4, instf_creature_cast_spell,  8,  0},
-    {1, 10,  5,  6,  3, 500, 200,  3,  0,  1,  3, instf_creature_cast_spell,  9,  0},
-    {1, 10,  5,  6,  3,  10, 200,  3,  0,  1,  3, instf_creature_cast_spell, 10,  0},
-    {1, 10,  5,  6,  3, 300, 200,  3,  0,  1,  3, instf_creature_cast_spell, 11,  0},
-    {0, 10,  5,  6,  3, 400,  20,  3,  0,  1,  3, instf_creature_cast_spell, 12,  0},
-    {0, 10,  5,  6,  3,   5,   3,  3,  0,  1,  3, instf_creature_cast_spell, 13,  0},
-    {0, 10,  5,  6,  3,  10,  40,  3,  0,  1,  3, instf_creature_cast_spell, 14,  0},
-    {0, 10,  5,  6,  3,  25,   2,  3,  0,  1,  3, instf_creature_cast_spell, 15,  0},
-    {0, 10,  5,  6,  3,  50,   2,  3,  0,  1,  3, instf_creature_cast_spell, 16,  0},
-    {0, 10,  5, 10,  5,   8,   4,  3,  1,  1,  3, instf_creature_cast_spell, 17,  0},
-    {0, 10,  5,  6,  3,  50,  40,  3,  0,  1,  3, instf_creature_cast_spell, 18,  0},
-    {0, 10,  5,  6,  3,   8,   3,  3,  0,  1,  3, instf_creature_cast_spell, 19,  0},
-    {1, 10,  5,  6,  3, 400, 200,  3,  0,  1,  3, instf_creature_cast_spell, 20,  0},
-    {0, 10,  5,  6,  3,   8,   4,  3,  0,  1,  3, instf_creature_cast_spell, 21,  0},
-    {0, 10,  5,  6,  3,  60,  20,  3,  0,  1,  3, instf_creature_cast_spell, 22,  0},
-    {0, 10,  5,  6,  3, 100,  20,  3,  0,  1,  3, instf_creature_cast_spell, 23,  0},
-    {0, 10,  5,  6,  3,   8, 200,  3,  0,  1,  3, instf_creature_cast_spell, 24,  0},
-    {0,  8,  4,  4,  2, 100,  10,  3,  0,  1,  3, instf_fart,         0,  0},
-    {0,  8,  4,  4,  2,   1,   1,  3,  0,  0,  3, instf_dig,          0,  0},
-    {0,  8,  4,  4,  2,   1,   1,  7,  0,  0,  3, instf_pretty_path,  0,  0},
-    {0,  8,  4,  4,  2,   1,   1,  7,  0,  0,  3, instf_destroy,      0,  0},
-    {0,  8,  4,  4,  2,   1,   1,  3,  0,  0,  3, instf_tunnel,       0,  0},
-    {0,  8,  4,  1,  1,   1,   1, 11,  0,  0,  3, NULL,               3,  0},
-    {0,  8,  4,  4,  2,   1,   1,  7,  0,  0,  3, instf_reinforce,    0,  0},
-    {0, 16,  8,  8,  4,   1,   1, 13,  0,  0,  3, instf_eat,          0,  0},
-    {0,  8,  4,  4,  2,   1,   1,  3,  0,  1,  3, instf_attack_room_slab,     0,  0},
-    {0,  8,  4,  4,  2,   1,   1,  3,  0,  1,  3, instf_damage_wall,         21,  0},
-    {0,  8,  4,  4,  2,   1,   1,  3,  0,  1,  3, instf_first_person_do_imp_task,0,0},
-    {0, 10,  5,  6,  3,   6,   3,  3,  0,  1,  6, instf_creature_cast_spell, 29,  0},
-    {0, 10,  5,  6,  3,   6,   3,  3,  0,  1,  3, instf_creature_cast_spell, 26,  0},
-    {0, 10,  5,  6,  3,   6,   3,  3,  0,  1,  3, instf_creature_cast_spell, 27,  0},
-    {0, 10,  5,  6,  3,   6,   3,  3,  0,  1,  3, instf_creature_cast_spell, 28,  0},
-    {0,  8,  4,  1,  1,   1,   1, 15,  0,  0,  3, NULL,               4,  0},
-    {0, 16,  8,  8,  4,   1,   1, 14,  0,  0,  3, instf_tortured,     0,  0},
-    {0, 16,  4,  4,  2,   1,   1,  5,  0,  0,  3, NULL,               0,  0},
-    {0,  8,  4,  4,  2,   1,   1,  6,  0,  0,  3, NULL,               0,  0},
-};*/
+    {0,  0,  0,  0,  0,   0,   0,  0,  0,  0,  0, NULL,                              {0,0}}, //0
+    {0,  8,  4,  4,  2,   8,   4,  3,  0,  1,  3, instf_creature_fire_shot,         {21,0}},
+    {0,  8,  4,  4,  2,   8,   4,  3,  0,  1,  3, instf_creature_fire_shot,         {22,0}},
+    {0,  0,  0,  0,  0,   0,   0,  3,  0,  0,  3, NULL,                              {0,0}},
+    {0, 10,  5,  5,  2,  16,   8,  3,  0,  1,  3, instf_creature_fire_shot,         {14,0}},
+    {0, 10,  4,  6,  2,  32,   4,  3,  0,  1,  3, instf_creature_cast_spell,         {1,0}}, //5
+    {0, 10,  5,  6,  3, 100,  16,  3,  0,  1,  3, instf_creature_cast_spell,         {2,0}},
+    {0, 10,  5,  6,  3, 100,  16,  3,  0,  1,  3, instf_creature_cast_spell,         {3,0}},
+    {1, 10,  5,  6,  3, 400, 200,  3,  0,  1,  3, instf_creature_cast_spell,         {4,0}},
+    {0, 10,  5,  6,  3,   4,   1,  3,  0,  1,  3, instf_creature_cast_spell,         {5,0}},
+    {1, 10,  5,  6,  3, 400, 200,  3,  0,  1,  3, instf_creature_cast_spell,         {6,0}}, //10
+    {1, 10,  5,  6,  3, 400, 200,  3,  0,  1,  3, instf_creature_cast_spell,         {7,0}},
+    {0, 10,  5,  6,  3,  80,  20,  3,  0,  1,  4, instf_creature_cast_spell,         {8,0}},
+    {1, 10,  5,  6,  3, 500, 200,  3,  0,  1,  3, instf_creature_cast_spell,         {9,0}},
+    {1, 10,  5,  6,  3,  10, 200,  3,  0,  1,  3, instf_creature_cast_spell,        {10,0}},
+    {1, 10,  5,  6,  3, 300, 200,  3,  0,  1,  3, instf_creature_cast_spell,        {11,0}}, //15
+    {0, 10,  5,  6,  3, 400,  20,  3,  0,  1,  3, instf_creature_cast_spell,        {12,0}},
+    {0, 10,  5,  6,  3,   5,   3,  3,  0,  1,  3, instf_creature_cast_spell,        {13,0}},
+    {0, 10,  5,  6,  3,  10,  40,  3,  0,  1,  3, instf_creature_cast_spell,        {14,0}},
+    {0, 10,  5,  6,  3,  25,   2,  3,  0,  1,  3, instf_creature_cast_spell,        {15,0}},
+    {0, 10,  5,  6,  3,  50,   2,  3,  0,  1,  3, instf_creature_cast_spell,        {16,0}}, //20
+    {0, 10,  5, 10,  5,   8,   4,  3,  1,  1,  3, instf_creature_cast_spell,        {17,0}},
+    {0, 10,  5,  6,  3,  50,  40,  3,  0,  1,  3, instf_creature_cast_spell,        {18,0}},
+    {0, 10,  5,  6,  3,   8,   3,  3,  0,  1,  3, instf_creature_cast_spell,        {19,0}},
+    {1, 10,  5,  6,  3, 400, 200,  3,  0,  1,  3, instf_creature_cast_spell,        {20,0}},
+    {0, 10,  5,  6,  3,   8,   4,  3,  0,  1,  3, instf_creature_cast_spell,        {21,0}}, //25
+    {0, 10,  5,  6,  3,  60,  20,  3,  0,  1,  3, instf_creature_cast_spell,        {22,0}},
+    {0, 10,  5,  6,  3, 100,  20,  3,  0,  1,  3, instf_creature_cast_spell,        {23,0}},
+    {0, 10,  5,  6,  3,   8, 200,  3,  0,  1,  3, instf_creature_cast_spell,        {24,0}},
+    {0,  8,  4,  4,  2, 100,  10,  3,  0,  1,  3, instf_fart,                        {0,0}},
+    {0,  8,  4,  4,  2,   1,   1,  3,  0,  0,  3, instf_dig,                         {0,0}}, //30
+    {0,  8,  4,  4,  2,   1,   1,  7,  0,  0,  3, instf_pretty_path,                 {0,0}},
+    {0,  8,  4,  4,  2,   1,   1,  7,  0,  0,  3, instf_destroy,                     {0,0}},
+    {0,  8,  4,  4,  2,   1,   1,  3,  0,  0,  3, instf_tunnel,                      {0,0}},
+    {0,  8,  4,  1,  1,   1,   1, 11,  0,  0,  3, NULL,                              {3,0}},
+    {0,  8,  4,  4,  2,   1,   1,  7,  0,  0,  3, instf_reinforce,                   {0,0}}, //35
+    {0, 16,  8,  8,  4,   1,   1, 13,  0,  0,  3, instf_eat,                         {0,0}},
+    {0,  8,  4,  4,  2,   1,   1,  3,  0,  1,  3, instf_attack_room_slab,            {0,0}},
+    {0,  8,  4,  4,  2,   1,   1,  3,  0,  1,  3, instf_damage_wall,                {21,0}},
+    {0,  8,  4,  4,  2,   1,   1,  3,  0,  1,  3, instf_first_person_do_imp_task,    {0,0}},
+//  {0, 10,  5,  6,  3,   6,   3,  3,  0,  1,  6, instf_creature_cast_spell,        {29,0}}, // 40 GROUP
+    {0, 10,  5,  6,  3,  60,  20,  3,  0,  1,  3, instf_creature_cast_spell,        {29,0}}, //40 LIZARD
+    {0, 10,  5,  6,  3,   6,   3,  3,  0,  1,  3, instf_creature_cast_spell,        {26,0}},
+    {0, 10,  5,  6,  3,   6,   3,  3,  0,  1,  3, instf_creature_cast_spell,        {27,0}},
+    {0, 10,  5,  6,  3,   6,   3,  3,  0,  1,  3, instf_creature_cast_spell,        {28,0}},
+    {0,  8,  4,  1,  1,   1,   1, 15,  0,  0,  3, NULL,                              {4,0}},
+    {0, 16,  8,  8,  4,   1,   1, 14,  0,  0,  3, instf_tortured,                    {0,0}}, // 45
+    {0, 16,  4,  4,  2,   1,   1,  5,  0,  0,  3, NULL,                              {0,0}},
+    {0,  8,  4,  4,  2,   1,   1,  6,  0,  0,  3, NULL,                              {0,0}},
+};
 
 /******************************************************************************/
 #ifdef __cplusplus
@@ -184,9 +185,8 @@ TbBool creature_instance_info_invalid(const struct InstanceInfo *inst_inf)
 
 TbBool creature_instance_is_available(const struct Thing *thing, CrInstance inst_id)
 {
-    struct CreatureControl *cctrl;
     TRACE_THING(thing);
-    cctrl = creature_control_get_from_thing(thing);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
     if (creature_control_invalid(cctrl))
         return false;
     return cctrl->instance_available[inst_id];
@@ -194,14 +194,11 @@ TbBool creature_instance_is_available(const struct Thing *thing, CrInstance inst
 
 TbBool creature_choose_first_available_instance(struct Thing *thing)
 {
-    struct CreatureStats *crstat;
-    struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(thing);
-    crstat = creature_stats_get_from_thing(thing);
-    long i,k;
-    for (i=0; i < LEARNED_INSTANCES_COUNT; i++)
+    struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
+    struct CreatureStats* crstat = creature_stats_get_from_thing(thing);
+    for (long i = 0; i < LEARNED_INSTANCES_COUNT; i++)
     {
-        k = crstat->learned_instance_id[i];
+        long k = crstat->learned_instance_id[i];
         if (k > 0)
         {
             if (cctrl->instance_available[k]) {
@@ -216,14 +213,11 @@ TbBool creature_choose_first_available_instance(struct Thing *thing)
 
 void creature_increase_available_instances(struct Thing *thing)
 {
-    struct CreatureStats *crstat;
-    struct CreatureControl *cctrl;
-    crstat = creature_stats_get_from_thing(thing);
-    cctrl = creature_control_get_from_thing(thing);
-    int i,k;
-    for (i=0; i < LEARNED_INSTANCES_COUNT; i++)
+    struct CreatureStats* crstat = creature_stats_get_from_thing(thing);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
+    for (int i = 0; i < LEARNED_INSTANCES_COUNT; i++)
     {
-        k = crstat->learned_instance_id[i];
+        int k = crstat->learned_instance_id[i];
         if (k > 0)
         {
             if (crstat->learned_instance_level[i] <= cctrl->explevel+1) {
@@ -242,15 +236,11 @@ void creature_increase_available_instances(struct Thing *thing)
  */
 int creature_instance_get_available_pos_for_id(struct Thing *thing, CrInstance req_inst_id)
 {
-    struct CreatureStats *crstat;
-    crstat = creature_stats_get_from_thing(thing);
-    int avail_pos;
-    avail_pos = 0;
-    int avail_num;
-    for (avail_num=0; avail_num < LEARNED_INSTANCES_COUNT; avail_num++)
+    struct CreatureStats* crstat = creature_stats_get_from_thing(thing);
+    int avail_pos = 0;
+    for (int avail_num = 0; avail_num < LEARNED_INSTANCES_COUNT; avail_num++)
     {
-        CrInstance inst_id;
-        inst_id = crstat->learned_instance_id[avail_num];
+        CrInstance inst_id = crstat->learned_instance_id[avail_num];
         if (creature_instance_is_available(thing, inst_id))
         {
             if (inst_id == req_inst_id) {
@@ -271,15 +261,11 @@ int creature_instance_get_available_pos_for_id(struct Thing *thing, CrInstance r
  */
 int creature_instance_get_available_number_for_pos(struct Thing *thing, int req_avail_pos)
 {
-    struct CreatureStats *crstat;
-    crstat = creature_stats_get_from_thing(thing);
-    int avail_pos;
-    avail_pos = 0;
-    int avail_num;
-    for (avail_num=0; avail_num < LEARNED_INSTANCES_COUNT; avail_num++)
+    struct CreatureStats* crstat = creature_stats_get_from_thing(thing);
+    int avail_pos = 0;
+    for (int avail_num = 0; avail_num < LEARNED_INSTANCES_COUNT; avail_num++)
     {
-        CrInstance inst_id;
-        inst_id = crstat->learned_instance_id[avail_num];
+        CrInstance inst_id = crstat->learned_instance_id[avail_num];
         if (creature_instance_is_available(thing, inst_id))
         {
             if (avail_pos == req_avail_pos) {
@@ -300,15 +286,11 @@ int creature_instance_get_available_number_for_pos(struct Thing *thing, int req_
  */
 CrInstance creature_instance_get_available_id_for_pos(struct Thing *thing, int req_avail_pos)
 {
-    struct CreatureStats *crstat;
-    crstat = creature_stats_get_from_thing(thing);
-    int avail_pos;
-    avail_pos = 0;
-    int avail_num;
-    for (avail_num=0; avail_num < LEARNED_INSTANCES_COUNT; avail_num++)
+    struct CreatureStats* crstat = creature_stats_get_from_thing(thing);
+    int avail_pos = 0;
+    for (int avail_num = 0; avail_num < LEARNED_INSTANCES_COUNT; avail_num++)
     {
-        CrInstance inst_id;
-        inst_id = crstat->learned_instance_id[avail_num];
+        CrInstance inst_id = crstat->learned_instance_id[avail_num];
         if (creature_instance_is_available(thing, inst_id))
         {
             if (avail_pos == req_avail_pos) {
@@ -322,17 +304,10 @@ CrInstance creature_instance_get_available_id_for_pos(struct Thing *thing, int r
 
 TbBool instance_is_ranged_weapon(CrInstance inum)
 {
-    switch (inum)
+    struct InstanceInfo* inst_inf;
+    inst_inf = creature_instance_info_get(inum);
+    if (inst_inf->flags & InstPF_RangedAttack)
     {
-    case CrInst_FIRE_ARROW:
-    case CrInst_FIREBALL:
-    case CrInst_FIRE_BOMB:
-    case CrInst_LIGHTNING:
-    case CrInst_POISON_CLOUD:
-    case CrInst_DRAIN:
-    case CrInst_MISSILE:
-    case CrInst_NAVIGATING_MISSILE:
-    case CrInst_HAILSTORM:
         return true;
     }
     return false;
@@ -340,16 +315,10 @@ TbBool instance_is_ranged_weapon(CrInstance inum)
 
 TbBool instance_is_ranged_weapon_vs_objects(CrInstance inum)
 {
-    switch (inum)
+    struct InstanceInfo* inst_inf;
+    inst_inf = creature_instance_info_get(inum);
+    if ((inst_inf->flags & InstPF_RangedAttack) && (inst_inf->flags & InstPF_Destructive) && !(inst_inf->flags & InstPF_Dangerous))
     {
-    case CrInst_FIRE_ARROW:
-    case CrInst_FIREBALL:
-    case CrInst_FIRE_BOMB:
-    case CrInst_LIGHTNING:
-    case CrInst_DRAIN:
-    case CrInst_MISSILE:
-    case CrInst_NAVIGATING_MISSILE:
-    case CrInst_HAILSTORM:
         return true;
     }
     return false;
@@ -357,16 +326,10 @@ TbBool instance_is_ranged_weapon_vs_objects(CrInstance inum)
 
 TbBool instance_is_quick_range_weapon(CrInstance inum)
 {
-    switch (inum)
+    struct InstanceInfo* inst_inf;
+    inst_inf = creature_instance_info_get(inum);
+    if ((inst_inf->flags & InstPF_RangedAttack) && (inst_inf->flags & InstPF_Quick))
     {
-    case CrInst_FIREBALL:
-    case CrInst_FIRE_ARROW:
-    case CrInst_MISSILE:
-    case CrInst_NAVIGATING_MISSILE:
-    case CrInst_LIGHTNING:
-    case CrInst_HAILSTORM:
-    case CrInst_GRENADE:
-    case CrInst_POISON_CLOUD:
         return true;
     }
     return false;
@@ -381,10 +344,8 @@ TbBool instance_is_quick_range_weapon(CrInstance inum)
 TbBool creature_has_ranged_weapon(const struct Thing *creatng)
 {
     TRACE_THING(creatng);
-    const struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(creatng);
-    long inum;
-    for (inum = 1; inum < CREATURE_INSTANCES_COUNT; inum++)
+    const struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+    for (long inum = 1; inum < CREATURE_INSTANCES_COUNT; inum++)
     {
         if (cctrl->instance_available[inum] > 0)
         {
@@ -404,10 +365,8 @@ TbBool creature_has_ranged_weapon(const struct Thing *creatng)
 TbBool creature_has_ranged_object_weapon(const struct Thing *creatng)
 {
     TRACE_THING(creatng);
-    const struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(creatng);
-    long inum;
-    for (inum = 1; inum < CREATURE_INSTANCES_COUNT; inum++)
+    const struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+    for (long inum = 1; inum < CREATURE_INSTANCES_COUNT; inum++)
     {
         if (cctrl->instance_available[inum])
         {
@@ -421,10 +380,8 @@ TbBool creature_has_ranged_object_weapon(const struct Thing *creatng)
 TbBool creature_has_quick_range_weapon(const struct Thing *creatng)
 {
     TRACE_THING(creatng);
-    const struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(creatng);
-    long inum;
-    for (inum = 1; inum < CREATURE_INSTANCES_COUNT; inum++)
+    const struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+    for (long inum = 1; inum < CREATURE_INSTANCES_COUNT; inum++)
     {
         if (cctrl->instance_available[inum])
         {
@@ -438,7 +395,6 @@ TbBool creature_has_quick_range_weapon(const struct Thing *creatng)
 void process_creature_instance(struct Thing *thing)
 {
     struct CreatureControl *cctrl;
-    struct InstanceInfo *inst_inf;
     SYNCDBG(19,"Starting for %s index %d instance %d",thing_model_name(thing),(int)thing->index,(int)cctrl->instance_id);
     TRACE_THING(thing);
     cctrl = creature_control_get_from_thing(thing);
@@ -447,7 +403,7 @@ void process_creature_instance(struct Thing *thing)
         cctrl->inst_turn++;
         if (cctrl->inst_turn == cctrl->inst_action_turns)
         {
-            inst_inf = creature_instance_info_get(cctrl->instance_id);
+            struct InstanceInfo* inst_inf = creature_instance_info_get(cctrl->instance_id);
             if (inst_inf->func_cb != NULL)
             {
                 SYNCDBG(18,"Executing %s for %s index %d.",creature_instance_code_name(cctrl->instance_id),thing_model_name(thing),(int)thing->index);
@@ -463,7 +419,7 @@ void process_creature_instance(struct Thing *thing)
                 return;
             }
             // Instances sometimes failed to reach this. More reliable to set instance_use_turn sooner
-            cctrl->instance_use_turn[cctrl->instance_id] = game.play_gameturn;
+            // cctrl->instance_use_turn[cctrl->instance_id] = game.play_gameturn; // so this code has been moved to another location
             cctrl->instance_id = CrInst_NULL;
         }
         cctrl->inst_repeat = 0;
@@ -472,11 +428,10 @@ void process_creature_instance(struct Thing *thing)
 
 long instf_creature_fire_shot(struct Thing *creatng, long *param)
 {
-    struct CreatureControl *cctrl;
     struct Thing *target;
     int i;
     TRACE_THING(creatng);
-    cctrl = creature_control_get_from_thing(creatng);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
     if (cctrl->targtng_idx <= 0)
     {
         if ((creatng->alloc_flags & TAlF_IsControlled) == 0)
@@ -522,18 +477,14 @@ long instf_creature_fire_shot(struct Thing *creatng, long *param)
 
 long instf_creature_cast_spell(struct Thing *creatng, long *param)
 {
-    struct CreatureControl *cctrl;
-    struct Thing *trthing;
-    struct SpellInfo *spinfo;
-    long spl_idx;
     TRACE_THING(creatng);
-    cctrl = creature_control_get_from_thing(creatng);
-    spl_idx = *param;
-    spinfo = get_magic_info(spl_idx);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+    long spl_idx = *param;
+    struct SpellInfo* spinfo = get_magic_info(spl_idx);
     SYNCDBG(8,"The %s index %d casts %s",thing_model_name(creatng),(int)creatng->index,spell_code_name(spl_idx));
     if (spinfo->cast_at_thing)
     {
-        trthing = thing_get(cctrl->targtng_idx);
+        struct Thing* trthing = thing_get(cctrl->targtng_idx);
         if (!thing_is_invalid(trthing))
         {
             creature_cast_spell_at_thing(creatng, trthing, spl_idx, cctrl->explevel);
@@ -550,32 +501,30 @@ long instf_creature_cast_spell(struct Thing *creatng, long *param)
 
 long instf_dig(struct Thing *creatng, long *param)
 {
-    struct CreatureControl *cctrl;
-    struct Dungeon *dungeon;
-    struct SlabMap *slb;
-    long stl_x,stl_y;
-    long task_idx,taskkind;
-    long dig_damage,gold;
+    long stl_x;
+    long stl_y;
+    long taskkind;
+    long gold;
     SYNCDBG(16,"Starting");
     TRACE_THING(creatng);
-    cctrl = creature_control_get_from_thing(creatng);
-    dungeon = get_dungeon(creatng->owner);
-    task_idx = cctrl->digger.task_idx;
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+    struct Dungeon* dungeon = get_dungeon(creatng->owner);
+    long task_idx = cctrl->digger.task_idx;
     {
-      struct MapTask *task;
-      task = get_dungeon_task_list_entry(dungeon,task_idx);
-      taskkind = task->kind;
-      if (task->coords != cctrl->word_8F) {
-        return 0;
+        struct MapTask* task = get_dungeon_task_list_entry(dungeon, task_idx);
+        taskkind = task->kind;
+        if (task->coords != cctrl->word_8F)
+        {
+            return 0;
       }
       stl_x = stl_num_decode_x(cctrl->word_8F);
       stl_y = stl_num_decode_y(cctrl->word_8F);
     }
-    slb = get_slabmap_for_subtile(stl_x, stl_y);
+    struct SlabMap* slb = get_slabmap_for_subtile(stl_x, stl_y);
     if (slabmap_block_invalid(slb)) {
         return 0;
     }
-    dig_damage = calculate_damage_did_to_slab_with_single_hit(creatng, slb);
+    long dig_damage = calculate_damage_did_to_slab_with_single_hit(creatng, slb);
     if ((slb->health > dig_damage) || slab_kind_is_indestructible(slb->kind))
     {
         if (!slab_kind_is_indestructible(slb->kind))
@@ -600,8 +549,7 @@ long instf_dig(struct Thing *creatng, long *param)
         mine_out_block(stl_x, stl_y, creatng->owner);
         if (dig_has_revealed_area(stl_x, stl_y, creatng->owner))
         {
-            EventIndex evidx;
-            evidx = event_create_event_or_update_nearby_existing_event(
+            EventIndex evidx = event_create_event_or_update_nearby_existing_event(
                 subtile_coord_center(stl_x), subtile_coord_center(stl_y),
                 EvKind_AreaDiscovered, creatng->owner, 0);
             if ((evidx > 0) && is_my_player_number(creatng->owner))
@@ -613,8 +561,7 @@ long instf_dig(struct Thing *creatng, long *param)
         dig_out_block(stl_x, stl_y, creatng->owner);
         if (dig_has_revealed_area(stl_x, stl_y, creatng->owner))
         {
-            EventIndex evidx;
-            evidx = event_create_event_or_update_nearby_existing_event(
+            EventIndex evidx = event_create_event_or_update_nearby_existing_event(
                 subtile_coord_center(stl_x), subtile_coord_center(stl_y),
                 EvKind_AreaDiscovered, creatng->owner, 0);
             if ((evidx > 0) && is_my_player_number(creatng->owner))
@@ -628,19 +575,13 @@ long instf_dig(struct Thing *creatng, long *param)
 
 long instf_destroy(struct Thing *creatng, long *param)
 {
-    struct Dungeon *dungeon;
-    struct Room *room;
-    struct SlabMap *slb;
-    MapSlabCoord slb_x,slb_y;
-    long prev_owner;
-
     TRACE_THING(creatng);
-    slb_x = subtile_slab_fast(creatng->mappos.x.stl.num);
-    slb_y = subtile_slab_fast(creatng->mappos.y.stl.num);
-    dungeon = get_dungeon(creatng->owner);
-    slb = get_slabmap_block(slb_x, slb_y);
-    room = room_get(slb->room_index);
-    prev_owner = slabmap_owner(slb);
+    MapSlabCoord slb_x = subtile_slab_fast(creatng->mappos.x.stl.num);
+    MapSlabCoord slb_y = subtile_slab_fast(creatng->mappos.y.stl.num);
+    struct Dungeon* dungeon = get_dungeon(creatng->owner);
+    struct SlabMap* slb = get_slabmap_block(slb_x, slb_y);
+    struct Room* room = room_get(slb->room_index);
+    long prev_owner = slabmap_owner(slb);
 
     if ( !room_is_invalid(room) && (prev_owner != creatng->owner) )
     {
@@ -655,9 +596,8 @@ long instf_destroy(struct Thing *creatng, long *param)
             claim_room(room, creatng);
         } else
         {
-            MapCoord ccor_x,ccor_y;
-            ccor_x = subtile_coord_center(room->central_stl_x);
-            ccor_y = subtile_coord_center(room->central_stl_y);
+            MapCoord ccor_x = subtile_coord_center(room->central_stl_x);
+            MapCoord ccor_y = subtile_coord_center(room->central_stl_y);
             event_create_event_or_update_nearby_existing_event(ccor_x, ccor_y, EvKind_RoomLost, room->owner, 0);
             claim_enemy_room(room, creatng);
         }
@@ -671,8 +611,7 @@ long instf_destroy(struct Thing *creatng, long *param)
         return 0;
     }
     if (prev_owner != game.neutral_player_num) {
-        struct Dungeon *prev_dungeon;
-        prev_dungeon = get_dungeon(prev_owner);
+        struct Dungeon* prev_dungeon = get_dungeon(prev_owner);
         prev_dungeon->lvstats.territory_lost++;
     }
     decrease_dungeon_area(prev_owner, 1);
@@ -686,16 +625,14 @@ long instf_destroy(struct Thing *creatng, long *param)
 long instf_attack_room_slab(struct Thing *creatng, long *param)
 {
     TRACE_THING(creatng);
-    struct Room *room;
-    room = get_room_thing_is_on(creatng);
+    struct Room* room = get_room_thing_is_on(creatng);
     if (room_is_invalid(room))
     {
         ERRORLOG("The %s index %d is not on room",thing_model_name(creatng),(int)creatng->index);
         return 0;
     }
     SYNCDBG(8,"Executing for %s index %d",thing_model_name(creatng),(int)creatng->index);
-    struct SlabMap *slb;
-    slb = get_slabmap_thing_is_on(creatng);
+    struct SlabMap* slb = get_slabmap_thing_is_on(creatng);
     if (slb->health > 2)
     {
         //TODO CONFIG damage made to room slabs is constant - doesn't look good
@@ -705,8 +642,7 @@ long instf_attack_room_slab(struct Thing *creatng, long *param)
     }
     if (room->owner != game.neutral_player_num)
     {
-        struct Dungeon *dungeon;
-        dungeon = get_dungeon(room->owner);
+        struct Dungeon* dungeon = get_dungeon(room->owner);
         dungeon->rooms_destroyed++;
     }
     if (!delete_room_slab(coord_slab(creatng->mappos.x.val), coord_slab(creatng->mappos.y.val), 1))
@@ -724,15 +660,14 @@ long instf_damage_wall(struct Thing *creatng, long *param)
     SYNCDBG(16,"Starting");
     TRACE_THING(creatng);
     //return _DK_instf_damage_wall(creatng, param);
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     {
-        struct CreatureControl *cctrl;
-        cctrl = creature_control_get_from_thing(creatng);
+        struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
         stl_x = stl_num_decode_x(cctrl->field_284);
         stl_y = stl_num_decode_y(cctrl->field_284);
     }
-    struct SlabMap *slb;
-    slb = get_slabmap_for_subtile(stl_x, stl_y);
+    struct SlabMap* slb = get_slabmap_for_subtile(stl_x, stl_y);
     if (slb->health > 2)
     {
         slb->health -= 2;
@@ -749,8 +684,7 @@ long instf_eat(struct Thing *creatng, long *param)
 {
     TRACE_THING(creatng);
     //return _DK_instf_eat(creatng, param);
-    struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(creatng);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
     if (cctrl->hunger_amount > 0)
         cctrl->hunger_amount--;
     apply_health_to_thing_and_display_health(creatng, game.food_health_gain);
@@ -762,32 +696,28 @@ long instf_fart(struct Thing *creatng, long *param)
 {
     TRACE_THING(creatng);
     //return _DK_instf_fart(creatng, param);
-    struct Thing *efftng;
-    efftng = create_effect(&creatng->mappos, TngEff_Unknown13, creatng->owner);
+    struct Thing* efftng = create_effect(&creatng->mappos, TngEff_Unknown13, creatng->owner);
     if (!thing_is_invalid(efftng))
         efftng->byte_16 = 4;
     thing_play_sample(creatng,94+UNSYNC_RANDOM(6), NORMAL_PITCH, 0, 3, 0, 4, FULL_LOUDNESS);
     // Start cooldown after fart created
-    struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(creatng);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
     cctrl->instance_use_turn[cctrl->instance_id] = game.play_gameturn;
     return 1;
 }
 
 long instf_first_person_do_imp_task(struct Thing *creatng, long *param)
 {
-    MapSlabCoord slb_x,slb_y;
-    long locparam;
     TRACE_THING(creatng);
-    slb_x = subtile_slab_fast(creatng->mappos.x.stl.num);
-    slb_y = subtile_slab_fast(creatng->mappos.y.stl.num);
+    MapSlabCoord slb_x = subtile_slab_fast(creatng->mappos.x.stl.num);
+    MapSlabCoord slb_y = subtile_slab_fast(creatng->mappos.y.stl.num);
     if (check_place_to_pretty_excluding(creatng, slb_x, slb_y))
     {
         instf_pretty_path(creatng, NULL);
     } else
     {
         //TODO CONFIG shot model dependency
-        locparam = 23;
+        long locparam = 23;
         instf_creature_fire_shot(creatng, &locparam);
     }
     return 1;
@@ -795,13 +725,11 @@ long instf_first_person_do_imp_task(struct Thing *creatng, long *param)
 
 long instf_pretty_path(struct Thing *creatng, long *param)
 {
-    struct Dungeon *dungeon;
     TRACE_THING(creatng);
     SYNCDBG(16,"Starting");
-    dungeon = get_dungeon(creatng->owner);
-    MapSlabCoord slb_x,slb_y;
-    slb_x = subtile_slab_fast(creatng->mappos.x.stl.num);
-    slb_y = subtile_slab_fast(creatng->mappos.y.stl.num);
+    struct Dungeon* dungeon = get_dungeon(creatng->owner);
+    MapSlabCoord slb_x = subtile_slab_fast(creatng->mappos.x.stl.num);
+    MapSlabCoord slb_y = subtile_slab_fast(creatng->mappos.y.stl.num);
     create_effect(&creatng->mappos, imp_spangle_effects[creatng->owner], creatng->owner);
     thing_play_sample(creatng, 76, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     place_slab_type_on_map(SlbT_CLAIMED, slab_subtile_center(slb_x), slab_subtile_center(slb_y), creatng->owner, 1);
@@ -815,16 +743,13 @@ long instf_pretty_path(struct Thing *creatng, long *param)
 
 long instf_reinforce(struct Thing *creatng, long *param)
 {
-    struct CreatureControl *cctrl;
     SYNCDBG(16,"Starting");
     TRACE_THING(creatng);
-    cctrl = creature_control_get_from_thing(creatng);
-    MapSubtlCoord stl_x,stl_y;
-    MapSlabCoord slb_x,slb_y;
-    stl_x = stl_num_decode_x(cctrl->digger.working_stl);
-    stl_y = stl_num_decode_y(cctrl->digger.working_stl);
-    slb_x = subtile_slab_fast(stl_x);
-    slb_y = subtile_slab_fast(stl_y);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+    MapSubtlCoord stl_x = stl_num_decode_x(cctrl->digger.working_stl);
+    MapSubtlCoord stl_y = stl_num_decode_y(cctrl->digger.working_stl);
+    MapSlabCoord slb_x = subtile_slab_fast(stl_x);
+    MapSlabCoord slb_y = subtile_slab_fast(stl_y);
     if (check_place_to_reinforce(creatng, slb_x, slb_y) <= 0) {
         return 0;
     }
@@ -842,13 +767,11 @@ long instf_reinforce(struct Thing *creatng, long *param)
     pos.x.stl.pos = 128;
     pos.y.stl.pos = 128;
     pos.z.stl.pos = 128;
-    long n;
-    for (n=0; n < SMALL_AROUND_LENGTH; n++)
+    for (long n = 0; n < SMALL_AROUND_LENGTH; n++)
     {
         pos.x.stl.num = stl_x + 2 * small_around[n].delta_x;
         pos.y.stl.num = stl_y + 2 * small_around[n].delta_y;
-        struct Map *mapblk;
-        mapblk = get_map_block_at(pos.x.stl.num, pos.y.stl.num);
+        struct Map* mapblk = get_map_block_at(pos.x.stl.num, pos.y.stl.num);
         if (map_block_revealed(mapblk, creatng->owner) && ((mapblk->flags & SlbAtFlg_Blocking) == 0))
         {
             pos.z.val = get_floor_height_at(&pos);
@@ -867,15 +790,12 @@ long instf_tortured(struct Thing *creatng, long *param)
 
 long instf_tunnel(struct Thing *creatng, long *param)
 {
-    struct CreatureControl *cctrl;
-    struct SlabMap *slb;
     SYNCDBG(16,"Starting");
     TRACE_THING(creatng);
-    cctrl = creature_control_get_from_thing(creatng);
-    MapSubtlCoord stl_x,stl_y;
-    stl_x = stl_num_decode_x(cctrl->navi.field_15);
-    stl_y = stl_num_decode_y(cctrl->navi.field_15);
-    slb = get_slabmap_for_subtile(stl_x, stl_y);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
+    MapSubtlCoord stl_x = stl_num_decode_x(cctrl->navi.field_15);
+    MapSubtlCoord stl_y = stl_num_decode_y(cctrl->navi.field_15);
+    struct SlabMap* slb = get_slabmap_for_subtile(stl_x, stl_y);
     if (slabmap_block_invalid(slb)) {
         return 0;
     }
@@ -894,8 +814,7 @@ long instf_tunnel(struct Thing *creatng, long *param)
  */
 void delay_teleport(struct Thing *creatng)
 {
-    struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(creatng);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
     cctrl->instance_use_turn[CrInst_TELEPORT] = game.play_gameturn + 100;
 }
 /******************************************************************************/

@@ -134,6 +134,9 @@ enum InstancePropertiesFlags {
     InstPF_MeleeAttack        = 0x04,
     InstPF_SelfBuff           = 0x08,
     InstPF_RangedDebuff       = 0x10,
+    InstPF_Dangerous          = 0x20,
+    InstPF_Destructive        = 0x40,
+    InstPF_Quick              = 0x80,
 };
 
 enum CreatureDeathKind {
@@ -227,6 +230,7 @@ struct CreatureModelConfig {
  * Structure which stores levelling up stats.
  */
 struct CreatureExperience {
+    long size_increase_on_exp;
     long pay_increase_on_exp;
     long spell_damage_increase_on_exp;
     long range_increase_on_exp;
@@ -256,6 +260,7 @@ struct CreatureConfig {
     ThingModel special_digger_good;
     ThingModel special_digger_evil;
     ThingModel spectator_breed;
+    long sprite_size;
 };
 
 /******************************************************************************/
