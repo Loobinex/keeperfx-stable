@@ -2514,7 +2514,6 @@ void command_set_room_variable(const char *objectv, unsigned long roomvar)
     }
   switch (roomdesc)
     {
-    game.bodies_for_vampire = roomvar;
     case 1: //BodiesForVampire
         JUSTMSG("TESTLOG: variable %d set to %d", roomdesc, roomvar); //todo replace with proper script
         game.bodies_for_vampire = roomvar;
