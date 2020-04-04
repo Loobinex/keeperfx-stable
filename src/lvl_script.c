@@ -383,15 +383,18 @@ const struct NamedCommand creature_select_criteria_desc[] = {
 };
 
 const struct NamedCommand game_rule_desc[] = {
-  {"BodiesForVampire",     1},
-  {"PrisonSkeletonChance", 2},
-  {"GhostConvertChance",   3},
-  {"TortureConvertChance", 4},
-  {"TortureDeathChance",   5},
-  {"FoodGenerationSpeed",  6},
-  {"StunEvilEnemyChance",  7},
-  {"StunGoodEnemyChance",  8},
-  {NULL,                   0},
+  {"BodiesForVampire",      1},
+  {"PrisonSkeletonChance",  2},
+  {"GhostConvertChance",    3},
+  {"TortureConvertChance",  4},
+  {"TortureDeathChance",    5},
+  {"FoodGenerationSpeed",   6},
+  {"StunEvilEnemyChance",   7},
+  {"StunGoodEnemyChance",   8},
+  {"BodyRemainsFor",        9},
+  {"FightHateKillValue",   10},
+  {"PreserveClassicBugs",  11},
+  {NULL,                    0},
 };
 
 /**
@@ -424,7 +427,6 @@ const struct NamedCommand campaign_flag_desc[] = {
   {"CAMPAIGN_FLAG7",  7},
   {NULL,     0},
 };
-
 
 /******************************************************************************/
 DLLIMPORT long _DK_script_support_send_tunneller_to_appropriate_dungeon(struct Thing *creatng);
@@ -4617,28 +4619,45 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
       switch (val2)
       {
       case 1: //BodiesForVampire
+          //JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
           game.bodies_for_vampire = val3;
           break;
       case 2: //PrisonSkeletonChance
+         // JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
           game.prison_skeleton_chance = val3;
           break;
       case 3: //GhostConvertChance
+         // JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
           game.ghost_convert_chance = val3;
           break;
       case 4: //TortureConvertChance
+         // JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
           gameadd.torture_convert_chance = val3;
           break;
       case 5: //TortureDeathChance
+        //  JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
           gameadd.torture_death_chance = val3;
           break;
       case 6: //FoodGenerationSpeed
+        //  JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
           game.food_generation_speed = val3;
           break;
       case 7: //StunEvilEnemyChance
+         // JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
           gameadd.stun_enemy_chance_evil = val3;
           break;
       case 8: //StunGoodEnemyChance
+          JUSTMSG("TESTLOG: variable %d set to %d, from %d", val2, val3, gameadd.stun_enemy_chance_good);
           gameadd.stun_enemy_chance_good = val3;
+          break;
+      case 9: //BodyRemainsFor
+          game.body_remains_for = val3;
+          break;
+      case 10: //FightHateKillValue
+          game.fight_hate_kill_value = val3;
+          break;
+      case 11: //PreserveClassicBugs
+          gameadd.classic_bugs_flags = val3;
           break;
       default:
           WARNMSG("Unsupported Game RULE, command %d.", val2);
