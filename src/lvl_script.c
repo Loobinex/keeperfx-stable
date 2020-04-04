@@ -383,18 +383,19 @@ const struct NamedCommand creature_select_criteria_desc[] = {
 };
 
 const struct NamedCommand game_rule_desc[] = {
-  {"BodiesForVampire",      1},
-  {"PrisonSkeletonChance",  2},
-  {"GhostConvertChance",    3},
-  {"TortureConvertChance",  4},
-  {"TortureDeathChance",    5},
-  {"FoodGenerationSpeed",   6},
-  {"StunEvilEnemyChance",   7},
-  {"StunGoodEnemyChance",   8},
-  {"BodyRemainsFor",        9},
-  {"FightHateKillValue",   10},
-  {"PreserveClassicBugs",  11},
-  {NULL,                    0},
+  {"BodiesForVampire",        1},
+  {"PrisonSkeletonChance",    2},
+  {"GhostConvertChance",      3},
+  {"TortureConvertChance",    4},
+  {"TortureDeathChance",      5},
+  {"FoodGenerationSpeed",     6},
+  {"StunEvilEnemyChance",     7},
+  {"StunGoodEnemyChance",     8},
+  {"BodyRemainsFor",          9},
+  {"FightHateKillValue",     10},
+  {"PreserveClassicBugs",    11},
+  {"DungeonHeartHealHealth", 12},
+  {NULL,                      0},
 };
 
 /**
@@ -4658,6 +4659,9 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
           break;
       case 11: //PreserveClassicBugs
           gameadd.classic_bugs_flags = val3;
+          break;
+      case 12: //DungeonHeartHealHealth
+          game.dungeon_heart_heal_health = val3;
           break;
       default:
           WARNMSG("Unsupported Game RULE, command %d.", val2);
