@@ -4712,7 +4712,6 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
           {
               SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, game.body_remains_for, val3);
               game.body_remains_for = val3;
-
           }
           else
           {
@@ -4728,7 +4727,6 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
           {
               SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, gameadd.classic_bugs_flags, val3);
               gameadd.classic_bugs_flags = val3;
-
           }
           else
           {
