@@ -2508,7 +2508,7 @@ void command_export_variable(long plr_range_id, const char *varib_name, const ch
     command_add_value(Cmd_EXPORT_VARIABLE, plr_range_id, varib_type, varib_id, flg_id);
 }
 
-void command_set_game_rule(const char *objectv, unsigned long roomvar)
+void command_set_game_rule(const char* objectv, unsigned long roomvar)
 {
     long ruledesc = get_id(game_rule_desc, objectv);
     if (ruledesc == -1)
@@ -2516,37 +2516,7 @@ void command_set_game_rule(const char *objectv, unsigned long roomvar)
         SCRPTERRLOG("Unknown room variable");
         return;
     }
-    JUSTMSG("TESTLOG: Roomvar, %d", ruledesc);
-  switch (ruledesc)
-    {
-    case 1: //BodiesForVampire
-        game.bodies_for_vampire = roomvar;
-        break;
-    case 2: //PrisonSkeletonChance
-        game.prison_skeleton_chance = roomvar;
-        break;
-    case 3: //GhostConvertChance
-        game.ghost_convert_chance = roomvar;
-        break;
-    case 4: //TortureConvertChance
-        gameadd.torture_convert_chance = roomvar;
-        break;
-    case 5: //TortureDeathChance
-        gameadd.torture_death_chance = roomvar;
-        break;
-    case 6: //FoodGenerationSpeed
-        game.food_generation_speed = roomvar;
-        break;
-    case 7: //StunEvilEnemyChance
-        gameadd.stun_enemy_chance_evil = roomvar;
-        break;
-    case 8: //StunGoodEnemyChance
-        gameadd.stun_enemy_chance_good = roomvar;
-        break;
-    default:
-    JUSTMSG("TESTLOG: default object");
-        break;
-    }
+    command_add_value(Cmd_SET_GAME_RULE, 0, ruledesc, roomvar, 0);
 }
 
 /** Adds a script command to in-game structures.
@@ -4641,6 +4611,38 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
       {
           SYNCDBG(8, "Setting campaign flag[%ld][%ld] to %ld.", i, val4, get_condition_value(i, val2, val3));
           intralvl.campaign_flags[i][val4] = get_condition_value(i, val2, val3);
+      }
+      break;
+  case Cmd_SET_GAME_RULE:
+      switch (val2)
+      {
+      case 1: //BodiesForVampire
+          game.bodies_for_vampire = val3;
+          break;
+      case 2: //PrisonSkeletonChance
+          game.prison_skeleton_chance = val3;
+          break;
+      case 3: //GhostConvertChance
+          game.ghost_convert_chance = val3;
+          break;
+      case 4: //TortureConvertChance
+          gameadd.torture_convert_chance = val3;
+          break;
+      case 5: //TortureDeathChance
+          gameadd.torture_death_chance = val3;
+          break;
+      case 6: //FoodGenerationSpeed
+          game.food_generation_speed = val3;
+          break;
+      case 7: //StunEvilEnemyChance
+          gameadd.stun_enemy_chance_evil = val3;
+          break;
+      case 8: //StunGoodEnemyChance
+          gameadd.stun_enemy_chance_good = val3;
+          break;
+      default:
+          WARNMSG("Unsupported Game RULE, command %d.", val2);
+          break;
       }
       break;
   default:
