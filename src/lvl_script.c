@@ -4620,47 +4620,123 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
       switch (val2)
       {
       case 1: //BodiesForVampire
-          //JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
-          game.bodies_for_vampire = val3;
+          if (val3 >= 0)
+          {
+              SCRIPTDBG(7,"Changing rule %d from %d to %d", val2, game.bodies_for_vampire, val3);
+              game.bodies_for_vampire = val3;
+          }
+          else
+          {
+              SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
+          }
           break;
       case 2: //PrisonSkeletonChance
-         // JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
-          game.prison_skeleton_chance = val3;
+          if (val3 >= 0 && val3 <= 100)
+          {
+              SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, game.prison_skeleton_chance, val3);
+              game.prison_skeleton_chance = val3;
+          }
+          else
+          {
+              SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
+          }
           break;
       case 3: //GhostConvertChance
-         // JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
-          game.ghost_convert_chance = val3;
+          if (val3 >= 0 && val3 <= 100)
+          {
+              SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, game.ghost_convert_chance, val3);
+              game.ghost_convert_chance = val3;
+          }
+          else
+          {
+              SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
+          }
           break;
       case 4: //TortureConvertChance
-         // JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
-          gameadd.torture_convert_chance = val3;
+          if (val3 >= 0 && val3 <= 100)
+          {
+              SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, gameadd.torture_convert_chance, val3);
+              gameadd.torture_convert_chance = val3;
+          }
+          else
+          {
+              SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
+          }
           break;
       case 5: //TortureDeathChance
-        //  JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
-          gameadd.torture_death_chance = val3;
+          if (val3 >= 0 && val3 <= 100)
+          {
+              SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, gameadd.torture_death_chance, val3);
+              gameadd.torture_death_chance = val3;
+          }
+          else
+          {
+              SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
+          }
           break;
       case 6: //FoodGenerationSpeed
-        //  JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
-          game.food_generation_speed = val3;
+          if (val3 >= 0)
+          {
+              SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, game.food_generation_speed, val3);
+              game.food_generation_speed = val3;
+          }
+          else
+          {
+              SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
+          }
           break;
       case 7: //StunEvilEnemyChance
-         // JUSTMSG("TESTLOG: variable %d set to %d", ruledesc, roomvar); //todo replace with proper script
-          gameadd.stun_enemy_chance_evil = val3;
+          if (val3 >= 0 && val3 <= 100)
+          {
+              SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, gameadd.stun_enemy_chance_evil, val3);
+              gameadd.stun_enemy_chance_evil = val3;
+          }
+          else
+          {
+              SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
+          }
           break;
       case 8: //StunGoodEnemyChance
-          JUSTMSG("TESTLOG: variable %d set to %d, from %d", val2, val3, gameadd.stun_enemy_chance_good);
-          gameadd.stun_enemy_chance_good = val3;
+          if (val3 >= 0 && val3 <= 100)
+          {
+              SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, gameadd.stun_enemy_chance_good, val3);
+              gameadd.stun_enemy_chance_good = val3;
+          }
+          else
+          {
+              SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
+          }
           break;
       case 9: //BodyRemainsFor
-          game.body_remains_for = val3;
+          if (val3 >= 0)
+          {
+              SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, game.body_remains_for, val3);
+              game.body_remains_for = val3;
+
+          }
+          else
+          {
+              SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
+          }
           break;
       case 10: //FightHateKillValue
+          SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, game.fight_hate_kill_value, val3);
           game.fight_hate_kill_value = val3;
           break;
       case 11: //PreserveClassicBugs
-          gameadd.classic_bugs_flags = val3;
+          if (val3 >= 0 && val3 <= 100)
+          {
+              SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, gameadd.classic_bugs_flags, val3);
+              gameadd.classic_bugs_flags = val3;
+
+          }
+          else
+          {
+              SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
+          }
           break;
       case 12: //DungeonHeartHealHealth
+          SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, game.dungeon_heart_heal_health, val3);
           game.dungeon_heart_heal_health = val3;
           break;
       default:
