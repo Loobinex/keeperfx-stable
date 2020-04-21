@@ -434,8 +434,6 @@
     <ClInclude Include="src\vidmode.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="bin\keeperfx.dll" />
-    <None Include="bin\keeperfx.exe" />
     <None Include="lib\keeper95_gold.map" />
     <None Include="Makefile" />
   </ItemGroup>
