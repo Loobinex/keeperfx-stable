@@ -13,3 +13,5 @@
 /tools/sndbanker
 .vs/
 build*/
+/Debug
+/Release

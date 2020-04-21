@@ -1278,5 +1278,7 @@
   <ItemGroup>
     <None Include="Makefile" />
     <None Include="lib\keeper95_gold.map" />
+    <None Include="bin\keeperfx.dll" />
+    <None Include="bin\keeperfx.exe" />
   </ItemGroup>
 </Project>
