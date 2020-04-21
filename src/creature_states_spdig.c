@@ -862,6 +862,7 @@ short imp_converts_dungeon(struct Thing *spdigtng)
           }
       }
       cctrl->exp_points += 50;
+      check_experience_upgrade(spdigtng);
       return 1;
     }
     if ( !check_place_to_pretty_excluding(spdigtng, slb_x, slb_y) )
@@ -1045,6 +1046,7 @@ short imp_improves_dungeon(struct Thing *spdigtng)
     TRACE_THING(spdigtng);
     struct CreatureControl* cctrl = creature_control_get_from_thing(spdigtng);
     cctrl->exp_points += 50;
+    check_experience_upgrade(spdigtng);
     // Check if we've arrived at the destination
     MapSubtlDelta delta_x = abs(spdigtng->mappos.x.stl.num - (MapSubtlDelta)cctrl->moveto_pos.x.stl.num);
     MapSubtlDelta delta_y = abs(spdigtng->mappos.y.stl.num - (MapSubtlDelta)cctrl->moveto_pos.y.stl.num);
