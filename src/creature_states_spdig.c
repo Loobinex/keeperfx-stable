@@ -863,7 +863,7 @@ short imp_converts_dungeon(struct Thing *spdigtng)
       }
       if (gameadd.digger_work_experience != 0)
       {
-          cctrl->exp_points += (gameadd.digger_work_experience * 6);
+          cctrl->exp_points += (gameadd.digger_work_experience / 6);
           check_experience_upgrade(spdigtng);
       }
       return 1;
@@ -1056,7 +1056,7 @@ short imp_improves_dungeon(struct Thing *spdigtng)
     struct CreatureControl* cctrl = creature_control_get_from_thing(spdigtng);
     if (gameadd.digger_work_experience != 0)
     {
-        cctrl->exp_points += (gameadd.digger_work_experience * 6);
+        cctrl->exp_points += (gameadd.digger_work_experience / 6);
         check_experience_upgrade(spdigtng);
     }
     // Check if we've arrived at the destination
