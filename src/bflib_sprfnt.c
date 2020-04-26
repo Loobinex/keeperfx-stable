@@ -56,6 +56,12 @@ struct AsianFont dbcChtFonts[] = {
   {"font16f.fon", 0, 265792, 0x1FF2, 0, 16, 0x1000, 32, 1, 8, 16, 16, 16, 0, 1, 1, 4, 2},
 };
 
+struct AsianFont dbcKorFonts[] = {
+  {"font12k.fon", 0, 199344, 0x1FF2, 0, 12, 0x0C00, 24, 1, 6, 12, 12, 12, 0, 1, 1, 1, 1},
+  {"font16k.fon", 0, 271712, 0x20AB, 0, 16, 0x1000, 32, 1, 8, 16, 16, 16, 0, 1, 1, 4, 2},
+  {"font16k.fon", 0, 271712, 0x20AB, 0, 16, 0x1000, 32, 1, 8, 16, 16, 16, 0, 1, 1, 4, 2},
+};
+
 struct AsianFont *active_dbcfont = &dbcJapFonts[0];
 long dbc_colour0 = 0;
 long dbc_colour1 = 0;
@@ -150,6 +156,7 @@ unsigned short dbc_char_to_font_char(unsigned long chr)
     }
     case 2://Chinese - int. and traditional
     case 3:
+    case 4:
         i = ((chr)&0xFF);
         k = ((chr>>8)&0xFF);
         font_char = 94 * (short)k + i - 15295;
@@ -280,6 +287,8 @@ int dbc_fonts_count(void)
        return (sizeof(dbcChiFonts)/sizeof(dbcChiFonts[0]));
   case 3:
        return (sizeof(dbcChtFonts)/sizeof(dbcChtFonts[0]));
+  case 4:
+      return (sizeof(dbcKorFonts) / sizeof(dbcKorFonts[0]));
   }
   return 0;
 }
@@ -294,6 +303,8 @@ struct AsianFont *dbc_fonts_list(void)
        return dbcChiFonts;
   case 3:
        return dbcChtFonts;
+  case 4:
+      return dbcKorFonts;
   }
   return NULL;
 }

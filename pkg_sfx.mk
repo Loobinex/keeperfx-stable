@@ -27,6 +27,7 @@ speech_fre \
 speech_ger \
 speech_ita \
 speech_jpn \
+speech_kor \
 speech_lat \
 speech_pol \
 speech_rus \
