@@ -87,6 +87,8 @@ TbBool is_wide_charcode(unsigned long chr)
         return ((chr > 0x80) && (chr <= 0xFF));
     case 3:
         return ((chr > 0x80) && (chr <= 0xFF));
+    case 4:
+        return ((chr > 0x80) && (chr <= 0xFF));
     }
   }
   return false;
