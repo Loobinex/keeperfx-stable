@@ -184,7 +184,7 @@ int dbc_get_sprite_for_char(struct AsianDraw *adraw, unsigned long chr)
           return 6;
         adraw->draw_char = chr;
         adraw->bits_width = active_dbcfont->bits_width;
-        adraw->bits_height = active_dbcfont->field_30;
+        adraw->bits_height = active_dbcfont->bits_height;
         i = active_dbcfont->field_3C;
         adraw->field_C = i;
         adraw->field_10 = active_dbcfont->field_40;
@@ -215,7 +215,7 @@ long dbc_char_height(unsigned long chr)
 {
   if (is_wide_charcode(chr))
   {
-    return active_dbcfont->field_44 + active_dbcfont->field_40 + active_dbcfont->field_30;
+    return active_dbcfont->field_44 + active_dbcfont->field_40 + active_dbcfont->bits_height;
   } else
   {
     return active_dbcfont->field_44 + active_dbcfont->field_40 + active_dbcfont->field_28;
