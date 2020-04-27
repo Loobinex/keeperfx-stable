@@ -184,7 +184,7 @@ int dbc_get_sprite_for_char(struct AsianDraw *adraw, unsigned long chr)
           return 6;
         adraw->draw_char = chr;
         adraw->bits_width = active_dbcfont->bits_width;
-        adraw->field_8 = active_dbcfont->field_30;
+        adraw->bits_height = active_dbcfont->field_30;
         i = active_dbcfont->field_3C;
         adraw->field_C = i;
         adraw->field_10 = active_dbcfont->field_40;
@@ -197,7 +197,7 @@ int dbc_get_sprite_for_char(struct AsianDraw *adraw, unsigned long chr)
         adraw->draw_char = chr;
         c = chr;
         adraw->bits_width = active_dbcfont->field_24;
-        adraw->field_8 = active_dbcfont->field_28;
+        adraw->bits_height = active_dbcfont->field_28;
         if ((c < 0xA0) || (c > 0xDF))
           i = active_dbcfont->field_34;
         else
@@ -333,7 +333,7 @@ int dbc_draw_font_sprite_text(const struct AsianFontWindow *awind, const struct 
       scr_y = adraw->field_10 + pos_y + 1;
       scr_x = pos_x + 1;
       width = adraw->bits_width;
-      height = adraw->field_8;
+      height = adraw->bits_height;
       if (scr_x < 0)
       {
         width += scr_x;
@@ -381,7 +381,7 @@ LABEL_21:
       y = 0;
       x = 0;
       width = adraw->bits_width;
-      height = adraw->field_8;
+      height = adraw->bits_height;
       scr_y = pos_y + adraw->field_10;
       scr_x = pos_x;
       if (pos_x >= 0)
@@ -517,7 +517,7 @@ void put_down_dbctext_sprites(const char *sbuf, const char *ebuf, long x, long y
               dbc_draw_font_sprite_text(&awind, &adraw, x, y, colour, -1, dbc_colour1);
               w = adraw.field_C + adraw.bits_width;
               if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0) {
-                  h = adraw.field_8;
+                  h = adraw.bits_height;
                   LbDrawCharUnderline(x,y,w,h,colour,lbDisplayEx.ShadowColour);
               }
               x += w;
@@ -622,7 +622,7 @@ void put_down_dbctext_sprites_resized(const char *sbuf, const char *ebuf, long x
               dbc_draw_font_sprite_text(&awind, &adraw, x, y, colour, -1, dbc_colour1);
               w = (adraw.field_C + adraw.bits_width) * units_per_px / 16;
               if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0) {
-                  h = adraw.field_8 * units_per_px / 16;
+                  h = adraw.bits_height * units_per_px / 16;
                   LbDrawCharUnderline(x,y,w,h,colour,lbDisplayEx.ShadowColour);
               }
               x += w;
