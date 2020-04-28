@@ -22,7 +22,7 @@ msgstr ""
 "Report-Msgid-Bugs-To: https://github.com/dkfans/keeperfx/issues/POT-Creation-"
 "Date: 2012-09-02 01:12+0200\n"
 "POT-Creation-Date: 2012-09-02 01:12+0200\n"
-"PO-Revision-Date: 2020-04-20 09:31+0900\n"
+"PO-Revision-Date: 2020-04-28 15:46+0900\n"
 "Last-Translator: Tomasz Lis <listom@gmail.com>\n"
 "Language-Team: KeeperFX Team <code.google.com>\n"
 "Language: ko_KR\n"
@@ -3829,22 +3829,22 @@ msgstr "F12"
 #: guitext:527
 msgctxt "Keyboard"
 msgid "UP"
-msgstr "UP"
+msgstr "위"
 
 #: guitext:528
 msgctxt "Keyboard"
 msgid "DOWN"
-msgstr "DOWN"
+msgstr "아래"
 
 #: guitext:529
 msgctxt "Keyboard"
 msgid "LEFT"
-msgstr "LEFT"
+msgstr "왼쪽"
 
 #: guitext:530
 msgctxt "Keyboard"
 msgid "RIGHT"
-msgstr "RIGHT"
+msgstr "오른쪽"
 
 #: guitext:531
 msgctxt "Network game message"
@@ -4252,7 +4252,7 @@ msgstr "보물 창고"
 #: guitext:600
 msgctxt "Room name"
 msgid "Library"
-msgstr "도서실"
+msgstr "도서관"
 
 #: guitext:601
 msgctxt "Room name"
@@ -4267,7 +4267,7 @@ msgstr "고문실"
 #: guitext:603
 msgctxt "Room name"
 msgid "Training Room"
-msgstr "훈련실"
+msgstr "훈련장"
 
 #: guitext:604
 msgctxt "Room name"
@@ -4532,7 +4532,7 @@ msgstr "치유"
 #: guitext:645
 msgctxt "Keeper spell name"
 msgid "Time Bomb"
-msgstr "시한폭탄"
+msgstr "시한 폭탄"
 
 #: guitext:646
 msgctxt "Keeper spell name"
