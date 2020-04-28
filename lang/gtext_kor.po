@@ -6535,4 +6535,4 @@ msgstr "생명력: 이 피조물의 최대 생명력입니다."
 #: guitext:967
 msgctxt "Menu interface item"
 msgid "Toggle Message"
-msgstr ""
+msgstr "메시지 전환"
