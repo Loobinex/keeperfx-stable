@@ -529,6 +529,36 @@ void put_down_dbctext_sprites(const char *sbuf, const char *ebuf, long x, long y
     }
 }
 
+int get_bit_to_array(unsigned char* arrD, int iX, int iY, int iMax)
+{
+    int iRet = 0;
+    int iBytePos = 0;
+    int iModBitPos = 0;
+    int iPos = (iY * iMax + iX);
+
+    iBytePos = iPos / 8;
+    iModBitPos = iPos % 8;
+
+    iRet = (*(arrD + iBytePos) & (0x80 >> iModBitPos)) == (0x80 >> iModBitPos) ? 1 : 0;
+
+    return iRet;
+}
+
+void set_bit_to_array(unsigned char* arrD, int iX, int iY, int iMax, int iValue)
+{
+    int iBytePos = 0;
+    int iModBitPos = 0;
+    int iPos = (iY * iMax + iX);
+
+    iBytePos = iPos / 8;
+    iModBitPos = iPos % 8;
+
+    if (iValue == 1)
+        *(arrD + iBytePos) |= 0x80 >> iModBitPos;
+    else
+        *(arrD + iBytePos) &= ~(0x80 >> iModBitPos);
+}
+
 void put_down_dbctext_sprites_resized(const char *sbuf, const char *ebuf, long x, long y, long space_len, int units_per_px)
 {
     const char *c;
@@ -614,20 +644,64 @@ void put_down_dbctext_sprites_resized(const char *sbuf, const char *ebuf, long x
             unsigned long colour;
             if (dbc_get_sprite_for_char(&adraw, chr) == 0)
             {
-              if ((lbDisplay.DrawFlags & Lb_TEXT_ONE_COLOR) == 0)
-                colour = dbc_colour0;
-              else
-                colour = lbDisplay.DrawColour;
-              // TODO RESCALE make support of rescaling here
-              dbc_draw_font_sprite_text(&awind, &adraw, x, y, colour, -1, dbc_colour1);
-              w = (adraw.field_C + adraw.bits_width) * units_per_px / 16;
-              if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0) {
-                  h = adraw.bits_height * units_per_px / 16;
-                  LbDrawCharUnderline(x,y,w,h,colour,lbDisplayEx.ShadowColour);
-              }
-              x += w;
-              if (x >= awind.width)
-                return;
+                if ((lbDisplay.DrawFlags & Lb_TEXT_ONE_COLOR) == 0)
+                  colour = dbc_colour0;
+                else
+                  colour = lbDisplay.DrawColour;
+
+                unsigned char dest_pixel[1024] = { 0 };
+                int iDstSizeW = 0;
+                int iDstSizeH = 0;
+
+                if (units_per_px % 8 != 0) // Needs to be a multiple of 8
+                {
+                    iDstSizeH = (units_per_px / 8) * 8;
+                }
+                else
+                {
+                    iDstSizeH = units_per_px;
+                }
+
+                iDstSizeW = iDstSizeH;
+                if (!is_wide_charcode(chr))
+                {
+                    iDstSizeW -= 8;//ANSI is small size
+                }
+
+                float scale_factorX = (float)adraw.bits_width / (float)iDstSizeW;
+                float scale_factorY = (float)adraw.bits_height / (float)iDstSizeH;
+                for (int sY = 0; sY < iDstSizeH; sY++)
+                {
+                    for (int sX = 0; sX < iDstSizeW; sX++)
+                    {
+                        set_bit_to_array(dest_pixel, sX, sY, iDstSizeW, get_bit_to_array(adraw.sprite_data, (int)(sX * scale_factorX), (int)(sY * scale_factorY), adraw.bits_width));
+                    }
+                }
+
+                adraw.bits_width = iDstSizeW;
+                adraw.bits_height = iDstSizeH;
+                adraw.sprite_data = dest_pixel;
+
+                dbc_draw_font_sprite_text(&awind, &adraw, x, y, colour, -1, dbc_colour1);
+
+                if(adraw.bits_height == 16)
+                {
+                   w = (adraw.field_C + adraw.bits_width) * units_per_px / 16;
+                }
+                else
+                {
+                    w = (adraw.field_C + adraw.bits_width);
+                }
+                if ((lbDisplay.DrawFlags & Lb_TEXT_UNDERLINE) != 0)
+                {
+                    h = adraw.bits_height * units_per_px / 16;
+                    LbDrawCharUnderline(x,y,w,h,colour,lbDisplayEx.ShadowColour);
+                }
+                x += w;
+                if (x >= awind.width)
+                {
+                  return;
+                }
             }
             needs_draw = 0;
         }
@@ -966,7 +1040,9 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
         long w;
         if (chr > 32)
         {
-            w = LbTextCharWidth(chr) * units_per_px / 16;
+            //=^^= when mix ansi and unicoe lang (etc option menu -> define keys) align
+            w = LbTextCharWidthM(chr, units_per_px);
+            
             if ((posx+w-justifyx <= lbTextJustifyWindow.width) || (count > 0) || !LbAlignMethodSet(lbDisplay.DrawFlags))
             {
                 posx += w;
@@ -988,7 +1064,6 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
             }
             count = 0;
         } else
-
         if (chr == ' ')
         {
             w = LbTextCharWidth(' ') * units_per_px / 16;
@@ -1013,7 +1088,6 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
             }
             count = 0;
         } else
-
         if (chr == '\n')
         {
             w = 0;
@@ -1028,7 +1102,6 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
             starty += h;
             count = 0;
         } else
-
         if (chr == '\t')
         {
             w = LbTextCharWidth(' ') * units_per_px / 16;
@@ -1051,9 +1124,7 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
             }
             count = 0;
             continue;
-
         } else
-
         if ((chr == 6) || (chr == 7) || (chr == 8) || (chr == 9))
         {
             if (posx-justifyx > lbTextJustifyWindow.width)
@@ -1083,7 +1154,6 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
               break;
             }
         } else
-
         if (chr == 14)
         {
             ebuf++;
@@ -1184,6 +1254,50 @@ int LbTextHeight(const char *text)
     } else
     {
       return LbSprFontCharHeight(lbFontPtr,' ');
+    }
+}
+
+long dbc_char_widthM(unsigned long chr, long units_per_px)
+{
+    if (chr == 0)
+    {
+        return 0;
+    }
+    /*else
+    if (is_wide_charcode(chr))
+    {
+        return active_dbcfont->field_3C + active_dbcfont->bits_width;
+    }
+    else
+    {
+        return active_dbcfont->field_34 + active_dbcfont->field_24;
+    }*/
+    long ret = 0;;
+    if (units_per_px % 8 != 0)
+    {
+        ret = (units_per_px / 8) * 8;
+    }
+    else
+    {
+        ret = units_per_px;
+    }
+    if (!is_wide_charcode(chr))
+    {
+        ret -= 8;
+    }
+
+    return ret;
+}
+
+int LbTextCharWidthM(const long chr, long units_per_px)
+{
+    if ((dbc_initialized) && (dbc_enabled))
+    {
+        return dbc_char_widthM(chr, units_per_px);
+    }
+    else
+    {        
+        return LbSprFontCharWidth(lbFontPtr, (unsigned char)chr) * units_per_px / 16;
     }
 }
 
