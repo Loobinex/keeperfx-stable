@@ -1040,7 +1040,7 @@ TbBool LbTextDrawResized(int posx, int posy, int units_per_px, const char *text)
         long w;
         if (chr > 32)
         {
-            //=^^= when mix ansi and unicoe lang (etc option menu -> define keys) align
+            // Align when ansi and unicode are mixed on one screen
             w = LbTextCharWidthM(chr, units_per_px);
             
             if ((posx+w-justifyx <= lbTextJustifyWindow.width) || (count > 0) || !LbAlignMethodSet(lbDisplay.DrawFlags))
