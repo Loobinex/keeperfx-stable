@@ -1531,6 +1531,54 @@ int LbTextStringPartWidth(const char *text, int part)
     return max_len;
 }
 
+int LbTextStringPartWidthM(const char *text, int part, long units_per_px)
+{
+    if (lbFontPtr == NULL)
+        return 0;
+    int max_len = 0;
+    int len = 0;
+    for (const char* ebuf = text; *ebuf != '\0'; ebuf++)
+    {
+        if (part <= 0) break;
+        part--;
+        long chr = (unsigned char)*ebuf;
+        if (is_wide_charcode(chr))
+        {
+            ebuf++;
+            if (*ebuf == '\0') break;
+            chr = (chr << 8) + (unsigned char)*ebuf;
+        }
+        if (chr > 31)
+        {
+            len += LbTextCharWidthM(chr, units_per_px);
+        }
+        else
+            if (chr == '\r')
+            {
+                if (len > max_len)
+                {
+                    max_len = len;
+                    len = 0;
+                }
+            }
+            else
+                if (chr == '\t')
+                {
+                    len += lbSpacesPerTab * LbTextCharWidthM(' ', units_per_px);
+                }
+                else
+                    if ((chr == 6) || (chr == 7) || (chr == 8) || (chr == 9) || (chr == 14))
+                    {
+                        ebuf++;
+                        if (*ebuf == '\0')
+                            break;
+                    }
+    }
+    if (len > max_len)
+        max_len = len;
+    return max_len;
+}
+
 /**
  * Returns length of given text if drawn on screen.
  * @param text The text to be probed.
@@ -1539,6 +1587,18 @@ int LbTextStringPartWidth(const char *text, int part)
 int LbTextStringWidth(const char *text)
 {
     return LbTextStringPartWidth(text, LONG_MAX);
+}
+
+int LbTextStringWidthM(const char *text, long units_per_px)
+{
+    if ((dbc_initialized) && (dbc_enabled))
+    {
+        return LbTextStringPartWidthM(text, LONG_MAX, units_per_px);
+    }
+    else
+    {
+        return LbTextStringWidth(text) * units_per_px / 16;
+    }
 }
 
 int LbTextStringHeight(const char *str)
@@ -1562,7 +1622,7 @@ int LbTextNumberDraw(int pos_x, int pos_y, int units_per_px, long number, unsign
     char text[16];
     sprintf(text, "%ld", number);
     int h = LbTextLineHeight() * units_per_px / 16;
-    int w = LbTextStringWidth(text) * units_per_px / 16;
+    int w = LbTextStringWidthM(text, units_per_px);
     switch (fdflags & 0x03)
     {
     case Fnt_LeftJustify:
@@ -1586,7 +1646,7 @@ int LbTextStringDraw(int pos_x, int pos_y, int units_per_px, const char *text, u
     if (text == NULL)
       return 0;
     int h = LbTextLineHeight() * units_per_px / 16;
-    int w = LbTextStringWidth(text) * units_per_px / 16;
+    int w = LbTextStringWidthM(text, units_per_px);
     switch (fdflags & 0x03)
     {
     case Fnt_LeftJustify:
