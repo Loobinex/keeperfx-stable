@@ -854,7 +854,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     MapSubtlCoord stl_x = coord_subtile(x);
     MapSubtlCoord stl_y = coord_subtile(y);
     short influence_own_creatures = false;
-
+    struct SlabMap *slb;
     long i;
     switch (player->work_state)
     {
@@ -1207,8 +1207,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         break;
     case PSt_StealRoom:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
-        {
-            struct SlabMap *slb;          
+        {          
             slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
             if (slb->room_index)
                 {
@@ -1220,8 +1219,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         break;
     case PSt_DestroyRoom:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
-        {
-            struct SlabMap *slb;          
+        {          
             slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
             if (slb->room_index)
                 {
@@ -1255,8 +1253,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         break;
     case PSt_StealSlab:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
-        {
-            struct SlabMap *slb;          
+        {          
             slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
         if (slb->kind >= SlbT_EARTH && slb->kind <= SlbT_CLAIMED)
           {
