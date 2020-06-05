@@ -71,6 +71,10 @@ const struct NamedCommand player_state_commands[] = {
     {"PLAYER_STATE_KILLCREATURE",     PSt_KillCreatr},
     {"PLAYER_STATE_CONVERTCREATURE",  PSt_ConvertCreatr},
     {"PLAYER_STATE_STEALSLAB",        PSt_StealSlab},
+    {"PLAYER_STATE_LEVELCREATUREUP",  PSt_LevelCreatureUp},
+    {"PLAYER_STATE_KILLPLAYER",       PSt_KillPlayer},
+    {"PLAYER_STATE_HEARTHEALTH",      PSt_HeartHealth},
+    {"PLAYER_STATE_CREATRQUERYALL",   PSt_CreatrQueryAll},
     {NULL,                            0},  
 };
 /******************************************************************************/

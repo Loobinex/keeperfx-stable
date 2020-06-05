@@ -82,7 +82,11 @@ struct GuiBoxOption gui_main_cheat_list[] = { //gui_main_option_list in beta
   {"Order creature mode",      1,           NULL,      gf_change_player_state, 0, 0, 0,     PSt_OrderCreatr, 0, 0, 0, 0},
   {"Kill creature mode",       1,           NULL,      gf_change_player_state, 0, 0, 0,      PSt_KillCreatr, 0, 0, 0, 0},
   {"Turncoat mode",            1,           NULL,      gf_change_player_state, 0, 0, 0,   PSt_ConvertCreatr, 0, 0, 0, 0},
+  {"Level up mode",            1,           NULL,      gf_change_player_state, 0, 0, 0, PSt_LevelCreatureUp, 0, 0, 0, 0},
+  {"Query mode",               1,           NULL,      gf_change_player_state, 0, 0, 0,  PSt_CreatrQueryAll, 0, 0, 0, 0},
   {"",                         2,           NULL,                        NULL, 0, 0, 0,            PSt_None, 0, 0, 0, 0},
+  {"Kill player mode",         1,           NULL,      gf_change_player_state, 0, 0, 0,      PSt_KillPlayer, 0, 0, 0, 0},
+  {"Edit heart health",        1,          NULL,      gf_change_player_state, 0, 0, 0,      PSt_HeartHealth, 0, 0, 0, 0},
   {"!",                        0,           NULL,                        NULL, 0, 0, 0,            PSt_None, 0, 0, 0, 0},
 };
 

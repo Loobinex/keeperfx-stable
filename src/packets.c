@@ -856,6 +856,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     short influence_own_creatures = false;
     struct SlabMap *slb;
     long i;
+    struct Room* room;
     switch (player->work_state)
     {
     case PSt_CtrlDungeon:
@@ -1211,7 +1212,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
             if (slb->room_index)
                 {
-                    struct Room* room = room_get(slb->room_index);
+                    room = room_get(slb->room_index);
                     take_over_room(room, plyr_idx);
                 }
             unset_packet_control(pckt, PCtr_LBtnRelease);
@@ -1223,7 +1224,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
             if (slb->room_index)
                 {
-                    struct Room* room = room_get(slb->room_index);
+                    room = room_get(slb->room_index);
                     destroy_room_leaving_unclaimed_ground(room);
                 }
             unset_packet_control(pckt, PCtr_LBtnRelease);
@@ -1284,6 +1285,144 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
               place_slab_type_on_map(slbkind, slab_subtile(subtile_slab_fast(stl_x), 0), slab_subtile(subtile_slab_fast(stl_y), 0), plyr_idx, 0);
           }
             unset_packet_control(pckt, PCtr_LBtnRelease);
+        }
+        break;
+    case PSt_LevelCreatureUp:
+        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
+        {
+        thing = get_creature_near(x, y);
+        if (thing_is_creature(thing))
+            {/*
+                struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
+                if (cctrl->explevel == 9)
+                {
+                set_creature_level(thing, 0);    
+                }
+                else
+                {
+                    */
+                creature_increase_level(thing);
+                // }
+            }
+        unset_packet_control(pckt, PCtr_LBtnRelease);    
+        }
+        break;
+    case PSt_KillPlayer:
+          if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
+            {
+                i = 0;
+                clear_key_pressed(KC_NUMPAD0);
+            }
+          else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
+            {
+                i = 1;
+                clear_key_pressed(KC_NUMPAD1);
+            }
+          else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
+            {
+                i = 2;
+                clear_key_pressed(KC_NUMPAD2);
+            }
+          else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+            {
+                i = 3;
+                clear_key_pressed(KC_NUMPAD3);
+            }
+          else if (is_key_pressed(KC_NUMPAD4, KMod_NONE))
+            {
+                i = 4;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else
+          {
+              i = -1;
+          }
+          struct PlayerInfo* PlayerToKill = get_player(i);
+          if (player_exists(PlayerToKill))
+          {
+          thing = get_player_soul_container(PlayerToKill->id_number);
+          if (thing_is_dungeon_heart(thing))
+            {
+                thing->health = -1;
+            }
+          }
+        break;
+    case PSt_HeartHealth:
+          thing = get_player_soul_container(plyr_idx);
+            if (is_key_pressed(KC_ADD, KMod_ALT))
+            {
+                if (thing_is_dungeon_heart(thing))
+                    {
+                        thing->health++;
+                    }
+            }
+            else if (is_key_pressed(KC_EQUALS, KMod_SHIFT))
+            {
+                if (thing_is_dungeon_heart(thing))
+                    {
+                        thing->health++;
+                    }
+            }
+            else if (is_key_pressed(KC_PERIOD, KMod_SHIFT))
+            {
+                if (thing_is_dungeon_heart(thing))
+                    {
+                        thing->health = thing->health + 100;
+                    }
+            }
+            else if (is_key_pressed(KC_COMMA, KMod_SHIFT))
+            {
+                if (thing_is_dungeon_heart(thing))
+                    {
+                        thing->health = thing->health - 100;
+                    }
+            }
+            else if (is_key_pressed(KC_SUBTRACT, KMod_ALT))
+            {
+                if (thing_is_dungeon_heart(thing))
+                    {
+                        thing->health--;
+                    }
+            }
+            else if (is_key_pressed(KC_MINUS, KMod_NONE))
+            {
+                if (thing_is_dungeon_heart(thing))
+                    {
+                        thing->health--;
+                    }
+            }
+            else if (is_key_pressed(KC_SLASH, KMod_SHIFT))
+            {
+                if (thing_is_dungeon_heart(thing))
+                    {
+                        char hhealth[5];
+                        itoa(thing->health, hhealth, 10);
+                        message_add(plyr_idx, hhealth);
+                        clear_key_pressed(KC_SLASH);
+                    }
+            }
+        break;
+    case PSt_CreatrQueryAll:
+        influence_own_creatures = 1;
+        thing = get_creature_near(x, y);
+        if (thing_is_invalid(thing))
+            player->thing_under_hand = 0;
+        else
+            player->thing_under_hand = thing->index;
+        if ((pckt->control_flags & PCtr_LBtnRelease) != 0)
+        {
+          if (player->thing_under_hand > 0)
+          {
+            if (player->controlled_thing_idx != player->thing_under_hand)
+            {
+              turn_off_all_panel_menus();
+              initialise_tab_tags_and_menu(GMnu_CREATURE_QUERY1);
+              turn_on_menu(GMnu_CREATURE_QUERY1);
+              player->influenced_thing_idx = player->thing_under_hand;
+              set_player_instance(player, PI_QueryCrtr, 0);
+            }
+            unset_packet_control(pckt, PCtr_LBtnRelease);
+          }
         }
         break;
     default:
