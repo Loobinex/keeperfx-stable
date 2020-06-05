@@ -1395,7 +1395,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             {
                 if (thing_is_dungeon_heart(thing))
                     {
-                        char hhealth[5];
+                        char hhealth[10];
                         itoa(thing->health, hhealth, 10);
                         message_add(plyr_idx, hhealth);
                         clear_key_pressed(KC_SLASH);
