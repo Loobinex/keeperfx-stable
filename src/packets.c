@@ -1021,8 +1021,8 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         break;
     case PSt_OrderCreatr:
         influence_own_creatures = 1;
-        thing = get_creature_near_and_owned_by(x, y, plyr_idx);
-        if (thing_is_invalid(thing))
+        thing = get_creature_near(x, y);
+        if (!thing_is_creature(thing))
             player->thing_under_hand = 0;
         else
             player->thing_under_hand = thing->index;
@@ -1231,10 +1231,14 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         }
         break;
     case PSt_KillCreatr:
+            thing = get_creature_near(x, y);
+            if (!thing_is_creature(thing))
+            player->thing_under_hand = 0;
+        else
+            player->thing_under_hand = thing->index;
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-        thing = get_creature_near(x, y);
-        if (thing_is_creature(thing))
+             if (player->thing_under_hand > 0)
             {
                 kill_creature(thing, INVALID_THING, -1, CrDed_NoUnconscious);
             }
@@ -1242,10 +1246,14 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         }
         break;
     case PSt_ConvertCreatr:
+                thing = get_creature_near(x, y);
+            if (!thing_is_creature(thing))
+            player->thing_under_hand = 0;
+        else
+            player->thing_under_hand = thing->index;
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-        thing = get_creature_near(x, y);
-        if (thing_is_creature(thing))
+             if (player->thing_under_hand > 0)
             {
                 change_creature_owner(thing, plyr_idx);
             }
@@ -1288,22 +1296,17 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         }
         break;
     case PSt_LevelCreatureUp:
+            thing = get_creature_near(x, y);
+            if (!thing_is_creature(thing))
+            player->thing_under_hand = 0;
+        else
+            player->thing_under_hand = thing->index;
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-        thing = get_creature_near(x, y);
-        if (thing_is_creature(thing))
-            {/*
-                struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
-                if (cctrl->explevel == 9)
-                {
-                set_creature_level(thing, 0);    
-                }
-                else
-                {
-                    */
+             if (player->thing_under_hand > 0)
+          {
                 creature_increase_level(thing);
-                // }
-            }
+          }
         unset_packet_control(pckt, PCtr_LBtnRelease);    
         }
         break;
