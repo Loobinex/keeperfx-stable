@@ -76,6 +76,7 @@ struct GuiBoxOption gui_main_cheat_list[] = { //gui_main_option_list in beta
   {"Steal room mode",          1,           NULL,      gf_change_player_state, 0, 0, 0,       PSt_StealRoom, 0, 0, 0, 0},
   {"Destroy room mode",        1,           NULL,      gf_change_player_state, 0, 0, 0,     PSt_DestroyRoom, 0, 0, 0, 0},
   {"Steal slab mode",          1,           NULL,      gf_change_player_state, 0, 0, 0,       PSt_StealSlab, 0, 0, 0, 0},
+  {"Place terrain mode",       1,           NULL,      gf_change_player_state, 0, 0, 0,    PSt_PlaceTerrain, 0, 0, 0, 0},
   {"",                         2,           NULL,                        NULL, 0, 0, 0,            PSt_None, 0, 0, 0, 0},
   {"Passenger control mode",   1,           NULL,      gf_change_player_state, 0, 0, 0, PSt_FreeCtrlPassngr, 0, 0, 0, 0},
   {"Direct control mode",      1,           NULL,      gf_change_player_state, 0, 0, 0,  PSt_FreeCtrlDirect, 0, 0, 0, 0},

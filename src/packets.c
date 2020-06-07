@@ -1423,6 +1423,85 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
           }
         }
         break;
+    case PSt_PlaceTerrain:
+        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
+        {          
+            slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
+            short slbkind;
+            char s[3];
+            if (is_key_pressed(KC_SLASH, KMod_NONE))
+            {
+                 itoa(slb->kind, s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_SLASH);
+            }
+            else if (is_key_pressed(KC_SLASH, KMod_SHIFT))
+            {
+                 itoa(slabmap_owner(slb), s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_SLASH);
+            }
+            else
+            {
+          if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
+            {
+                slbkind = SlbT_ROCK;
+                clear_key_pressed(KC_NUMPAD0);
+            }
+          else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
+            {
+                slbkind = SlbT_GOLD;
+                clear_key_pressed(KC_NUMPAD1);
+            }
+          else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
+            {
+                slbkind = SlbT_GEMS;
+                clear_key_pressed(KC_NUMPAD2);
+            }
+          else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+            {
+                slbkind = SlbT_EARTH;
+                clear_key_pressed(KC_NUMPAD3);
+            }
+          else if (is_key_pressed(KC_NUMPAD4, KMod_NONE))
+            {
+                slbkind = SlbT_TORCHDIRT;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
+            {
+                slbkind = SlbT_PATH;
+                clear_key_pressed(KC_NUMPAD5);
+            }
+          else if (is_key_pressed(KC_NUMPAD6, KMod_NONE))
+            {
+                slbkind = SlbT_CLAIMED;
+                clear_key_pressed(KC_NUMPAD6);
+            }
+          else if (is_key_pressed(KC_NUMPAD7, KMod_NONE))
+            {
+                slbkind = SlbT_LAVA;
+                clear_key_pressed(KC_NUMPAD7);
+            }
+          else if (is_key_pressed(KC_NUMPAD8, KMod_NONE))
+            {
+                slbkind = SlbT_WATER;
+                clear_key_pressed(KC_NUMPAD8);
+            }
+          else if (is_key_pressed(KC_NUMPAD9, KMod_NONE))
+            {
+                slbkind = rand() % (5) + 4;
+                clear_key_pressed(KC_NUMPAD9);
+            }
+          else
+            {
+                  slbkind = 0;
+            }
+              place_slab_type_on_map(slbkind, slab_subtile(subtile_slab_fast(stl_x), 0), slab_subtile(subtile_slab_fast(stl_y), 0), game.neutral_player_num, 0);
+            }
+          }
+            unset_packet_control(pckt, PCtr_LBtnRelease);
+        break;
     default:
         ERRORLOG("Unrecognized player %d work state: %d", (int)plyr_idx, (int)player->work_state);
         ret = false;

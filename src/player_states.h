@@ -79,6 +79,7 @@ enum PlayerStates {
     PSt_CreatrQueryAll,
     PSt_MkHappy,
     PSt_MkAngry,
+    PSt_PlaceTerrain,
     PSt_ListEnd
 };
 
