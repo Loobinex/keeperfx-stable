@@ -947,7 +947,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         if (player->work_state == PSt_CtrlDirect)
             thing = get_creature_near_for_controlling(plyr_idx, x, y);
         else
-            thing = get_creature_near_for_controlling(plyr_idx, x, y); // TODO Change to allow controlling any owner
+            thing = get_creature_near(x, y); // TODO Change to allow controlling any owner
         if (thing_is_invalid(thing))
           player->thing_under_hand = 0;
         else
@@ -2641,7 +2641,7 @@ void process_packets(void)
             for (i = 0; i < 4; i++)
             {
                 player = get_player(i);
-                if (network_player_active(player->packet_num))
+                if (!network_player_active(player->packet_num))
                 {
                     player->allocflags |= PlaF_CompCtrl;
                     toggle_computer_player(i);
