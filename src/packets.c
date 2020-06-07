@@ -828,7 +828,6 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
 {
     struct Thing *thing;
     PowerKind pwkind;
-
     struct PlayerInfo* player = get_player(plyr_idx);
     struct Packet* pckt = get_packet_direct(player->packet_num);
     SYNCDBG(6,"Starting for player %d state %s",(int)plyr_idx,player_state_code_name(player->work_state));
@@ -869,44 +868,72 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     case PSt_MkGoodDigger:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-            create_owned_special_digger(x, y, game.hero_player_num);
+            if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
+            {
+                i = 0;
+                clear_key_pressed(KC_NUMPAD0);
+            }
+          else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
+            {
+                i = 1;
+                clear_key_pressed(KC_NUMPAD1);
+            }
+          else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
+            {
+                i = 2;
+                clear_key_pressed(KC_NUMPAD2);
+            }
+          else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+            {
+                i = 3;
+                clear_key_pressed(KC_NUMPAD3);
+            }
+          else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
+            {
+                i = 5;
+                clear_key_pressed(KC_NUMPAD5);
+            }
+          else
+          {
+              i = game.hero_player_num;
+          }
+            create_owned_special_digger(x, y, i);
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
         break;
     case PSt_MkGoodCreatr:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-            PlayerNumber n;
             if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
             {
-                n = 0;
+                i = 0;
                 clear_key_pressed(KC_NUMPAD0);
             }
           else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
             {
-                n = 1;
+                i = 1;
                 clear_key_pressed(KC_NUMPAD1);
             }
           else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
             {
-                n = 2;
+                i = 2;
                 clear_key_pressed(KC_NUMPAD2);
             }
           else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
             {
-                n = 3;
+                i = 3;
                 clear_key_pressed(KC_NUMPAD3);
             }
           else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
             {
-                n = 5;
+                i = 5;
                 clear_key_pressed(KC_NUMPAD5);
             }
           else
           {
-              n = game.hero_player_num;
+              i = game.hero_player_num;
           }
-            create_random_hero_creature(x, y, n, CREATURE_MAX_LEVEL);
+            create_random_hero_creature(x, y, i, CREATURE_MAX_LEVEL);
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
         break;
@@ -1095,42 +1122,41 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     case PSt_MkBadCreatr:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-            PlayerNumber n;
             if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
             {
-                n = 0;
+                i = 0;
                 clear_key_pressed(KC_NUMPAD4);
             }
           else if (is_key_pressed(KC_NUMPAD4, KMod_NONE))
             {
-                n = 4;
+                i = 4;
                 clear_key_pressed(KC_NUMPAD4);
             }
           else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
             {
-                n = 1;
+                i = 1;
                 clear_key_pressed(KC_NUMPAD1);
             }
           else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
             {
-                n = 2;
+                i = 2;
                 clear_key_pressed(KC_NUMPAD2);
             }
           else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
             {
-                n = 3;
+                i = 3;
                 clear_key_pressed(KC_NUMPAD3);
             }
           else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
             {
-                n = 5;
+                i = 5;
                 clear_key_pressed(KC_NUMPAD4);
             }
           else
           {
-              n = plyr_idx;
+              i = plyr_idx;
           }
-            create_random_evil_creature(x, y, n, CREATURE_MAX_LEVEL);
+            create_random_evil_creature(x, y, i, CREATURE_MAX_LEVEL);
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
         break;
