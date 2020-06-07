@@ -1301,10 +1301,44 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {          
             slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
+          if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
+            {
+                i = 0;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else if (is_key_pressed(KC_NUMPAD4, KMod_NONE))
+            {
+                i = 4;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
+            {
+                i = 1;
+                clear_key_pressed(KC_NUMPAD1);
+            }
+          else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
+            {
+                i = 2;
+                clear_key_pressed(KC_NUMPAD2);
+            }
+          else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+            {
+                i = 3;
+                clear_key_pressed(KC_NUMPAD3);
+            }
+          else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
+            {
+                i = 5;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else
+          {
+              i = plyr_idx;
+          }
             if (slb->room_index)
                 {
                     room = room_get(slb->room_index);
-                    take_over_room(room, plyr_idx);
+                    take_over_room(room, i);
                 }
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
@@ -1337,16 +1371,50 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         }
         break;
     case PSt_ConvertCreatr:
-                thing = get_creature_near(x, y);
+            thing = get_creature_near(x, y);
             if (!thing_is_creature(thing))
             player->thing_under_hand = 0;
         else
             player->thing_under_hand = thing->index;
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
+          if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
+            {
+                i = 0;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else if (is_key_pressed(KC_NUMPAD4, KMod_NONE))
+            {
+                i = 4;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
+            {
+                i = 1;
+                clear_key_pressed(KC_NUMPAD1);
+            }
+          else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
+            {
+                i = 2;
+                clear_key_pressed(KC_NUMPAD2);
+            }
+          else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+            {
+                i = 3;
+                clear_key_pressed(KC_NUMPAD3);
+            }
+          else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
+            {
+                i = 5;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else
+          {
+              i = plyr_idx;
+          }
              if (player->thing_under_hand > 0)
             {
-                change_creature_owner(thing, plyr_idx);
+                change_creature_owner(thing, i);
             }
         unset_packet_control(pckt, PCtr_LBtnRelease);    
         }
@@ -1355,6 +1423,40 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {          
             slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
+          if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
+            {
+                i = 0;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else if (is_key_pressed(KC_NUMPAD4, KMod_NONE))
+            {
+                i = 4;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
+            {
+                i = 1;
+                clear_key_pressed(KC_NUMPAD1);
+            }
+          else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
+            {
+                i = 2;
+                clear_key_pressed(KC_NUMPAD2);
+            }
+          else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+            {
+                i = 3;
+                clear_key_pressed(KC_NUMPAD3);
+            }
+          else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
+            {
+                i = 5;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else
+          {
+              i = plyr_idx;
+          }
         if (slb->kind >= SlbT_EARTH && slb->kind <= SlbT_CLAIMED)
           {
               short slbkind;
@@ -1381,7 +1483,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
                   break;
               }
               }
-              place_slab_type_on_map(slbkind, slab_subtile(subtile_slab_fast(stl_x), 0), slab_subtile(subtile_slab_fast(stl_y), 0), plyr_idx, 0);
+              place_slab_type_on_map(slbkind, slab_subtile(subtile_slab_fast(stl_x), 0), slab_subtile(subtile_slab_fast(stl_y), 0), i, 0);
           }
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
