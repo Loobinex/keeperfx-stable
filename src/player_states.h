@@ -77,6 +77,8 @@ enum PlayerStates {
     PSt_KillPlayer,
     PSt_HeartHealth,
     PSt_CreatrQueryAll,
+    PSt_MkHappy,
+    PSt_MkAngry,
     PSt_ListEnd
 };
 

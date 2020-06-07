@@ -1428,6 +1428,30 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
           }
         }
         break;
+    case PSt_MkHappy:
+    case PSt_MkAngry:
+        influence_own_creatures = 1;
+        thing = get_creature_near(x, y);
+        if (!thing_is_creature(thing))
+            player->thing_under_hand = 0;
+        else
+            player->thing_under_hand = thing->index;
+        if ((pckt->control_flags & PCtr_LBtnRelease) != 0)
+        {
+          if (player->thing_under_hand > 0)
+          {
+            if (player->work_state == PSt_MkHappy)
+            {
+            anger_set_creature_anger_all_types(thing, 0);
+            }
+            else if (player->work_state == PSt_MkAngry)
+            {
+            anger_set_creature_anger_all_types(thing, 10000);
+            }
+            unset_packet_control(pckt, PCtr_LBtnRelease);
+          }
+        }
+        break;
     default:
         ERRORLOG("Unrecognized player %d work state: %d", (int)plyr_idx, (int)player->work_state);
         ret = false;
