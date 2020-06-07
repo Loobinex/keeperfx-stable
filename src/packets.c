@@ -876,7 +876,37 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     case PSt_MkGoodCreatr:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-            create_random_hero_creature(x, y, game.hero_player_num, CREATURE_MAX_LEVEL);
+            PlayerNumber n;
+            if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
+            {
+                n = 0;
+                clear_key_pressed(KC_NUMPAD0);
+            }
+          else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
+            {
+                n = 1;
+                clear_key_pressed(KC_NUMPAD1);
+            }
+          else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
+            {
+                n = 2;
+                clear_key_pressed(KC_NUMPAD2);
+            }
+          else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+            {
+                n = 3;
+                clear_key_pressed(KC_NUMPAD3);
+            }
+          else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
+            {
+                n = 5;
+                clear_key_pressed(KC_NUMPAD5);
+            }
+          else
+          {
+              n = game.hero_player_num;
+          }
+            create_random_hero_creature(x, y, n, CREATURE_MAX_LEVEL);
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
         break;
@@ -1065,7 +1095,42 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     case PSt_MkBadCreatr:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-            create_random_evil_creature(x, y, plyr_idx, CREATURE_MAX_LEVEL);
+            PlayerNumber n;
+            if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
+            {
+                n = 0;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else if (is_key_pressed(KC_NUMPAD4, KMod_NONE))
+            {
+                n = 4;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
+            {
+                n = 1;
+                clear_key_pressed(KC_NUMPAD1);
+            }
+          else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
+            {
+                n = 2;
+                clear_key_pressed(KC_NUMPAD2);
+            }
+          else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+            {
+                n = 3;
+                clear_key_pressed(KC_NUMPAD3);
+            }
+          else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
+            {
+                n = 5;
+                clear_key_pressed(KC_NUMPAD4);
+            }
+          else
+          {
+              n = plyr_idx;
+          }
+            create_random_evil_creature(x, y, n, CREATURE_MAX_LEVEL);
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
         break;
