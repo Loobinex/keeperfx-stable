@@ -1292,6 +1292,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
               }
               }
               place_slab_type_on_map(slbkind, slb_x, slb_y, get_selected_player_for_cheat(plyr_idx), 0);
+              do_slab_efficiency_alteration(subtile_slab(stl_x), subtile_slab(stl_y));
           }
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
@@ -1443,6 +1444,36 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
                  message_add(plyr_idx, s);
                  clear_key_pressed(KC_SLASH);
             }
+            else if (is_key_pressed(KC_X, KMod_NONE))
+            {
+                 itoa(stl_x, s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_X);
+            }
+            else if (is_key_pressed(KC_Y, KMod_NONE))
+            {
+                 itoa(stl_y, s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_Y);
+            }
+            else if (is_key_pressed(KC_X, KMod_SHIFT))
+            {
+                 itoa(slb_x, s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_X);
+            }
+            else if (is_key_pressed(KC_Y, KMod_SHIFT))
+            {
+                 itoa(slb_y, s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_Y);
+            }
+            else if (is_key_pressed(KC_N, KMod_NONE))
+            {
+                 itoa(get_slab_number(subtile_slab(stl_x), subtile_slab(stl_y)), s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_N);
+            }
             else
             {
           if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
@@ -1512,12 +1543,9 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             {
               place_slab_type_on_map(slbkind, slb_x, slb_y, game.neutral_player_num, 0);
             }
-            if (!room_is_invalid(room))
-            {
-                set_room_efficiency(room);
+            do_slab_efficiency_alteration(subtile_slab(stl_x), subtile_slab(stl_y));
             }
           }
-        }
             unset_packet_control(pckt, PCtr_LBtnRelease);
         break;
     default:
