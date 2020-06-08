@@ -1497,7 +1497,14 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             {
                   slbkind = 0;
             }
+            if (slab_kind_is_animated(slbkind))
+            {
+              place_animating_slab_type_on_map(slbkind, 0, slab_subtile(subtile_slab_fast(stl_x), 0), slab_subtile(subtile_slab_fast(stl_y), 0), game.neutral_player_num);  
+            }
+            else
+            {
               place_slab_type_on_map(slbkind, slab_subtile(subtile_slab_fast(stl_x), 0), slab_subtile(subtile_slab_fast(stl_y), 0), game.neutral_player_num, 0);
+            }
             }
           }
             unset_packet_control(pckt, PCtr_LBtnRelease);
