@@ -856,6 +856,8 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     struct SlabMap *slb;
     long i;
     struct Room* room;
+    MapSlabCoord slb_x = slab_subtile(subtile_slab_fast(stl_x), 0);
+    MapSlabCoord slb_y = slab_subtile(subtile_slab_fast(stl_y), 0);
     switch (player->work_state)
     {
     case PSt_CtrlDungeon:
@@ -1289,7 +1291,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
                   break;
               }
               }
-              place_slab_type_on_map(slbkind, slab_subtile(subtile_slab_fast(stl_x), 0), slab_subtile(subtile_slab_fast(stl_y), 0), get_selected_player_for_cheat(plyr_idx), 0);
+              place_slab_type_on_map(slbkind, slb_x, slb_y, get_selected_player_for_cheat(plyr_idx), 0);
           }
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
@@ -1497,16 +1499,25 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             {
                   slbkind = 0;
             }
+                if (subtile_is_room(stl_x, stl_y)) 
+                {
+                    room = subtile_room_get(stl_x, stl_y);
+                    delete_room_slab(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y), true);
+                }
             if (slab_kind_is_animated(slbkind))
             {
-              place_animating_slab_type_on_map(slbkind, 0, slab_subtile(subtile_slab_fast(stl_x), 0), slab_subtile(subtile_slab_fast(stl_y), 0), game.neutral_player_num);  
+              place_animating_slab_type_on_map(slbkind, 0, slb_x, slb_y, game.neutral_player_num);  
             }
             else
             {
-              place_slab_type_on_map(slbkind, slab_subtile(subtile_slab_fast(stl_x), 0), slab_subtile(subtile_slab_fast(stl_y), 0), game.neutral_player_num, 0);
+              place_slab_type_on_map(slbkind, slb_x, slb_y, game.neutral_player_num, 0);
             }
+            if (!room_is_invalid(room))
+            {
+                set_room_efficiency(room);
             }
           }
+        }
             unset_packet_control(pckt, PCtr_LBtnRelease);
         break;
     default:
