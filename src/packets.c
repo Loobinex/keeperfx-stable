@@ -43,6 +43,7 @@
 #include "config.h"
 #include "config_creature.h"
 #include "config_crtrmodel.h"
+#include "config_effects.h"
 #include "config_terrain.h"
 #include "config_players.h"
 #include "config_settings.h"
@@ -70,6 +71,7 @@
 #include "thing_traps.h"
 #include "magic.h"
 #include "map_blocks.h"
+#include "map_utils.h"
 #include "light_data.h"
 #include "gui_draw.h"
 #include "gui_topmsg.h"
@@ -1214,7 +1216,15 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             if (slb->room_index)
                 {
                     room = room_get(slb->room_index);
-                    take_over_room(room, get_selected_player_for_cheat(plyr_idx));
+                    i = get_selected_player_for_cheat(plyr_idx);
+                    if (is_key_pressed(KC_RALT, KMod_DONTCARE))
+                    {
+                        play_non_3d_sample(116);
+                        create_effects_on_room_slabs(room, imp_spangle_effects[i], 0, i);
+                    }
+                    {
+                    take_over_room(room, i);
+                    }
                 }
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
@@ -1291,7 +1301,43 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
                   break;
               }
               }
-              place_slab_type_on_map(slbkind, slb_x, slb_y, get_selected_player_for_cheat(plyr_idx), 0);
+              i = get_selected_player_for_cheat(plyr_idx);
+              if ((slbkind == SlbT_CLAIMED) || ((slbkind >= SlbT_WALLDRAPE) && (slbkind <= SlbT_WALLPAIRSHR)))
+              {
+                    if (is_key_pressed(KC_RALT, KMod_DONTCARE))
+                    {
+                        struct Coord3d pos;                    
+                        if (slbkind == SlbT_CLAIMED)
+                        {
+                        pos.x.val = subtile_coord_center(slab_subtile_center(subtile_slab(stl_x)));
+                        pos.y.val = subtile_coord_center(slab_subtile_center(subtile_slab(stl_y))); 
+                        pos.z.val = subtile_coord_center(1);
+                        play_non_3d_sample(76);
+                        create_effect(&pos, imp_spangle_effects[i], i);
+                        }
+                        else
+                        {
+                            play_non_3d_sample(41);
+                            for (long n = 0; n < SMALL_AROUND_LENGTH; n++)
+                            {
+                            pos.x.stl.pos = 128;
+                            pos.y.stl.pos = 128;
+                            pos.z.stl.pos = 128;
+                            pos.x.stl.num = stl_x + 2 * small_around[n].delta_x;
+                            pos.y.stl.num = stl_y + 2 * small_around[n].delta_y;
+                            struct Map* mapblk = get_map_block_at(pos.x.stl.num, pos.y.stl.num);
+                            if (map_block_revealed(mapblk, i) && ((mapblk->flags & SlbAtFlg_Blocking) == 0))
+                            {
+                            pos.z.val = get_floor_height_at(&pos);
+                            create_effect(&pos, imp_spangle_effects[i], i);
+                        // thing = thing_get(player->hand_thing_idx);
+                        // pos.z.val = get_thing_height_at(thing, &pos);   
+                            }
+                            }
+                        }
+                    }
+              }
+              place_slab_type_on_map(slbkind, slb_x, slb_y, i, 0);
               do_slab_efficiency_alteration(subtile_slab(stl_x), subtile_slab(stl_y));
           }
             unset_packet_control(pckt, PCtr_LBtnRelease);
