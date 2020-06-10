@@ -520,7 +520,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapCoord y = ((unsigned short)pckt->pos_y);
     MapSubtlCoord stl_x = coord_subtile(x);
     MapSubtlCoord stl_y = coord_subtile(y);
-
+    int a;
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -552,7 +552,35 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
       }
       return false;
     }
-    keeper_build_room(stl_x,stl_y,plyr_idx,player->chosen_room_kind);
+     if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+     {
+        a = 1;
+        clear_key_pressed(KC_NUMPAD3);
+     }
+     else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
+     {
+        a = 2;
+        clear_key_pressed(KC_NUMPAD5);
+     }
+     else if (is_key_pressed(KC_NUMPAD7, KMod_NONE))
+     {
+        a = 3;
+        clear_key_pressed(KC_NUMPAD7);
+     }
+     else
+     {
+        a = 0;
+     }
+    int dist = a * 3;
+    MapSubtlCoord buildx = stl_x - dist;
+    MapSubtlCoord buildy = stl_y - dist;
+    for (buildy = stl_y - dist; buildy <= stl_y + dist; buildy += 3)
+    {
+        for (buildx = stl_x - dist; buildx <= stl_x + dist; buildx += 3)
+        {
+            keeper_build_room(buildx,buildy,plyr_idx,player->chosen_room_kind);
+        }
+    }
     unset_packet_control(pckt, PCtr_LBtnClick);
     return true;
 }
