@@ -29,6 +29,7 @@
 #include "frontmenu_ingame_map.h"
 #include "game_legacy.h"
 #include "creature_states.h"
+#include "map_data.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -269,6 +270,27 @@ TbBool can_build_room_at_slab(PlayerNumber plyr_idx, RoomKind rkind,
         return false;
     }
     return (slb->kind == SlbT_CLAIMED);
+}
+
+TbBool can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord slb_x, MapSlabCoord slb_y, int radius)
+{
+    int dist = radius * 3;
+    MapSubtlCoord stl_x = slab_subtile_center(slb_x);
+    MapSubtlCoord stl_y = slab_subtile_center(slb_y);
+    MapSubtlCoord buildx = stl_x - dist;
+    MapSubtlCoord buildy = stl_y - dist;
+        for (buildy = stl_y - dist; buildy <= stl_y + dist; buildy += 3)
+    {
+        for (buildx = stl_x - dist; buildx <= stl_x + dist; buildx += 3)
+        {
+            if (!can_build_room_at_slab(plyr_idx, rkind, subtile_slab(buildx), subtile_slab(buildy)))
+            {
+            return false;   
+            }
+        }
+    }
+    return true;
 }
 
 /**

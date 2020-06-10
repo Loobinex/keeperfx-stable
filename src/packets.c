@@ -579,12 +579,19 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     int dist = a * 3;
     MapSubtlCoord buildx = stl_x - dist;
     MapSubtlCoord buildy = stl_y - dist;
+    if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a))
+    {
     for (buildy = stl_y - dist; buildy <= stl_y + dist; buildy += 3)
     {
         for (buildx = stl_x - dist; buildx <= stl_x + dist; buildx += 3)
         {
             keeper_build_room(buildx,buildy,plyr_idx,player->chosen_room_kind);
         }
+    }
+    }
+    else
+    {
+        play_non_3d_sample(119);
     }
     unset_packet_control(pckt, PCtr_LBtnClick);
     return true;
