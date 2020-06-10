@@ -567,6 +567,11 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         a = 3;
         clear_key_pressed(KC_NUMPAD7);
      }
+     else if (is_key_pressed(KC_NUMPAD9, KMod_NONE))
+     {
+        a = 4;
+        clear_key_pressed(KC_NUMPAD9);
+     }
      else
      {
         a = 0;
