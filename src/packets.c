@@ -553,37 +553,37 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
       }
       return false;
     }
-     if ((is_key_pressed(KC_NUMPAD3, KMod_NONE)) || (is_key_pressed(KC_NUMPAD2, KMod_NONE)))
+     if ((is_key_pressed(KC_NUMPAD3, KMod_DONTCARE)) || (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE)))
      {
         a = 1;
-        b = is_key_pressed(KC_NUMPAD3, KMod_NONE);
+        b = is_key_pressed(KC_NUMPAD3, KMod_DONTCARE);
      }
-     else if (is_key_pressed(KC_NUMPAD4, KMod_NONE))
+     else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
      {
         a = 3;
         b = false;
      }
-     else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
+     else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
      {
         a = 2;
         b = true;
      }
-     else if (is_key_pressed(KC_NUMPAD6, KMod_NONE))
+     else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
      {
         a = 5;
         b = false;
      }
-     else if (is_key_pressed(KC_NUMPAD7, KMod_NONE))
+     else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
      {
         a = 3;
         b = true;
      }
-     else if (is_key_pressed(KC_NUMPAD8, KMod_NONE))
+     else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
      {
         a = 7;
         b = false;
      }
-     else if (is_key_pressed(KC_NUMPAD9, KMod_NONE))
+     else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
      {
         a = 4;
         b = true;
@@ -596,7 +596,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     int dist = a * 3;
     MapSubtlCoord buildx;
     MapSubtlCoord buildy;
-    if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a, b))
+    if ((is_key_pressed(KC_RSHIFT, KMod_DONTCARE)) || (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a, b)))
     {
     for (buildy = stl_y - (dist * (char)b); buildy <= stl_y + dist; buildy += 3)
     {
