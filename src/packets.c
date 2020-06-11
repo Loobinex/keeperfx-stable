@@ -521,6 +521,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapSubtlCoord stl_x = coord_subtile(x);
     MapSubtlCoord stl_y = coord_subtile(y);
     int a;
+    TbBool b;
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -552,38 +553,54 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
       }
       return false;
     }
-     if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+     if ((is_key_pressed(KC_NUMPAD3, KMod_NONE)) || (is_key_pressed(KC_NUMPAD2, KMod_NONE)))
      {
         a = 1;
-        clear_key_pressed(KC_NUMPAD3);
+        b = is_key_pressed(KC_NUMPAD3, KMod_NONE);
+     }
+     else if (is_key_pressed(KC_NUMPAD4, KMod_NONE))
+     {
+        a = 3;
+        b = false;
      }
      else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
      {
         a = 2;
-        clear_key_pressed(KC_NUMPAD5);
+        b = true;
+     }
+     else if (is_key_pressed(KC_NUMPAD6, KMod_NONE))
+     {
+        a = 5;
+        b = false;
      }
      else if (is_key_pressed(KC_NUMPAD7, KMod_NONE))
      {
         a = 3;
-        clear_key_pressed(KC_NUMPAD7);
+        b = true;
+     }
+     else if (is_key_pressed(KC_NUMPAD8, KMod_NONE))
+     {
+        a = 7;
+        b = false;
      }
      else if (is_key_pressed(KC_NUMPAD9, KMod_NONE))
      {
         a = 4;
-        clear_key_pressed(KC_NUMPAD9);
+        b = true;
      }
      else
      {
         a = 0;
+        b = false;
      }
     int dist = a * 3;
-    MapSubtlCoord buildx = stl_x - dist;
-    MapSubtlCoord buildy = stl_y - dist;
-    if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a))
+    MapSubtlCoord buildx;
+    MapSubtlCoord buildy;
+    if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a, b))
     {
-    for (buildy = stl_y - dist; buildy <= stl_y + dist; buildy += 3)
+    for (buildy = stl_y - (dist * (char)b); buildy <= stl_y + dist; buildy += 3)
     {
-        for (buildx = stl_x - dist; buildx <= stl_x + dist; buildx += 3)
+        for (buildx = stl_x - (dist * (char)b); buildx <= stl_x + dist; buildx += 3)
         {
             keeper_build_room(buildx,buildy,plyr_idx,player->chosen_room_kind);
         }
