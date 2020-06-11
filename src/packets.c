@@ -553,40 +553,45 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
       }
       return false;
     }
-     if ((is_key_pressed(KC_NUMPAD3, KMod_DONTCARE)) || (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE)))
+     if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
      {
         a = 1;
-        b = is_key_pressed(KC_NUMPAD3, KMod_DONTCARE);
+        b = false;
+     }
+     else if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
+     {
+        a = 0;
+        b = true;
      }
      else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
      {
-        a = 3;
-        b = false;
+        a = 1;
+        b = true;
      }
      else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
      {
         a = 2;
-        b = true;
+        b = false;
      }
      else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
      {
-        a = 5;
-        b = false;
+        a = 2;
+        b = true;
      }
      else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
      {
         a = 3;
-        b = true;
+        b = false;
      }
      else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
      {
-        a = 7;
-        b = false;
+        a = 3;
+        b = true;
      }
      else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
      {
         a = 4;
-        b = true;
+        b = false;
      }
      else
      {
@@ -598,9 +603,9 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapSubtlCoord buildy;
     if ((is_key_pressed(KC_RSHIFT, KMod_DONTCARE)) || (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a, b)))
     {
-    for (buildy = stl_y - (dist * (char)b); buildy <= stl_y + dist; buildy += 3)
+    for (buildy = stl_y - dist; buildy <= stl_y + dist + (((char)b)*3); buildy += 3)
     {
-        for (buildx = stl_x - (dist * (char)b); buildx <= stl_x + dist; buildx += 3)
+        for (buildx = stl_x - dist; buildx <= stl_x + dist + (((char)b)*3); buildx += 3)
         {
             keeper_build_room(buildx,buildy,plyr_idx,player->chosen_room_kind);
         }
