@@ -604,8 +604,6 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapSubtlCoord buildy;
     if ((is_key_pressed(KC_RSHIFT, KMod_DONTCARE)) || (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a, b)))
     {
-        player->field_4A4 = dist;
-        tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4);
         for (buildy = stl_y - dist; buildy <= stl_y + dist + (((char)b)*3); buildy += 3)
         {
             for (buildx = stl_x - dist; buildx <= stl_x + dist + (((char)b)*3); buildx += 3)
