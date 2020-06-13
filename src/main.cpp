@@ -3809,7 +3809,7 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         map_volume_box.beg_x = subtile_coord(slab_subtile(slb_x, 0) - dist, 0);
         map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0) - dist, 0);
         map_volume_box.field_13 = par1;
-        map_volume_box.field_17 = a4;
+        map_volume_box.field_17 = 1+ (2 * a5) + b;
         map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3*a4) + (dist + (((char)b)*3)), 0);
         map_volume_box.color = allowed;
         map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3*a4) + (dist + (((char)b)*3)), 0);
