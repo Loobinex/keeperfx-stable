@@ -576,10 +576,10 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         a = 0;
         b = false;
     }
-    player->field_4A4 = 1+a+a+b;
+    player->field_4A4 = 1;
     if (is_my_player(player))
       gui_room_type_highlighted = player->chosen_room_kind;
-    long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4);
+    long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4, a, b);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
