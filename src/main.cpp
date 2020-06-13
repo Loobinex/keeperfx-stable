@@ -959,6 +959,7 @@ void init_keeper(void)
     game.field_14EA2A = 256;
     game.field_14EA2C = 256;
     game.field_14EA2E = 256;
+    map_volume_box.field_17 = 1;
     if (game.generate_speed <= 0)
       game.generate_speed = game.default_generate_speed;
     poly_pool_end = &poly_pool[sizeof(poly_pool)-128];

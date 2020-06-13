@@ -6045,7 +6045,7 @@ static void create_frontview_map_volume_box(struct Camera *cam, unsigned char st
     orient = ((unsigned int)(cam->orient_a + LbFPMath_PI/4) >> 9) & 0x03;
     convert_world_coord_to_front_view_screen_coord(&pos, cam, &coord_x, &coord_y, &coord_z);
     depth = (5 - map_volume_box.field_13) * ((long)stl_width << 7) / 256;
-    slb_width = STL_PER_SLB * (long)stl_width * map_volume_box.field_17;
+    slb_width = (STL_PER_SLB * (long)stl_width) * map_volume_box.field_17;
     switch ( orient )
     {
     case 1:
