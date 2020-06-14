@@ -6078,7 +6078,7 @@ static void create_frontview_map_volume_box(struct Camera *cam, unsigned char st
       create_line_element(coord_x + vstart,    coord_y + delta[2],  coord_x + vend,      coord_y + delta[2], coord_z,             map_volume_box.color);
       create_line_element(coord_x + vstart,    coord_y + delta[3],  coord_x + vend,      coord_y + delta[3], coord_z - slb_width, map_volume_box.color);
       vend += stl_width;
-      vstart += stl_width;
+      vstart += stl_width * map_volume_box.field_17;
     }
     // Now the rectangles at left and right
     for (i=3; i > 0; i--)
@@ -6089,10 +6089,10 @@ static void create_frontview_map_volume_box(struct Camera *cam, unsigned char st
       create_line_element(coord_x + slb_width, coord_y + delta[0],  coord_x + slb_width, coord_y + delta[1], coord_z - delta[0], map_volume_box.color);
       create_line_element(coord_x,             coord_y + delta[2],  coord_x,             coord_y + delta[3], coord_z - delta[0], map_volume_box.color);
       create_line_element(coord_x + slb_width, coord_y + delta[2],  coord_x + slb_width, coord_y + delta[3], coord_z - delta[0], map_volume_box.color);
-      delta[0] += stl_width;
+      delta[0] += stl_width * map_volume_box.field_17;
       delta[2] += stl_width;
       delta[3] += stl_width;
-      delta[1] += stl_width;
+      delta[1] += stl_width * map_volume_box.field_17;
     }
 }
 
