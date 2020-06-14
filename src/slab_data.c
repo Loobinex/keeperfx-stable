@@ -286,7 +286,7 @@ TbBool can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
         {
             if (!can_build_room_at_slab(plyr_idx, rkind, subtile_slab(buildx), subtile_slab(buildy)))
             {
-                return false;   
+                return false;
             }
         }
     }
