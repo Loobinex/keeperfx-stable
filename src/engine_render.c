@@ -6073,10 +6073,10 @@ static void create_frontview_map_volume_box(struct Camera *cam, unsigned char st
     {
       if (!is_free_space_in_poly_pool(4))
         break;
-      create_line_element(coord_x + vstart,    coord_y + delta[0],  coord_x + vend,      coord_y + delta[0], coord_z,             map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[1],  coord_x + vend,      coord_y + delta[1], coord_z - slb_width, map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[2],  coord_x + vend,      coord_y + delta[2], coord_z,             map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[3],  coord_x + vend,      coord_y + delta[3], coord_z - slb_width, map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[0],  coord_x + (vend * map_volume_box.field_17),      coord_y + delta[0], coord_z,             map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[1],  coord_x + (vend * map_volume_box.field_17),      coord_y + delta[1], coord_z - slb_width, map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[2],  coord_x + (vend * map_volume_box.field_17),      coord_y + delta[2], coord_z,             map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[3],  coord_x + (vend * map_volume_box.field_17),      coord_y + delta[3], coord_z - slb_width, map_volume_box.color);
       vend += stl_width;
       vstart += stl_width * map_volume_box.field_17;
     }
