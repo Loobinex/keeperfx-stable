@@ -531,15 +531,18 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
       }
       return false;
     }
-    if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
-    {
-        a = 1;
-        b = false;
-    }
-    else if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
+    player->field_4A4 = 1;
+    if (is_my_player(player))
+        gui_room_type_highlighted = player->chosen_room_kind;
+    if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
     {
         a = 0;
         b = true;
+    }
+    else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
+    {
+        a = 1;
+        b = false;
     }
     else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
     {
@@ -571,14 +574,36 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         a = 4;
         b = false;
     }
+    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE))
+    {
+        b = false;
+        for (a = 0; a < 5; a++)
+        {
+            if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a, 1))
+            {
+                b = true;
+                if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a+1, 0))
+                {
+                    b = false;
+                }
+                else
+                {
+                    break;
+                }
+
+            }
+            else
+            {
+                break;
+            }
+        }
+    }
     else
     {
         a = 0;
         b = false;
     }
-    player->field_4A4 = 1;
-    if (is_my_player(player))
-      gui_room_type_highlighted = player->chosen_room_kind;
+
     long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4, a, b);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
