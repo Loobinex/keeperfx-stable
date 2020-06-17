@@ -1156,7 +1156,14 @@ struct Room *player_build_room_at(MapSubtlCoord stl_x, MapSubtlCoord stl_y, Play
       if (rkind == RoK_BRIDGE)
         dungeon->lvstats.bridges_built++;
       if (is_my_player(player))
-        play_non_3d_sample(77);
+      {
+          play_non_3d_sample(77);
+          if (player->boxsize > 1)
+          {
+              play_non_3d_sample(959);
+              play_non_3d_sample(856);
+          }
+      }
     }
     return room;
 }

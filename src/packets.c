@@ -295,7 +295,14 @@ struct Room *keeper_build_room(long stl_x,long stl_y,long plyr_idx,long rkind)
     struct Room* room = player_build_room_at(x, y, plyr_idx, rkind);
     if (!room_is_invalid(room))
     {
-        dungeon->camera_deviate_jump = 192;
+        if (player->boxsize > 1)
+        {
+            dungeon->camera_deviate_jump = 240;
+        }
+        else
+        {
+            dungeon->camera_deviate_jump = 192;
+        }
         struct Coord3d pos;
         set_coords_to_slab_center(&pos, subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
         create_price_effect(&pos, plyr_idx, rstat->cost);
@@ -609,7 +616,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         b = false;
     }
 
-    player->field_2 = (1 + a + a + b) * (1 + a + a + b); //number of slabs to build
+    player->boxsize = (1 + a + a + b) * (1 + a + a + b); //number of slabs to build
     long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4, a, b);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
