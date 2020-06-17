@@ -574,7 +574,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         a = 4;
         b = false;
     }
-    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE))
+    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible square room
     {
         b = false;
         for (a = 0; a < 5; a++)
@@ -604,6 +604,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         b = false;
     }
 
+    player->field_2 = (1 + a + a + b) * (1 + a + a + b); //number of slabs to build
     long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4, a, b);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
