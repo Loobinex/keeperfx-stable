@@ -574,15 +574,20 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         a = 4;
         b = false;
     }
-    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE))
+    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible square room
     {
+        int tiles;
+        struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
+        struct Dungeon* dungeon = get_players_dungeon(player);
         b = false;
         for (a = 0; a < 5; a++)
         {
-            if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a, 1))
+            tiles = (1 + a + a + 1) * (1 + a + a + 1);
+            if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a, 1) && (( tiles * rstat->cost) <= dungeon->total_money_owned))
             {
                 b = true;
-                if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a+1, 0))
+                tiles = (1 + a + a + 2) * (1 + a + a + 2);
+                if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a+1, 0) && ((tiles * rstat->cost) <= dungeon->total_money_owned))
                 {
                     b = false;
                 }
@@ -604,6 +609,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         b = false;
     }
 
+    player->field_2 = (1 + a + a + b) * (1 + a + a + b); //number of slabs to build
     long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4, a, b);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
