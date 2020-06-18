@@ -616,7 +616,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         b = false;
     }
 
-    player->boxsize = (1 + radius + radius + b) * (1 + radius + radius + b); //number of slabs to build
+    player->boxsize = can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), radius, b); //number of slabs to build, corrected for blocked tiles
     long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4, radius, b);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
@@ -640,7 +640,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     int dist = radius * 3;
     MapSubtlCoord buildx;
     MapSubtlCoord buildy;
-    if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), radius, b) > 0)
+    if (player->boxsize > 0)
     {
         for (buildy = stl_y - dist; buildy <= stl_y + dist + (((char)b)*3); buildy += 3)
         {
