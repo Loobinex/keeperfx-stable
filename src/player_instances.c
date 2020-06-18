@@ -1144,7 +1144,7 @@ struct Room *player_build_room_at(MapSubtlCoord stl_x, MapSubtlCoord stl_y, Play
         play_non_3d_sample(119);
       return INVALID_ROOM;
     }
-    if (take_money_from_dungeon(plyr_idx, rstat->cost, 1) < 0)
+    if (take_money_from_dungeon(plyr_idx, rstat->cost*player->boxsize, 1) < 0)
     {
       if (is_my_player(player))
         output_message(SMsg_GoldNotEnough, 0, true);
