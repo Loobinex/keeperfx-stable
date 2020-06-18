@@ -527,7 +527,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapCoord y = ((unsigned short)pckt->pos_y);
     MapSubtlCoord stl_x = coord_subtile(x);
     MapSubtlCoord stl_y = coord_subtile(y);
-    int a;
+    int radius;
     TbBool b;
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
@@ -543,42 +543,42 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         gui_room_type_highlighted = player->chosen_room_kind;
     if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
     {
-        a = 0;
+        radius = 0;
         b = true;
     }
     else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
     {
-        a = 1;
+        radius = 1;
         b = false;
     }
     else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
     {
-        a = 1;
+        radius = 1;
         b = true;
     }
     else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
     {
-        a = 2;
+        radius = 2;
         b = false;
     }
     else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
     {
-        a = 2;
+        radius = 2;
         b = true;
     }
     else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
     {
-        a = 3;
+        radius = 3;
         b = false;
     }
     else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
     {
-        a = 3;
+        radius = 3;
         b = true;
     }
     else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
     {
-        a = 4;
+        radius = 4;
         b = false;
     }
     else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible square room
@@ -587,14 +587,14 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
         struct Dungeon* dungeon = get_players_dungeon(player);
         b = false;
-        for (a = 0; a < 5; a++)
+        for (radius = 0; radius < 5; radius++)
         {
-            tiles = (1 + a + a + 1) * (1 + a + a + 1);
-            if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a, 1) && (( tiles * rstat->cost) <= dungeon->total_money_owned))
+            tiles = (1 + radius + radius + 1) * (1 + radius + radius + 1);
+            if ((can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), radius, 1) == tiles) && (( tiles * rstat->cost) <= dungeon->total_money_owned))
             {
                 b = true;
-                tiles = (1 + a + a + 2) * (1 + a + a + 2);
-                if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a+1, 0) && ((tiles * rstat->cost) <= dungeon->total_money_owned))
+                tiles = (1 + radius + radius + 2) * (1 + radius + radius + 2);
+                if ((can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), radius+1, 0) == tiles) && ((tiles * rstat->cost) <= dungeon->total_money_owned))
                 {
                     b = false;
                 }
@@ -612,12 +612,12 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     else
     {
-        a = 0;
+        radius = 0;
         b = false;
     }
 
-    player->boxsize = (1 + a + a + b) * (1 + a + a + b); //number of slabs to build
-    long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4, a, b);
+    player->boxsize = (1 + radius + radius + b) * (1 + radius + radius + b); //number of slabs to build
+    long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4, radius, b);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -637,10 +637,10 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
       return false;
     }
      
-    int dist = a * 3;
+    int dist = radius * 3;
     MapSubtlCoord buildx;
     MapSubtlCoord buildy;
-    if ((is_key_pressed(KC_RSHIFT, KMod_DONTCARE)) || (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), a, b)))
+    if (can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), radius, b) > 0)
     {
         for (buildy = stl_y - dist; buildy <= stl_y + dist + (((char)b)*3); buildy += 3)
         {
