@@ -137,7 +137,7 @@ TbBool slab_is_liquid(MapSlabCoord slb_x, MapSlabCoord slb_y);
 TbBool can_build_room_at_slab(PlayerNumber plyr_idx, RoomKind rkind,
     MapSlabCoord slb_x, MapSlabCoord slb_y);
     
-TbBool can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
+int can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
     MapSlabCoord slb_x, MapSlabCoord slb_y, int radius, TbBool even);
     
 void clear_slabs(void);
