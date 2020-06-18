@@ -275,18 +275,14 @@ TbBool can_build_room_at_slab(PlayerNumber plyr_idx, RoomKind rkind,
 int can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
     MapSlabCoord slb_x, MapSlabCoord slb_y, int radius, TbBool even)
 {
-    int dist = radius * 3;
-    char evenslab = even * 3;
-    MapSubtlCoord stl_x = slab_subtile_center(slb_x);
-    MapSubtlCoord stl_y = slab_subtile_center(slb_y);
-    MapSubtlCoord buildx;
-    MapSubtlCoord buildy;
+    MapCoord buildx;
+    MapCoord buildy;
     int count = 0;
-    for (buildy = stl_y - dist; buildy <= stl_y + (dist + evenslab); buildy += 3)
+    for (buildy = slb_y - radius; buildy <= slb_y + (radius + even); buildy += 1)
     {
-        for (buildx = stl_x - dist; buildx <= stl_x + (dist + evenslab); buildx += 3)
+        for (buildx = slb_x - radius; buildx <= slb_x + (radius + even); buildx += 1)
         {
-            if (can_build_room_at_slab(plyr_idx, rkind, subtile_slab(buildx), subtile_slab(buildy)))
+            if (can_build_room_at_slab(plyr_idx, rkind, buildx, buildy))
             {
                 count++;
             }
