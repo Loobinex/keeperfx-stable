@@ -295,13 +295,10 @@ struct Room *keeper_build_room(long stl_x,long stl_y,long plyr_idx,long rkind)
     struct Room* room = player_build_room_at(x, y, plyr_idx, rkind);
     if (!room_is_invalid(room))
     {
+        dungeon->camera_deviate_jump = 192;
         if (player->boxsize > 1)
         {
-            dungeon->camera_deviate_jump = 240;
-        }
-        else
-        {
-            dungeon->camera_deviate_jump = 192;
+            dungeon->camera_deviate_quake = 6;
         }
         struct Coord3d pos;
         set_coords_to_slab_center(&pos, subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
