@@ -171,17 +171,17 @@ struct Dungeon {
     unsigned short gold_pots_stolen;
     int last_entrance_generation_gameturn;
     int turns_between_entrance_generation;
-    int field_AE5;
+    int last_research_complete_gameturn;
     int manage_score;
     int total_score;
     unsigned long max_gameplay_score;
-    short field_AF5;
-    short task_count;
+    short times_breached_dungeon;
+    short highest_task_number;
     int total_money_owned;
     int offmap_money_owned;
     short hates_player[DUNGEONS_COUNT];
     struct MapTask task_list[MAPTASKS_COUNT];
-    int field_E8F;
+    int task_count;
     int field_E93[3];
     unsigned char owner;
     int camera_deviate_quake;
@@ -230,7 +230,7 @@ unsigned char field_F7D;
     short zoom_annoyed_creature_idx;
     long total_experience_creatures_gained;
     long total_research_points;
-long field_1181;
+    long total_manufacture_points;
     long manufacture_progress;
     unsigned char manufacture_class;
     unsigned char manufacture_kind;
@@ -247,13 +247,13 @@ long manufacture_level;
     unsigned short tortured_creatures[CREATURE_TYPES_COUNT];
     unsigned char bodies_rotten_for_vampire;
 unsigned char field_1461[36];
-    long field_1485;
+    long portal_scavenge_boost;
     /** Stores how many creatures of each kind of has joined the dungeon during the level.
      * Values are saturated at 255. */
     unsigned char creature_models_joined[CREATURE_TYPES_COUNT];
     unsigned long fights_num;
     unsigned char research_override; // could be easily changed into flags..
-int field_14AE;
+    int last_creature_dropped_gameturn;
     unsigned char devastation_centr_x;
     unsigned char devastation_centr_y;
     unsigned long devastation_turn;
