@@ -35,6 +35,7 @@
 
 #include "kjm_input.h"
 #include "front_simple.h"
+#include "front_input.h"
 #include "front_landview.h"
 #include "front_network.h"
 #include "frontmenu_net.h"
@@ -578,7 +579,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         radius = 4;
         even = false;
     }
-    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible square room
+    else if (is_game_key_pressed(Gkey_SpeedMod, NULL, true)) // Find biggest possible square room
     {
         int tiles;
         struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
