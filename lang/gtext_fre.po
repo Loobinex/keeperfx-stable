@@ -339,7 +339,7 @@ msgid ""
 "creatures can hone their fighting skills, gain new abilities and learn more "
 "powerful spells."
 msgstr ""
-"Vous devrez renforcer vos créatures dans une Salle D’entraînement. Elles "
+"Vous devrez renforcer vos créatures dans une Salle D'entraînement. Elles "
 "pourront y affiner leurs talents de guerrières, gagner de nouvelles "
 "compétences et apprendre des sorts plus puissants."
 
@@ -362,7 +362,7 @@ msgid ""
 "The Training Room attracts ever more ferocious creatures, such as Demon "
 "Spawn. Build it and they will come."
 msgstr ""
-"La Salle D’entraînement attire des créatures extrêmement féroces, tel que le "
+"La Salle D'entraînement attire des créatures extrêmement féroces, tel que le "
 "Demon Avorton. Construisez-en une et ils viendront."
 
 #. Level Cosyton information after attracting Demon Spawn
@@ -432,7 +432,7 @@ msgid ""
 "the morale of your minions."
 msgstr ""
 "Construisez un donjon avec une Salle du Trésor, un Antre, un Couvoir et une "
-"Salle D’entraînement. Ces salles doivent être assez grandes, car la "
+"Salle D'entraînement. Ces salles doivent être assez grandes, car la "
 "promiscuité nuit au moral de vos larbins."
 
 #. Level Waterdream Warm objective after basic 5 rooms are built/claimed
@@ -2571,7 +2571,7 @@ msgid ""
 "Defence: The chance a creature will avoid a blow. The higher the number, the "
 "greater the chance of avoidance."
 msgstr "Défense: Probabilité qu'a une créature d'éviter un coup. Plus le nombre"
-" est grand plus la créature à de chances d’évitement [23.9]"
+" est grand plus la créature à de chances d'évitement [23.9]"
 
 #: guitext:297
 msgctxt "In-game interface description"
@@ -2756,8 +2756,8 @@ msgid ""
 "Zoom In: Zoom in the Dynamic Map. This increases the scale of the map. LMB "
 "select."
 msgstr ""
-"Zoom avant: Zoom avant sur la carte dynamique. Agrandit l’échelle de la carte"
-"Bouton gauche pour sélectionner. [4.1]"
+"Zoom avant: Zoom avant sur la carte dynamique. Agrandit l'échelle de la carte"
+" Bouton gauche pour sélectionner. [4.1]"
 
 #: guitext:322
 msgctxt "In-game interface description"
@@ -2765,8 +2765,8 @@ msgid ""
 "Zoom Out: Zoom out the Dynamic Map. This decreases the scale of the map. LMB "
 "select."
 msgstr ""
-"Zoom arrière: Zoom arrière sur la carte dynamique. Décroît l’échelle de la carte"
-"Bouton gauche pour sélectionner. [4.1]"
+"Zoom arrière: Zoom arrière sur la carte dynamique. Décroît l'échelle de la carte"
+" Bouton gauche pour sélectionner. [4.1]"
 
 #: guitext:323
 msgctxt "In-game interface description"
@@ -2804,7 +2804,7 @@ msgctxt "Slab description"
 msgid "Lava: Burns any creature that step on it. Get over lava by casting Cave-In or building a Bridge."
 
 msgstr "Lave: Toute créature qui marche sur la lave sera brûlée. Surmontez la lave en lançant un sort "
-"d’éboulement ou en construisant un Pont.. [14.2]"
+"d'éboulement ou en construisant un Pont.. [14.2]"
 
 #: guitext:328
 msgctxt "Slab description"
@@ -6567,7 +6567,7 @@ msgstr "Compétence: Aptitude d'une créature à effectuer des tâches. "
 #: guitext:956
 msgctxt "In-game interface description"
 msgid "Training Cost: Gold used for training the creature."
-msgstr "Coût d’entraînement: Coût en or pour entraîner la créature"
+msgstr "Coût d'entraînement: Coût en or pour entraîner la créature"
 
 #: guitext:957
 msgctxt "In-game interface description"
