@@ -351,6 +351,8 @@ struct MapVolumeBox { // sizeof = 24
   unsigned char field_17;
 };
 
+extern unsigned char Box;
+
 /******************************************************************************/
 DLLIMPORT unsigned char *_DK_getpoly;
 #define getpoly _DK_getpoly
