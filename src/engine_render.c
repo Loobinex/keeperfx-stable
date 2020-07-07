@@ -143,7 +143,6 @@ static int water_wibble_angle = 0;
 static unsigned long render_problems;
 static long render_prob_kind;
 static long sp_x, sp_y, sp_dx, sp_dy;
-unsigned char Box = 1;
 /******************************************************************************/
 #ifdef __cplusplus
 }
@@ -6046,7 +6045,7 @@ static void create_frontview_map_volume_box(struct Camera *cam, unsigned char st
     orient = ((unsigned int)(cam->orient_a + LbFPMath_PI/4) >> 9) & 0x03;
     convert_world_coord_to_front_view_screen_coord(&pos, cam, &coord_x, &coord_y, &coord_z);
     depth = (5 - map_volume_box.field_13) * ((long)stl_width << 7) / 256;
-    slb_width = (STL_PER_SLB * (long)stl_width) * Box;
+    slb_width = (STL_PER_SLB * (long)stl_width) * map_volume_box.field_17;
     switch ( orient )
     {
     case 1:
@@ -6074,15 +6073,15 @@ static void create_frontview_map_volume_box(struct Camera *cam, unsigned char st
     {
       if (!is_free_space_in_poly_pool(4))
         break;
-      create_line_element(coord_x + vstart,    coord_y + delta[0],  coord_x + (vend * Box),      coord_y + delta[0], coord_z,             map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[1],  coord_x + (vend * Box),      coord_y + delta[1], coord_z - slb_width, map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[2],  coord_x + (vend * Box),      coord_y + delta[2], coord_z,             map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[3],  coord_x + (vend * Box),      coord_y + delta[3], coord_z - slb_width, map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[0],  coord_x + (vend * map_volume_box.field_17),      coord_y + delta[0], coord_z,             map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[1],  coord_x + (vend * map_volume_box.field_17),      coord_y + delta[1], coord_z - slb_width, map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[2],  coord_x + (vend * map_volume_box.field_17),      coord_y + delta[2], coord_z,             map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[3],  coord_x + (vend * map_volume_box.field_17),      coord_y + delta[3], coord_z - slb_width, map_volume_box.color);
       vend += stl_width;
-      vstart += stl_width * Box;
+      vstart += stl_width * map_volume_box.field_17;
     }
     // Now the rectangles at left and right
-    for (i=(3* Box); i > 0; i--)
+    for (i=(3* map_volume_box.field_17); i > 0; i--)
     {
       if (!is_free_space_in_poly_pool(4))
         break;

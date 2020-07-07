@@ -82,7 +82,6 @@
 #include "net_sync.h"
 #include "game_legacy.h"
 #include "engine_redraw.h"
-#include "engine_render.h"
 #include "frontmenu_ingame_tabs.h"
 #include "vidfade.h"
 
@@ -616,7 +615,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         radius = 0;
         even = false;
     }
-    Box = 1+ (2 * radius) + even;
+
     player->boxsize = can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), radius, even); //number of slabs to build, corrected for blocked tiles
     long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4, radius, even);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
