@@ -82,6 +82,7 @@
 #include "net_sync.h"
 #include "game_legacy.h"
 #include "engine_redraw.h"
+#include "engine_render.h"
 #include "frontmenu_ingame_tabs.h"
 #include "vidfade.h"
 
@@ -948,6 +949,8 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     } else
     if ((pckt->control_flags & PCtr_RBtnRelease) == 0)
     {
+      map_volume_box.field_17 = 1;
+      player->boxsize = 1;
       player->field_4D6 = 0;
     }
     update_double_click_detection(plyr_idx);
