@@ -783,12 +783,12 @@ long melee_shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, stru
         shooter = thing_get(shotng->parent_idx);
     struct CreatureControl* tgcctrl = creature_control_get_from_thing(trgtng);
     long damage = get_damage_of_melee_shot(shotng, trgtng);
-    if (damage != 0)
+    if (damage > 0)
     {
       if (shotst->old->hit_sound > 0)
       {
-          thing_play_sample(trgtng, shotst->old->hit_sound, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
-          play_creature_sound(trgtng, CrSnd_Hurt, 3, 0);
+          //thing_play_sample(trgtng, shotst->old->hit_sound, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+          //play_creature_sound(trgtng, CrSnd_Hurt, 3, 0);
       }
       if (!thing_is_invalid(shooter)) {
           apply_damage_to_thing_and_display_health(trgtng, shotng->shot.damage, shotst->damage_type, shooter->owner);
@@ -819,6 +819,16 @@ long melee_shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, stru
           shot_kill_creature(shotng,trgtng);
       }
     }
+    if (damage < 0)
+    {
+        if (shotst->old->hit_sound >= 0)
+        {
+            thing_play_sample(trgtng, 996, 25, 0, 3, 0, 2, FULL_LOUDNESS);
+            //play_creature_sound(trgtng, CrSnd_Happy, 3, 0);
+        }
+        JUSTMSG("TESTLOG:We missed");
+    }
+
     if (shotst->old->destroy_on_first_hit) {
         delete_thing_structure(shotng, 0);
     }
