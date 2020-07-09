@@ -79,6 +79,8 @@
 #include "sounds.h"
 #include "game_legacy.h"
 
+#include "creature_jobs.h"
+
 #include "keeperfx.hpp"
 
 #ifdef __cplusplus
@@ -702,6 +704,8 @@ TbBool creature_affected_by_spell(const struct Thing *thing, SpellKind spkind)
         return ((cctrl->spell_flags & CSAfF_Disease) != 0);
     case SplK_Chicken:
         return ((cctrl->spell_flags & CSAfF_Chicken) != 0);
+    case SplK_TimeBomb:
+        return ((cctrl->spell_flags & CSAfF_Timebomb) != 0);
     // Handle spells with no continuous effect
     case SplK_Lightning:
     case SplK_Heal:
@@ -709,7 +713,6 @@ TbBool creature_affected_by_spell(const struct Thing *thing, SpellKind spkind)
     case SplK_NavigMissile:
     case SplK_Grenade:
     case SplK_WordOfPower:
-    case SplK_TimeBomb:
     case SplK_Fireball:
     case SplK_FireBomb:
     case SplK_FlameBreath:
@@ -861,6 +864,7 @@ TbBool free_spell_slot(struct Thing *thing, long slot_idx)
 
 void first_apply_spell_effect_to_thing(struct Thing *thing, SpellKind spell_idx, long spell_lev)
 {
+    JUSTMSG("TESTLOG: first apply spell effect %d", spell_idx);
     struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
     const struct MagicStats *pwrdynst;
     struct ComponentVector cvect;
@@ -939,6 +943,56 @@ void first_apply_spell_effect_to_thing(struct Thing *thing, SpellKind spell_idx,
         cctrl->field_2B0 = 7;
         cctrl->field_2AE = pwrdynst->time;
         break;
+    case SplK_TimeBomb:
+        i = get_free_spell_slot(thing);
+        if (i != -1)
+        {
+            //todo: make creature run towards enemy
+            JUSTMSG("TESTLOG: Fill slot with timebomb, duration %d", splconf->duration);
+            pwrdynst = get_power_dynamic_stats(PwrK_TIMEBOMB);
+            fill_spell_slot(thing, i, spell_idx, splconf->duration);
+            //cctrl->countdown_282 = 13; //needed?
+            cctrl->spell_flags |= CSAfF_Timebomb;
+        }
+        break;
+       /* pwrdynst = get_power_dynamic_stats(PwrK_TIMEBOMB);
+        JUSTMSG("TESTLOG: drain heal");
+        i = saturate_set_signed(thing->health - pwrdynst->strength[spell_lev], 16);
+        if (i < 0)
+        {
+            
+            //thing->health = 0;
+            /*
+            struct Thing* heartng;
+            heartng = get_player_soul_container(thing->owner);
+            struct ShotConfigStats* shotst = get_shot_model_stats(28);         
+            HitTargetFlags hit_targets = hit_type_to_hit_targets(shotst->area_hit_type);
+            explosion_affecting_area(thing, &thing->mappos, 100, 20000, shotst->area_blow, hit_targets, shotst->damage_type);
+            kill_creature(thing, heartng, thing->owner, CrDed_DiedInBattle);
+            /
+            thing->continue_state = CrSt_MadKillingPsycho;
+            if (creature_model_bleeds(thing->model))
+            {
+                create_effect_around_thing(thing, TngEff_Unknown10);
+            }
+            create_effect_around_thing(thing, TngEff_Unknown45);
+            struct ShotConfigStats* shotst = get_shot_model_stats(SplK_TimeBomb);
+            HitTargetFlags hit_targets = hit_type_to_hit_targets(shotst->area_hit_type);
+            explosion_affecting_area(thing, &thing->mappos, 2000, 20000, shotst->area_blow, hit_targets, shotst->damage_type);
+            JUSTMSG("TESTLOG: boom baby");
+            kill_creature(thing, INVALID_THING, -1, CrDed_NoEffects);
+            
+        }
+        else {
+            thing->health = min(i, cctrl->max_health);
+            thing->continue_state = CrSt_MadKillingPsycho;
+            attempt_anger_job_mad_psycho(thing);
+
+            JUSTMSG("TESTLOG: boom baby 2");
+        }
+        cctrl->field_2B0 = 7;
+        cctrl->field_2AE = pwrdynst->time;
+        break;*/
     case SplK_Invisibility:
         i = get_free_spell_slot(thing);
         if (i != -1)
@@ -1117,6 +1171,9 @@ void reapply_spell_effect_to_thing(struct Thing *thing, long spell_idx, long spe
         pwrdynst = get_power_dynamic_stats(PwrK_CHICKEN);
         cspell->duration = pwrdynst->strength[spell_lev];
         break;
+    case SplK_TimeBomb:
+        cspell->duration = cspell->duration / 2;
+        break;
     default:
         WARNLOG("No action for spell %d at level %d",(int)spell_idx,(int)spell_lev);
         break;
@@ -1125,6 +1182,7 @@ void reapply_spell_effect_to_thing(struct Thing *thing, long spell_idx, long spe
 
 void apply_spell_effect_to_thing(struct Thing *thing, SpellKind spell_idx, long spell_lev)
 {
+    JUSTMSG("TESTLOG: Apply spell_idx %d", spell_idx);
     // Make sure the creature level isn't larger than max spell level
     if (spell_lev > SPELL_MAX_LEVEL)
         spell_lev = SPELL_MAX_LEVEL;
@@ -1221,6 +1279,21 @@ void terminate_thing_spell_effect(struct Thing *thing, SpellKind spkind)
         cctrl->spell_flags &= ~CSAfF_Chicken;
         external_set_thing_state(thing, CrSt_CreatureChangeFromChicken);
         cctrl->countdown_282 = 10;
+        break;
+    case SplK_TimeBomb:
+        JUSTMSG("TESTLOG: Terminate timebomb");
+        cctrl->spell_flags &= ~CSAfF_Timebomb;
+        cctrl->countdown_282 = 10;
+        if (creature_model_bleeds(thing->model))
+        {
+            create_effect_around_thing(thing, TngEff_Unknown10);
+        }
+        create_effect_around_thing(thing, TngEff_Unknown45);
+        struct ShotConfigStats* shotst = get_shot_model_stats(SplK_TimeBomb);
+        HitTargetFlags hit_targets = hit_type_to_hit_targets(shotst->area_hit_type);
+        explosion_affecting_area(thing, &thing->mappos, 2000, 20000, shotst->area_blow, hit_targets, shotst->damage_type); //todo configure proper damage
+        JUSTMSG("TESTLOG: boom baby");
+        kill_creature(thing, INVALID_THING, -1, CrDed_NoEffects);
         break;
     }
     if (slot_idx >= 0) {

@@ -667,6 +667,12 @@ void process_spells_affected_by_effect_elements(struct Thing *thing)
         effeltng = create_thing(&thing->mappos, TCls_EffectElem, 0x59u, thing->owner, -1);
     }
 
+    if ((cctrl->spell_flags & CSAfF_Timebomb) != 0)
+    {
+        JUSTMSG("TESTLOG: We're timebombing"); //todo, give it pretty effect
+        effeltng = create_thing(&thing->mappos, TCls_EffectElem, 0x59u, thing->owner, -1);
+    }
+
     if ((cctrl->spell_flags & CSAfF_Speed) != 0)
     {
         effeltng = create_effect_element(&thing->mappos, 0x12u, thing->owner);
@@ -1407,6 +1413,7 @@ long explosion_effect_affecting_map_block(struct Thing *efftng, struct Thing *tn
  */
 void word_of_power_affecting_area(struct Thing *efftng, struct Thing *owntng, struct Coord3d *pos)
 {
+    JUSTMSG("TESTLOG: gogo");
     long stl_xmin;
     long stl_xmax;
     long stl_ymin;
@@ -1416,6 +1423,7 @@ void word_of_power_affecting_area(struct Thing *efftng, struct Thing *owntng, st
         return;
     }
     struct ShotConfigStats* shotst;
+    JUSTMSG("TESTLOG: hittype = %d", efftng->shot.hit_type);
     if (efftng->shot.hit_type == 4) // TODO: hit type seems hard coded. Find a better way to tell apart WoP traps from spells.
     {
         shotst = get_shot_model_stats(31); //SHOT_TRAP_WORD_OF_POWER
@@ -1562,6 +1570,7 @@ long explosion_affecting_area(struct Thing *tngsrc, const struct Coord3d *pos, M
 {
     MapSubtlCoord start_x;
     MapSubtlCoord start_y;
+    JUSTMSG("TESTLOG: we go boom");
     if (hit_targets == HitTF_None)
     {
         ERRORLOG("The %s tries to affect area up to distance %d with invalid hit type %d",thing_model_name(tngsrc),(int)max_dist,(int)hit_targets);
@@ -1595,6 +1604,7 @@ long explosion_affecting_area(struct Thing *tngsrc, const struct Coord3d *pos, M
             num_affected += explosion_affecting_map_block(tngsrc, mapblk, pos, max_dist, max_damage, blow_strength, hit_targets, damage_type);
         }
     }
+    JUSTMSG("TESTLOG: we go boom on %d num", num_affected);
     return num_affected;
 }
 
@@ -1636,6 +1646,7 @@ TbBool poison_cloud_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, 
                     srcctrl = creature_control_get_from_thing(tngsrc);
                     apply_spell_effect_to_thing(tngdst, SplK_Slow, srcctrl->explevel);
                 }
+                break;
             case AAffT_GasSlowDamage:
                 if (max_damage > 0) {
                     HitPoints damage;
@@ -1785,6 +1796,7 @@ TngUpdateRet update_effect(struct Thing *efftng)
         poison_cloud_affecting_area(subtng, &efftng->mappos, 5*COORD_PER_STL, 120, effnfo->area_affect_type);
         break;
     case AAffT_WOPDamage:
+        JUSTMSG("TESTLOG: WOP DAMAGE");
         word_of_power_affecting_area(efftng, subtng, &efftng->mappos);
         break;
     }

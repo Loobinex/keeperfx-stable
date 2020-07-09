@@ -1109,10 +1109,12 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     case PSt_SpeedUp:
     case PSt_Armour:
     case PSt_Conceal:
+    case PSt_TimeBomb:
     case PSt_Heal:
         influence_own_creatures = true;
         pwkind = player_state_to_power_kind[player->work_state];
         thing = get_creature_near_to_be_keeper_power_target(x, y, pwkind, plyr_idx);
+        //JUSTMSG("TESTLOG: Cast power %d!", pwkind);
         if (thing_is_invalid(thing))
         {
             player->thing_under_hand = 0;
@@ -1134,6 +1136,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
             pwkind = player_state_to_power_kind[player->work_state];
+            JUSTMSG("TESTLOG: Cast power %d", pwkind);
             i = get_power_overcharge_level(player);
             magic_use_available_power_on_subtile(plyr_idx, pwkind, i, stl_x, stl_y, PwCast_None);
             unset_packet_control(pckt, PCtr_LBtnRelease);

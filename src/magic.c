@@ -1134,9 +1134,33 @@ TbResult magic_use_power_destroy_walls(PlayerNumber plyr_idx, MapSubtlCoord stl_
     return Lb_SUCCESS;
 }
 
-TbResult magic_use_power_time_bomb(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long splevel, unsigned long mod_flags)
+//TbResult magic_use_power_time_bomb(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long splevel, unsigned long mod_flags)
+TbResult magic_use_power_time_bomb(PlayerNumber plyr_idx, struct Thing* thing, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long splevel, unsigned long mod_flags)
 {
-    struct Thing *thing;
+    JUSTMSG("TESTLOG: use power timebomb");
+    // If this spell is already casted at that creature, do nothing
+    if (thing_affected_by_spell(thing, SplK_TimeBomb)) //todo change when finished, test to see if it can reduce time by half
+    {
+        return Lb_OK;
+    }
+    if ((mod_flags & PwMod_CastForFree) == 0) // todo see why we always fails
+    {
+        // If we can't afford the spell, fail
+        if (!pay_for_spell(plyr_idx, SplK_TimeBomb, splevel)) {
+            JUSTMSG("TESTLOG: Fail power timebomb");
+            //return Lb_FAIL;
+        }
+    }
+    JUSTMSG("TESTLOG: go apply effect");
+    apply_spell_effect_to_thing(thing, SplK_TimeBomb, splevel);
+    struct PowerConfigStats* powerst;
+    powerst = get_power_model_stats(PwrK_TIMEBOMB);
+    thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+    return Lb_SUCCESS;
+
+    /*
+        JUSTMSG("TESTLOG: Use power");
+    //struct Thing *thing;
     struct Coord3d pos;
     struct PowerConfigStats *powerst;
     if (!i_can_allocate_free_thing_structure(FTAF_FreeEffectIfNoSlots)) {
@@ -1153,10 +1177,12 @@ TbResult magic_use_power_time_bomb(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     pos.y.val = subtile_coord_center(stl_y);
     pos.z.val = get_floor_height_at(&pos) + 512;
     //TODO SPELL TIMEBOMB write the spell support
-    thing = INVALID_THING;//create_object(&pos, , plyr_idx);
+    //thing = create_object(&pos, 964, plyr_idx, -1);
+    JUSTMSG("TESTLOG: create thing");
     if (thing_is_invalid(thing))
     {
         ERRORLOG("There was place to create new thing, but creation failed");
+        JUSTMSG("TESTLOG: invalid");
         return Lb_OK;
     }
     thing->veloc_push_add.x.val += ACTION_RANDOM(321) - 160;
@@ -1165,7 +1191,8 @@ TbResult magic_use_power_time_bomb(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     thing->state_flags |= TF1_PushAdd;
     powerst = get_power_model_stats(PwrK_TIMEBOMB);
     thing_play_sample(thing, powerst->select_sound_idx, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
-    return Lb_SUCCESS;
+    JUSTMSG("TESTLOG: Success");
+    return Lb_SUCCESS;*/
 }
 
 TbResult magic_use_power_imp(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, unsigned long mod_flags)
@@ -1895,6 +1922,7 @@ void process_dungeon_power_magic(void)
 TbResult magic_use_available_power_on_thing(PlayerNumber plyr_idx, PowerKind pwkind,
     unsigned short splevel, MapSubtlCoord stl_x, MapSubtlCoord stl_y, struct Thing *thing)
 {
+    JUSTMSG("TESTLOG: power %d on thing", pwkind);
     TbResult ret;
     ret = Lb_OK;
     if (!is_power_available(plyr_idx, pwkind)) {
@@ -1930,6 +1958,7 @@ TbResult magic_use_available_power_on_thing(PlayerNumber plyr_idx, PowerKind pwk
     }
     if (ret == Lb_OK)
     {
+        JUSTMSG("TESTLOG: we go to pwkind %d", pwkind);
         switch (pwkind)
         {
         case PwrK_HAND:
@@ -1971,6 +2000,10 @@ TbResult magic_use_available_power_on_thing(PlayerNumber plyr_idx, PowerKind pwk
             break;
         case PwrK_LIGHTNING:
             ret = magic_use_power_lightning(plyr_idx, stl_x, stl_y, splevel, PwMod_Default);
+            break;
+        case PwrK_TIMEBOMB:
+            ret = magic_use_power_time_bomb(plyr_idx, thing, stl_x, stl_y, splevel, PwMod_Default);
+            JUSTMSG("TESTLOG: USED TIME BOMB");
             break;
         default:
             ERRORLOG("Power not supported here: %d", (int)pwkind);
@@ -2048,9 +2081,9 @@ TbResult magic_use_available_power_on_subtile(PlayerNumber plyr_idx, PowerKind p
         case PwrK_DESTRWALLS:
             ret = magic_use_power_destroy_walls(plyr_idx, stl_x, stl_y, splevel, PwMod_Default);
             break;
-        case PwrK_TIMEBOMB:
-            ret = magic_use_power_time_bomb(plyr_idx, stl_x, stl_y, splevel, PwMod_Default);
-            break;
+        //case PwrK_TIMEBOMB:
+            //ret = magic_use_power_time_bomb(plyr_idx, stl_x, stl_y, splevel, PwMod_Default);
+            //break;
         default:
             ERRORLOG("Power not supported here: %d", (int)pwkind);
             ret = Lb_FAIL;
