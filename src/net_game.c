@@ -240,6 +240,7 @@ long network_session_join(void)
         process_network_error(-802);
       return -1;
     }
+    //resync_game();
     return plyr_num;
 }
 /******************************************************************************/

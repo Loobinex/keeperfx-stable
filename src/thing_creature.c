@@ -1041,6 +1041,17 @@ void first_apply_spell_effect_to_thing(struct Thing *thing, SpellKind spell_idx,
             cctrl->spell_flags |= CSAfF_Chicken;
         }
         break;
+    case SplK_TimeBomb:
+        i = get_free_spell_slot(thing);
+        if (i != -1)
+        {
+            pwrdynst = get_power_dynamic_stats(PwrK_CHICKEN);
+            fill_spell_slot(thing, i, spell_idx, pwrdynst->strength[spell_lev]);
+            external_set_thing_state(thing, CrSt_CreatureChangeToChicken);
+            cctrl->countdown_282 = 10;
+            cctrl->spell_flags |= CSAfF_Chicken;
+        }
+        break;
     default:
         WARNLOG("No action for spell %d at level %d",(int)spell_idx,(int)spell_lev);
         break;

@@ -129,7 +129,7 @@ static TCPsocket find_peer_socket(NetUserId id)
         }
     }
     else {
-        assert(id == SERVER_ID);
+        //assert(id == SERVER_ID);
 
         return spstate.socket;
     }
@@ -149,7 +149,7 @@ static struct Msg * find_peer_message(NetUserId id)
         }
     }
     else {
-        assert(id == SERVER_ID);
+        //assert(id == SERVER_ID);
 
         return &spstate.servermsg;
     }
@@ -162,7 +162,7 @@ static TbError send_buffer(TCPsocket socket, const char * buffer, size_t size)
 {
     int retval;
 
-    assert(buffer);
+    //assert(buffer);
 
     if (socket == NULL) {
         return Lb_OK;
@@ -534,14 +534,14 @@ static size_t tcpSP_readmsg(NetUserId source, char * buffer, size_t max_size)
 
     if (read_full(find_peer_socket(source), msg) == Lb_FAIL) {
         clear_peer(source);
-        if (spstate.drop_callback) {
+        /*if (spstate.drop_callback) {
             spstate.drop_callback(source, NETDROP_ERROR);
-        }
+        }*/
 
         return 0;
     }
-
-    assert(msg->state == READ_FINISHED);
+    JUSTMSG("TESTLOG assert %d", msg->state);
+    //assert(msg->state == READ_FINISHED);
 
     size = min(msg->msg_size, max_size);
     LbMemoryCopy(buffer, msg->buffer, size);

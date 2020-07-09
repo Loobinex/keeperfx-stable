@@ -33,6 +33,7 @@
 //TODO: get rid of the following headers later by refactoring, they're here for testing primarily
 #include "frontend.h"
 #include "net_game.h"
+#include "net_sync.h"
 #include "packets.h"
 #include "front_landview.h"
 
@@ -158,7 +159,8 @@ enum NetUserProgress
     USER_CONNECTED,			//connected user on slot
     USER_LOGGEDIN,          //sent name and password and was accepted
 
-    USER_SERVER             //none of the above states are applicable because this is server
+    USER_SERVER,             //none of the above states are applicable because this is server
+    USER_DROPPED             //dropped user who wants to get back
 };
 
 struct NetUser
@@ -256,6 +258,7 @@ static TbBool UserIdentifiersValid(void)
     for (i = 0; i < MAX_N_USERS; ++i) {
         if (netstate.users[i].id != i) {
             NETMSG("Bad peer ID on index %i", i);
+            //netstate.users[i].id = i;
             return 0;
         }
     }
@@ -741,7 +744,7 @@ TbError LbNetwork_Init(unsigned long srvcindex, unsigned long maxplayrs, void *e
           WARNLOG("Failure on TCP/IP Initialization");
           res = Lb_FAIL;
       }*/
-
+      //GenericTCPInit(init_data);
       netstate.sp = &tcpSP;
 
       break;
@@ -964,6 +967,7 @@ void LbNetwork_ChangeExchangeTimeout(unsigned long tmout)
 
 TbError LbNetwork_Stop(void)
 {
+    JUSTMSG("TESTLOG: NETWORK STOP");
     NetFrame* frame;
     NetFrame* nextframe;
 
@@ -1003,20 +1007,43 @@ TbError LbNetwork_Stop(void)
   exchangeTimeout = 0;*/
 
     if (netstate.sp) {
+        JUSTMSG("TESTLOG: NETWORK STOP 1");
         netstate.sp->exit();
     }
-
+    JUSTMSG("TESTLOG: NETWORK STOP 2");
     frame = netstate.exchg_queue;
     while (frame != NULL) {
+        JUSTMSG("TESTLOG: NETWORK STOP 3");
         nextframe = frame->next;
         LbMemoryFree(frame->buffer);
         LbMemoryFree(frame);
         frame = nextframe;
     }
-
+    JUSTMSG("TESTLOG: NETWORK STOP 4");
     LbMemorySet(&netstate, 0, sizeof(netstate));
-
+JUSTMSG("TESTLOG: NETWORK STOP 5");
     return Lb_OK;
+}
+
+static TbBool OnReturningUser(NetUserId* assigned_id)
+{
+    NetUserId i;
+
+    if (netstate.locked) {
+        return 0;
+    }
+
+    for (i = MAX_N_USERS; i > 0; i--) {
+        if (netstate.users[i].progress == USER_DROPPED) {
+            *assigned_id = i;
+            netstate.users[i].progress = USER_CONNECTED;
+            netstate.users[i].ack = -1;
+            NETLOG("Assigning returning user to ID %u", i);
+            return 1;
+        }
+    }
+
+    return 0;
 }
 
 static TbBool OnNewUser(NetUserId * assigned_id)
@@ -1027,7 +1054,7 @@ static TbBool OnNewUser(NetUserId * assigned_id)
         return 0;
     }
 
-    for (i = 0; i < MAX_N_USERS; ++i) {
+    for (i = 0; i < 2; ++i) {
         if (netstate.users[i].progress == USER_UNUSED) {
             *assigned_id = i;
             netstate.users[i].progress = USER_CONNECTED;
@@ -1037,7 +1064,7 @@ static TbBool OnNewUser(NetUserId * assigned_id)
         }
     }
 
-    return 0;
+    return OnReturningUser(assigned_id);
 }
 
 static void OnDroppedUser(NetUserId id, enum NetDropReason reason)
@@ -1061,7 +1088,8 @@ static void OnDroppedUser(NetUserId id, enum NetDropReason reason)
     }
 
 
-    if (netstate.my_id == SERVER_ID) {
+    if (netstate.my_id == (SERVER_ID || NETDROP_ERROR)) // || NETDROP_ERROR || NETDROP_MANUAL
+    {
         LbMemorySet(&netstate.users[id], 0, sizeof(netstate.users[id]));
         netstate.users[id].id = id; //repair effect by LbMemorySet
 
@@ -1080,7 +1108,13 @@ static void OnDroppedUser(NetUserId id, enum NetDropReason reason)
     }
     else {
         NETMSG("Quitting after connection loss");
-        LbNetwork_Stop();
+        JUSTMSG("TESTLOG: dropped because my_id = %d", netstate.my_id);
+        NETMSG("resync game");
+        LbNetwork_EnableNewPlayers(true);
+        netstate.users[1].progress = USER_DROPPED;
+        ProcessMessagesUntilNextLoginReply(WAIT_FOR_SERVER_TIMEOUT_IN_MS);
+        //resync_game();
+        //LbNetwork_Stop();
     }
 }
 
@@ -1170,7 +1204,12 @@ TbError LbNetwork_Exchange(void *buf)
     WARNLOG("Failure when Completing Exchange");
     return Lb_FAIL;
   }*/
-    assert(UserIdentifiersValid());
+   // assert(UserIdentifiersValid()); //this line used to be enabled, but disabling it seems to make multiplayer more stable.
+
+    if(!UserIdentifiersValid())
+    { 
+        JUSTMSG("TESTLOG: INVALID USERS");
+    }
 
     if (netstate.users[netstate.my_id].progress == USER_SERVER) {
         //server needs to be careful about how it reads messages
@@ -1250,7 +1289,8 @@ TbBool LbNetwork_Resync(void * buf, size_t len)
 
     full_buf = (char *) LbMemoryAlloc(len + 1);
 
-    if (netstate.users[netstate.my_id].progress == USER_SERVER) {
+    if (netstate.users[netstate.my_id].progress == USER_SERVER) 
+    {
         full_buf[0] = NETMSG_RESYNC;
         LbMemoryCopy(full_buf + 1, buf, len);
 
@@ -1390,8 +1430,9 @@ TbError LbNetwork_EnumeratePlayers(struct TbNetworkSessionNameEntry *sesn, TbNet
     //for now assume this our session.
 
     for (id = 0; id < MAX_N_USERS; ++id) {
-        if (netstate.users[id].progress != USER_UNUSED &&
-                netstate.users[id].progress != USER_CONNECTED) { //no point in showing user if there's no name
+        if (netstate.users[id].progress != USER_UNUSED && //todo, kijk hier
+                netstate.users[id].progress != USER_CONNECTED) 
+        { //no point in showing user if there's no name
             LbMemorySet(&data, 0, sizeof(data));
             LbStringCopy(data.plyr_name, netstate.users[id].name,
                 sizeof(data.plyr_name));

@@ -1153,7 +1153,8 @@ TbResult magic_use_power_time_bomb(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     pos.y.val = subtile_coord_center(stl_y);
     pos.z.val = get_floor_height_at(&pos) + 512;
     //TODO SPELL TIMEBOMB write the spell support
-    thing = INVALID_THING;//create_object(&pos, , plyr_idx);
+    //thing = INVALID_THING;//create_object(&pos, , plyr_idx);
+    thing = create_object(&pos, 112, thing->owner, -1);
     if (thing_is_invalid(thing))
     {
         ERRORLOG("There was place to create new thing, but creation failed");

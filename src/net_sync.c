@@ -142,22 +142,40 @@ void recall_localised_game_structure(void)
 void resync_game(void)
 {
     SYNCDBG(2,"Starting");
+    JUSTMSG("TESTLOG: 1");
     struct PlayerInfo* player = get_my_player();
+    JUSTMSG("TESTLOG: 2");
     draw_out_of_sync_box(0, 32*units_per_pixel/16, player->engine_window_x);
+    JUSTMSG("TESTLOG: 3");
     reset_eye_lenses();
+    JUSTMSG("TESTLOG: 4");
     store_localised_game_structure();
+    JUSTMSG("TESTLOG: 5");
     int i = get_resync_sender();
+    JUSTMSG("TESTLOG: 6");
     if (is_my_player_number(i))
     {
+        JUSTMSG("TESTLOG: 7");
         send_resync_game();
+        JUSTMSG("TESTLOG: 8");
     } else
     {
-        receive_resync_game();
+        JUSTMSG("TESTLOG: 9");
+        if (receive_resync_game() == 0)
+        {
+            network_session_join();
+        }
+        JUSTMSG("TESTLOG: 10");
     }
+    JUSTMSG("TESTLOG: 11");
     recall_localised_game_structure();
+    JUSTMSG("TESTLOG: 12");
     reinit_level_after_load();
+    JUSTMSG("TESTLOG: 13");
     set_flag_byte(&game.system_flags,GSF_NetGameNoSync,false);
+    JUSTMSG("TESTLOG: 14");
     set_flag_byte(&game.system_flags,GSF_NetSeedNoSync,false);
+    JUSTMSG("TESTLOG: 15");
 }
 
 /**
