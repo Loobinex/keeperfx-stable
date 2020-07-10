@@ -125,6 +125,12 @@ TbBool slab_has_trap_on(MapSlabCoord slb_x, MapSlabCoord slb_y)
     return !thing_is_invalid(traptng);
 }
 
+TbBool subtile_has_trap_on(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
+{
+    struct Thing* traptng = get_trap_for_position(stl_x, stl_y);
+    return !thing_is_invalid(traptng);
+}
+
 TbBool thing_is_deployed_trap(const struct Thing *thing)
 {
     if (thing_is_invalid(thing))
@@ -566,18 +572,8 @@ TngUpdateRet update_trap_trigger(struct Thing *traptng)
                 }
                 traptng->field_4F &= TF4F_Unknown10;
                 traptng->field_4F |= TF4F_Unknown20;
-                if (!is_neutral_thing(traptng) && !is_hero_thing(traptng)) 
-                {
-                    if (placing_offmap_workshop_item(traptng->owner, TCls_Trap, traptng->model))
-                    {
-                        //When there's only offmap traps, destroy the disarmed one so the player can place a new one.
-                        traptng->health = -1;
-                    }
-                    else
-                    {
-                        //Trap is available to be rearmed, so earmark a workshop crate for it.
-                        remove_workshop_item_from_amount_placeable(traptng->owner, traptng->class_id, traptng->model);
-                    }
+                if (!is_neutral_thing(traptng) && !is_hero_thing(traptng)) {
+                    remove_workshop_item_from_amount_placeable(traptng->owner, traptng->class_id, traptng->model);
                 }
             }
         }
@@ -811,7 +807,7 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     }
     if ((slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED))
     {
-        if (!slab_has_trap_on(slb_x, slb_y) && !subtile_has_door_thing_on(stl_x, stl_y))
+        if (!subtile_has_trap_on(stl_x, stl_y) && !subtile_has_door_thing_on(stl_x, stl_y))
         {
             return true;
         }
@@ -845,10 +841,11 @@ TbBool tag_cursor_blocks_place_trap(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     {
         if (!game_is_busy_doing_gui() && (game.small_map_state != 2)) {
             // Move to first subtile on a slab
-            stl_x = slab_subtile(slb_x,0);
-            stl_y = slab_subtile(slb_y,0);
-            draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0),
-                subtile_coord(stl_x+STL_PER_SLB,0), subtile_coord(stl_y+STL_PER_SLB,0), floor_height, can_place);
+            // stl_x = slab_subtile(slb_x,0);
+            // stl_y = slab_subtile(slb_y,0);
+            // draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0),
+               // subtile_coord(stl_x+STL_PER_SLB,0), subtile_coord(stl_y+STL_PER_SLB,0), floor_height, can_place);
+               draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0), subtile_coord(stl_x+1,0), subtile_coord(stl_y+1,0), floor_height, can_place);
         }
     }
     return can_place;

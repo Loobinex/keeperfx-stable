@@ -94,6 +94,7 @@ DLLIMPORT extern unsigned char _DK_trap_to_object[8];
 #pragma pack()
 /******************************************************************************/
 TbBool slab_has_trap_on(MapSlabCoord slb_x, MapSlabCoord slb_y);
+TbBool subtile_has_trap_on(MapSubtlCoord stl_x, MapSubtlCoord stl_y);
 TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y);
 
 TbBool destroy_trap(struct Thing *thing);
