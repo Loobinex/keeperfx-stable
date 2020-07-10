@@ -796,6 +796,8 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     MapSlabCoord slb_y = subtile_slab_fast(stl_y);
     struct SlabMap* slb = get_slabmap_block(slb_x, slb_y);
     struct SlabAttr* slbattr = get_slab_attrs(slb);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    TbBool HasTrap;
     if (!subtile_revealed(stl_x, stl_y, plyr_idx)) {
         return false;
     }
@@ -807,7 +809,15 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     }
     if ((slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED))
     {
-        if (!subtile_has_trap_on(stl_x, stl_y) && !subtile_has_door_thing_on(stl_x, stl_y))
+        if (player->chosen_trap_kind == TngTrp_Unknown01)
+        {
+                HasTrap = slab_has_trap_on(slb_x, slb_y);
+        }
+        else
+        {
+                HasTrap = subtile_has_trap_on(stl_x, stl_y);
+        }
+        if (!HasTrap && !subtile_has_door_thing_on(stl_x, stl_y))
         {
             return true;
         }
@@ -837,15 +847,22 @@ TbBool tag_cursor_blocks_place_trap(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     MapSlabCoord slb_y = subtile_slab_fast(stl_y);
     TbBool can_place = can_place_trap_on(plyr_idx, stl_x, stl_y);
     int floor_height = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
+    struct PlayerInfo* player = get_player(plyr_idx);
     if (is_my_player_number(plyr_idx))
     {
         if (!game_is_busy_doing_gui() && (game.small_map_state != 2)) {
             // Move to first subtile on a slab
-            // stl_x = slab_subtile(slb_x,0);
-            // stl_y = slab_subtile(slb_y,0);
-            // draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0),
-               // subtile_coord(stl_x+STL_PER_SLB,0), subtile_coord(stl_y+STL_PER_SLB,0), floor_height, can_place);
+        if (player->chosen_trap_kind == TngTrp_Unknown01)
+        {
+            stl_x = slab_subtile(slb_x,0);
+            stl_y = slab_subtile(slb_y,0);
+            draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0),
+                subtile_coord(stl_x+STL_PER_SLB,0), subtile_coord(stl_y+STL_PER_SLB,0), floor_height, can_place);
+        }
+        else
+        {
                draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0), subtile_coord(stl_x+1,0), subtile_coord(stl_y+1,0), floor_height, can_place);
+        }
         }
     }
     return can_place;
