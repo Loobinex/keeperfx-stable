@@ -39,6 +39,7 @@
 #include "creature_states_gardn.h"
 #include "creature_states_lair.h"
 #include "thing_stats.h"
+#include "thing_traps.h"
 #include "game_lghtshdw.h"
 #include "game_heap.h"
 #include "kjm_input.h"
@@ -6417,20 +6418,16 @@ void draw_frontview_engine(struct Camera *cam)
     update_frontview_pointed_block(zoom, qdrant, px, py, qx, qy);
     if (map_volume_box.visible)
     {
+        BoxWidth = (zoom >> 8) & 0xFF;
+        if (gameadd.place_traps_on_subtiles)
+        {
         if (player->work_state == PSt_PlaceTrap)
         {
             if (player->chosen_trap_kind != TngTrp_Unknown01)
             {
-                    BoxWidth = ((zoom >> 8) & 0xFF) / 3;
-            }
-            else
-            {
-                    BoxWidth = (zoom >> 8) & 0xFF; 
+                    BoxWidth = BoxWidth / 3;
             }
         }
-        else
-        {
-                BoxWidth = (zoom >> 8) & 0xFF;
         }
         create_frontview_map_volume_box(cam, BoxWidth);
     }

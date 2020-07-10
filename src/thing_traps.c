@@ -809,7 +809,7 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     }
     if ((slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED))
     {
-        if (player->chosen_trap_kind == TngTrp_Unknown01)
+        if ((player->chosen_trap_kind == TngTrp_Unknown01) || (!gameadd.place_traps_on_subtiles))
         {
                 HasTrap = slab_has_trap_on(slb_x, slb_y);
         }
@@ -852,7 +852,7 @@ TbBool tag_cursor_blocks_place_trap(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     {
         if (!game_is_busy_doing_gui() && (game.small_map_state != 2)) {
             // Move to first subtile on a slab
-        if (player->chosen_trap_kind == TngTrp_Unknown01)
+        if ((player->chosen_trap_kind == TngTrp_Unknown01) || (!gameadd.place_traps_on_subtiles))
         {
             stl_x = slab_subtile(slb_x,0);
             stl_y = slab_subtile(slb_y,0);
