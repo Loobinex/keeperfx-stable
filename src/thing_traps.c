@@ -930,7 +930,8 @@ TbBool tag_cursor_blocks_place_trap(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     struct PlayerInfo* player = get_player(plyr_idx);
     if (is_my_player_number(plyr_idx))
     {
-        if (!game_is_busy_doing_gui() && (game.small_map_state != 2)) {
+        if (!game_is_busy_doing_gui() && (game.small_map_state != 2)) 
+        {
             // Move to first subtile on a slab
         if ((player->chosen_trap_kind == TngTrp_Unknown01) || (!gameadd.place_traps_on_subtiles))
         {
@@ -942,6 +943,7 @@ TbBool tag_cursor_blocks_place_trap(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         else
         {
                draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0), subtile_coord(stl_x+1,0), subtile_coord(stl_y+1,0), floor_height, can_place);
+        }
         }
     }
     return can_place;
