@@ -1131,6 +1131,18 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         }
         break;
     case PSt_Sell:
+    if (is_key_pressed(KC_RSHIFT, KMod_DONTCARE))
+    {        
+            thing = get_trap_for_position(stl_x, stl_y);
+        if (thing_is_invalid(thing))
+        {
+            player->thing_under_hand = 0;
+        }
+        else
+        {
+            player->thing_under_hand = thing->index;
+        }
+    }    
         process_dungeon_control_packet_sell_operation(plyr_idx);
         break;
     case PSt_CreateDigger:

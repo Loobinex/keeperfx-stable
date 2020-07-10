@@ -721,12 +721,44 @@ void init_traps(void)
  * @param sell_value Value to be added to treasury if selling traps; if not selling but just removing, should be null.
  * @return Amount of traps removed.
  */
-long remove_traps_around_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, long *sell_value)
+
+long remove_trap(struct Thing *traptng, long *sell_value)
 {
     long total = 0;
-    for (long k = 0; k < AROUND_TILES_COUNT; k++)
-    {
-        struct Thing* traptng = get_trap_for_position(stl_x + around[k].delta_x, stl_y + around[k].delta_y);
+        if (!thing_is_invalid(traptng))
+        {
+            if (sell_value != NULL)
+            {
+                // Do the refund only if we were able to sell armed trap
+                long i = game.traps_config[traptng->model].selling_value;
+                if (traptng->trap.num_shots == 0)
+                {
+                    // Trap not armed - try selling crate from workshop
+                    if (remove_workshop_item_from_amount_stored(traptng->owner, traptng->class_id, traptng->model, WrkCrtF_NoOffmap) > WrkCrtS_None) {
+                        remove_workshop_object_from_player(traptng->owner, trap_crate_object_model(traptng->model));
+                        (*sell_value) += i;
+                    }
+                } else
+                {
+                    // Trap armed - we can get refund
+                    (*sell_value) += i;
+                }
+                // We don't want to increase trap_amount_placeable, so we'll not use destroy_trap() there
+                delete_thing_structure(traptng, 0);
+            } else {
+                destroy_trap(traptng);
+            }
+            total++;
+        } 
+return total;        
+}
+ 
+long remove_trap_on_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, long *sell_value)
+{
+    long total; // = 0;
+        struct Thing* traptng = get_trap_for_position(stl_x, stl_y);
+        total = remove_trap(traptng, sell_value);
+        /* 
         if (!thing_is_invalid(traptng))
         {
             if (sell_value != NULL)
@@ -752,6 +784,44 @@ long remove_traps_around_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, long 
             }
             total++;
         }
+        */
+    return total;
+}
+ 
+long remove_traps_around_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, long *sell_value)
+{
+    long total; // = 0;
+    for (long k = 0; k < AROUND_TILES_COUNT; k++)
+    {
+        struct Thing* traptng = get_trap_for_position(stl_x + around[k].delta_x, stl_y + around[k].delta_y);
+        total = remove_trap(traptng, sell_value);
+        /*
+        if (!thing_is_invalid(traptng))
+        {
+            if (sell_value != NULL)
+            {
+                // Do the refund only if we were able to sell armed trap
+                long i = game.traps_config[traptng->model].selling_value;
+                if (traptng->trap.num_shots == 0)
+                {
+                    // Trap not armed - try selling crate from workshop
+                    if (remove_workshop_item_from_amount_stored(traptng->owner, traptng->class_id, traptng->model, WrkCrtF_NoOffmap) > WrkCrtS_None) {
+                        remove_workshop_object_from_player(traptng->owner, trap_crate_object_model(traptng->model));
+                        (*sell_value) += i;
+                    }
+                } else
+                {
+                    // Trap armed - we can get refund
+                    (*sell_value) += i;
+                }
+                // We don't want to increase trap_amount_placeable, so we'll not use destroy_trap() there
+                delete_thing_structure(traptng, 0);
+            } else {
+                destroy_trap(traptng);
+            }
+            total++;
+        }
+        */
     }
     return total;
 }

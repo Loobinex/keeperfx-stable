@@ -858,21 +858,35 @@ void process_players(void)
 
 TbBool player_sell_trap_at_subtile(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y)
 {
-    struct Thing* thing = get_trap_for_slab_position(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
+    struct Thing *thing;
+    struct Coord3d pos;
+    MapSlabCoord slb_x = subtile_slab_fast(stl_x);
+    MapSlabCoord slb_y = subtile_slab_fast(stl_y);
+    long sell_value = 0;
+    if (is_key_pressed(KC_RSHIFT, KMod_DONTCARE))
+    {
+        thing = get_trap_for_position(stl_x, stl_y);
     if (thing_is_invalid(thing))
     {
         return false;
     }
+        set_coords_to_subtile_center(&pos,stl_x,stl_y,1);
+        remove_trap_on_subtile(stl_x, stl_y, &sell_value);
+    }
+    else
+    {
+        thing = get_trap_for_slab_position(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
+    if (thing_is_invalid(thing))
+    {
+        return false;
+    }
+        set_coords_to_slab_center(&pos,slb_x,slb_y);
+        remove_traps_around_subtile(slab_subtile_center(slb_x), slab_subtile_center(slb_y), &sell_value);
+    }
     struct Dungeon* dungeon = get_players_num_dungeon(thing->owner);
-    MapSlabCoord slb_x = subtile_slab_fast(stl_x);
-    MapSlabCoord slb_y = subtile_slab_fast(stl_y);
-    long sell_value = 0;
-    remove_traps_around_subtile(slab_subtile_center(slb_x), slab_subtile_center(slb_y), &sell_value);
     if (is_my_player_number(plyr_idx))
         play_non_3d_sample(115);
     dungeon->camera_deviate_jump = 192;
-    struct Coord3d pos;
-    set_coords_to_slab_center(&pos,slb_x,slb_y);
     if (sell_value != 0)
     {
         create_price_effect(&pos, plyr_idx, sell_value);
