@@ -52,6 +52,7 @@
 #include "config_creature.h"
 #include "game_legacy.h"
 #include "keeperfx.hpp"
+#include "player_states.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -6344,6 +6345,7 @@ void draw_frontview_engine(struct Camera *cam)
     long long zoom;
     long long lbbb;
     long i;
+    unsigned char BoxWidth;
     SYNCDBG(9,"Starting");
     player = get_my_player();
     if (cam->zoom > 65536)
@@ -6414,7 +6416,24 @@ void draw_frontview_engine(struct Camera *cam)
 
     update_frontview_pointed_block(zoom, qdrant, px, py, qx, qy);
     if (map_volume_box.visible)
-        create_frontview_map_volume_box(cam, (zoom >> 8) & 0xFF);
+    {
+        if (player->work_state == PSt_PlaceTrap)
+        {
+            if (player->chosen_trap_kind != TngTrp_Unknown01)
+            {
+                    BoxWidth = ((zoom >> 8) & 0xFF) / 3;
+            }
+            else
+            {
+                    BoxWidth = (zoom >> 8) & 0xFF; 
+            }
+        }
+        else
+        {
+                BoxWidth = (zoom >> 8) & 0xFF;
+        }
+        create_frontview_map_volume_box(cam, BoxWidth);
+    }
     map_volume_box.visible = 0;
 
     h = (8 * (zoom + 32 * ewnd.height) - qy) / zoom;
