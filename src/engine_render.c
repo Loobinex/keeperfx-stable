@@ -6027,7 +6027,7 @@ static void update_frontview_pointed_block(unsigned long laaa, unsigned char qdr
     }
 }
 
-static void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width)
+void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width)
 {
     struct Coord3d pos;
     long coord_x;
@@ -6040,7 +6040,6 @@ static void create_frontview_map_volume_box(struct Camera *cam, unsigned char st
     long vstart;
     long vend;
     long delta[4];
-
     pos.y.val = map_volume_box.beg_y;
     pos.x.val = map_volume_box.beg_x;
     pos.z.val = subtile_coord(5,0);
@@ -6419,15 +6418,9 @@ void draw_frontview_engine(struct Camera *cam)
     if (map_volume_box.visible)
     {
         BoxWidth = (zoom >> 8) & 0xFF;
-        if (gameadd.place_traps_on_subtiles)
+        if ( ( (gameadd.place_traps_on_subtiles) && ((player->work_state == PSt_PlaceTrap) && (player->chosen_trap_kind != TngTrp_Unknown01)) ) || ((player->work_state == PSt_Sell) && (is_key_pressed(KC_RSHIFT, KMod_DONTCARE))) )
         {
-        if (player->work_state == PSt_PlaceTrap)
-        {
-            if (player->chosen_trap_kind != TngTrp_Unknown01)
-            {
-                    BoxWidth = BoxWidth / 3;
-            }
-        }
+            BoxWidth /= 3;
         }
         create_frontview_map_volume_box(cam, BoxWidth);
     }
