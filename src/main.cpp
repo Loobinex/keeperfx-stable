@@ -3741,7 +3741,7 @@ int can_thing_be_queried(struct Thing *thing, long a2)
   return _DK_can_thing_be_queried(thing, a2);
 }
 
-void tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4)
+void tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4, TbBool Subtile)
 {
     SYNCDBG(7,"Starting");
     // _DK_tag_cursor_blocks_sell_area(plyr_idx, stl_x, stl_y, a4);
