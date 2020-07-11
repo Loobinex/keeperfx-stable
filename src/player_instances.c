@@ -1169,13 +1169,13 @@ TbBool player_place_trap_at(MapSubtlCoord stl_x, MapSubtlCoord stl_y, PlayerNumb
     }
     struct Coord3d pos;
     struct PlayerInfo* player = get_player(plyr_idx);
-    if ((player->chosen_trap_kind == TngTrp_Unknown01) || (!gameadd.place_traps_on_subtiles))
+    if ((player->chosen_trap_kind == TngTrp_Boulder) || (!gameadd.place_traps_on_subtiles))
     {
-    set_coords_to_slab_center(&pos,subtile_slab_fast(stl_x),subtile_slab_fast(stl_y));
+        set_coords_to_slab_center(&pos,subtile_slab_fast(stl_x),subtile_slab_fast(stl_y));
     }
     else
     {
-    set_coords_to_subtile_center(&pos,stl_x,stl_y,1);
+        set_coords_to_subtile_center(&pos,stl_x,stl_y,1);
     }
     delete_room_slabbed_objects(get_slab_number(subtile_slab_fast(stl_x),subtile_slab_fast(stl_y)));
     struct Thing* traptng = create_trap(&pos, tngmodel, plyr_idx);
@@ -1193,7 +1193,9 @@ TbBool player_place_trap_at(MapSubtlCoord stl_x, MapSubtlCoord stl_y, PlayerNumb
     }
     dungeon->camera_deviate_jump = 192;
     if (is_my_player_number(plyr_idx))
+    {
         play_non_3d_sample(117);
+    }
     return true;
 }
 
@@ -1226,7 +1228,9 @@ TbBool player_place_door_at(MapSubtlCoord stl_x, MapSubtlCoord stl_y, PlayerNumb
     }
     dungeon->camera_deviate_jump = 192;
     if (is_my_player_number(plyr_idx))
+    {
         play_non_3d_sample(117);
+    }
     return 1;
 }
 /******************************************************************************/

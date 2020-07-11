@@ -3745,47 +3745,46 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
 {
     SYNCDBG(7,"Starting");
     // _DK_tag_cursor_blocks_sell_area(plyr_idx, stl_x, stl_y, a4);
-    MapSlabCoord slb_x = subtile_slab_fast(stl_x); // v4
-    MapSlabCoord slb_y = subtile_slab_fast(stl_y); // v5
+    MapSlabCoord slb_x = subtile_slab_fast(stl_x);
+    MapSlabCoord slb_y = subtile_slab_fast(stl_y);
     int v6 = slab_subtile(slb_x, 0);
     int v7 = slab_subtile(slb_y, 0);
-    // int v8 = slb_x + 85 * slb_y;
-    // int v9 = game.slabmap[v8].kind;
     struct SlabMap *slb;
     slb = get_slabmap_block(slb_x, slb_y);
     struct SlabAttr *slbattr;
     slbattr = get_slab_attrs(slb);
     signed int parl;
     TbBool allowed = false;
-      if (!subtile_revealed(stl_x, stl_y, plyr_idx)
-    || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
-  {
-    parl = temp_cluedo_mode < 1u ? 5 : 2;
-  }
-  else if (slab_kind_is_liquid(slb->kind)) // ( slb->kind == SlbT_WATER || slb->kind == SlbT_LAVA )
-  {
-    parl = 0;
-  }
-  else
-  {
-    if ( ( ((subtile_is_sellable_room(plyr_idx, stl_x, stl_y)) || ( (slabmap_owner(slb) == plyr_idx) && ( (slab_is_door(slb_x, slb_y)) || (Subtile ? (subtile_has_trap_on(stl_x, stl_y)) : (slab_has_trap_on(slb_x, slb_y))) ) ) ) )
-      && ( slb->kind != SlbT_ENTRANCE && slb->kind != SlbT_DUNGHEART ) )
+    if (!subtile_revealed(stl_x, stl_y, plyr_idx)
+        || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
     {
-      allowed = true;
+        parl = temp_cluedo_mode < 1u ? 5 : 2;
     }
-    parl = 1;
-  }
+    else if (slab_kind_is_liquid(slb->kind))
+    {
+        parl = 0;
+    }
+    else
+    {
+        if ( ( ((subtile_is_sellable_room(plyr_idx, stl_x, stl_y)) || ( (slabmap_owner(slb) == plyr_idx) && ( (slab_is_door(slb_x, slb_y)) 
+            || (Subtile ? (subtile_has_trap_on(stl_x, stl_y)) : (slab_has_trap_on(slb_x, slb_y))) ) ) ) )
+            && ( slb->kind != SlbT_ENTRANCE && slb->kind != SlbT_DUNGHEART ) )
+        {
+            allowed = true;
+        }
+        parl = 1;
+    }
     if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
-  {
-    map_volume_box.visible = 1;
-    map_volume_box.beg_x = Subtile ? (subtile_coord(stl_x,0)) : (v6 << 8);
-    map_volume_box.beg_y = Subtile ? (subtile_coord(stl_y,0)) : (v7 << 8);
-    map_volume_box.field_13 = parl;
-    map_volume_box.end_x = Subtile ? (subtile_coord(stl_x+1,0)) : ((v6 + 2 * a4 + 1) << 8);
-    map_volume_box.color = allowed;
-    map_volume_box.end_y = Subtile ? (subtile_coord(stl_y+1,0)) : ((v7 + 2 * a4 + 1) << 8);
-  }
-  return allowed;
+    {
+        map_volume_box.visible = 1;
+        map_volume_box.beg_x = Subtile ? (subtile_coord(stl_x,0)) : (v6 << 8);
+        map_volume_box.beg_y = Subtile ? (subtile_coord(stl_y,0)) : (v7 << 8);
+        map_volume_box.field_13 = parl;
+        map_volume_box.end_x = Subtile ? (subtile_coord(stl_x+1,0)) : ((v6 + 2 * a4 + 1) << 8);
+        map_volume_box.color = allowed;
+        map_volume_box.end_y = Subtile ? (subtile_coord(stl_y+1,0)) : ((v7 + 2 * a4 + 1) << 8);
+    }
+    return allowed;
 }
 
 long packet_place_door(MapSubtlCoord stl_x, MapSubtlCoord stl_y, PlayerNumber plyr_idx, ThingModel tngmodel, unsigned char a5)

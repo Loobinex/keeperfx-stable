@@ -32,7 +32,7 @@ extern "C" {
 
 enum ThingTrapModels {
     TngTrp_None = 0,
-    TngTrp_Unknown01,
+    TngTrp_Boulder,
     TngTrp_Unknown02,
     TngTrp_Unknown03,
     TngTrp_Unknown04,

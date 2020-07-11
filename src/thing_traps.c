@@ -735,103 +735,47 @@ void init_traps(void)
 long remove_trap(struct Thing *traptng, long *sell_value)
 {
     long total = 0;
-        if (!thing_is_invalid(traptng))
+    if (!thing_is_invalid(traptng))
+    {
+        if (sell_value != NULL)
         {
-            if (sell_value != NULL)
+            // Do the refund only if we were able to sell armed trap
+            long i = game.traps_config[traptng->model].selling_value;
+            if (traptng->trap.num_shots == 0)
             {
-                // Do the refund only if we were able to sell armed trap
-                long i = game.traps_config[traptng->model].selling_value;
-                if (traptng->trap.num_shots == 0)
-                {
-                    // Trap not armed - try selling crate from workshop
-                    if (remove_workshop_item_from_amount_stored(traptng->owner, traptng->class_id, traptng->model, WrkCrtF_NoOffmap) > WrkCrtS_None) {
-                        remove_workshop_object_from_player(traptng->owner, trap_crate_object_model(traptng->model));
-                        (*sell_value) += i;
-                    }
-                } else
-                {
-                    // Trap armed - we can get refund
+                // Trap not armed - try selling crate from workshop
+                if (remove_workshop_item_from_amount_stored(traptng->owner, traptng->class_id, traptng->model, WrkCrtF_NoOffmap) > WrkCrtS_None) {
+                    remove_workshop_object_from_player(traptng->owner, trap_crate_object_model(traptng->model));
                     (*sell_value) += i;
                 }
-                // We don't want to increase trap_amount_placeable, so we'll not use destroy_trap() there
-                delete_thing_structure(traptng, 0);
-            } else {
-                destroy_trap(traptng);
+            } else
+            {
+                // Trap armed - we can get refund
+                (*sell_value) += i;
             }
-            total++;
-        } 
-return total;        
+            // We don't want to increase trap_amount_placeable, so we'll not use destroy_trap() there
+            delete_thing_structure(traptng, 0);
+        } else {
+            destroy_trap(traptng);
+        }
+        total++;
+    } 
+    return total;        
 }
  
 long remove_trap_on_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, long *sell_value)
 {
-    long total; // = 0;
-        struct Thing* traptng = get_trap_for_position(stl_x, stl_y);
-        total = remove_trap(traptng, sell_value);
-        /* 
-        if (!thing_is_invalid(traptng))
-        {
-            if (sell_value != NULL)
-            {
-                // Do the refund only if we were able to sell armed trap
-                long i = game.traps_config[traptng->model].selling_value;
-                if (traptng->trap.num_shots == 0)
-                {
-                    // Trap not armed - try selling crate from workshop
-                    if (remove_workshop_item_from_amount_stored(traptng->owner, traptng->class_id, traptng->model, WrkCrtF_NoOffmap) > WrkCrtS_None) {
-                        remove_workshop_object_from_player(traptng->owner, trap_crate_object_model(traptng->model));
-                        (*sell_value) += i;
-                    }
-                } else
-                {
-                    // Trap armed - we can get refund
-                    (*sell_value) += i;
-                }
-                // We don't want to increase trap_amount_placeable, so we'll not use destroy_trap() there
-                delete_thing_structure(traptng, 0);
-            } else {
-                destroy_trap(traptng);
-            }
-            total++;
-        }
-        */
-    return total;
+    struct Thing* traptng = get_trap_for_position(stl_x, stl_y);
+    return remove_trap(traptng, sell_value);
 }
  
 long remove_traps_around_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, long *sell_value)
 {
-    long total; // = 0;
+    long total;
     for (long k = 0; k < AROUND_TILES_COUNT; k++)
     {
         struct Thing* traptng = get_trap_for_position(stl_x + around[k].delta_x, stl_y + around[k].delta_y);
         total = remove_trap(traptng, sell_value);
-        /*
-        if (!thing_is_invalid(traptng))
-        {
-            if (sell_value != NULL)
-            {
-                // Do the refund only if we were able to sell armed trap
-                long i = game.traps_config[traptng->model].selling_value;
-                if (traptng->trap.num_shots == 0)
-                {
-                    // Trap not armed - try selling crate from workshop
-                    if (remove_workshop_item_from_amount_stored(traptng->owner, traptng->class_id, traptng->model, WrkCrtF_NoOffmap) > WrkCrtS_None) {
-                        remove_workshop_object_from_player(traptng->owner, trap_crate_object_model(traptng->model));
-                        (*sell_value) += i;
-                    }
-                } else
-                {
-                    // Trap armed - we can get refund
-                    (*sell_value) += i;
-                }
-                // We don't want to increase trap_amount_placeable, so we'll not use destroy_trap() there
-                delete_thing_structure(traptng, 0);
-            } else {
-                destroy_trap(traptng);
-            }
-            total++;
-        }
-        */
     }
     return total;
 }
@@ -889,7 +833,7 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     }
     if ((slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED))
     {
-        if ((player->chosen_trap_kind == TngTrp_Unknown01) || (!gameadd.place_traps_on_subtiles))
+        if ((player->chosen_trap_kind == TngTrp_Boulder) || (!gameadd.place_traps_on_subtiles))
         {
                 HasTrap = slab_has_trap_on(slb_x, slb_y);
         }
@@ -932,7 +876,7 @@ TbBool tag_cursor_blocks_place_trap(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     {
         if (!game_is_busy_doing_gui() && (game.small_map_state != 2)) 
         {
-            if ((player->chosen_trap_kind == TngTrp_Unknown01) || (!gameadd.place_traps_on_subtiles))
+            if ((player->chosen_trap_kind == TngTrp_Boulder) || (!gameadd.place_traps_on_subtiles))
             {
                 // Move to first subtile on a slab
                 stl_x = slab_subtile(slb_x,0);
