@@ -3745,12 +3745,10 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
 {
     SYNCDBG(7,"Starting");
     // _DK_tag_cursor_blocks_sell_area(plyr_idx, stl_x, stl_y, a4);
-    MapSlabCoord slb_x = subtile_slab_fast(stl_x); // v4
-    MapSlabCoord slb_y = subtile_slab_fast(stl_y); // v5
+    MapSlabCoord slb_x = subtile_slab_fast(stl_x);
+    MapSlabCoord slb_y = subtile_slab_fast(stl_y);
     int v6 = slab_subtile(slb_x, 0);
     int v7 = slab_subtile(slb_y, 0);
-    // int v8 = slb_x + 85 * slb_y;
-    // int v9 = game.slabmap[v8].kind;
     struct SlabMap *slb;
     slb = get_slabmap_block(slb_x, slb_y);
     struct SlabAttr *slbattr;
@@ -3762,7 +3760,7 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     {
         parl = temp_cluedo_mode < 1u ? 5 : 2;
     }
-    else if (slab_kind_is_liquid(slb->kind)) // ( slb->kind == SlbT_WATER || slb->kind == SlbT_LAVA )
+    else if (slab_kind_is_liquid(slb->kind))
     {
         parl = 0;
     }
