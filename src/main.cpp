@@ -3741,7 +3741,7 @@ int can_thing_be_queried(struct Thing *thing, long a2)
   return _DK_can_thing_be_queried(thing, a2);
 }
 
-void tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4)
+TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4)
 {
     SYNCDBG(7,"Starting");
     // _DK_tag_cursor_blocks_sell_area(plyr_idx, stl_x, stl_y, a4);
@@ -3785,6 +3785,7 @@ void tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, Map
         map_volume_box.color = allowed;
         map_volume_box.end_y = (v7 + 2 * a4 + 1) << 8;
     }
+    return allowed;
 }
 
 long packet_place_door(MapSubtlCoord stl_x, MapSubtlCoord stl_y, PlayerNumber plyr_idx, ThingModel tngmodel, unsigned char a5)
