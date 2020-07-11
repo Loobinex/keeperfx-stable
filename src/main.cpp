@@ -3768,7 +3768,7 @@ void tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, Map
   }
   else
   {
-    if ( ( ((subtile_is_sellable_room(plyr_idx, stl_x, stl_y)) || ( (slabmap_owner(slb) == plyr_idx) && ( (subtile_is_door(stl_x, stl_y)) || (slab_has_trap_on(slb_x, slb_y)) ) ) ) )
+    if ( ( ((subtile_is_sellable_room(plyr_idx, stl_x, stl_y)) || ( (slabmap_owner(slb) == plyr_idx) && ( (slab_is_door(slb_x, slb_y)) || (Subtile ? (subtile_has_trap_on(stl_x, stl_y)) : (slab_has_trap_on(slb_x, slb_y))) ) ) ) )
       && ( slb->kind != SlbT_ENTRANCE && slb->kind != SlbT_DUNGHEART ) )
     {
       allowed = true;
@@ -3778,12 +3778,12 @@ void tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, Map
     if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
   {
     map_volume_box.visible = 1;
-    map_volume_box.beg_x = v6 << 8;
-    map_volume_box.beg_y = v7 << 8;
+    map_volume_box.beg_x = Subtile ? (subtile_coord(stl_x,0)) : (v6 << 8);
+    map_volume_box.beg_y = Subtile ? (subtile_coord(stl_y,0)) : (v7 << 8);
     map_volume_box.field_13 = parl;
-    map_volume_box.end_x = (v6 + 2 * a4 + 1) << 8;
+    map_volume_box.end_x = Subtile ? (subtile_coord(stl_x+1,0)) : ((v6 + 2 * a4 + 1) << 8);
     map_volume_box.color = allowed;
-    map_volume_box.end_y = (v7 + 2 * a4 + 1) << 8;
+    map_volume_box.end_y = Subtile ? (subtile_coord(stl_y+1,0)) : ((v7 + 2 * a4 + 1) << 8);
   }
 }
 
