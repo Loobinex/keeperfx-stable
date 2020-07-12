@@ -835,7 +835,7 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     {
         if ((player->chosen_trap_kind == TngTrp_Boulder) || (!gameadd.place_traps_on_subtiles))
         {
-                HasTrap = slab_has_trap_on(slb_x, slb_y);
+                HasTrap = subtile_has_trap_on(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
         }
         else
         {
