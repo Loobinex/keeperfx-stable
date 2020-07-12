@@ -3813,38 +3813,35 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     slbattr = get_slab_attrs(slb);
     signed int parl;
     TbBool allowed = false;
-    if (!subtile_revealed(stl_x, stl_y, plyr_idx)
-    || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
-  {
-    parl = temp_cluedo_mode < 1u ? 5 : 2;
-  }
-  else if (slab_kind_is_liquid(slb->kind))
-  {
-    parl = 0;
-  }
-      else 
-      {
-      if (
-      ( (slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED) )
-      && (find_door_angle(stl_x, stl_y, plyr_idx) != -1)
-      && ( (!slab_has_trap_on(slb_x, slb_y) ) && (!slab_has_door_thing_on(stl_x, stl_y) ) )
-      )
+    if (!subtile_revealed(stl_x, stl_y, plyr_idx) || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
     {
-      allowed = true;
+        parl = temp_cluedo_mode < 1u ? 5 : 2;
     }
-    parl = 1;
-      }
+    else if (slab_kind_is_liquid(slb->kind))
+    {
+        parl = 0;
+    }
+    else 
+    {
+        if ( ( (slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED) )
+            && (find_door_angle(stl_x, stl_y, plyr_idx) != -1)
+            && ( (!slab_has_trap_on(slb_x, slb_y) ) && (!slab_has_door_thing_on(stl_x, stl_y) ) ) )
+        {
+            allowed = true;
+        }
+        parl = 1;
+    }
     if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
     {
-  map_volume_box.visible = 1;
-  map_volume_box.beg_x = subtile_coord(slab_subtile(slb_x, 0), 0);
-  map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0), 0);
-  map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3), 0);
-  map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3), 0);
-  map_volume_box.field_13 = parl;
-  map_volume_box.color = allowed;
+        map_volume_box.visible = 1;
+        map_volume_box.beg_x = subtile_coord(slab_subtile(slb_x, 0), 0);
+        map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0), 0);
+        map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3), 0);
+        map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3), 0);
+        map_volume_box.field_13 = parl;
+        map_volume_box.color = allowed;
     }
-  return allowed;
+    return allowed;
 }
 
 TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4)
