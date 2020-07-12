@@ -3807,8 +3807,6 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     // return _DK_tag_cursor_blocks_place_door(a1, a2, a3);
     MapSlabCoord slb_x = subtile_slab_fast(stl_x);
     MapSlabCoord slb_y = subtile_slab_fast(stl_y);
-    int v5 = slab_subtile(slb_x, 0);
-    int v6 = slab_subtile(slb_y, 0);
     struct SlabMap *slb;
     slb = get_slabmap_block(slb_x, slb_y);
     struct SlabAttr *slbattr;
