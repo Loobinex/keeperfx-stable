@@ -6418,7 +6418,7 @@ void draw_frontview_engine(struct Camera *cam)
     if (map_volume_box.visible)
     {
         BoxWidth = (zoom >> 8) & 0xFF;
-        if ( ( (gameadd.place_traps_on_subtiles) && ((player->work_state == PSt_PlaceTrap) && (player->chosen_trap_kind != TngTrp_Unknown01)) ) || ((player->work_state == PSt_Sell) && (is_key_pressed(KC_LSHIFT, KMod_DONTCARE))) )
+        if ( ( (gameadd.place_traps_on_subtiles) && ((player->work_state == PSt_PlaceTrap) && (player->chosen_trap_kind != TngTrp_Boulder)) ) || ((player->work_state == PSt_Sell) && (is_key_pressed(KC_LSHIFT, KMod_DONTCARE))) )
         {
             BoxWidth /= 3;
         }
