@@ -131,6 +131,32 @@ TbBool subtile_has_trap_on(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
     return !thing_is_invalid(traptng);
 }
 
+TbBool slab_middle_row_has_trap_on(MapSlabCoord slb_x, MapSlabCoord slb_y)
+{
+    int i;
+    for (i = 0; i <= 2; i++)
+    {
+        if (subtile_has_trap_on(slab_subtile(slb_x,i), slab_subtile_center(slb_y)))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+TbBool slab_middle_column_has_trap_on(MapSlabCoord slb_x, MapSlabCoord slb_y)
+{
+    int i;
+    for (i = 0; i <= 2; i++)
+    {
+        if (subtile_has_trap_on(slab_subtile_center(slb_x), slab_subtile(slb_y,i)))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
 TbBool thing_is_deployed_trap(const struct Thing *thing)
 {
     if (thing_is_invalid(thing))

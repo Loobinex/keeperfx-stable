@@ -3814,6 +3814,8 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     slbattr = get_slab_attrs(slb);
     signed int parl;
     TbBool allowed = false;
+    char Orientation;
+    TbBool Check;
     if (!subtile_revealed(stl_x, stl_y, plyr_idx) || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
     {
         parl = temp_cluedo_mode < 1u ? 5 : 2;
@@ -3824,9 +3826,27 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     }
     else 
     {
+        Orientation = find_door_angle(stl_x, stl_y, plyr_idx);
+        if (gameadd.place_traps_on_subtiles)
+        {
+            switch(Orientation)
+            {
+                case 0:
+                {
+                    Check = (!slab_middle_row_has_trap_on(slb_x, slb_y) );
+                    break;
+                }
+                case 1:
+                {
+                    Check = (!slab_middle_column_has_trap_on(slb_x, slb_y) );
+                    break;
+                }
+            }
+        }
         if ( ( (slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED) )
-            && (find_door_angle(stl_x, stl_y, plyr_idx) != -1)
-            && ( (!slab_has_trap_on(slb_x, slb_y) ) && (!slab_has_door_thing_on(stl_x, stl_y) ) ) )
+            && (Orientation != -1)
+            && ( ( (gameadd.place_traps_on_subtiles) ? (Check) : (!slab_has_trap_on(slb_x, slb_y) ) ) && (!slab_has_door_thing_on(stl_x, stl_y) ) ) 
+            )
         {
             allowed = true;
         }
