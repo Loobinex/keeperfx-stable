@@ -848,6 +848,7 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     struct SlabAttr* slbattr = get_slab_attrs(slb);
     struct PlayerInfo* player = get_player(plyr_idx);
     TbBool HasTrap;
+    TbBool HasDoor;
     if (!subtile_revealed(stl_x, stl_y, plyr_idx)) {
         return false;
     }
@@ -857,21 +858,24 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     if (slab_kind_is_liquid(slb->kind)) {
         return false;
     }
-    if ((slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED))
+    if ((slabmap_owner(slb) == plyr_idx) && ((slb->kind == SlbT_CLAIMED) || (slab_is_door(slb_x, slb_y))))
     {
         if ((!gameadd.place_traps_on_subtiles))
         {
                 HasTrap = slab_has_trap_on(slb_x, slb_y);
+                HasDoor = slab_is_door(slb_x, slb_y);
         }
         else if ( (gameadd.place_traps_on_subtiles) && (player->chosen_trap_kind == TngTrp_Boulder) ) 
         {
                 HasTrap = subtile_has_trap_on(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
+                HasDoor = slab_is_door(slb_x, slb_y);
         }
         else
         {
                 HasTrap = subtile_has_trap_on(stl_x, stl_y);
+                HasDoor = ((subtile_has_door_thing_on(stl_x, stl_y)) || (subtile_is_door(stl_x, stl_y)));
         }
-        if (!HasTrap && !subtile_has_door_thing_on(stl_x, stl_y))
+        if (!HasTrap && !HasDoor)
         {
             return true;
         }
