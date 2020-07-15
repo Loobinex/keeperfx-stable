@@ -67,33 +67,37 @@ char get_door_orientation(MapSlabCoord slb_x, MapSlabCoord slb_y)
     {
         return -1;
     }
-    if ( ((slab_is_wall(slb_x-1, slb_y))) && ((slab_is_wall(slb_x+1, slb_y))) && ((!slab_is_wall(slb_x, slb_y-1))) && ((!slab_is_wall(slb_x, slb_y+1))) )
+    else if ( ((slab_is_wall(slb_x-1, slb_y))) && ((slab_is_wall(slb_x+1, slb_y))) && ((!slab_is_wall(slb_x, slb_y-1))) && ((!slab_is_wall(slb_x, slb_y+1))) )
     {
-    return 0;    
+        return 0;    
     }
-    if ( ((slab_is_wall(slb_x-1, slb_y))) && ((slab_is_wall(slb_x+1, slb_y))) && ((slab_is_wall(slb_x, slb_y-1))) && ((!slab_is_wall(slb_x, slb_y+1))) )
+    else if ( ((slab_is_wall(slb_x-1, slb_y))) && ((slab_is_wall(slb_x+1, slb_y))) && ((slab_is_wall(slb_x, slb_y-1))) && ((!slab_is_wall(slb_x, slb_y+1))) )
     {
-    return 0;    
+        return 0;    
     }
-    if ( ((slab_is_wall(slb_x-1, slb_y))) && ((slab_is_wall(slb_x+1, slb_y))) && ((!slab_is_wall(slb_x, slb_y-1))) && ((slab_is_wall(slb_x, slb_y+1))) )
+    else if ( ((slab_is_wall(slb_x-1, slb_y))) && ((slab_is_wall(slb_x+1, slb_y))) && ((!slab_is_wall(slb_x, slb_y-1))) && ((slab_is_wall(slb_x, slb_y+1))) )
     {
-    return 0;    
+        return 0;    
     }
-    if ( ((slab_is_wall(slb_x, slb_y-1))) && ((slab_is_wall(slb_x, slb_y+1))) && ((!slab_is_wall(slb_x-1, slb_y))) && ((!slab_is_wall(slb_x+1, slb_y))) )
+    else if ( ((slab_is_wall(slb_x, slb_y-1))) && ((slab_is_wall(slb_x, slb_y+1))) && ((!slab_is_wall(slb_x-1, slb_y))) && ((!slab_is_wall(slb_x+1, slb_y))) )
     {
-    return 1;    
+        return 1;    
     }
-    if ( ((slab_is_wall(slb_x, slb_y-1))) && ((slab_is_wall(slb_x, slb_y+1))) && ((slab_is_wall(slb_x-1, slb_y))) && ((!slab_is_wall(slb_x+1, slb_y))) )
+    else if ( ((slab_is_wall(slb_x, slb_y-1))) && ((slab_is_wall(slb_x, slb_y+1))) && ((slab_is_wall(slb_x-1, slb_y))) && ((!slab_is_wall(slb_x+1, slb_y))) )
     {
-    return 1;    
+        return 1;    
     }
-    if ( ((slab_is_wall(slb_x, slb_y-1))) && ((slab_is_wall(slb_x, slb_y+1))) && ((!slab_is_wall(slb_x-1, slb_y))) && ((slab_is_wall(slb_x+1, slb_y))) )
+    else if ( ((slab_is_wall(slb_x, slb_y-1))) && ((slab_is_wall(slb_x, slb_y+1))) && ((!slab_is_wall(slb_x-1, slb_y))) && ((slab_is_wall(slb_x+1, slb_y))) )
     {
-    return 1;    
+        return 1;    
     }
-    if ( ((slab_is_wall(slb_x, slb_y-1))) && ((slab_is_wall(slb_x, slb_y+1))) && ((slab_is_wall(slb_x-1, slb_y))) && ((slab_is_wall(slb_x+1, slb_y))) )
+    else if ( ((slab_is_wall(slb_x, slb_y-1))) && ((slab_is_wall(slb_x, slb_y+1))) && ((slab_is_wall(slb_x-1, slb_y))) && ((slab_is_wall(slb_x+1, slb_y))) )
     {
-    return -1;    
+        return -1;    
+    }
+    else
+    {
+        return -1;
     }
 }
 

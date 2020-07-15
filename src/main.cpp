@@ -3815,7 +3815,7 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     signed int parl;
     TbBool allowed = false;
     char Orientation;
-    TbBool Check;
+    TbBool Check = false;
     if (!subtile_revealed(stl_x, stl_y, plyr_idx) || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
     {
         parl = temp_cluedo_mode < 1u ? 5 : 2;

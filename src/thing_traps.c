@@ -847,8 +847,8 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     struct SlabMap* slb = get_slabmap_block(slb_x, slb_y);
     struct SlabAttr* slbattr = get_slab_attrs(slb);
     struct PlayerInfo* player = get_player(plyr_idx);
-    TbBool HasTrap;
-    TbBool HasDoor;
+    TbBool HasTrap = true;
+    TbBool HasDoor = true;
     if (!subtile_revealed(stl_x, stl_y, plyr_idx)) {
         return false;
     }
