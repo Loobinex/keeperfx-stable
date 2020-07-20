@@ -654,7 +654,10 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     else
     {
-        play_non_3d_sample(119);
+        if (is_my_player(player))
+        {
+            play_non_3d_sample(119);
+        }
     }
     unset_packet_control(pckt, PCtr_LBtnClick);
     return true;
