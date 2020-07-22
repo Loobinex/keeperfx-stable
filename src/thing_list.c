@@ -3455,10 +3455,9 @@ struct Thing *get_door_for_position(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
     param.class_id = TCls_Door;
     param.model_id = -1;
     param.plyr_idx = -1;
-    // MapSlabCoord slb_x = subtile_slab(stl_x);
-    // MapSlabCoord slb_y = subtile_slab(stl_y);
-    // const struct Map* mapblk = get_map_block_at(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
-    const struct Map* mapblk = get_map_block_at(stl_x, stl_y);
+    MapSlabCoord slb_x = subtile_slab(stl_x);
+    MapSlabCoord slb_y = subtile_slab(stl_y);
+    const struct Map* mapblk = get_map_block_at(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
     if (map_block_invalid(mapblk))
     {
         return INVALID_THING;
