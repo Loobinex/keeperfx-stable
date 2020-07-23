@@ -216,18 +216,24 @@ TbBool subtile_has_door_thing_on(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
     return !thing_is_invalid(doortng);
 }
 
+TbBool subtile_has_door_thing_on_for_trap_placement(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
+{
+    struct Thing* doortng = get_door_for_position_for_trap_placement(stl_x, stl_y);
+    return !thing_is_invalid(doortng);
+}
+
 TbBool slab_row_has_door_thing_on(MapSlabCoord slb_x, MapSubtlCoord stl_y)
 {
     MapSubtlCoord stl_x = slab_subtile_center(slb_x);
-    if (subtile_has_door_thing_on(stl_x, stl_y))
+    if (subtile_has_door_thing_on_for_trap_placement(stl_x, stl_y))
     {
         return true;
     }
-    if (subtile_has_door_thing_on(stl_x-1, stl_y))
+    if (subtile_has_door_thing_on_for_trap_placement(stl_x-1, stl_y))
     {
         return true;
     }
-    if (subtile_has_door_thing_on(stl_x+1, stl_y))
+    if (subtile_has_door_thing_on_for_trap_placement(stl_x+1, stl_y))
     {
         return true;
     }
@@ -237,15 +243,15 @@ TbBool slab_row_has_door_thing_on(MapSlabCoord slb_x, MapSubtlCoord stl_y)
 TbBool slab_column_has_door_thing_on(MapSubtlCoord stl_x, MapSlabCoord slb_y)
 {
     MapSubtlCoord stl_y = slab_subtile_center(slb_y);
-    if (subtile_has_door_thing_on(stl_x, stl_y))
+    if (subtile_has_door_thing_on_for_trap_placement(stl_x, stl_y))
     {
         return true;
     }
-    if (subtile_has_door_thing_on(stl_x, stl_y-1))
+    if (subtile_has_door_thing_on_for_trap_placement(stl_x, stl_y-1))
     {
         return true;
     }
-    if (subtile_has_door_thing_on(stl_x, stl_y+1))
+    if (subtile_has_door_thing_on_for_trap_placement(stl_x, stl_y+1))
     {
         return true;
     }
