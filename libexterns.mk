@@ -35,7 +35,7 @@ sdl/lib/libSDLmain.a: sdl/$(SDL_PACKAGE)
 	-$(ECHO) 'Extracting package: $<'
 	# Grep is used to remove bogus error messages, return state of tar is also ignored
 	-cd "$(<D)"; \
-	tar --strip-components=1 -zxmUf "$(<F)" --no-anchored bin include lib share 2>&1 | \
+	tar --strip-components=1 -zxmUf "$(<F)" SDL-1.2.15/bin SDL-1.2.15/include SDL-1.2.15/lib SDL-1.2.15/share 2>&1 | \
 	grep -v '^.*: Archive value .* is out of .* range.*$$'
 	-$(ECHO) 'Finished extracting: $<'
 	-$(ECHO) ' '
