@@ -277,7 +277,7 @@ void process_dungeon_destroy(struct Thing *heartng)
             efftng = create_effect(central_pos, TngEff_Unknown04, plyr_idx);
             if (!thing_is_invalid(efftng))
               efftng->byte_16 = 8;
-            efftng = create_effect(central_pos, TngEff_Unknown14, plyr_idx);
+            efftng = create_effect(central_pos, TngEff_WoPExplosion, plyr_idx);
             if (!thing_is_invalid(efftng))
                 efftng->byte_16 = 8;
             destroy_dungeon_heart_room(plyr_idx, heartng);
@@ -1458,7 +1458,7 @@ void reinit_tagged_blocks_for_player(PlayerNumber plyr_idx)
     struct Dungeon *dungeon;
     dungeon = get_dungeon(plyr_idx);
     int task_idx;
-    for (task_idx = 0; task_idx < dungeon->field_AF7; task_idx++)
+    for (task_idx = 0; task_idx < dungeon->highest_task_number; task_idx++)
     {
         struct MapTask  *mtask;
         mtask = &dungeon->task_list[task_idx];
@@ -1540,7 +1540,7 @@ short zoom_to_next_annoyed_creature(void)
     {
       return false;
     }
-    set_players_packet_action(player, PckA_Unknown087, thing->mappos.x.val, thing->mappos.y.val, 0, 0);
+    set_players_packet_action(player, PckA_ZoomToPosition, thing->mappos.x.val, thing->mappos.y.val, 0, 0);
     return true;
 }
 
@@ -2431,12 +2431,12 @@ void count_players_creatures_being_paid(int *creatures_count)
             {
                 struct CreatureControl *cctrl;
                 cctrl = creature_control_get_from_thing(thing);
-                if (cctrl->field_49 > 0)
+                if (cctrl->prepayments_received > 0)
                 {
-                    cctrl->field_49--;
+                    cctrl->prepayments_received--;
                 } else
                 {
-                    cctrl->field_48++;
+                    cctrl->paydays_owed++;
                     creatures_count[thing->owner]++;
                 }
             }
@@ -2454,7 +2454,7 @@ void count_players_creatures_being_paid(int *creatures_count)
 void process_payday(void)
 {
     //_DK_process_payday();
-    game.field_15033A++;
+    game.pay_day_progress = game.pay_day_progress + (gameadd.pay_day_speed / 100);
     PlayerNumber plyr_idx;
     for (plyr_idx=0; plyr_idx < PLAYERS_COUNT; plyr_idx++)
     {
@@ -2468,10 +2468,10 @@ void process_payday(void)
             compute_and_update_player_payday_total(plyr_idx);
         }
     }
-    if (game.pay_day_gap <= game.field_15033A)
+    if (game.pay_day_gap <= game.pay_day_progress)
     {
         output_message(SMsg_Payday, 0, true);
-        game.field_15033A = 0;
+        game.pay_day_progress = 0;
         // Prepare a list which counts how many creatures of each owner needs pay
         int player_paid_creatures_count[PLAYERS_EXT_COUNT];
         PlayerNumber plyr_idx;
@@ -3741,10 +3741,50 @@ int can_thing_be_queried(struct Thing *thing, long a2)
   return _DK_can_thing_be_queried(thing, a2);
 }
 
-void tag_cursor_blocks_sell_area(unsigned char a1, long a2, long a3, long a4)
+TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4, TbBool Subtile)
 {
     SYNCDBG(7,"Starting");
-    _DK_tag_cursor_blocks_sell_area(a1, a2, a3, a4);
+    // _DK_tag_cursor_blocks_sell_area(plyr_idx, stl_x, stl_y, a4);
+    MapSlabCoord slb_x = subtile_slab_fast(stl_x);
+    MapSlabCoord slb_y = subtile_slab_fast(stl_y);
+    int v6 = slab_subtile(slb_x, 0);
+    int v7 = slab_subtile(slb_y, 0);
+    struct SlabMap *slb;
+    slb = get_slabmap_block(slb_x, slb_y);
+    struct SlabAttr *slbattr;
+    slbattr = get_slab_attrs(slb);
+    signed int parl;
+    TbBool allowed = false;
+    if (!subtile_revealed(stl_x, stl_y, plyr_idx)
+        || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
+    {
+        parl = temp_cluedo_mode < 1u ? 5 : 2;
+    }
+    else if (slab_kind_is_liquid(slb->kind))
+    {
+        parl = 0;
+    }
+    else
+    {
+        if ( ( ((subtile_is_sellable_room(plyr_idx, stl_x, stl_y)) || ( (slabmap_owner(slb) == plyr_idx) && ( (slab_is_door(slb_x, slb_y)) 
+            || (Subtile ? (subtile_has_trap_on(stl_x, stl_y)) : (slab_has_trap_on(slb_x, slb_y))) ) ) ) )
+            && ( slb->kind != SlbT_ENTRANCE && slb->kind != SlbT_DUNGHEART ) )
+        {
+            allowed = true;
+        }
+        parl = 1;
+    }
+    if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
+    {
+        map_volume_box.visible = 1;
+        map_volume_box.beg_x = Subtile ? (subtile_coord(stl_x,0)) : (v6 << 8);
+        map_volume_box.beg_y = Subtile ? (subtile_coord(stl_y,0)) : (v7 << 8);
+        map_volume_box.field_13 = parl;
+        map_volume_box.end_x = Subtile ? (subtile_coord(stl_x+1,0)) : ((v6 + 2 * a4 + 1) << 8);
+        map_volume_box.color = allowed;
+        map_volume_box.end_y = Subtile ? (subtile_coord(stl_y+1,0)) : ((v7 + 2 * a4 + 1) << 8);
+    }
+    return allowed;
 }
 
 long packet_place_door(MapSubtlCoord stl_x, MapSubtlCoord stl_y, PlayerNumber plyr_idx, ThingModel tngmodel, unsigned char a5)
@@ -3762,10 +3802,67 @@ long packet_place_door(MapSubtlCoord stl_x, MapSubtlCoord stl_y, PlayerNumber pl
     return 1;
 }
 
-unsigned char tag_cursor_blocks_place_door(unsigned char a1, long a2, long a3)
+TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y)
 {
     SYNCDBG(7,"Starting");
-    return _DK_tag_cursor_blocks_place_door(a1, a2, a3);
+    // return _DK_tag_cursor_blocks_place_door(a1, a2, a3);
+    MapSlabCoord slb_x = subtile_slab_fast(stl_x);
+    MapSlabCoord slb_y = subtile_slab_fast(stl_y);
+    struct SlabMap *slb;
+    slb = get_slabmap_block(slb_x, slb_y);
+    struct SlabAttr *slbattr;
+    slbattr = get_slab_attrs(slb);
+    signed int parl;
+    TbBool allowed = false;
+    char Orientation;
+    TbBool Check = false;
+    if (!subtile_revealed(stl_x, stl_y, plyr_idx) || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
+    {
+        parl = temp_cluedo_mode < 1u ? 5 : 2;
+    }
+    else if (slab_kind_is_liquid(slb->kind))
+    {
+        parl = 0;
+    }
+    else 
+    {
+        Orientation = find_door_angle(stl_x, stl_y, plyr_idx);
+        if (gameadd.place_traps_on_subtiles)
+        {
+            switch(Orientation)
+            {
+                case 0:
+                {
+                    Check = (!slab_middle_row_has_trap_on(slb_x, slb_y) );
+                    break;
+                }
+                case 1:
+                {
+                    Check = (!slab_middle_column_has_trap_on(slb_x, slb_y) );
+                    break;
+                }
+            }
+        }
+        if ( ( (slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED) )
+            && (Orientation != -1)
+            && ( ( (gameadd.place_traps_on_subtiles) ? (Check) : (!slab_has_trap_on(slb_x, slb_y) ) ) && (!slab_has_door_thing_on(stl_x, stl_y) ) ) 
+            )
+        {
+            allowed = true;
+        }
+        parl = 1;
+    }
+    if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
+    {
+        map_volume_box.visible = 1;
+        map_volume_box.beg_x = subtile_coord(slab_subtile(slb_x, 0), 0);
+        map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0), 0);
+        map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3), 0);
+        map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3), 0);
+        map_volume_box.field_13 = parl;
+        map_volume_box.color = allowed;
+    }
+    return allowed;
 }
 
 TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4)
@@ -4074,7 +4171,7 @@ void init_level(void)
     init_messages();
     game.creatures_tend_imprison = 0;
     game.creatures_tend_flee = 0;
-    game.field_15033A = 0;
+    game.pay_day_progress = 0;
     game.chosen_room_kind = 0;
     game.chosen_room_spridx = 0;
     game.chosen_room_tooltip = 0;
@@ -4650,7 +4747,16 @@ short process_command_line(unsigned short argc, char *argv[])
   }
 
   if (level_num == LEVELNUMBER_ERROR)
-    level_num = first_singleplayer_level();
+  {
+      if (first_singleplayer_level() > 0)
+      {
+          level_num = first_singleplayer_level();
+      }
+      else
+      {
+          level_num = 1;
+      }
+  }
   start_params.selected_level_number = level_num;
   my_player_number = default_loc_player;
   return (bad_param==0);
@@ -4692,7 +4798,8 @@ int LbBullfrogMain(unsigned short argc, char *argv[])
     {
       if ((install_info.lang_id == Lang_Japanese) ||
           (install_info.lang_id == Lang_ChineseInt) ||
-          (install_info.lang_id == Lang_ChineseTra))
+          (install_info.lang_id == Lang_ChineseTra) ||
+          (install_info.lang_id == Lang_Korean))
       {
         switch (install_info.lang_id)
         {
@@ -4704,6 +4811,9 @@ int LbBullfrogMain(unsigned short argc, char *argv[])
             break;
         case Lang_ChineseTra:
             dbc_set_language(3);
+            break;
+        case Lang_Korean:
+            dbc_set_language(4);
             break;
         }
         if (dbc_initialize("fxdata"))

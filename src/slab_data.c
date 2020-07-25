@@ -29,6 +29,7 @@
 #include "frontmenu_ingame_map.h"
 #include "game_legacy.h"
 #include "creature_states.h"
+#include "map_data.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -237,11 +238,24 @@ TbBool slab_is_liquid(MapSlabCoord slb_x, MapSlabCoord slb_y)
     return slab_kind_is_liquid(slb->kind);
 }
 
+TbBool slab_is_wall(MapSlabCoord slb_x, MapSlabCoord slb_y)
+{
+    struct SlabMap* slb = get_slabmap_block(slb_x, slb_y);
+    if ( (slb->kind <= SlbT_WALLPAIRSHR) || (slb->kind == SlbT_GEMS) )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 TbBool slab_kind_is_animated(SlabKind slbkind)
 {
     if (slab_kind_is_door(slbkind))
         return true;
-    if ((slbkind == SlbT_GUARDPOST) || (slbkind == SlbT_BRIDGE))
+    if ((slbkind == SlbT_GUARDPOST) || (slbkind == SlbT_BRIDGE) || (slbkind == SlbT_GEMS))
         return true;
     return false;
 }

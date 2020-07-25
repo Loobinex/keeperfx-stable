@@ -62,7 +62,6 @@ enum RoomAreaChoose {
 };
 
 #define ROOM_EFFICIENCY_MAX 256
-#define ROOM_SELL_REVENUE_PERCENT  50
 /******************************************************************************/
 #pragma pack(1)
 
@@ -196,6 +195,7 @@ TbBool thing_is_on_any_room_tile(const struct Thing *thing);
 TbBool thing_is_on_own_room_tile(const struct Thing *thing);
 struct Room *get_room_thing_is_on(const struct Thing *thing);
 void reinitialise_map_rooms(void);
+struct Thing *find_gold_hoarde_at(MapSubtlCoord stl_x, MapSubtlCoord stl_y);
 
 // Finding position within room
 TbBool find_random_valid_position_for_thing_in_room(struct Thing *thing, struct Room *room, struct Coord3d *pos);
@@ -252,6 +252,8 @@ TbBool room_has_enough_free_capacity_for_creature_job(const struct Room *room, c
 long count_slabs_of_room_type(PlayerNumber plyr_idx, RoomKind rkind);
 long claim_enemy_room(struct Room *room,struct Thing *claimtng);
 long claim_room(struct Room *room,struct Thing *claimtng);
+long take_over_room(struct Room* room, PlayerNumber newowner);
+void destroy_room_leaving_unclaimed_ground(struct Room *room);
 TbBool create_effects_on_room_slabs(struct Room *room, ThingModel effkind, long effrange, PlayerNumber effowner);
 TbBool clear_dig_on_room_slabs(struct Room *room, PlayerNumber plyr_idx);
 void do_room_integration(struct Room *room);

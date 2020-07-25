@@ -38,6 +38,7 @@
 #include "gui_topmsg.h"
 
 #include "keeperfx.hpp"
+#include "creature_senses.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -122,6 +123,38 @@ TbBool slab_has_trap_on(MapSlabCoord slb_x, MapSlabCoord slb_y)
 {
     struct Thing* traptng = get_trap_for_slab_position(slb_x, slb_y);
     return !thing_is_invalid(traptng);
+}
+
+TbBool subtile_has_trap_on(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
+{
+    struct Thing* traptng = get_trap_for_position(stl_x, stl_y);
+    return !thing_is_invalid(traptng);
+}
+
+TbBool slab_middle_row_has_trap_on(MapSlabCoord slb_x, MapSlabCoord slb_y)
+{
+    int i;
+    for (i = 0; i <= 2; i++)
+    {
+        if (subtile_has_trap_on(slab_subtile(slb_x,i), slab_subtile_center(slb_y)))
+        {
+            return true;
+        }
+    }
+    return false;
+}
+
+TbBool slab_middle_column_has_trap_on(MapSlabCoord slb_x, MapSlabCoord slb_y)
+{
+    int i;
+    for (i = 0; i <= 2; i++)
+    {
+        if (subtile_has_trap_on(slab_subtile_center(slb_x), slab_subtile(slb_y,i)))
+        {
+            return true;
+        }
+    }
+    return false;
 }
 
 TbBool thing_is_deployed_trap(const struct Thing *thing)
@@ -430,19 +463,19 @@ void activate_trap(struct Thing *traptng, struct Thing *creatng)
     thing_play_sample(traptng, 176, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     switch (trapstat->activation_type)
     {
-    case 1:
+    case TrpAcT_HeadforTarget90:
         activate_trap_shot_head_for_target90(traptng, creatng);
         break;
-    case 2:
+    case TrpAcT_EffectonTrap:
         activate_trap_effect_on_trap(traptng, creatng);
         break;
-    case 3:
+    case TrpAcT_ShotonTrap:
         activate_trap_shot_on_trap(traptng, creatng);
         break;
-    case 4:
+    case TrpAcT_SlapChange:
         activate_trap_slab_change(traptng, creatng);
         break;
-    case 5:
+    case TrpAcT_CreatureShot:
         creature_fire_shot(traptng, creatng,trapstat->created_itm_model,1,1);
         break;
     default:
@@ -514,6 +547,18 @@ TbBool update_trap_trigger_pressure(struct Thing *traptng)
     return false;
 }
 
+TbBool update_trap_trigger_line_of_sight(struct Thing* traptng)
+{
+    struct Thing* trgtng = get_nearest_enemy_creature_possible_to_attack_by(traptng);
+
+    if (line_of_sight_2d(&traptng->mappos, &trgtng->mappos))
+    {
+        activate_trap(traptng, trgtng);
+        return true;
+    }
+    return false;
+}
+
 TngUpdateRet update_trap_trigger(struct Thing *traptng)
 {
     if (traptng->trap.num_shots <= 0) {
@@ -522,11 +567,14 @@ TngUpdateRet update_trap_trigger(struct Thing *traptng)
     TbBool do_trig;
     switch (trap_stats[traptng->model].trigger_type)
     {
-    case 1:
+    case TrpTrg_LineOfSight90:
         do_trig = update_trap_trigger_line_of_sight_90(traptng);
         break;
-    case 2:
+    case TrpTrg_Pressure:
         do_trig = update_trap_trigger_pressure(traptng);
+        break;
+    case TrpTrg_LineOfSight:
+        do_trig = update_trap_trigger_line_of_sight(traptng);
         break;
     default:
         ERRORLOG("Illegal trap trigger type %d",(int)trap_stats[traptng->model].trigger_type);
@@ -550,8 +598,18 @@ TngUpdateRet update_trap_trigger(struct Thing *traptng)
                 }
                 traptng->field_4F &= TF4F_Unknown10;
                 traptng->field_4F |= TF4F_Unknown20;
-                if (!is_neutral_thing(traptng) && !is_hero_thing(traptng)) {
-                    remove_workshop_item_from_amount_placeable(traptng->owner, traptng->class_id, traptng->model);
+                if (!is_neutral_thing(traptng) && !is_hero_thing(traptng)) 
+                {
+                    if (placing_offmap_workshop_item(traptng->owner, TCls_Trap, traptng->model))
+                    {
+                        //When there's only offmap traps, destroy the disarmed one so the player can place a new one.
+                        traptng->health = -1;
+                    }
+                    else
+                    {
+                        //Trap is available to be rearmed, so earmark a workshop crate for it.
+                        remove_workshop_item_from_amount_placeable(traptng->owner, traptng->class_id, traptng->model);
+                    }
                 }
             }
         }
@@ -699,37 +757,51 @@ void init_traps(void)
  * @param sell_value Value to be added to treasury if selling traps; if not selling but just removing, should be null.
  * @return Amount of traps removed.
  */
-long remove_traps_around_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, long *sell_value)
+
+long remove_trap(struct Thing *traptng, long *sell_value)
 {
     long total = 0;
+    if (!thing_is_invalid(traptng))
+    {
+        if (sell_value != NULL)
+        {
+            // Do the refund only if we were able to sell armed trap
+            long i = game.traps_config[traptng->model].selling_value;
+            if (traptng->trap.num_shots == 0)
+            {
+                // Trap not armed - try selling crate from workshop
+                if (remove_workshop_item_from_amount_stored(traptng->owner, traptng->class_id, traptng->model, WrkCrtF_NoOffmap) > WrkCrtS_None) {
+                    remove_workshop_object_from_player(traptng->owner, trap_crate_object_model(traptng->model));
+                    (*sell_value) += i;
+                }
+            } else
+            {
+                // Trap armed - we can get refund
+                (*sell_value) += i;
+            }
+            // We don't want to increase trap_amount_placeable, so we'll not use destroy_trap() there
+            delete_thing_structure(traptng, 0);
+        } else {
+            destroy_trap(traptng);
+        }
+        total++;
+    } 
+    return total;        
+}
+ 
+long remove_trap_on_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, long *sell_value)
+{
+    struct Thing* traptng = get_trap_for_position(stl_x, stl_y);
+    return remove_trap(traptng, sell_value);
+}
+ 
+long remove_traps_around_subtile(MapSubtlCoord stl_x, MapSubtlCoord stl_y, long *sell_value)
+{
+    long total;
     for (long k = 0; k < AROUND_TILES_COUNT; k++)
     {
         struct Thing* traptng = get_trap_for_position(stl_x + around[k].delta_x, stl_y + around[k].delta_y);
-        if (!thing_is_invalid(traptng))
-        {
-            if (sell_value != NULL)
-            {
-                // Do the refund only if we were able to sell armed trap
-                long i = game.traps_config[traptng->model].selling_value;
-                if (traptng->trap.num_shots == 0)
-                {
-                    // Trap not armed - try selling crate from workshop
-                    if (remove_workshop_item_from_amount_stored(traptng->owner, traptng->class_id, traptng->model, WrkCrtF_NoOffmap) > WrkCrtS_None) {
-                        remove_workshop_object_from_player(traptng->owner, trap_crate_object_model(traptng->model));
-                        (*sell_value) += i;
-                    }
-                } else
-                {
-                    // Trap armed - we can get refund
-                    (*sell_value) += i;
-                }
-                // We don't want to increase trap_amount_placeable, so we'll not use destroy_trap() there
-                delete_thing_structure(traptng, 0);
-            } else {
-                destroy_trap(traptng);
-            }
-            total++;
-        }
+        total = remove_trap(traptng, sell_value);
     }
     return total;
 }
@@ -774,6 +846,9 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     MapSlabCoord slb_y = subtile_slab_fast(stl_y);
     struct SlabMap* slb = get_slabmap_block(slb_x, slb_y);
     struct SlabAttr* slbattr = get_slab_attrs(slb);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    TbBool HasTrap = true;
+    TbBool HasDoor = true;
     if (!subtile_revealed(stl_x, stl_y, plyr_idx)) {
         return false;
     }
@@ -783,9 +858,42 @@ TbBool can_place_trap_on(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoo
     if (slab_kind_is_liquid(slb->kind)) {
         return false;
     }
-    if ((slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED))
+    if ((slabmap_owner(slb) == plyr_idx) && ((slb->kind == SlbT_CLAIMED) || (slab_is_door(slb_x, slb_y))))
     {
-        if (!slab_has_trap_on(slb_x, slb_y) && !subtile_has_door_thing_on(stl_x, stl_y))
+        if ((!gameadd.place_traps_on_subtiles))
+        {
+                HasTrap = slab_has_trap_on(slb_x, slb_y);
+                HasDoor = slab_is_door(slb_x, slb_y);
+        }
+        else if ( (gameadd.place_traps_on_subtiles) && (player->chosen_trap_kind == TngTrp_Boulder) ) 
+        {
+                HasTrap = subtile_has_trap_on(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
+                HasDoor = slab_is_door(slb_x, slb_y);
+        }
+        else
+        {
+                HasTrap = subtile_has_trap_on(stl_x, stl_y);
+                switch(get_door_orientation(slb_x, slb_y))
+                {
+                    case -1:
+                    {
+                        HasDoor = false;
+                        break;
+                    }
+                    case 0:
+                    {
+                        HasDoor = slab_row_has_door_thing_on(slb_x, stl_y);
+                        break;
+                    }
+                    case 1:
+                    {
+                        HasDoor = slab_column_has_door_thing_on(stl_x, slb_y);
+                        break;
+                    }
+                }
+                // HasDoor = ((subtile_has_door_thing_on(stl_x, stl_y)) || (subtile_is_door(stl_x, stl_y)) );
+        }
+        if (!HasTrap && !HasDoor)
         {
             return true;
         }
@@ -815,14 +923,23 @@ TbBool tag_cursor_blocks_place_trap(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     MapSlabCoord slb_y = subtile_slab_fast(stl_y);
     TbBool can_place = can_place_trap_on(plyr_idx, stl_x, stl_y);
     int floor_height = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
+    struct PlayerInfo* player = get_player(plyr_idx);
     if (is_my_player_number(plyr_idx))
     {
-        if (!game_is_busy_doing_gui() && (game.small_map_state != 2)) {
-            // Move to first subtile on a slab
-            stl_x = slab_subtile(slb_x,0);
-            stl_y = slab_subtile(slb_y,0);
-            draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0),
+        if (!game_is_busy_doing_gui() && (game.small_map_state != 2))
+        {
+            if ((player->chosen_trap_kind == TngTrp_Boulder) || (!gameadd.place_traps_on_subtiles))
+            {
+                // Move to first subtile on a slab
+                stl_x = slab_subtile(slb_x,0);
+                stl_y = slab_subtile(slb_y,0);
+                draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0),
                 subtile_coord(stl_x+STL_PER_SLB,0), subtile_coord(stl_y+STL_PER_SLB,0), floor_height, can_place);
+            }
+            else
+            {
+               draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0), subtile_coord(stl_x+1,0), subtile_coord(stl_y+1,0), floor_height, can_place);
+            }
         }
     }
     return can_place;

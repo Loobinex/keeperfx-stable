@@ -302,7 +302,7 @@ DEPFLAGS = -MMD -MP -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)"
 # other flags to include while compiling
 INCFLAGS =
 # code optimization and debugging flags
-CV2PDB := $(shell PATH=`pwd`:$PATH command -v cv2pdb.exe 2> /dev/null)
+CV2PDB := $(shell PATH=`pwd`:$$PATH command -v cv2pdb.exe 2> /dev/null)
 DEBUG ?= 0
 ifeq ($(DEBUG), 1)
   OPTFLAGS = -march=i686 -Og -fno-omit-frame-pointer
@@ -350,7 +350,7 @@ questfth \
 twinkprs \
 undedkpr
 
-LANGS = eng chi cht cze dut fre ger ita jpn lat pol rus spa swe
+LANGS = eng chi cht cze dut fre ger ita jpn kor lat pol rus spa swe
 
 # load program version
 include version.mk

@@ -1238,7 +1238,7 @@ void go_to_my_next_room_of_type(RoomKind rkind)
     struct PlayerInfo* player = get_my_player();
     if (room_idx > 0) {
         struct Room* room = room_get(room_idx);
-        set_players_packet_action(player, PckA_Unknown087, subtile_coord_center(room->central_stl_x), subtile_coord_center(room->central_stl_y), 0, 0);
+        set_players_packet_action(player, PckA_ZoomToPosition, subtile_coord_center(room->central_stl_x), subtile_coord_center(room->central_stl_y), 0, 0);
     }
 }
 
@@ -1949,7 +1949,7 @@ void gui_area_payday_button(struct GuiButton *gbtn)
     int units_per_px = (gbtn->width * 16 + 132 / 2) / 132;
     int ps_units_per_px = simple_gui_panel_sprite_width_units_per_px(gbtn, gbtn->sprite_idx, 100);
     draw_gui_panel_sprite_left(gbtn->scr_pos_x, gbtn->scr_pos_y, ps_units_per_px, gbtn->sprite_idx);
-    gui_area_progress_bar_wide(gbtn, units_per_px, game.field_15033A, game.pay_day_gap);
+    gui_area_progress_bar_wide(gbtn, units_per_px, game.pay_day_progress, game.pay_day_gap);
     struct Dungeon* dungeon = get_players_num_dungeon(my_player_number);
     char* text = buf_sprintf("%d", (int)dungeon->creatures_total_pay);
     draw_centred_string64k(text, gbtn->scr_pos_x + (gbtn->width >> 1), gbtn->scr_pos_y + 8*units_per_px/16, 130, gbtn->width);

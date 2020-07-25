@@ -82,7 +82,14 @@ struct Thing *create_gold_for_hand_grab(struct Thing *thing, long owner)
     {
         dungeon->field_14BC = thing->index;
         GoldAmount gold_req;
-        gold_req = thing->long_13 / 4 + 1;
+        if (lbKeyOn[KC_LCONTROL])
+        {
+            gold_req = thing->long_13;
+        }
+        else
+        {
+            gold_req = thing->long_13 / 4 + 1;
+        }
         if (gold_req <= 100)
             gold_req = 100;
         dungeon->field_14BE = gold_req;
@@ -789,8 +796,8 @@ long gold_being_dropped_on_creature(long plyr_idx, struct Thing *goldtng, struct
     if (creature_is_taking_salary_activity(creatng))
     {
         cctrl = creature_control_get_from_thing(creatng);
-        if (cctrl->field_48 > 0)
-            cctrl->field_48--;
+        if (cctrl->paydays_owed > 0)
+            cctrl->paydays_owed--;
         set_start_state(creatng);
         taking_salary = true;
     }
@@ -814,13 +821,17 @@ long gold_being_dropped_on_creature(long plyr_idx, struct Thing *goldtng, struct
     if ( !taking_salary )
     {
         cctrl = creature_control_get_from_thing(creatng);
-        if (cctrl->field_49 < 255) {
-            cctrl->field_49++;
+        if (cctrl->prepayments_received < 255) {
+            cctrl->prepayments_received++;
         }
     }
     struct CreatureStats *crstat;
     crstat = creature_stats_get_from_thing(creatng);
     anger_apply_anger_to_creature_all_types(creatng, (crstat->annoy_got_wage*(tribute/salary)*2));
+    if (gameadd.classic_bugs_flags & ClscBug_FullyHappyWithGold)
+    {
+        anger_set_creature_anger_all_types(creatng, 0);
+    }
     if (can_change_from_state_to(creatng, get_creature_state_besides_interruptions(creatng), CrSt_CreatureBeHappy))
     {
         if (external_set_thing_state(creatng, CrSt_CreatureBeHappy)) {
@@ -860,7 +871,7 @@ void drop_held_thing_on_ground(struct Dungeon *dungeon, struct Thing *droptng, c
         if (is_my_player_number(dungeon->owner)) {
             play_creature_sound(droptng, 6, 3, 0);
         }
-        dungeon->field_14AE = game.play_gameturn;
+        dungeon->last_creature_dropped_gameturn = game.play_gameturn;
     } else
     if (thing_is_object(droptng))
     {

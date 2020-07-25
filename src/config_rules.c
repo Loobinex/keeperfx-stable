@@ -58,6 +58,7 @@ const struct NamedCommand rules_game_commands[] = {
   {"MAXGOLDLOOKUP",              16},
   {"MINGOLDTORECORD",            17},
   {"PAYDAYGAP",                  18},
+  {"PAYDAYSPEED",                19},
   {"SLABCOLLAPSETIME",           20},
   {"DUNGEONHEARTHEALTH",         21},
   {"DUNGEONHEARTHEALTIME",       22},
@@ -66,6 +67,9 @@ const struct NamedCommand rules_game_commands[] = {
   {"PRESERVECLASSICBUGS",        25},
   {"DEATHMATCHSTATUEREAPPERTIME",26},
   {"DEATHMATCHOBJECTREAPPERTIME",27},
+  {"GEMEFFECTIVENESS",           28},
+  {"ROOMSELLGOLDBACKPERCENT",    29},
+  {"PLACETRAPSONSUBTILES",       30},
   {NULL,                          0},
   };
 
@@ -78,6 +82,8 @@ const struct NamedCommand rules_game_classicbugs_commands[] = {
   {"MUST_OBEY_KEEPS_NOT_DO_JOBS", 6},
   {"BREAK_NEUTRAL_WALLS",         7},
   {"ALWAYS_TUNNEL_TO_RED",        8},
+  {"FULLY_HAPPY_WITH_GOLD",       9},
+  {"FAINTED_IMMUNE_TO_BOULDER",  10},
   {NULL,                          0},
   };
 
@@ -101,6 +107,8 @@ const struct NamedCommand rules_creatures_commands[] = {
   {"GAMETURNSINFLEE",               8},
   {"GAMETURNSUNCONSCIOUS",          9},
   {"CRITICALHEALTHPERCENTAGE",     10},
+  {"STUNEVILENEMYCHANCE",          11},
+  {"STUNGOODENEMYCHANCE",          12},
   {NULL,                            0},
   };
 
@@ -125,29 +133,30 @@ const struct NamedCommand rules_magic_commands[] = {
   };
 
 const struct NamedCommand rules_rooms_commands[] = {
-  {"SCAVENGECOSTFREQUENCY",      1},
-  {"TEMPLESCAVENGEPROTECTIONTIME",2},
-  {"TRAINCOSTFREQUENCY",         3},
-  {"TORTURECONVERTCHANCE",       4},
-  {"TIMESPENTINPRISONWITHOUTBREAK", 5},
-  {"GHOSTCONVERTCHANCE",         6},
-  {"ARMORYTIME",                 7},
-  {"WORKSHOPTIME",               8},
-  {"OBSERVATORYTIME",            9},
-  {"OBSERVATORYGENERATE",       10},
-  {"DEFAULTGENERATESPEED",      11},
+  {"SCAVENGECOSTFREQUENCY",                1},
+  {"TEMPLESCAVENGEPROTECTIONTIME",         2},
+  {"TRAINCOSTFREQUENCY",                   3},
+  {"TORTURECONVERTCHANCE",                 4},
+  {"TIMESPENTINPRISONWITHOUTBREAK",        5},
+  {"GHOSTCONVERTCHANCE",                   6},
+  {"ARMORYTIME",                           7},
+  {"WORKSHOPTIME",                         8},
+  {"OBSERVATORYTIME",                      9},
+  {"OBSERVATORYGENERATE",                 10},
+  {"DEFAULTGENERATESPEED",                11},
   {"DEFAULTMAXCREATURESGENERATEENTRANCE", 12},
-  {"DEFAULTNEUTRALENTRANCELEVEL", 13},
-  {"BARRACKTIME",               14},
-  {"FOODGENERATIONSPEED",       15},
-  {"PRISONSKELETONCHANCE",      16},
-  {"BODIESFORVAMPIRE",          17},
-  {"GRAVEYARDCONVERTTIME",      18},
-  {"SCAVENGEGOODALLOWED",       19},
-  {"SCAVENGENEUTRALALLOWED",    20},
-  {"TIMEBETWEENPRISONBREAK",    21},
-  {"PRISONBREAKCHANCE",         22},
-  {NULL,                         0},
+  {"DEFAULTNEUTRALENTRANCELEVEL",         13},
+  {"BARRACKTIME",                         14},
+  {"FOODGENERATIONSPEED",                 15},
+  {"PRISONSKELETONCHANCE",                16},
+  {"BODIESFORVAMPIRE",                    17},
+  {"GRAVEYARDCONVERTTIME",                18},
+  {"SCAVENGEGOODALLOWED",                 19},
+  {"SCAVENGENEUTRALALLOWED",              20},
+  {"TIMEBETWEENPRISONBREAK",              21},
+  {"PRISONBREAKCHANCE",                   22},
+  {"TORTUREDEATHCHANCE",                  23},
+  {NULL,                                   0},
   };
 
 const struct NamedCommand rules_workers_commands[] = {
@@ -159,6 +168,7 @@ const struct NamedCommand rules_workers_commands[] = {
   {"DEFAULTIMPDIGDAMAGE",        6},
   {"DEFAULTIMPDIGOWNDAMAGE",     7},
   {"PERIMPGOLDDIGSIZE",          8},
+  {"IMPWORKEXPERIENCE",          9},
   {NULL,                         0},
   };
 
@@ -283,6 +293,10 @@ TbBool parse_rules_game_blocks(char *buf, long len, const char *config_textname,
         game.dungeon_heart_heal_health = 1;
         game.hero_door_wait_time = 100;
         gameadd.classic_bugs_flags = ClscBug_None;
+        gameadd.room_sale_percent = 50;
+        gameadd.gem_effectiveness = 17;
+        gameadd.pay_day_speed = 100;
+        gameadd.place_traps_on_subtiles = false;
     }
     // Find the block
     char block_buf[COMMAND_WORD_LEN];
@@ -520,6 +534,19 @@ TbBool parse_rules_game_blocks(char *buf, long len, const char *config_textname,
                   COMMAND_TEXT(cmd_num),block_buf,config_textname);
             }
             break;
+        case 19: // PAYDAYSPEED
+            if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+            {
+                k = atoi(word_buf);
+                gameadd.pay_day_speed = k;
+                n++;
+            }
+            if (n < 1)
+            {
+                CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                    COMMAND_TEXT(cmd_num), block_buf, config_textname);
+            }
+            break;
         case 20: // SLABCOLLAPSETIME
             //Unused
             break;
@@ -615,6 +642,14 @@ TbBool parse_rules_game_blocks(char *buf, long len, const char *config_textname,
                   gameadd.classic_bugs_flags |= ClscBug_AlwaysTunnelToRed;
                   n++;
                   break;
+              case 9: // FULLY_HAPPY_WITH_GOLD
+                  gameadd.classic_bugs_flags |= ClscBug_FullyHappyWithGold;
+                  n++;
+                  break;
+              case 10: // FAINTED_IMMUNE_TO_BOULDER
+                  gameadd.classic_bugs_flags |= ClscBug_FaintedImmuneToBoulder;
+                  n++;
+                  break;
               default:
                 CONFWRNLOG("Incorrect value of \"%s\" parameter \"%s\" in [%s] block of %s file.",
                     COMMAND_TEXT(cmd_num),word_buf,block_buf,config_textname);
@@ -627,6 +662,45 @@ TbBool parse_rules_game_blocks(char *buf, long len, const char *config_textname,
             break;
         case 27: // DEATHMATCHOBJECTREAPPERTIME
             //Unused
+            break;
+        case 28: // GEMEFFECTIVENESS
+            if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+            {
+                k = atoi(word_buf);
+                gameadd.gem_effectiveness = k;
+                n++;
+            }
+            if (n < 1)
+            {
+                CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                    COMMAND_TEXT(cmd_num), block_buf, config_textname);
+            }
+            break;
+        case 29: // ROOMSELLGOLDBACKPERCENT
+            if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+            {
+                k = atoi(word_buf);
+                gameadd.room_sale_percent = k;
+                n++;
+            }
+            if (n < 1)
+            {
+                CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                    COMMAND_TEXT(cmd_num), block_buf, config_textname);
+            }
+            break;
+        case 30: // PLACETRAPSONSUBTILES
+            if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+            {
+                k = atoi(word_buf);
+                gameadd.place_traps_on_subtiles = (TbBool)k;
+                n++;
+            }
+            if (n < 1)
+            {
+                CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                    COMMAND_TEXT(cmd_num), block_buf, config_textname);
+            }
             break;
         case 0: // comment
             break;
@@ -762,6 +836,8 @@ TbBool parse_rules_creatures_blocks(char *buf, long len, const char *config_text
       game.game_turns_in_flee = 200;
       gameadd.game_turns_unconscious = 2000;
       gameadd.critical_health_permil = 125;
+      gameadd.stun_enemy_chance_good = 100;
+      gameadd.stun_enemy_chance_evil = 100;
   }
   // Find the block
   char block_buf[COMMAND_WORD_LEN];
@@ -913,6 +989,32 @@ TbBool parse_rules_creatures_blocks(char *buf, long len, const char *config_text
           {
             CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
                 COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 11: // STUNEVILENEMYCHANCE
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              gameadd.stun_enemy_chance_evil = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+          }
+          break;
+      case 12: // STUNGOODENEMYCHANCE
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              gameadd.stun_enemy_chance_good = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
           }
           break;
       case 0: // comment
@@ -1452,6 +1554,19 @@ TbBool parse_rules_rooms_blocks(char *buf, long len, const char *config_textname
                 COMMAND_TEXT(cmd_num),block_buf,config_textname);
           }
           break;
+      case 23: // TORTUREDEATHCHANCE
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              gameadd.torture_death_chance = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+          }
+          break;
       case 0: // comment
           break;
       case -1: // end of buffer
@@ -1563,6 +1678,19 @@ TbBool parse_rules_workers_blocks(char *buf, long len, const char *config_textna
           {
             CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
                 COMMAND_TEXT(cmd_num),block_buf,config_textname);
+          }
+          break;
+      case 9: // IMPWORKEXPERIENCE
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              gameadd.digger_work_experience = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Incorrect value of \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
           }
           break;
       case 0: // comment

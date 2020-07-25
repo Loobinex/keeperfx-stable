@@ -21,6 +21,7 @@
 
 #include "bflib_math.h"
 #include "creature_states.h"
+#include "creature_states_spdig.h"
 #include "thing_list.h"
 #include "creature_control.h"
 #include "creature_instances.h"
@@ -101,7 +102,7 @@ short creature_arrived_at_prison(struct Thing *creatng)
         set_start_state(creatng);
         return 0;
     }
-    cctrl->field_82 = game.play_gameturn;
+    cctrl->turns_at_job = game.play_gameturn;
     cctrl->imprison.start_gameturn = game.play_gameturn;
     cctrl->imprison.last_mood_sound_turn = game.play_gameturn;
     cctrl->flgfield_1 |= CCFlg_NoCompControl;
@@ -133,7 +134,11 @@ short creature_drop_body_in_prison(struct Thing *thing)
         return 0;
     }
     struct Room* room = get_room_thing_is_on(thing);
-    if ((room->owner != thing->owner) || !room_role_matches(room->kind, RoRoF_Prison)) {
+    if ((room->owner != thing->owner) || !room_role_matches(room->kind, RoRoF_Prison) || (room->used_capacity >= room->total_capacity)) {
+        if (creature_drop_thing_to_another_room(thing, room, RoK_PRISON)) {
+            thing->continue_state = CrSt_CreatureDropBodyInPrison;
+            return 1;
+        }
         set_start_state(thing);
         return 0;
     }
@@ -247,9 +252,9 @@ CrStateRet process_prison_visuals(struct Thing *creatng, struct Room *room)
     if (cctrl->instance_id != CrInst_NULL) {
         return CrStRet_Unchanged;
     }
-    if (game.play_gameturn - cctrl->field_82 > 200)
+    if (game.play_gameturn - cctrl->turns_at_job > 200)
     {
-        if (game.play_gameturn - cctrl->field_82 < 250)
+        if (game.play_gameturn - cctrl->turns_at_job < 250)
         {
             set_creature_instance(creatng, CrInst_MOAN, 1, 0, 0);
             if (game.play_gameturn - cctrl->imprison.last_mood_sound_turn > 32)
@@ -259,7 +264,7 @@ CrStateRet process_prison_visuals(struct Thing *creatng, struct Room *room)
             }
             return CrStRet_Modified;
         }
-        cctrl->field_82 = game.play_gameturn;
+        cctrl->turns_at_job = game.play_gameturn;
     }
     if (!creature_setup_adjacent_move_for_job_within_room(creatng, room, Job_CAPTIVITY)) {
         return CrStRet_Unchanged;

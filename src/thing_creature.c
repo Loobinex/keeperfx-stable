@@ -897,7 +897,7 @@ void first_apply_spell_effect_to_thing(struct Thing *thing, SpellKind spell_idx,
             fill_spell_slot(thing, i, spell_idx, pwrdynst->strength[spell_lev]);
             n = 0;
             cctrl->spell_flags |= CSAfF_Armour;
-            for (k=0; k < 3; k++)
+            for (k=0; k < 2; k++)
             {
                 set_coords_to_cylindric_shift(&pos, &thing->mappos, 32, n, k * (thing->clipbox_size_yz >> 1) );
                 ntng = create_object(&pos, 51, thing->owner, -1);
@@ -2413,7 +2413,10 @@ TbBool kill_creature(struct Thing *creatng, struct Thing *killertng,
     }
     SYNCDBG(18,"Almost finished");
     if (((flags & CrDed_NoUnconscious) != 0) || (!player_has_room_of_role(killertng->owner,RoRoF_Prison))
-      || (!player_creature_tends_to(killertng->owner,CrTend_Imprison)))
+      || (!player_creature_tends_to(killertng->owner,CrTend_Imprison)) ||
+        ((get_creature_model_flags(creatng) & CMF_IsEvil) && (ACTION_RANDOM(100) >= gameadd.stun_enemy_chance_evil)) ||
+        (!(get_creature_model_flags(creatng) & CMF_IsEvil) && (ACTION_RANDOM(100) >= gameadd.stun_enemy_chance_good)) ||
+        (get_creature_model_flags(creatng) & CMF_NoImprisonment) )
     {
         if ((flags & CrDed_NoEffects) == 0) {
             cause_creature_death(creatng, flags);
@@ -2695,7 +2698,7 @@ void creature_fire_shot(struct Thing *firing, struct Thing *target, ThingModel s
     if (!thing_is_invalid(shotng))
     {
 #if (BFDEBUG_LEVEL > 0)
-      damage = shotng->word_14;
+      damage = shotng->damagepoints;
       // Special debug code that shows amount of damage the shot will make
       if ((start_params.debug_flags & DFlg_ShotsDamage) != 0)
           create_price_effect(&pos1, my_player_number, damage);
@@ -4161,8 +4164,8 @@ void go_to_next_creature_of_model_and_gui_job(long crmodel, long job_idx)
     struct Thing* creatng = find_players_next_creature_of_breed_and_gui_job(crmodel, job_idx, my_player_number, 0);
     if (!thing_is_invalid(creatng))
     {
-        struct Packet* pckt = get_packet_direct(my_player_number);
-        set_packet_action(pckt, PckA_Unknown087, creatng->mappos.x.val, creatng->mappos.y.val, 0, 0);
+        struct PlayerInfo* player = get_my_player();
+        set_players_packet_action(player, PckA_ZoomToPosition, creatng->mappos.x.val, creatng->mappos.y.val, 0, 0);
     }
 }
 
@@ -4322,7 +4325,7 @@ long player_list_creature_filter_needs_to_be_placed_in_room_for_job(const struct
     }
 
     // If creature wants salary, let it go get the gold
-    if ( cctrl->field_48 )
+    if ( cctrl->paydays_owed )
     {
         // If already taking salary, then don't do anything
         if (creature_is_taking_salary_activity(thing))

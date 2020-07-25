@@ -76,6 +76,9 @@ const struct NamedCommand magic_shot_commands[] = {
   {"SHOTSOUND",           11},
   {"FIRINGSOUNDVARIANTS", 12},
   {"MAXRANGE",            13},
+  {"ANIMATION",           14},
+  {"ANIMATIONSIZE",       15},
+  {"SPELLEFFECT",         16},
   {NULL,                   0},
   };
 
@@ -943,6 +946,45 @@ TbBool parse_magic_shot_blocks(char *buf, long len, const char *config_textname,
                     COMMAND_TEXT(cmd_num),block_buf,config_textname);
           }
                    break;
+      case 14: //ANIMATION
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              shotst->sprite_anim_idx = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+          }
+          break;
+      case 15: //ANIMATIONSIZE
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              shotst->sprite_size_max = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+          }
+          break;
+      case 16: //SPELLEFFECT
+          if (get_conf_parameter_single(buf, &pos, len, word_buf, sizeof(word_buf)) > 0)
+          {
+              k = atoi(word_buf);
+              shotst->cast_spell_kind = k;
+              n++;
+          }
+          if (n < 1)
+          {
+              CONFWRNLOG("Couldn't read \"%s\" parameter in [%s] block of %s file.",
+                  COMMAND_TEXT(cmd_num), block_buf, config_textname);
+          }
+          break;
       case 0: // comment
           break;
       case -1: // end of buffer
@@ -1619,7 +1661,6 @@ TbBool add_power_to_player(PowerKind pwkind, PlayerNumber plyr_idx)
         i = 0;
     }
     dungeon->magic_level[pwkind] = i+1;
-    dungeon->magic_resrchable[pwkind] = 1;
     return true;
 }
 

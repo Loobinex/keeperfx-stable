@@ -49,6 +49,7 @@
 #include "frontmenu_ingame_tabs.h"
 #include "frontmenu_ingame_map.h"
 #include "keeperfx.hpp"
+#include "kjm_input.h"
 
 /******************************************************************************/
 /******************************************************************************/
@@ -857,21 +858,37 @@ void process_players(void)
 
 TbBool player_sell_trap_at_subtile(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y)
 {
-    struct Thing* thing = get_trap_for_slab_position(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
-    if (thing_is_invalid(thing))
-    {
-        return false;
-    }
-    struct Dungeon* dungeon = get_players_num_dungeon(thing->owner);
+    struct Thing *thing;
+    struct Coord3d pos;
     MapSlabCoord slb_x = subtile_slab_fast(stl_x);
     MapSlabCoord slb_y = subtile_slab_fast(stl_y);
     long sell_value = 0;
-    remove_traps_around_subtile(slab_subtile_center(slb_x), slab_subtile_center(slb_y), &sell_value);
+    if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE))
+    {
+        thing = get_trap_for_position(stl_x, stl_y);
+        if (thing_is_invalid(thing))
+        {
+            return false;
+        }
+        set_coords_to_subtile_center(&pos,stl_x,stl_y,1);
+        remove_trap_on_subtile(stl_x, stl_y, &sell_value);
+    }
+    else
+    {
+        thing = get_trap_for_slab_position(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
+        if (thing_is_invalid(thing))
+        {
+            return false;
+        }
+        set_coords_to_slab_center(&pos,slb_x,slb_y);
+        remove_traps_around_subtile(slab_subtile_center(slb_x), slab_subtile_center(slb_y), &sell_value);
+    }
+    struct Dungeon* dungeon = get_players_num_dungeon(thing->owner);
     if (is_my_player_number(plyr_idx))
+    {
         play_non_3d_sample(115);
+    }
     dungeon->camera_deviate_jump = 192;
-    struct Coord3d pos;
-    set_coords_to_slab_center(&pos,slb_x,slb_y);
     if (sell_value != 0)
     {
         create_price_effect(&pos, plyr_idx, sell_value);
@@ -880,11 +897,11 @@ TbBool player_sell_trap_at_subtile(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     {
         WARNLOG("Sold traps at (%d,%d) which didn't cost anything",(int)stl_x,(int)stl_y);
     }
-    { // Add the trap location to related computer player, in case we'll want to place a trap again
-        struct Computer2* comp = get_computer_player(plyr_idx);
-        if (!computer_player_invalid(comp)) {
-            add_to_trap_location(comp, &pos);
-        }
+    // Add the trap location to related computer player, in case we'll want to place a trap again
+    struct Computer2* comp = get_computer_player(plyr_idx);
+    if (!computer_player_invalid(comp))
+    {
+        add_to_trap_location(comp, &pos);
     }
     return true;
 }
@@ -925,5 +942,43 @@ void compute_and_update_player_payday_total(PlayerNumber plyr_idx)
     SYNCDBG(15,"Starting for player %d",(int)plyr_idx);
     struct Dungeon* dungeon = get_players_num_dungeon(plyr_idx);
     dungeon->creatures_total_pay = compute_player_payday_total(dungeon);
+}
+
+PlayerNumber get_selected_player_for_cheat(PlayerNumber defplayer)
+{
+        if (is_key_pressed(KC_NUMPAD0, KMod_DONTCARE))
+        {
+            return 0;
+            clear_key_pressed(KC_NUMPAD0);
+        }
+        else if (is_key_pressed(KC_NUMPAD1, KMod_DONTCARE))
+        {
+            return 1;
+            clear_key_pressed(KC_NUMPAD1);
+        }
+        else if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
+        {
+            return 2;
+            clear_key_pressed(KC_NUMPAD2);
+        }
+        else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
+        {
+            return 3;
+            clear_key_pressed(KC_NUMPAD3);
+        }
+        else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
+        {
+            return 4;
+            clear_key_pressed(KC_NUMPAD4);
+        }
+        else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
+        {
+            return 5;
+            clear_key_pressed(KC_NUMPAD5);
+        }
+        else
+        {
+            return defplayer;
+        }
 }
 /******************************************************************************/

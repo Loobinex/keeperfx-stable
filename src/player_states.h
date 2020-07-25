@@ -68,6 +68,18 @@ enum PlayerStates {
     PSt_FreeTurnChicken,
     PSt_FreeCtrlPassngr,
     PSt_FreeCtrlDirect,
+    PSt_StealRoom,
+    PSt_DestroyRoom,
+    PSt_KillCreatr,
+    PSt_ConvertCreatr,
+    PSt_StealSlab,
+    PSt_LevelCreatureUp,
+    PSt_KillPlayer,
+    PSt_HeartHealth,
+    PSt_CreatrQueryAll,
+    PSt_MkHappy,
+    PSt_MkAngry,
+    PSt_PlaceTerrain,
     PSt_ListEnd
 };
 

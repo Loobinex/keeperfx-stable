@@ -49,6 +49,8 @@ enum AreaAffectTypes {
     AAffT_Unkn2,
     AAffT_GasSlow,
     AAffT_WOPDamage,
+    AAffT_GasSlowDamage,
+    AAffT_GasDisease,
 };
 
 enum ThingEffectKind {
@@ -66,7 +68,7 @@ enum ThingEffectKind {
     TngEff_Unknown11,
     TngEff_Unknown12,
     TngEff_Unknown13,
-    TngEff_Unknown14,
+    TngEff_WoPExplosion,
     TngEff_Unknown15,
     TngEff_Unknown16,
     TngEff_Unknown17,

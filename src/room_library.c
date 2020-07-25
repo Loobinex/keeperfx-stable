@@ -313,14 +313,21 @@ void process_player_research(PlayerNumber plyr_idx)
                 return;
             }
             pos.z.val = get_thing_height_at(spelltng, &pos);
-            add_power_to_player(pwkind, plyr_idx);
-            move_thing_in_map(spelltng, &pos);
-            add_item_to_room_capacity(room, true);
-            event_create_event(spelltng->mappos.x.val, spelltng->mappos.y.val, EvKind_NewSpellResrch, spelltng->owner, pwkind);
-            create_effect(&pos, TngEff_Unknown53, spelltng->owner);
+            if (add_power_to_player(pwkind, plyr_idx))
+            {
+                move_thing_in_map(spelltng, &pos);
+                add_item_to_room_capacity(room, true);
+                event_create_event(spelltng->mappos.x.val, spelltng->mappos.y.val, EvKind_NewSpellResrch, spelltng->owner, pwkind);
+                create_effect(&pos, TngEff_Unknown53, spelltng->owner);
+            }
+            else
+            {
+                dungeon->magic_level[pwkind]++;
+            }
             if (is_my_player_number(plyr_idx))
+            {
                 output_message(SMsg_ResearchedSpell, 0, true);
-            dungeon->magic_level[pwkind]++;
+            }
         }
         break;
     }
@@ -356,7 +363,7 @@ void process_player_research(PlayerNumber plyr_idx)
         break;
     }
     dungeon->research_progress -= (rsrchval->req_amount << 8);
-    dungeon->field_AE5 = game.play_gameturn;
+    dungeon->last_research_complete_gameturn = game.play_gameturn;
 
     dungeon->current_research_idx = get_next_research_item(dungeon);
     dungeon->lvstats.things_researched++;

@@ -312,6 +312,8 @@ TbBool cleanup_creature_state_and_interactions(struct Thing *thing);
 short state_cleanup_in_room(struct Thing *creatng);
 short set_start_state_f(struct Thing *thing,const char *func_name);
 #define set_start_state(thing) set_start_state_f(thing,__func__)
+short patrol_here(struct Thing* creatng);
+short patrolling(struct Thing* creatng);
 /******************************************************************************/
 TbBool creature_model_bleeds(unsigned long crmodel);
 TbBool creature_can_hear_within_distance(const struct Thing *thing, long dist);
@@ -384,6 +386,7 @@ TbBool creature_affected_by_call_to_arms(const struct Thing *thing);
 TbBool creature_is_kept_in_custody(const struct Thing *thing);
 TbBool creature_is_kept_in_custody_by_enemy(const struct Thing *thing);
 TbBool creature_is_kept_in_custody_by_player(const struct Thing *thing, PlayerNumber plyr_idx);
+short player_keeping_creature_in_custody(const struct Thing* thing);
 TbBool creature_state_is_unset(const struct Thing *thing);
 TbBool creature_will_attack_creature(const struct Thing *tng1, const struct Thing *tng2);
 TbBool creature_will_attack_creature_incl_til_death(const struct Thing *tng1, const struct Thing *tng2);

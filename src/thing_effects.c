@@ -65,6 +65,7 @@ struct EffectGeneratorStats effect_generator_stats[] = {
     { 2,  5,  1, 37, 0,  0,-15, 15,-15, 15,  0,  0,  0,  0, 0}
 };
 
+//start_health;generation_type;accel_xy_min;accel_xy_max;accel_z_min;accel_z_max;field_B;effect_sound;kind_min;kind_max;area_affect_type;field_11;struct InitLight ilght;affected_by_wind;
 struct InitEffect effect_info[] = {
     { 0, 1,   0,   0,  0,    0,  0,   0,  0,  0,  AAffT_None, 0, {0}, 0},
     { 1, 1,  32,  32, -32,  32,  1,  47,  1,  1,  AAffT_None, 1, { 512, 45, 1, 0, 0, 0, {{0},{0},{0}}, 0, 0, 0}, 1},
@@ -96,7 +97,7 @@ struct InitEffect effect_info[] = {
     { 3, 1,  64,  64, -96,  96, 10,   0, 26, 28,  AAffT_None, 1, {0}, 1},
     { 4, 1,  16,  16, -32,  64,  3,   0, 75, 75,  AAffT_None, 1, {0}, 1},
     { 1, 1,   1,   1,   1,   1,  1,   0, 40, 40,  AAffT_None, 1, {0}, 1},
-    {80, 2,   1,   1,   1,   1,  1,   0, 21, 21,  AAffT_None, 0, {0}, 1},
+    {80, 2,   1,   1,   1,   1,  1,   0, 21, 21,  AAffT_None, 0, {0}, 1}, // [30]
     { 8, 1,  64,  64, -64,  64,  1,   0, 47, 47,  AAffT_None, 1, {0}, 1},
     { 2, 1,  64,  64, -96,  96,  2,   0, 49, 49,  AAffT_None, 1, {0}, 1},
     { 2, 1,  64,  64, -96,  96,  1,   0, 49, 51,  AAffT_None, 1, {0}, 1},
@@ -106,7 +107,7 @@ struct InitEffect effect_info[] = {
     {40, 1,  44,  44, -32,  32,  2,  52,  7,  7,  AAffT_Unkn2, 1, {0}, 1},
     {40, 1,  44,  44, -32,  32,  2,  52,  7,  7,  AAffT_Unkn2, 1, {0}, 1},
     {40, 1,  44,  44, -32,  32,  2,  52,  7,  7,  AAffT_Unkn2, 1, {0}, 1},
-    {40, 1,  44,  44, -32,  32,  2,  52,  7,  7,  AAffT_GasSlow, 1, {0}, 0},
+    {40, 1,  44,  44, -32,  32,  2,  52,  7,  7,  AAffT_GasSlow, 1, {0}, 0}, // [40]
     {40, 1,  44,  44, -32,  32,  2,  52,  7,  7,  AAffT_GasSlow, 1, {0}, 0},
     {40, 1,  44,  44, -32,  32,  2,  52,  7,  7,  AAffT_GasSlow, 1, {0}, 0},
     {16, 1, 128, 128,-128, 128,  2,  47, 26, 32,  AAffT_None, 1, {2560, 45, 1, 0, 0, 0, {{0},{0},{0}}, 0, 0, 0}, 0},
@@ -116,7 +117,7 @@ struct InitEffect effect_info[] = {
     {60, 3,   1,   1,   1,   1,  2,  54, 55, 58,  AAffT_None, 1, {0}, 1},
     {20, 4,   1,   1,   1,   1,  1,  47,  0,  0,  AAffT_None, 1, {0}, 1},
     {50, 4,   1,   1,   1,   1,  1,   0,  0,  0,  AAffT_None, 0, {0}, 0},
-    {10, 1, 128, 128,-128, 128, 10,  47,  1,  1,  AAffT_None, 1, {4096, 50, 1, 0, 0, 0, {{0},{0},{0}}, 0, 0, 0}, 1},
+    {10, 1, 128, 128,-128, 128, 10,  47,  1,  1,  AAffT_None, 1, {4096, 50, 1, 0, 0, 0, {{0},{0},{0}}, 0, 0, 0}, 1}, // [50]
     { 1, 1,   1,   1,   1,   1,  1, 112, 61, 61,  AAffT_None, 1, {0}, 1},
     { 5, 1, 128, 128,-128, 128,  5,  47,  1,  1,  AAffT_None, 1, {2048, 45, 1, 0, 0, 0, {{0},{0},{0}}, 0, 0, 0}, 1},
     {96, 1, 256, 256,-256, 256,  1, 160, 63, 74,  AAffT_None, 1, {0}, 0},
@@ -126,7 +127,7 @@ struct InitEffect effect_info[] = {
     { 4, 1,  16,  16, -32,  64,  3,   0, 76, 76,  AAffT_None, 1, {0}, 1},
     { 4, 1,  16,  16, -32,  64,  3,   0, 77, 77,  AAffT_None, 1, {0}, 1},
     { 4, 1,  16,  16, -32,  64,  3,   0, 78, 78,  AAffT_None, 1, {0}, 1},
-    { 4, 1,  16,  16, -32,  64,  3,   0, 54, 54,  AAffT_None, 1, {0}, 1},
+    { 4, 1,  16,  16, -32,  64,  3,   0, 54, 54,  AAffT_None, 1, {0}, 1}, // [60]
     { 4, 1,  16,  16, -32,  64,  3,   0, 79, 79,  AAffT_None, 1, {0}, 1},
     { 4, 1,  16,  16, -32,  64,  3,   0, 80, 80,  AAffT_None, 1, {0}, 1},
     { 4, 1,  16,  16, -32,  64,  3,   0, 81, 81,  AAffT_None, 1, {0}, 1},
@@ -134,7 +135,7 @@ struct InitEffect effect_info[] = {
     { 1, 1,  32,  32, 100, 100,  2,   0, 84, 84,  AAffT_None, 1, {0}, 1},
     { 1, 1,   1,   1,   1,   1,  2,   0, 85, 85,  AAffT_None, 1, {0}, 1},
     { 4, 1,  16,  16, -32,  64,  3,   0, 75, 78,  AAffT_None, 1, {0}, 1},
-    {10, 1,  20, 150, -80,  80, 20,  36, 27, 29,  AAffT_None, 1, {2560, 52, 0, 0, 0, 0, {{0},{0},{0}}, 0, 0, 0}, 1},
+    {10, 1,  20, 150, -80,  80, 20,  36, 27, 29,  AAffT_None, 1, {2560, 52, 0, 0, 0, 0, {{0},{0},{0}}, 0, 0, 0}, 1}, // [68]
     { 0, 0,   0,   0,   0,   0,  0,   0,  0,  0,  0, 0, {0}, 0},
 };
 
@@ -341,6 +342,7 @@ struct EffectElementStats effect_element_stats[] = {
    {2, 1, 0, -1, -1, 856, 128, 128, 1, 256, 256, 1, 1,
     3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    // [55]
    {2, 5, 0, -1, -1, 863, 320, 374, 1, 256, 256, 0, 0,
     3, 1, 0, 0, 10, 0, 102, 0, 0, 0, 0, 0, 0, 0, 0,
     256, 0, 0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0,
@@ -360,6 +362,7 @@ struct EffectElementStats effect_element_stats[] = {
    {2, 5, 0, 8, 8, 819, 256, 256, 1, 256, 256, 1, 0,
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    // [60]
    {2, 1, 0, 5, 5, 964, 96, 160, 1, 85, 85, 1, 1, 3, 0,
     0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0, 0, 0,
     256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -375,6 +378,7 @@ struct EffectElementStats effect_element_stats[] = {
    {2, 2, 0, -1, -1, 117, 256, 256, 0, 128, 128, 1, 1,
     3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    // [65]
    {2, 2, 0, -1, -1, 118, 256, 256, 0, 128, 128, 1, 1,
     3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -390,6 +394,7 @@ struct EffectElementStats effect_element_stats[] = {
    {2, 2, 0, -1, -1, 118, 358, 358, 0, 128, 128, 1, 1,
     3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    // [70]
    {2, 2, 0, -1, -1, 119, 358, 358, 0, 128, 128, 1, 1,
     3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -405,6 +410,7 @@ struct EffectElementStats effect_element_stats[] = {
    {2, 2, 0, -1, -1, 119, 460, 460, 0, 128, 128, 1, 1,
     3, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    // [75]
    {2, 1, 0, -1, -1, 966, 172, 255, 1, 256, 256, 1, 1,
     3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -420,6 +426,7 @@ struct EffectElementStats effect_element_stats[] = {
    {2, 1, 0, -1, -1, 857, 128, 128, 1, 256, 256, 1, 1,
     3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
+    // [80]
    {2, 1, 0, -1, -1, 858, 128, 128, 1, 256, 256, 1, 1,
     3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -436,6 +443,7 @@ struct EffectElementStats effect_element_stats[] = {
     1, 1, 0, 0, 10, 0, 102, 0, 0, 0, 0, 0, 1, 66, 0,
     256, 1, 66, 36, 100, 1, 0, 0, 256, 1, 0, 0, 0, 0, 0,
     0, 0, 0, 1},
+    // [85]
    {2, 5, 0, -1, -1, 97, 250, 300, 1, 128, 128, 1, 0,
     1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
@@ -451,6 +459,7 @@ struct EffectElementStats effect_element_stats[] = {
    {2, 1, 0, -1, -1, 110, 225, 270, 1, 1024, 1024, 1, 0,
     2, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+    // [90]
    {2, 5, 0, -1, -1, 853, 172, 172, 1, 256, 256, 1, 1,
     3, 0, 0, 0, 2, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 256, 0,
     0, 0, 256, 0, 0, 0, 256, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0},
@@ -611,7 +620,7 @@ void process_spells_affected_by_effect_elements(struct Thing *thing)
     {
         int diamtr = 4 * thing->clipbox_size_xy / 2;
         dturn = game.play_gameturn - thing->creation_turn;
-        MapCoord cor_z_max = (thing->clipbox_size_yz >> 2) + thing->clipbox_size_yz;
+        MapCoord cor_z_max = thing->clipbox_size_yz + (thing->clipbox_size_yz * crtr_conf.exp.size_increase_on_exp * cctrl->explevel) / 80; //effect is 25% larger than unit
 
         struct EffectElementStats* eestat = get_effect_element_model_stats(16);
         unsigned short nframes = keepersprite_frames(eestat->sprite_idx);
@@ -639,7 +648,7 @@ void process_spells_affected_by_effect_elements(struct Thing *thing)
     if ((cctrl->spell_flags & CSAfF_Slow) != 0)
     {
         int diamtr = 4 * thing->clipbox_size_xy / 2;
-        MapCoord cor_z_max = (thing->clipbox_size_yz >> 2) + thing->clipbox_size_yz;
+        MapCoord cor_z_max = thing->clipbox_size_yz + (thing->clipbox_size_yz * crtr_conf.exp.size_increase_on_exp * cctrl->explevel) / 80; //effect is 25% larger than unit
         int i = cor_z_max / 64;
         if (i <= 1)
           i = 1;
@@ -1210,7 +1219,7 @@ struct Thing *create_effect(const struct Coord3d *pos, ThingModel effmodel, Play
     }
     add_thing_to_its_class_list(thing);
     place_thing_in_mapwho(thing);
-    if ((ieffect->effect_sound != 0) && (ieffect->area_affect_type != AAffT_WOPDamage)) //Excluding WOP effect, taking shot sound instead
+    if (ieffect->effect_sound != 0)
     {
         thing_play_sample(thing, ieffect->effect_sound, NORMAL_PITCH, 0, 3, 0, 3, FULL_LOUDNESS);
     }
@@ -1636,6 +1645,25 @@ TbBool poison_cloud_affecting_thing(struct Thing *tngsrc, struct Thing *tngdst, 
                     apply_spell_effect_to_thing(tngdst, SplK_Slow, srcctrl->explevel);
                 }
                 break;
+            case AAffT_GasSlowDamage:
+                if (max_damage > 0) {
+                    HitPoints damage;
+                    damage = get_radially_decaying_value(max_damage, 3 * max_dist / 4, max_dist / 4, distance) + 1;
+                    SYNCDBG(7, "Causing %d damage to %s at distance %d", (int)damage, thing_model_name(tngdst), (int)distance);
+                    apply_damage_to_thing_and_display_health(tngdst, damage, damage_type, tngsrc->owner);
+                }
+                if (!creature_affected_by_spell(tngdst, SplK_Slow)) {
+                    struct CreatureControl* srcctrl;
+                    srcctrl = creature_control_get_from_thing(tngsrc);
+                    apply_spell_effect_to_thing(tngdst, SplK_Slow, srcctrl->explevel);
+                }
+                break;
+            case AAffT_GasDisease:
+                if (!creature_affected_by_spell(tngdst, SplK_Disease)) {
+                    struct CreatureControl* srcctrl;
+                    srcctrl = creature_control_get_from_thing(tngsrc);
+                    apply_spell_effect_to_thing(tngdst, SplK_Disease, srcctrl->explevel);
+                }
             }
             affected = true;
         }
@@ -1761,6 +1789,8 @@ TngUpdateRet update_effect(struct Thing *efftng)
     {
     case AAffT_GasDamage:
     case AAffT_GasSlow:
+    case AAffT_GasSlowDamage:
+    case AAffT_GasDisease:
         poison_cloud_affecting_area(subtng, &efftng->mappos, 5*COORD_PER_STL, 120, effnfo->area_affect_type);
         break;
     case AAffT_WOPDamage:
@@ -1776,7 +1806,7 @@ struct Thing *create_price_effect(const struct Coord3d *pos, long plyr_idx, long
     struct Thing* elemtng = create_effect_element(pos, TngEff_Unknown41, plyr_idx);
     TRACE_THING(elemtng);
     if (!thing_is_invalid(elemtng)) {
-        elemtng->price.number = price;
+        elemtng->price.number = abs(price);
     }
     return elemtng;
 }

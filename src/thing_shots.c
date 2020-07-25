@@ -298,7 +298,7 @@ void process_dig_shot_hit_wall(struct Thing *thing, unsigned long blocked_flags)
     {
         return;
     }
-    int damage = thing->word_14;
+    int damage = thing->damagepoints;
     if ((damage >= slb->health) && !slab_kind_is_indestructible(slb->kind))
     {
         if ((mapblk->flags & SlbAtFlg_Valuable) != 0)
@@ -624,14 +624,14 @@ long shot_hit_object_at(struct Thing *shotng, struct Thing *target, struct Coord
             thing_play_sample(target, i, NORMAL_PITCH, 0, 3, 0, 3, FULL_LOUDNESS);
         }
     }
-    if (shotng->word_14)
+    if (shotng->damagepoints)
     {
         // Drain allows caster to regain half of damage
         if ((shotst->model_flags & ShMF_LifeDrain) && thing_is_creature(creatng)) 
         {
-            apply_health_to_thing(creatng, shotng->word_14/2);
+            apply_health_to_thing(creatng, shotng->damagepoints/2);
         }
-        apply_damage_to_thing(target, shotng->word_14, shotst->damage_type, -1);
+        apply_damage_to_thing(target, shotng->damagepoints, shotst->damage_type, -1);
         target->byte_13 = 20;
     }
     create_relevant_effect_for_shot_hitting_thing(shotng, target);
@@ -656,9 +656,11 @@ long get_damage_of_melee_shot(const struct Thing *shotng, const struct Thing *ta
     if (hitchance > 96) {
         hitchance = 96;
     }
-    if (ACTION_RANDOM(256) < (128+hitchance))
-      return shotng->shot.damage;
-    return 0;
+    if (ACTION_RANDOM(256) < (128 + hitchance))
+    {
+        return shotng->shot.damage;
+    }
+    return -1;
 }
 
 long project_damage_of_melee_shot(long shot_dexterity, long shot_damage, const struct Thing *target)
@@ -690,24 +692,24 @@ void create_relevant_effect_for_shot_hitting_thing(struct Thing *shotng, struct 
     {
         switch (shotng->model)
         {
-        case 1:
-        case 2:
-        case 4:
+        case ShM_Fireball:
+        case ShM_Firebomb:
+        case ShM_Lightning:
             efftng = create_effect(&shotng->mappos, TngEff_Unknown01, shotng->owner);
             break;
-        case 5:
+        case ShM_PoisonCloud:
             efftng = create_effect(&shotng->mappos, TngEff_Unknown13, shotng->owner);
             if ( !thing_is_invalid(efftng) ) {
                 efftng->byte_16 = 2;
             }
             break;
-        case 6:
-        case 9:
+        case ShM_NaviMissile:
+        case ShM_Missile:
             efftng = create_effect(&shotng->mappos, TngEff_Unknown08, shotng->owner);
             break;
-        case 14:
-        case 21:
-        case 22:
+        case ShM_Arrow:
+        case ShM_SwingSword:
+        case ShM_SwingFist:
             if (creature_affected_by_spell(target, SplK_Freeze)) {
                 efftng = create_effect(&shotng->mappos, TngEff_Unknown22, shotng->owner);
             } else
@@ -907,18 +909,13 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
     {
         if ((get_creature_model_flags(trgtng) & CMF_ImmuneToBoulder) != 0)
         {
-            struct Thing* efftng = create_effect(&trgtng->mappos, TngEff_Unknown14, trgtng->owner);
+            struct Thing* efftng = create_effect(&trgtng->mappos, TngEff_WoPExplosion, trgtng->owner);
             if (!thing_is_invalid(efftng)) {
                 efftng->byte_16 = 8;
             }
             shotng->health = -1;
             return 1;
         }
-    }
-    if (shotst->old->hit_sound != 0)
-    {
-        play_creature_sound(trgtng, CrSnd_Hurt, 1, 0);
-        thing_play_sample(trgtng, shotst->old->hit_sound, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
     }
     if (shotng->shot.damage != 0)
     {
@@ -939,7 +936,7 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
             cctrl->field_B1 = shotst->old->field_24;
         }
     }
-    if (shotst->old->cast_spell_kind != 0)
+    if (shotst->cast_spell_kind != 0)
     {
         struct CreatureControl* cctrl = creature_control_get_from_thing(shooter);
         if (!creature_control_invalid(cctrl)) {
@@ -947,7 +944,7 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
         } else {
             n = 0;
         }
-        apply_spell_effect_to_thing(trgtng, shotst->old->cast_spell_kind, n);
+        apply_spell_effect_to_thing(trgtng, shotst->cast_spell_kind, n);
     }
     if (shotst->model_flags & ShMF_GroupUp)
     {
@@ -961,34 +958,100 @@ long shot_hit_creature_at(struct Thing *shotng, struct Thing *trgtng, struct Coo
             WARNDBG(8,"The %s index %d owner %d cannot group; invalid parent",thing_model_name(shotng),(int)shotng->index,(int)shotng->owner);
         }
     }
-    if (shotst->old->push_on_hit != 0 || creature_is_being_unconscious(trgtng))
+    if (shotst->old->push_on_hit != 0 )
     {
-        if (creature_is_being_unconscious(trgtng)) {
-            amp ++;
-            amp *= 5;
-        }
         i = amp * (long)shotng->velocity.x.val;
         trgtng->veloc_push_add.x.val += i / 16;
         i = amp * (long)shotng->velocity.y.val;
         trgtng->veloc_push_add.y.val += i / 16;
         trgtng->state_flags |= TF1_PushAdd;
     }
-    create_relevant_effect_for_shot_hitting_thing(shotng, trgtng);
-    if (shotst->old->is_boulder != 0)
+    if (creature_is_being_unconscious(trgtng))
     {
-        struct CreatureStats* crstat = creature_stats_get_from_thing(trgtng);
-        shotng->health -= crstat->damage_to_boulder;
+        amp ++;
+        if (gameadd.classic_bugs_flags & ClscBug_FaintedImmuneToBoulder)
+        {
+            amp *= 5;
+            i = amp * (long)shotng->velocity.x.val;
+            trgtng->veloc_push_add.x.val += i / 16;
+            i = amp * (long)shotng->velocity.y.val;
+            trgtng->veloc_push_add.y.val += i / 16;
+            trgtng->state_flags |= TF1_PushAdd;
+            if (shotst->old->hit_sound != 0)
+            {
+                play_creature_sound(trgtng, CrSnd_Hurt, 1, 0);
+                thing_play_sample(trgtng, shotst->old->hit_sound, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+            }
+        }
+        else
+        {
+            if (shotst->model_flags & ShMF_Boulder) //Boulders move units slightly but without purpose
+            {
+                if (abs(shotng->velocity.x.val) >= abs(shotng->velocity.y.val))
+                {
+                    i = amp * (long)shotng->velocity.x.val;
+                    trgtng->veloc_push_add.x.val += i / 64;
+                    i = amp * (long)shotng->velocity.x.val * (ACTION_RANDOM(3) - 1);
+                    trgtng->veloc_push_add.y.val += i / 64;
+                }
+                else
+                {
+                    i = amp * (long)shotng->velocity.y.val;
+                    trgtng->veloc_push_add.y.val += i / 64;
+                    i = amp * (long)shotng->velocity.y.val * (ACTION_RANDOM(3) - 1);
+                    trgtng->veloc_push_add.x.val += i / 64;
+                }
+                trgtng->state_flags |= TF1_PushAdd;
+            }
+            else // Normal shots blast unconscious units out of the way
+            {
+                amp *= 5;
+                i = amp * (long)shotng->velocity.x.val;
+                trgtng->veloc_push_add.x.val += i / 16;
+                i = amp * (long)shotng->velocity.y.val;
+                trgtng->veloc_push_add.y.val += i / 16;
+                trgtng->state_flags |= TF1_PushAdd;
+            }
+        }
+    }
+    else // not for unconscious units
+    {
+        if (shotst->old->hit_sound != 0)
+        {
+            play_creature_sound(trgtng, CrSnd_Hurt, 1, 0);
+            thing_play_sample(trgtng, shotst->old->hit_sound, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+        }
+    }
+
+    create_relevant_effect_for_shot_hitting_thing(shotng, trgtng);
+    if (shotst->model_flags & ShMF_Boulder)
+    {
+        if (creature_is_being_unconscious(trgtng)  && !(gameadd.classic_bugs_flags & ClscBug_FaintedImmuneToBoulder)) //We're not actually hitting the unconscious units with a boulder
+        {
+            return 0;
+        } 
+        else
+        {
+            struct CreatureStats* crstat = creature_stats_get_from_thing(trgtng);
+            shotng->health -= crstat->damage_to_boulder;
+        }
+
     }
     if (trgtng->health < 0)
     {
         shot_kill_creature(shotng, trgtng);
     } else
     {
-        if (trgtng->owner != shotng->owner) {
+        if (trgtng->owner != shotng->owner) 
+        {
             check_hit_when_attacking_door(trgtng);
         }
     }
-    if (shotst->area_range != 0) detonate_shot(shotng);
+
+    if (shotst->area_range != 0)
+    {
+        detonate_shot(shotng);
+    }
 
 
     if (shotst->old->destroy_on_first_hit != 0) {
@@ -1360,7 +1423,7 @@ struct Thing *create_shot(struct Coord3d *pos, unsigned short model, unsigned sh
     thing->field_23 = shotst->old->field_11;
     thing->field_24 = shotst->old->field_12;
     thing->movement_flags ^= (thing->movement_flags ^ TMvF_Unknown08 * shotst->old->field_13) & TMvF_Unknown08;
-    set_thing_draw(thing, shotst->old->sprite_anim_idx, 256, shotst->old->sprite_size_max, 0, 0, 2);
+    set_thing_draw(thing, shotst->sprite_anim_idx, 256, shotst->sprite_size_max, 0, 0, 2);
     thing->field_4F ^= (thing->field_4F ^ 0x02 * shotst->old->field_6) & TF4F_Unknown02;
     thing->field_4F ^= thing->field_4F ^ ((thing->field_4F ^ TF4F_Unknown10 * shotst->old->field_8) & (TF4F_Unknown10|TF4F_Unknown20));
     thing->field_4F ^= (thing->field_4F ^ shotst->old->field_7) & TF4F_Unknown01;

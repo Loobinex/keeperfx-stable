@@ -1620,7 +1620,7 @@ long creature_of_model_find_first(ThingModel crmodel)
     return 0;
 }
 
-long creature_of_model_in_prison_or_tortured(ThingModel crmodel)
+struct Thing *creature_of_model_in_prison_or_tortured(ThingModel crmodel)
 {
     const struct StructureList* slist = get_list_for_thing_class(TCls_Creature);
     long i = slist->index;
@@ -1638,7 +1638,7 @@ long creature_of_model_in_prison_or_tortured(ThingModel crmodel)
         if ((crmodel <= 0) || (thing->model == crmodel))
         {
           if (creature_is_kept_in_prison(thing) || creature_is_being_tortured(thing))
-              return i;
+              return thing;
         }
         // Thing list loop body ends
         k++;
@@ -1658,8 +1658,14 @@ TbBool lord_of_the_land_in_prison_or_tortured(void)
         struct CreatureModelConfig* crconf = &crtr_conf.model[crtr_model];
         if ((crconf->model_flags & CMF_IsLordOTLand) != 0)
         {
-            if (creature_of_model_in_prison_or_tortured(crtr_model) > 0)
-                return true;
+            struct Thing* thing = creature_of_model_in_prison_or_tortured(crtr_model);
+            if (thing > 0)
+            {
+                if (player_keeping_creature_in_custody(thing) == my_player_number)
+                {
+                    return true;
+                }
+            }
         }
     }
     return false;
@@ -2361,7 +2367,7 @@ struct Thing *get_thing_on_map_block_with_filter(long thing_idx, Thing_Maximizer
       i = thing->next_on_mapblk;
       // Begin per-loop code
       long n = filter(thing, param, *maximizer);
-      if (n >= *maximizer)
+      if (n > *maximizer)
       {
           retng = thing;
           *maximizer = n;
@@ -2377,6 +2383,43 @@ struct Thing *get_thing_on_map_block_with_filter(long thing_idx, Thing_Maximizer
         ERRORLOG("Infinite loop detected when sweeping things list");
         break;
       }
+    }
+    return retng;
+}
+
+struct Thing* get_other_thing_on_map_block_with_filter(long thing_idx, Thing_Maximizer_Filter filter, MaxTngFilterParam param, long* maximizer)
+{
+    SYNCDBG(19, "Starting");
+    struct Thing* retng = INVALID_THING;
+    unsigned long k = 0;
+    long i = thing_idx;
+    while (i != 0)
+    {
+        struct Thing* thing = thing_get(i);
+        if (thing_is_invalid(thing))
+        {
+            ERRORLOG("Jump to invalid thing detected");
+            break;
+        }
+        i = thing->next_on_mapblk;
+        // Begin per-loop code
+        long n = filter(thing, param, *maximizer);
+        if (n >= *maximizer)
+        {
+            retng = thing;
+            *maximizer = n;
+            if (*maximizer == LONG_MAX)
+            {
+                break;
+            }
+        }
+        // End of per-loop code
+        k++;
+        if (k > THINGS_COUNT)
+        {
+            ERRORLOG("Infinite loop detected when sweeping things list");
+            break;
+        }
     }
     return retng;
 }
@@ -2536,7 +2579,7 @@ long count_things_spiral_near_map_block_with_filter(MapCoord x, MapCoord y, long
         {
             long i = get_mapwho_thing_index(mapblk);
             long n = maximizer;
-            struct Thing* thing = get_thing_on_map_block_with_filter(i, filter, param, &n);
+            struct Thing* thing = get_other_thing_on_map_block_with_filter(i, filter, param, &n);
             if (!thing_is_invalid(thing) && (n >= maximizer))
             {
                 maximizer = n;
@@ -3415,6 +3458,25 @@ struct Thing *get_door_for_position(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
     MapSlabCoord slb_x = subtile_slab(stl_x);
     MapSlabCoord slb_y = subtile_slab(stl_y);
     const struct Map* mapblk = get_map_block_at(slab_subtile_center(slb_x), slab_subtile_center(slb_y));
+    // const struct Map* mapblk = get_map_block_at(stl_x, stl_y);
+    if (map_block_invalid(mapblk))
+    {
+        return INVALID_THING;
+    }
+    long i = get_mapwho_thing_index(mapblk);
+    long n = 0;
+    return get_thing_on_map_block_with_filter(i, filter, &param, &n);
+}
+
+struct Thing *get_door_for_position_for_trap_placement(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
+{
+    SYNCDBG(19,"Starting");
+    Thing_Maximizer_Filter filter = anywhere_thing_filter_is_of_class_and_model_and_owned_by;
+    struct CompoundTngFilterParam param;
+    param.class_id = TCls_Door;
+    param.model_id = -1;
+    param.plyr_idx = -1;
+    const struct Map* mapblk = get_map_block_at(stl_x, stl_y);
     if (map_block_invalid(mapblk))
     {
         return INVALID_THING;
