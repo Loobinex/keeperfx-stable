@@ -114,6 +114,7 @@ const struct CommandDesc command_desc[] = {
   {"SET_CREATURE_ARMOUR",               "CN      ", Cmd_SET_CREATURE_ARMOUR},
   {"SET_CREATURE_FEAR_WOUNDED",         "CN      ", Cmd_SET_CREATURE_FEAR_WOUNDED},
   {"SET_CREATURE_FEAR_STRONGER",        "CN      ", Cmd_SET_CREATURE_FEAR_STRONGER},
+  {"SET_CREATURE_FEARSOME_FACTOR",      "CN      ", Cmd_SET_CREATURE_FEARSOME_FACTOR},
   {"SET_CREATURE_PROPERTY",             "CXN     ", Cmd_SET_CREATURE_PROPERTY},
   {"IF_AVAILABLE",                      "PAON    ", Cmd_IF_AVAILABLE},
   {"IF_CONTROLS",                       "PAON    ", Cmd_IF_CONTROLS},
@@ -255,6 +256,23 @@ const struct NamedCommand variable_desc[] = {
     {"TIMES_BROKEN_INTO",           SVar_TIMES_BROKEN_INTO},
     {"GOLD_POTS_STOLEN",            SVar_GOLD_POTS_STOLEN},
     {"HEART_HEALTH",                SVar_HEART_HEALTH},
+    {"GHOSTS_RAISED",               SVar_GHOSTS_RAISED},
+    {"SKELETONS_RAISED",            SVar_SKELETONS_RAISED},
+    {"VAMPIRES_RAISED",             SVar_VAMPIRES_RAISED},
+    {"CREATURES_CONVERTED",         SVar_CREATURES_CONVERTED},
+    {"TIMES_ANNOYED_CREATURE",      SVar_TIMES_ANNOYED_CREATURE},
+    {"TIMES_TORTURED_CREATURE",     SVar_TIMES_TORTURED_CREATURE},
+    {"TOTAL_DOORS_MANUFACTURED",    SVar_TOTAL_DOORS_MANUFACTURED},
+    {"TOTAL_TRAPS_MANUFACTURED",    SVar_TOTAL_TRAPS_MANUFACTURED},
+    {"TOTAL_MANUFACTURED",          SVar_TOTAL_MANUFACTURED},
+    {"TOTAL_TRAPS_USED",            SVar_TOTAL_TRAPS_USED},
+    {"TOTAL_DOORS_USED",            SVar_TOTAL_DOORS_USED},
+    {"KEEPERS_DESTROYED",           SVar_KEEPERS_DESTROYED},
+    {"CREATURES_SACRIFICED",        SVar_CREATURES_SACRIFICED},
+    {"CREATURES_FROM_SACRIFICE",    SVar_CREATURES_FROM_SACRIFICE},
+    {"TIMES_LEVELUP_CREATURE",      SVar_TIMES_LEVELUP_CREATURE},
+    {"TOTAL_SALARY",                SVar_TOTAL_SALARY},
+    {"CURRENT_SALARY",              SVar_CURRENT_SALARY},
     //{"TIMER",                     SVar_TIMER},
     {"DUNGEON_DESTROYED",           SVar_DUNGEON_DESTROYED},
     {"TOTAL_GOLD_MINED",            SVar_TOTAL_GOLD_MINED},
@@ -414,6 +432,7 @@ const struct NamedCommand game_rule_desc[] = {
   {"PayDayGap",               16},
   {"PayDaySpeed",             17},
   {"PayDayProgress",          18},
+  {"PlaceTrapsOnSubtiles",    19},
   {NULL,                      0},
 };
 
@@ -1216,6 +1235,11 @@ void command_if(long plr_range_id, const char *varib_name, const char *operatr, 
     {
       varib_id = get_id(door_desc, varib_name);
       varib_type = SVar_DOOR_NUM;
+    }
+    if (varib_id == -1)
+    {
+        varib_id = get_id(trap_desc, varib_name);
+        varib_type = SVar_TRAP_NUM;
     }
     if (varib_id == -1)
     {
@@ -2244,6 +2268,22 @@ void command_set_creature_fear_stronger(const char *crtr_name, long val)
   command_add_value(Cmd_SET_CREATURE_FEAR_STRONGER, ALL_PLAYERS, crtr_id, val, 0);
 }
 
+void command_set_creature_fearsome_factor(const char* crtr_name, long val)
+{
+    long crtr_id = get_rid(creature_desc, crtr_name);
+    if (crtr_id == -1)
+    {
+        SCRPTERRLOG("Unknown creature, '%s'", crtr_name);
+        return;
+    }
+    if ((val < 0) || (val > 32767))
+    {
+        SCRPTERRLOG("Invalid '%s' fearsome value, %d", crtr_name, val);
+        return;
+    }
+    command_add_value(Cmd_SET_CREATURE_FEARSOME_FACTOR, ALL_PLAYERS, crtr_id, val, 0);
+}
+
 void command_set_creature_property(const char* crtr_name, long property, short val)
 {
     long crtr_id = get_rid(creature_desc, crtr_name);
@@ -2714,6 +2754,9 @@ void script_add_command(const struct CommandDesc *cmd_desc, const struct ScriptL
         break;
     case Cmd_SET_CREATURE_FEAR_STRONGER:
         command_set_creature_fear_stronger(scline->tp[0], scline->np[1]);
+        break;
+    case Cmd_SET_CREATURE_FEARSOME_FACTOR:
+        command_set_creature_fearsome_factor(scline->tp[0], scline->np[1]);
         break;
     case Cmd_SET_CREATURE_PROPERTY:
         command_set_creature_property(scline->tp[0], scline->np[1], scline->np[2]);
@@ -4118,7 +4161,7 @@ long get_condition_value(PlayerNumber plyr_idx, unsigned char valtype, unsigned 
         return game.play_gameturn;
     case SVar_BREAK_IN:
         dungeon = get_dungeon(plyr_idx);
-        return dungeon->field_AF5;
+        return dungeon->times_breached_dungeon;
     case SVar_CREATURE_NUM:
         return count_player_creatures_of_model(plyr_idx, validx);
     case SVar_TOTAL_DIGGERS:
@@ -4157,6 +4200,57 @@ long get_condition_value(PlayerNumber plyr_idx, unsigned char valtype, unsigned 
     case SVar_TIMES_BROKEN_INTO:
         dungeon = get_dungeon(plyr_idx);
         return dungeon->times_broken_into;
+    case SVar_GHOSTS_RAISED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.ghosts_raised;
+    case SVar_SKELETONS_RAISED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.skeletons_raised;
+    case SVar_VAMPIRES_RAISED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.vamps_created;
+    case SVar_CREATURES_CONVERTED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.creatures_converted;
+    case SVar_TIMES_ANNOYED_CREATURE:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.lies_told;
+    case SVar_TOTAL_DOORS_MANUFACTURED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.manufactured_doors;
+    case SVar_TOTAL_TRAPS_MANUFACTURED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.manufactured_traps;
+    case SVar_TOTAL_MANUFACTURED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.manufactured_items;
+    case SVar_TOTAL_TRAPS_USED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.traps_used;
+    case SVar_TOTAL_DOORS_USED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.doors_used;
+    case SVar_KEEPERS_DESTROYED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.keepers_destroyed;
+    case SVar_TIMES_LEVELUP_CREATURE:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.creatures_trained;
+    case SVar_TIMES_TORTURED_CREATURE:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.creatures_tortured;
+    case SVar_CREATURES_SACRIFICED:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.creatures_sacrificed;
+    case SVar_CREATURES_FROM_SACRIFICE:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.creatures_from_sacrifice;
+    case SVar_TOTAL_SALARY:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->lvstats.salary_cost;
+    case SVar_CURRENT_SALARY:
+        dungeon = get_dungeon(plyr_idx);
+        return dungeon->creatures_total_pay;
     case SVar_GOLD_POTS_STOLEN:
         dungeon = get_dungeon(plyr_idx);
         return dungeon->gold_pots_stolen;
@@ -4642,6 +4736,13 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
       if (creature_stats_invalid(crstat))
           break;
       crstat->fear_stronger = saturate_set_unsigned(val3, 16);
+      creature_stats_updated(val2);
+      break;
+  case Cmd_SET_CREATURE_FEARSOME_FACTOR:
+      crstat = creature_stats_get(val2);
+      if (creature_stats_invalid(crstat))
+          break;
+      crstat->fearsome_factor = saturate_set_unsigned(val3, 16);
       creature_stats_updated(val2);
       break;
   case Cmd_SET_CREATURE_PROPERTY:
@@ -5152,6 +5253,10 @@ void script_process_value(unsigned long var_index, unsigned long plr_range_id, l
           {
               SCRPTERRLOG("Rule '%d' value %d out of range", val2, val3);
           }
+          break;
+    case 19: //PlaceTrapsOnSubtiles
+          SCRIPTDBG(7, "Changing rule %d from %d to %d", val2, gameadd.place_traps_on_subtiles, val3);
+          gameadd.place_traps_on_subtiles = (TbBool)val3;
           break;
       default:
           WARNMSG("Unsupported Game RULE, command %d.", val2);

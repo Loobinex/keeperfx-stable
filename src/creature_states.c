@@ -2071,7 +2071,7 @@ short creature_in_hold_audience(struct Thing *creatng)
     TRACE_THING(creatng);
     int speed = get_creature_speed(creatng);
     struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
-    if ((cctrl->field_82 == -1) && (cctrl->instance_id == CrInst_NULL))
+    if ((cctrl->turns_at_job == -1) && (cctrl->instance_id == CrInst_NULL))
     {
         struct Room* room = get_room_thing_is_on(creatng);
         if (room_is_invalid(room)) {
@@ -2084,7 +2084,7 @@ short creature_in_hold_audience(struct Thing *creatng)
         }
         setup_person_move_to_coord(creatng, &pos, NavRtF_Default);
         creatng->continue_state = CrSt_CreatureInHoldAudience;
-        cctrl->field_82 = 0;
+        cctrl->turns_at_job = 0;
         return 1;
     }
     long ret = creature_move_to(creatng, &cctrl->moveto_pos, speed, cctrl->move_flags, 0);
@@ -2098,14 +2098,14 @@ short creature_in_hold_audience(struct Thing *creatng)
         }
         return 1;
     }
-    if (cctrl->field_82 != 0)
+    if (cctrl->turns_at_job != 0)
     {
-        if ((cctrl->field_82 != 1) || (cctrl->instance_id != CrInst_NULL))
+        if ((cctrl->turns_at_job != 1) || (cctrl->instance_id != CrInst_NULL))
             return 1;
-        cctrl->field_82 = -1;
+        cctrl->turns_at_job = -1;
     } else
     {
-        cctrl->field_82 = 1;
+        cctrl->turns_at_job = 1;
         set_creature_instance(creatng, CrInst_CELEBRATE_SHORT, 1, 0, 0);
     }
     return 1;
@@ -2736,8 +2736,8 @@ short creature_take_salary(struct Thing *creatng)
     }
     {
         struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
-        if (cctrl->field_48 > 0)
-            cctrl->field_48--;
+        if (cctrl->paydays_owed > 0)
+            cctrl->paydays_owed--;
     }
     set_start_state(creatng);
     {
@@ -2890,8 +2890,8 @@ short creature_wait_at_treasure_room_door(struct Thing *creatng)
     anger_apply_anger_to_creature(creatng, crstat->annoy_queue, AngR_NotPaid, 1);
     struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
     struct Thing *doortng;
-    if (cctrl->field_86 > 0) {
-        doortng = thing_get(cctrl->field_86);
+    if (cctrl->blocking_door_id > 0) {
+        doortng = thing_get(cctrl->blocking_door_id);
     } else {
         doortng = INVALID_THING;
     }
@@ -2970,9 +2970,9 @@ short creature_wants_salary(struct Thing *creatng)
     if (room_is_invalid(room))
     {
         SYNCDBG(5,"No player %d %s with used capacity found to pay %s",(int)creatng->owner,room_code_name(RoK_TREASURE),thing_model_name(creatng));
-        if (cctrl->field_48 > 0)
+        if (cctrl->paydays_owed > 0)
         {
-            cctrl->field_48--;
+            cctrl->paydays_owed--;
             struct CreatureStats* crstat = creature_stats_get_from_thing(creatng);
             anger_apply_anger_to_creature(creatng, crstat->annoy_no_salary, AngR_NotPaid, 1);
         }
@@ -3347,7 +3347,7 @@ short person_sulk_at_lair(struct Thing *creatng)
     }
     process_lair_enemy(creatng, room);
     internal_set_thing_state(creatng, CrSt_PersonSulking);
-    cctrl->field_82 = 0;
+    cctrl->turns_at_job = 0;
     struct CreatureStats* crstat = creature_stats_get_from_thing(creatng);
     anger_apply_anger_to_creature_all_types(creatng, crstat->annoy_sulking);
     return 1;
@@ -3400,14 +3400,14 @@ short person_sulking(struct Thing *creatng)
         return 0;
     }
     process_lair_enemy(creatng, room);
-    cctrl->field_82++;
-    if (cctrl->field_82 - 200 > 0)
+    cctrl->turns_at_job++;
+    if (cctrl->turns_at_job - 200 > 0)
     {
-        if ((cctrl->field_82 % 32) == 0) {
+        if ((cctrl->turns_at_job % 32) == 0) {
             play_creature_sound(creatng, 4, 2, 0);
         }
-        if (cctrl->field_82 - 250 >= 0) {
-          cctrl->field_82 = 0;
+        if (cctrl->turns_at_job - 250 >= 0) {
+          cctrl->turns_at_job = 0;
         } else
         if (cctrl->instance_id == CrInst_NULL) {
             set_creature_instance(creatng, CrInst_MOAN, 1, 0, 0);
@@ -4284,7 +4284,7 @@ long creature_setup_head_for_treasure_room_door(struct Thing *creatng, struct Ro
 long process_creature_needs_a_wage(struct Thing *thing, const struct CreatureStats *crstat)
 {
     struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
-    if ((crstat->pay == 0) || (cctrl->field_48 == 0)) {
+    if ((crstat->pay == 0) || (cctrl->paydays_owed == 0)) {
       return 0;
     }
     if (creature_is_taking_salary_activity(thing)) {
@@ -4330,7 +4330,7 @@ long process_creature_needs_a_wage(struct Thing *thing, const struct CreatureSta
         set_start_state(thing);
         return 0;
     }
-    cctrl->field_48--;
+    cctrl->paydays_owed--;
     anger_apply_anger_to_creature(thing, crstat->annoy_no_salary, AngR_NotPaid, 1);
     return 0;
 }
@@ -4437,26 +4437,47 @@ long anger_process_creature_anger(struct Thing *creatng, const struct CreatureSt
     }
     if (is_my_player_number(creatng->owner))
     {
+        struct Dungeon* dungeon;
         AnnoyMotive anger_motive = anger_get_creature_anger_type(creatng);
         switch (anger_motive)
         {
         case AngR_NotPaid:
-            output_message(SMsg_CreatrAngryNotPaid, MESSAGE_DELAY_CRTR_MOOD, 1);
+            dungeon = get_players_num_dungeon(creatng->owner);
+            struct Room *room = find_nearest_room_for_thing(creatng, creatng->owner, RoK_TREASURE, NavRtF_Default);
+            if ((dungeon->total_money_owned >= calculate_correct_creature_pay(creatng)) && !room_is_invalid(room))
+            {
+                if (cctrl->paydays_owed <= 0)
+                {
+                    cctrl->paydays_owed++;
+                }
+                else
+                {
+                    output_message(SMsg_CreatrAngryAnyReason, MESSAGE_DELAY_CRTR_MOOD, 1);
+                }
+            }
+            else
+            {
+                output_message(SMsg_CreatrAngryNotPaid, MESSAGE_DELAY_CRTR_MOOD, 1);
+            }
             break;
         case AngR_Hungry:
             output_message(SMsg_CreatrAngryNoFood, MESSAGE_DELAY_CRTR_MOOD, 1);
             break;
         case AngR_NoLair:
             if (cctrl->lairtng_idx != 0)
-                output_message(SMsg_CreatrAngryAnyReson, MESSAGE_DELAY_CRTR_MOOD, 1);
+            {
+                output_message(SMsg_CreatrAngryAnyReason, MESSAGE_DELAY_CRTR_MOOD, 1);
+            }
             else
+            {
                 output_message(SMsg_CreatrAngryNoLair, MESSAGE_DELAY_CRTR_MOOD, 1);
+            }
             break;
         case AngR_Other:
-            output_message(SMsg_CreatrAngryAnyReson, MESSAGE_DELAY_CRTR_MOOD, 1);
+            output_message(SMsg_CreatrAngryAnyReason, MESSAGE_DELAY_CRTR_MOOD, 1);
             break;
         default:
-            output_message(SMsg_CreatrAngryAnyReson, MESSAGE_DELAY_CRTR_MOOD, 1);
+            output_message(SMsg_CreatrAngryAnyReason, MESSAGE_DELAY_CRTR_MOOD, 1);
             ERRORLOG("The %s owned by player %d is angry but has no motive (%d).",thing_model_name(creatng),(int)creatng->owner,(int)anger_motive);
             break;
         }

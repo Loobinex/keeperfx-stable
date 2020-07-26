@@ -412,7 +412,7 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
     if (is_my_player(player))
     {
       if (!game_is_busy_doing_gui())
-        tag_cursor_blocks_sell_area(player->id_number, stl_x, stl_y, player->field_4A4);
+        tag_cursor_blocks_sell_area(player->id_number, stl_x, stl_y, player->field_4A4, (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)));
     }
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
@@ -431,22 +431,44 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
         return false;
     }
     // Trying to sell room
-    if (subtile_is_sellable_room(plyr_idx, stl_x, stl_y))
+    if (!is_key_pressed(KC_LSHIFT, KMod_DONTCARE))
     {
-        player_sell_room_at_subtile(plyr_idx, stl_x, stl_y);
-    } else
-    // Trying to sell door
-    if (player_sell_door_at_subtile(plyr_idx, stl_x, stl_y))
+        if (subtile_is_sellable_room(plyr_idx, stl_x, stl_y))
+        {
+            player_sell_room_at_subtile(plyr_idx, stl_x, stl_y);
+        } else
+        // Trying to sell door
+        if (player_sell_door_at_subtile(plyr_idx, stl_x, stl_y))
+        {
+            // Nothing to do here - door already sold
+        } else
+        // Trying to sell trap
+        if (player_sell_trap_at_subtile(plyr_idx, stl_x, stl_y))
+        {
+            // Nothing to do here - trap already sold
+        } else
+        {
+            WARNLOG("Nothing to do for player %d request",(int)plyr_idx);
+        }
+    }
+    else
     {
-        // Nothing to do here - door already sold
-    } else
-    // Trying to sell trap
-    if (player_sell_trap_at_subtile(plyr_idx, stl_x, stl_y))
-    {
-        // Nothing to do here - trap already sold
-    } else
-    {
-        WARNLOG("Nothing to do for player %d request",(int)plyr_idx);
+        if (player_sell_trap_at_subtile(plyr_idx, stl_x, stl_y))
+        {
+            // Nothing to do here - trap already sold
+        } else
+        if (player_sell_door_at_subtile(plyr_idx, stl_x, stl_y))
+        {
+            // Nothing to do here - door already sold
+        } else
+        if (subtile_is_sellable_room(plyr_idx, stl_x, stl_y))
+        {
+            player_sell_room_at_subtile(plyr_idx, stl_x, stl_y);
+        }
+        else
+        {
+            WARNLOG("Nothing to do for player %d request",(int)plyr_idx);
+        }
     }
     unset_packet_control(pckt, PCtr_LBtnClick);
     return true;
@@ -809,7 +831,7 @@ TbBool process_dungeon_control_packet_dungeon_control(long plyr_idx)
               {
                 untag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
               } else
-              if (dungeon->field_E8F < 300)
+              if (dungeon->task_count < 300)
               {
                 tag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
               } else
@@ -824,7 +846,7 @@ TbBool process_dungeon_control_packet_dungeon_control(long plyr_idx)
               {
                 untag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
               } else
-              if (dungeon->field_E8F < 300)
+              if (dungeon->task_count < 300)
               {
                 if (can_dig_here(stl_x, stl_y, player->id_number))
                   tag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
@@ -884,7 +906,7 @@ TbBool process_dungeon_control_packet_dungeon_control(long plyr_idx)
             {
               untag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
             } else
-            if (300-dungeon->field_E8F >= 9)
+            if (300-dungeon->task_count >= 9)
             {
               tag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
             } else

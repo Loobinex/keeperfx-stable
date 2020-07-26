@@ -238,6 +238,19 @@ TbBool slab_is_liquid(MapSlabCoord slb_x, MapSlabCoord slb_y)
     return slab_kind_is_liquid(slb->kind);
 }
 
+TbBool slab_is_wall(MapSlabCoord slb_x, MapSlabCoord slb_y)
+{
+    struct SlabMap* slb = get_slabmap_block(slb_x, slb_y);
+    if ( (slb->kind <= SlbT_WALLPAIRSHR) || (slb->kind == SlbT_GEMS) )
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
 TbBool slab_kind_is_animated(SlabKind slbkind)
 {
     if (slab_kind_is_door(slbkind))
