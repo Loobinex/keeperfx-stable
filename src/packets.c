@@ -397,7 +397,6 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
     struct Packet* pckt = get_packet_direct(player->packet_num);
     unsigned char radius = 0;
     TbBool even = false;
-    char evendist = even * 3;
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -482,6 +481,7 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
     }
     // Trying to sell room
     int dist = radius * 3;
+    char evendist = even * 3;
     if (!is_key_pressed(KC_LSHIFT, KMod_DONTCARE))
     {
         for (selly = stl_y - dist; selly <= stl_y + dist + evendist; selly += 3)
