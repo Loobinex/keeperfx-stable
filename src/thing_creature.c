@@ -78,6 +78,7 @@
 #include "engine_redraw.h"
 #include "sounds.h"
 #include "game_legacy.h"
+#include "kjm_input.h"
 
 #include "keeperfx.hpp"
 
@@ -1232,6 +1233,9 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
 {
     struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
     struct SpellConfig* splconf = &game.spells_config[SplK_Teleport];
+    const struct Room* room;
+    const struct Thing* desttng;
+    long distance = LONG_MAX;
     if (cspell->duration == splconf->duration / 2)
     {
         struct Coord3d pos;
@@ -1242,18 +1246,86 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
         {
             const struct Coord3d* newpos = NULL;
             {
-                const struct Thing* lairtng = thing_get(cctrl->lairtng_idx);
-                if (thing_is_object(lairtng)) {
-                    newpos = &lairtng->mappos;
+                if (is_key_pressed(KC_T,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_TREASURE, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_F,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_GARDEN, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_C,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_TRAINING, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_L,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_LIBRARY, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_B,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_BARRACKS, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_M,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_WORKSHOP, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_I,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_TORTURE, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_J,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_PRISON, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_G,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_GRAVEYARD, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_O,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_SCAVENGER, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_N,KMod_DONTCARE))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_TEMPLE, &thing->mappos, &distance);
+                }
+                else if (is_key_pressed(KC_H,KMod_DONTCARE))
+                {
+                    newpos = dungeon_get_essential_pos(thing->owner);
+                }
+                else if (is_key_pressed(KC_Z,KMod_DONTCARE))
+                {
+                    room = room_get(cctrl->last_work_room_id);
+                }
+                else
+                {
+                    desttng = thing_get(cctrl->lairtng_idx);
                 }
             }
-            if (newpos == NULL)
+                if (thing_is_object(desttng)) {
+                    newpos = &desttng->mappos;
+                }
+                if (newpos != NULL)
+            {
+                pos.x.val = newpos->x.val;
+                pos.y.val = newpos->y.val;
+                pos.z.val = newpos->z.val;
+            }
+                else if (!room_is_invalid(room))
+                {
+                    pos.x.stl.num = room->central_stl_x;
+                    pos.y.stl.num = room->central_stl_y;
+                    pos.z.val = 0;
+                }
+            else if ( (room_is_invalid(room)) && (newpos == NULL) )
             {
                 newpos = dungeon_get_essential_pos(thing->owner);
+                pos.x.val = newpos->x.val;
+                pos.y.val = newpos->y.val;
+                pos.z.val = newpos->z.val;
             }
-            pos.x.val = newpos->x.val;
-            pos.y.val = newpos->y.val;
-            pos.z.val = newpos->z.val;
+
         }
         pos.z.val += subtile_coord(2,0);
         move_thing_in_map(thing, &pos);
