@@ -2393,9 +2393,25 @@ void set_gui_visible(TbBool visible)
       break;
   }
   if (((game.numfield_D & GNFldD_Unkn20) != 0) && ((game.operation_flags & GOF_ShowGui) != 0))
-    setup_engine_window(status_panel_width, 0, MyScreenWidth, MyScreenHeight);
+  {
+      setup_engine_window(status_panel_width, 0, MyScreenWidth, MyScreenHeight);
+  }
   else
-    setup_engine_window(0, 0, MyScreenWidth, MyScreenHeight);
+  {
+      setup_engine_window(0, 0, MyScreenWidth, MyScreenHeight);
+  }
+  if (player->acamera)
+  {
+      if ((game.operation_flags & GOF_ShowGui) == 0)
+      {
+          //Without the gui sidebar, the camera cannot be zoomed in as much.
+          update_camera_zoom_bounds(player->acamera, CAMERA_ZOOM_MAX, CAMERA_ZOOM_MIN + 300);
+      }
+      else
+      {
+          update_camera_zoom_bounds(player->acamera, CAMERA_ZOOM_MAX, CAMERA_ZOOM_MIN);
+      }
+  }
 }
 
 void toggle_gui(void)
