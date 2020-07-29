@@ -1898,7 +1898,15 @@ void process_players_dungeon_control_packet_control(long plyr_idx)
             break;
         }
     }
-    unsigned long zoom_min = CAMERA_ZOOM_MIN;
+    unsigned long zoom_min;
+    if ((game.operation_flags & GOF_ShowGui) == 0)
+    {
+        zoom_min = CAMERA_ZOOM_MIN + 300;
+    }
+    else
+    {
+        zoom_min = CAMERA_ZOOM_MIN;
+    }
     unsigned long zoom_max = CAMERA_ZOOM_MAX;
     if (pckt->control_flags & PCtr_ViewZoomIn)
     {
