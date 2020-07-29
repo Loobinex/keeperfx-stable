@@ -290,6 +290,21 @@ long get_camera_zoom(struct Camera *cam)
     }
 }
 
+/** When the menu is hidden in Isometric view, show less of the map (at max zoom out)
+    because the increased view exceeds the render array, and we want to hide the graphical glitches it causes)
+    otherwise this function just sets zoom_min = CAMERA_ZOOM_MIN
+ *
+ * @param cam The current player's camera.\
+ * @param showgui Whether the side-menu is visible or not (you should pass "game.operation_flags & GOF_ShowGui".\
+ */
+unsigned long adjust_min_camera_zoom(struct Camera *cam, int showgui)
+{
+  unsigned long zoom_min = CAMERA_ZOOM_MIN;
+  if (showgui == 0 && cam->view_mode == PVM_IsometricView)
+    zoom_min += 300; // a higher value is a nearer zoom
+  return zoom_min;
+}
+
 /** Scales camera zoom for current screen resolution.
  *
  * @param zoom_lvl Unscaled zoom level.
