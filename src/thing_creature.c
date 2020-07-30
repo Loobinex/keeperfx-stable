@@ -79,6 +79,7 @@
 #include "sounds.h"
 #include "game_legacy.h"
 #include "kjm_input.h"
+#include "front_input.h"
 
 #include "keeperfx.hpp"
 
@@ -1236,6 +1237,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
     const struct Room* room;
     const struct Thing* desttng;
     long distance = LONG_MAX;
+    long val;
     if (cspell->duration == splconf->duration / 2)
     {
         struct Coord3d pos;
@@ -1246,53 +1248,65 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
         {
             const struct Coord3d* newpos = NULL;
             {
-                if (is_key_pressed(KC_T,KMod_DONTCARE))
+                if (is_game_key_pressed(Gkey_ZoomRoom00, &val, false))
                 {
                     room = find_room_nearest_to_position(thing->owner, RoK_TREASURE, &thing->mappos, &distance);
                 }
-                else if (is_key_pressed(KC_F,KMod_DONTCARE))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_GARDEN, &thing->mappos, &distance);
-                }
-                else if (is_key_pressed(KC_C,KMod_DONTCARE))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_TRAINING, &thing->mappos, &distance);
-                }
-                else if (is_key_pressed(KC_L,KMod_DONTCARE))
+                else if (is_game_key_pressed(Gkey_ZoomRoom01, &val, false))
                 {
                     room = find_room_nearest_to_position(thing->owner, RoK_LIBRARY, &thing->mappos, &distance);
                 }
-                else if (is_key_pressed(KC_B,KMod_DONTCARE))
+                else if (is_game_key_pressed(Gkey_ZoomRoom02, &val, false))
                 {
-                    room = find_room_nearest_to_position(thing->owner, RoK_BARRACKS, &thing->mappos, &distance);
+                    room = find_room_nearest_to_position(thing->owner, RoK_LAIR, &thing->mappos, &distance);
                 }
-                else if (is_key_pressed(KC_M,KMod_DONTCARE))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_WORKSHOP, &thing->mappos, &distance);
-                }
-                else if (is_key_pressed(KC_I,KMod_DONTCARE))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_TORTURE, &thing->mappos, &distance);
-                }
-                else if (is_key_pressed(KC_J,KMod_DONTCARE))
+                else if (is_game_key_pressed(Gkey_ZoomRoom03, &val, false))
                 {
                     room = find_room_nearest_to_position(thing->owner, RoK_PRISON, &thing->mappos, &distance);
                 }
-                else if (is_key_pressed(KC_G,KMod_DONTCARE))
+                else if (is_game_key_pressed(Gkey_ZoomRoom04, &val, false))
                 {
-                    room = find_room_nearest_to_position(thing->owner, RoK_GRAVEYARD, &thing->mappos, &distance);
+                    room = find_room_nearest_to_position(thing->owner, RoK_TORTURE, &thing->mappos, &distance);
                 }
-                else if (is_key_pressed(KC_O,KMod_DONTCARE))
+                else if (is_game_key_pressed(Gkey_ZoomRoom05, &val, false))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_TRAINING, &thing->mappos, &distance);
+                }
+                else if (is_game_key_pressed(Gkey_ZoomRoom06, &val, false))
+                {
+                    newpos = dungeon_get_essential_pos(thing->owner);
+                }
+                else if (is_game_key_pressed(Gkey_ZoomRoom07, &val, false))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_WORKSHOP, &thing->mappos, &distance);
+                }
+                else if (is_game_key_pressed(Gkey_ZoomRoom08, &val, false))
                 {
                     room = find_room_nearest_to_position(thing->owner, RoK_SCAVENGER, &thing->mappos, &distance);
                 }
-                else if (is_key_pressed(KC_N,KMod_DONTCARE))
+                else if (is_game_key_pressed(Gkey_ZoomRoom09, &val, false))
                 {
                     room = find_room_nearest_to_position(thing->owner, RoK_TEMPLE, &thing->mappos, &distance);
                 }
-                else if (is_key_pressed(KC_H,KMod_DONTCARE))
+                else if (is_game_key_pressed(Gkey_ZoomRoom10, &val, false))
                 {
-                    newpos = dungeon_get_essential_pos(thing->owner);
+                    room = find_room_nearest_to_position(thing->owner, RoK_GRAVEYARD, &thing->mappos, &distance);
+                }
+                else if (is_game_key_pressed(Gkey_ZoomRoom11, &val, false))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_BARRACKS, &thing->mappos, &distance);
+                }
+                else if (is_game_key_pressed(Gkey_ZoomRoom12, &val, false))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_GARDEN, &thing->mappos, &distance);
+                }
+                else if (is_game_key_pressed(Gkey_ZoomRoom13, &val, false))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_GUARDPOST, &thing->mappos, &distance);
+                }
+                else if (is_game_key_pressed(Gkey_ZoomRoom14, &val, false))
+                {
+                    room = find_room_nearest_to_position(thing->owner, RoK_BRIDGE, &thing->mappos, &distance);
                 }
                 else if (is_key_pressed(KC_Z,KMod_DONTCARE))
                 {
