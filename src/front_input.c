@@ -51,6 +51,7 @@
 #include "gui_topmsg.h"
 #include "gui_parchment.h"
 #include "power_hand.h"
+#include "thing_creature.h"
 #include "thing_traps.h"
 #include "room_workshop.h"
 #include "kjm_input.h"
@@ -1231,6 +1232,28 @@ short get_creature_control_action_inputs(void)
             numkey = 9;
         }
     }
+        long val;
+        for (int i = 0; i <= 14; i++)
+    {
+        if (is_game_key_pressed(Gkey_ZoomRoom00 + i, &val, false))
+        {
+            clear_key_pressed(val);
+            TeleDest = i + 1;
+        }
+        
+    }
+                if (is_key_pressed(KC_Z,KMod_DONTCARE))
+                {
+                    TeleDest = 16;
+                }
+                else if (is_key_pressed(KC_C,KMod_DONTCARE))
+                {
+                    TeleDest = 17;
+                }
+                else if (is_key_pressed(KC_X,KMod_DONTCARE))
+                {
+                    TeleDest = 18;
+                }
     // In possession sets the screen blue when frozen, and to default when not.
     if (creature_affected_by_spell(thing, SplK_Freeze)) 
     {

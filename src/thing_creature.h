@@ -77,6 +77,7 @@ extern struct TbSprite *swipe_sprites;
 extern struct TbSprite *end_swipe_sprites;
 extern int creature_swap_idx[CREATURE_TYPES_COUNT];
 extern unsigned long creature_create_errors;
+extern unsigned char TeleDest;
 /******************************************************************************/
 struct Thing *create_creature(struct Coord3d *pos, ThingModel model, PlayerNumber owner);
 long move_creature(struct Thing *thing);

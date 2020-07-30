@@ -89,6 +89,7 @@ extern "C" {
 
 /******************************************************************************/
 int creature_swap_idx[CREATURE_TYPES_COUNT];
+unsigned char TeleDest = 0;
 
 struct Creatures creatures_NEW[] = {
   { 0,  0, 0, 0, 0, 0, 0, 0, 0, 0x0000, 1},
@@ -1237,7 +1238,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
     const struct Room* room;
     const struct Thing* desttng;
     long distance = LONG_MAX;
-    long val;
+    struct Dungeon *dungeon = get_players_num_dungeon(thing->owner);
     if (cspell->duration == splconf->duration / 2)
     {
         struct Coord3d pos;
@@ -1248,75 +1249,114 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
         {
             const struct Coord3d* newpos = NULL;
             {
-                if (is_game_key_pressed(Gkey_ZoomRoom00, &val, false))
+                switch(TeleDest)
                 {
-                    room = find_room_nearest_to_position(thing->owner, RoK_TREASURE, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom01, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_LIBRARY, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom02, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_LAIR, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom03, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_PRISON, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom04, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_TORTURE, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom05, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_TRAINING, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom06, &val, false))
-                {
-                    newpos = dungeon_get_essential_pos(thing->owner);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom07, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_WORKSHOP, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom08, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_SCAVENGER, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom09, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_TEMPLE, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom10, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_GRAVEYARD, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom11, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_BARRACKS, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom12, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_GARDEN, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom13, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_GUARDPOST, &thing->mappos, &distance);
-                }
-                else if (is_game_key_pressed(Gkey_ZoomRoom14, &val, false))
-                {
-                    room = find_room_nearest_to_position(thing->owner, RoK_BRIDGE, &thing->mappos, &distance);
-                }
-                else if (is_key_pressed(KC_Z,KMod_DONTCARE))
-                {
-                    room = room_get(cctrl->last_work_room_id);
-                }
-                else
-                {
-                    desttng = thing_get(cctrl->lairtng_idx);
+                    case 0:
+                    {
+                        desttng = thing_get(cctrl->lairtng_idx);
+                        break;
+                    }
+                    case 1:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_TREASURE, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 2:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_LIBRARY, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 3:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_LAIR, &thing->mappos, &distance);
+                        break;
+                    }   
+                    case 4:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_PRISON, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 5:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_TORTURE, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 6:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_TRAINING, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 7:
+                    {
+                        newpos = dungeon_get_essential_pos(thing->owner);
+                        break;
+                    }
+                    case 8:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_WORKSHOP, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 9:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_SCAVENGER, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 10:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_TEMPLE, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 11:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_GRAVEYARD, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 12:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_BARRACKS, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 13:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_GARDEN, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 14:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_GUARDPOST, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 15:
+                    {
+                        room = find_room_nearest_to_position(thing->owner, RoK_BRIDGE, &thing->mappos, &distance);
+                        break;
+                    }
+                    case 16:
+                    {
+                        room = room_get(cctrl->last_work_room_id);
+                        break;
+                    }
+                    case 17:
+                    {
+                        struct Coord3d cta_pos;
+                        cta_pos.x.val = subtile_coord_center(dungeon->cta_stl_x);
+                        cta_pos.y.val = subtile_coord_center(dungeon->cta_stl_y);
+                        cta_pos.z.val = subtile_coord(1,0);
+                        if (creature_can_navigate_to_with_storage(thing, &cta_pos, NavRtF_Default))
+                        {
+                        pos = cta_pos;
+                        }
+                        break;
+                    }
+                    case 18:
+                    {
+                        desttng = find_hero_door_hero_can_navigate_to(thing);
+                        break;
+                    }
                 }
             }
+            if ( (pos.x.val == subtile_coord_center(cctrl->teleport_x)) && (pos.y.val == subtile_coord_center(cctrl->teleport_y)) )
+            {
                 if (thing_is_object(desttng)) {
                     newpos = &desttng->mappos;
                 }
@@ -1339,6 +1379,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                 pos.y.val = newpos->y.val;
                 pos.z.val = newpos->z.val;
             }
+            }
 
         }
         pos.z.val += subtile_coord(2,0);
@@ -1352,6 +1393,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
             thing->veloc_push_add.z.val += ACTION_RANDOM(96) + 40;
             thing->state_flags |= TF1_PushAdd;
         }
+        TeleDest = 0;
     }
 }
 
