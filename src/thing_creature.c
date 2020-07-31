@@ -80,6 +80,7 @@
 #include "game_legacy.h"
 #include "kjm_input.h"
 #include "front_input.h"
+#include "frontmenu_ingame_tabs.h"
 
 #include "keeperfx.hpp"
 
@@ -1239,6 +1240,8 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
     const struct Thing* desttng;
     long distance = LONG_MAX;
     struct Dungeon *dungeon = get_players_num_dungeon(thing->owner);
+    TbBool nearest = is_key_pressed(KC_LALT,KMod_DONTCARE);
+    RoomKind rkind = 0;
     if (cspell->duration == splconf->duration / 2)
     {
         struct Coord3d pos;
@@ -1258,32 +1261,32 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     }
                     case 1:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_TREASURE, &thing->mappos, &distance);
+                        rkind = RoK_TREASURE;
                         break;
                     }
                     case 2:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_LIBRARY, &thing->mappos, &distance);
+                        rkind = RoK_LIBRARY;
                         break;
                     }
                     case 3:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_LAIR, &thing->mappos, &distance);
+                        rkind = RoK_LAIR;
                         break;
                     }   
                     case 4:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_PRISON, &thing->mappos, &distance);
+                        rkind = RoK_PRISON;
                         break;
                     }
                     case 5:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_TORTURE, &thing->mappos, &distance);
+                        rkind = RoK_TORTURE;
                         break;
                     }
                     case 6:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_TRAINING, &thing->mappos, &distance);
+                        rkind = RoK_TRAINING;
                         break;
                     }
                     case 7:
@@ -1293,42 +1296,42 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     }
                     case 8:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_WORKSHOP, &thing->mappos, &distance);
+                        rkind = RoK_WORKSHOP;
                         break;
                     }
                     case 9:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_SCAVENGER, &thing->mappos, &distance);
+                        rkind = RoK_SCAVENGER;
                         break;
                     }
                     case 10:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_TEMPLE, &thing->mappos, &distance);
+                        rkind = RoK_TEMPLE;
                         break;
                     }
                     case 11:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_GRAVEYARD, &thing->mappos, &distance);
+                        rkind = RoK_GRAVEYARD;
                         break;
                     }
                     case 12:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_BARRACKS, &thing->mappos, &distance);
+                        rkind = RoK_BARRACKS;
                         break;
                     }
                     case 13:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_GARDEN, &thing->mappos, &distance);
+                        rkind = RoK_GARDEN;
                         break;
                     }
                     case 14:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_GUARDPOST, &thing->mappos, &distance);
+                        rkind = RoK_GUARDPOST;
                         break;
                     }
                     case 15:
                     {
-                        room = find_room_nearest_to_position(thing->owner, RoK_BRIDGE, &thing->mappos, &distance);
+                        rkind = RoK_BRIDGE;
                         break;
                     }
                     case 16:
@@ -1357,6 +1360,10 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
             }
             if ( (pos.x.val == subtile_coord_center(cctrl->teleport_x)) && (pos.y.val == subtile_coord_center(cctrl->teleport_y)) )
             {
+            if (rkind > 0)
+            {
+                room = nearest ? find_room_nearest_to_position(thing->owner, rkind, &thing->mappos, &distance) : room_get(find_next_room_of_type(thing->owner, rkind));
+            }
                 if (thing_is_object(desttng)) {
                     newpos = &desttng->mappos;
                 }
