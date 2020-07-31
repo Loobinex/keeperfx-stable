@@ -91,6 +91,7 @@ extern "C" {
 /******************************************************************************/
 int creature_swap_idx[CREATURE_TYPES_COUNT];
 unsigned char TeleDest = 0;
+BattleIndex battleid = -1;
 
 struct Creatures creatures_NEW[] = {
   { 0,  0, 0, 0, 0, 0, 0, 0, 0, 0x0000, 1},
@@ -1336,10 +1337,31 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     }
                     case 16:
                     {
-                        room = room_get(cctrl->last_work_room_id);
+                        if (active_battle_exists(thing->owner))
+                        {
+                            do
+                            {
+                            battleid = find_next_battle_of_mine(thing->owner, battleid);
+                            struct CreatureBattle* battle = creature_battle_get(battleid);
+                            struct Thing* tng = thing_get(battle->first_creatr);
+                            TRACE_THING(tng);
+                            if (creature_can_navigate_to_with_storage(thing, &tng->mappos, NavRtF_Default))
+                            {
+                                pos.x.val = tng->mappos.x.val;
+                                pos.y.val = tng->mappos.y.val;
+                                break;
+                            }
+                            }
+                            while (battleid < BATTLES_COUNT);
+                        }
                         break;
                     }
                     case 17:
+                    {
+                        room = room_get(cctrl->last_work_room_id);
+                        break;
+                    }
+                    case 18:
                     {
                         struct Coord3d cta_pos;
                         cta_pos.x.val = subtile_coord_center(dungeon->cta_stl_x);
@@ -1351,7 +1373,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                         }
                         break;
                     }
-                    case 18:
+                    case 19:
                     {
                         desttng = find_hero_door_hero_can_navigate_to(thing);
                         break;
