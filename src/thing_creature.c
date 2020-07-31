@@ -91,7 +91,7 @@ extern "C" {
 /******************************************************************************/
 int creature_swap_idx[CREATURE_TYPES_COUNT];
 unsigned char TeleDest = 0;
-BattleIndex battleid = -1;
+BattleIndex battleid = 1;
 
 struct Creatures creatures_NEW[] = {
   { 0,  0, 0, 0, 0, 0, 0, 0, 0, 0x0000, 1},
@@ -1243,6 +1243,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
     struct Dungeon *dungeon = get_players_num_dungeon(thing->owner);
     TbBool nearest = is_key_pressed(KC_LALT,KMod_DONTCARE);
     RoomKind rkind = 0;
+    long i;
     if (cspell->duration == splconf->duration / 2)
     {
         struct Coord3d pos;
@@ -1339,20 +1340,48 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     {
                         if (active_battle_exists(thing->owner))
                         {
-                            do
+                            long count = 0;
+                            if (battleid > BATTLES_COUNT)
                             {
-                            battleid = find_next_battle_of_mine(thing->owner, battleid);
-                            struct CreatureBattle* battle = creature_battle_get(battleid);
+                                battleid = 1;
+                            }
+                            for (i = battleid; i <= BATTLES_COUNT; i++)
+                            {
+                            JUSTMSG("TESTLOG: Loop iteration: %d.",i);
+                            if (i > BATTLES_COUNT)
+                            {
+                                i = 1;
+                                battleid = 1;
+                            }
+                            count++;
+                            struct CreatureBattle* battle = creature_battle_get(i);
+                            if ( (battle->fighters_num != 0) && (battle_with_creature_of_player(thing->owner, i)) )
+                            {
                             struct Thing* tng = thing_get(battle->first_creatr);
                             TRACE_THING(tng);
                             if (creature_can_navigate_to_with_storage(thing, &tng->mappos, NavRtF_Default))
                             {
                                 pos.x.val = tng->mappos.x.val;
                                 pos.y.val = tng->mappos.y.val;
+                                JUSTMSG("TESTLOG: Teleporting to battle %d. Loop iteration %d",battleid,i);
+                                battleid = i + 1;
                                 break;
                             }
                             }
-                            while (battleid < BATTLES_COUNT);
+                            if (count >= BATTLES_COUNT)
+                            {
+                                battleid = 1;
+                                JUSTMSG("TESTLOG: Count greater than 48. Resetting battleid.");
+                                break;
+                            }
+                            if (i >= BATTLES_COUNT)
+                            {
+                                i = 0;
+                                battleid = 1;
+                                JUSTMSG("TESTLOG: Loop control variable greater than 48. Resetting it and battleid.");
+                                continue;
+                            }
+                            }
                         }
                         break;
                     }
