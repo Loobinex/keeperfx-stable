@@ -1347,7 +1347,6 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                             }
                             for (i = battleid; i <= BATTLES_COUNT; i++)
                             {
-                            JUSTMSG("TESTLOG: Loop iteration: %d.",i);
                             if (i > BATTLES_COUNT)
                             {
                                 i = 1;
@@ -1363,7 +1362,6 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                             {
                                 pos.x.val = tng->mappos.x.val;
                                 pos.y.val = tng->mappos.y.val;
-                                JUSTMSG("TESTLOG: Teleporting to battle %d. Loop iteration %d",battleid,i);
                                 battleid = i + 1;
                                 break;
                             }
@@ -1371,14 +1369,12 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                             if (count >= BATTLES_COUNT)
                             {
                                 battleid = 1;
-                                JUSTMSG("TESTLOG: Count greater than 48. Resetting battleid.");
                                 break;
                             }
                             if (i >= BATTLES_COUNT)
                             {
                                 i = 0;
                                 battleid = 1;
-                                JUSTMSG("TESTLOG: Loop control variable greater than 48. Resetting it and battleid.");
                                 continue;
                             }
                             }
