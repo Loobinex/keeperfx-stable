@@ -1424,7 +1424,6 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                 {
                     pos.x.stl.num = room->central_stl_x;
                     pos.y.stl.num = room->central_stl_y;
-                    pos.z.val = 0;
                 }
             else if ( (room_is_invalid(room)) && (newpos == NULL) )
             {
