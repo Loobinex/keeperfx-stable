@@ -1242,15 +1242,15 @@ short get_creature_control_action_inputs(void)
         }
         
     }
-                if (is_key_pressed(KC_Z,KMod_DONTCARE))
+                if (is_key_pressed(KC_SEMICOLON,KMod_DONTCARE))
                 {
                     TeleDest = 17;
                 }
-                else if (is_key_pressed(KC_C,KMod_DONTCARE))
+                else if (is_key_pressed(KC_SLASH,KMod_DONTCARE))
                 {
                     TeleDest = 18;
                 }
-                else if (is_key_pressed(KC_X,KMod_DONTCARE))
+                else if (is_key_pressed(KC_PERIOD,KMod_DONTCARE))
                 {
                     TeleDest = 19;
                 }
