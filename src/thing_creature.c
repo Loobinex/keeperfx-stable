@@ -1244,6 +1244,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
     TbBool nearest = is_key_pressed(KC_LALT,KMod_DONTCARE);
     RoomKind rkind = 0;
     long i;
+    TbBool allowed = true;
     if (cspell->duration == splconf->duration / 2)
     {
         struct Coord3d pos;
@@ -1347,43 +1348,48 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                             }
                             for (i = battleid; i <= BATTLES_COUNT; i++)
                             {
-                            if (i > BATTLES_COUNT)
-                            {
-                                i = 1;
-                                battleid = 1;
+                                if (i > BATTLES_COUNT)
+                                {
+                                    i = 1;
+                                    battleid = 1;
+                                }
+                                count++;
+                                struct CreatureBattle* battle = creature_battle_get(i);
+                                if ( (battle->fighters_num != 0) && (battle_with_creature_of_player(thing->owner, i)) )
+                                {
+                                    struct Thing* tng = thing_get(battle->first_creatr);
+                                    TRACE_THING(tng);
+                                    if (creature_can_navigate_to_with_storage(thing, &tng->mappos, NavRtF_Default))
+                                    {
+                                        pos.x.val = tng->mappos.x.val;
+                                        pos.y.val = tng->mappos.y.val;
+                                        battleid = i + 1;
+                                        break;
+                                    }
+                                }
+                                if (count >= BATTLES_COUNT)
+                                {
+                                    battleid = 1;
+                                    break;
+                                }
+                                if (i >= BATTLES_COUNT)
+                                {
+                                    i = 0;
+                                    battleid = 1;
+                                    continue;
+                                }
                             }
-                            count++;
-                            struct CreatureBattle* battle = creature_battle_get(i);
-                            if ( (battle->fighters_num != 0) && (battle_with_creature_of_player(thing->owner, i)) )
-                            {
-                            struct Thing* tng = thing_get(battle->first_creatr);
-                            TRACE_THING(tng);
-                            if (creature_can_navigate_to_with_storage(thing, &tng->mappos, NavRtF_Default))
-                            {
-                                pos.x.val = tng->mappos.x.val;
-                                pos.y.val = tng->mappos.y.val;
-                                battleid = i + 1;
-                                break;
-                            }
-                            }
-                            if (count >= BATTLES_COUNT)
-                            {
-                                battleid = 1;
-                                break;
-                            }
-                            if (i >= BATTLES_COUNT)
-                            {
-                                i = 0;
-                                battleid = 1;
-                                continue;
-                            }
-                            }
+                        }
+                        else
+                        {
+                            allowed = false;
                         }
                         break;
                     }
                     case 17:
                     {
                         room = room_get(cctrl->last_work_room_id);
+                        allowed = (!room_is_invalid(room));
                         break;
                     }
                     case 18:
@@ -1396,42 +1402,55 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                         {
                         pos = cta_pos;
                         }
+                        else
+                        {
+                            allowed = false;
+                        }
                         break;
                     }
                     case 19:
                     {
                         desttng = find_hero_door_hero_can_navigate_to(thing);
+                        allowed = (!thing_is_invalid(desttng));
                         break;
                     }
                 }
             }
-            if ( (pos.x.val == subtile_coord_center(cctrl->teleport_x)) && (pos.y.val == subtile_coord_center(cctrl->teleport_y)) )
+            if (!allowed)
             {
-            if (rkind > 0)
-            {
-                room = nearest ? find_room_nearest_to_position(thing->owner, rkind, &thing->mappos, &distance) : room_get(find_next_room_of_type(thing->owner, rkind));
+                pos = thing->mappos;
             }
-                if (thing_is_object(desttng)) {
-                    newpos = &desttng->mappos;
-                }
-                if (newpos != NULL)
+            else
             {
-                pos.x.val = newpos->x.val;
-                pos.y.val = newpos->y.val;
-                pos.z.val = newpos->z.val;
-            }
-                else if (!room_is_invalid(room))
+                if ( (pos.x.val == subtile_coord_center(cctrl->teleport_x)) && (pos.y.val == subtile_coord_center(cctrl->teleport_y)) )
                 {
-                    pos.x.stl.num = room->central_stl_x;
-                    pos.y.stl.num = room->central_stl_y;
+                    if (rkind > 0)
+                    {
+                        room = nearest ? find_room_nearest_to_position(thing->owner, rkind, &thing->mappos, &distance) : room_get(find_next_room_of_type(thing->owner, rkind));
+                    }
+                    if (thing_is_object(desttng))
+                    {
+                        newpos = &desttng->mappos;
+                    }
+                    if (newpos != NULL)
+                    {
+                        pos.x.val = newpos->x.val;
+                        pos.y.val = newpos->y.val;
+                        pos.z.val = newpos->z.val;
+                    }
+                    else if (!room_is_invalid(room))
+                    {
+                        pos.x.stl.num = room->central_stl_x;
+                        pos.y.stl.num = room->central_stl_y;
+                    }
+                    else if ( (room_is_invalid(room)) && (newpos == NULL) )
+                    {
+                        newpos = dungeon_get_essential_pos(thing->owner);
+                        pos.x.val = newpos->x.val;
+                        pos.y.val = newpos->y.val;
+                        pos.z.val = newpos->z.val;
+                    }
                 }
-            else if ( (room_is_invalid(room)) && (newpos == NULL) )
-            {
-                newpos = dungeon_get_essential_pos(thing->owner);
-                pos.x.val = newpos->x.val;
-                pos.y.val = newpos->y.val;
-                pos.z.val = newpos->z.val;
-            }
             }
 
         }
