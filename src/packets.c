@@ -43,6 +43,7 @@
 #include "config.h"
 #include "config_creature.h"
 #include "config_crtrmodel.h"
+#include "config_effects.h"
 #include "config_terrain.h"
 #include "config_players.h"
 #include "config_settings.h"
@@ -65,10 +66,12 @@
 #include "power_hand.h"
 #include "room_util.h"
 #include "room_workshop.h"
+#include "room_data.h"
 #include "thing_stats.h"
 #include "thing_traps.h"
 #include "magic.h"
 #include "map_blocks.h"
+#include "map_utils.h"
 #include "light_data.h"
 #include "gui_draw.h"
 #include "gui_topmsg.h"
@@ -106,8 +109,7 @@ void set_packet_action(struct Packet *pckt, unsigned char pcktype, unsigned shor
 
 void set_players_packet_action(struct PlayerInfo *player, unsigned char pcktype, unsigned short par1, unsigned short par2, unsigned short par3, unsigned short par4)
 {
-    struct Packet *pckt;
-    pckt = get_packet_direct(player->packet_num);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     pckt->actn_par1 = par1;
     pckt->actn_par2 = par2;
     pckt->action = pcktype;
@@ -115,8 +117,7 @@ void set_players_packet_action(struct PlayerInfo *player, unsigned char pcktype,
 
 unsigned char get_players_packet_action(struct PlayerInfo *player)
 {
-    struct Packet *pckt;
-    pckt = get_packet_direct(player->packet_num);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     return pckt->action;
 }
 
@@ -127,9 +128,8 @@ void set_packet_control(struct Packet *pckt, unsigned long flag)
 
 void set_players_packet_control(struct PlayerInfo *player, unsigned long flag)
 {
-  struct Packet *pckt;
-  pckt = get_packet_direct(player->packet_num);
-  pckt->control_flags |= flag;
+    struct Packet* pckt = get_packet_direct(player->packet_num);
+    pckt->control_flags |= flag;
 }
 
 void unset_packet_control(struct Packet *pckt, unsigned long flag)
@@ -139,15 +139,13 @@ void unset_packet_control(struct Packet *pckt, unsigned long flag)
 
 void unset_players_packet_control(struct PlayerInfo *player, unsigned long flag)
 {
-  struct Packet *pckt;
-  pckt = get_packet_direct(player->packet_num);
-  pckt->control_flags &= ~flag;
+    struct Packet* pckt = get_packet_direct(player->packet_num);
+    pckt->control_flags &= ~flag;
 }
 
 void set_players_packet_position(struct PlayerInfo *player, long x, long y)
 {
-    struct Packet *pckt;
-    pckt = get_packet_direct(player->packet_num);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     pckt->pos_x = x;
     pckt->pos_y = y;
 }
@@ -159,8 +157,7 @@ void set_players_packet_position(struct PlayerInfo *player, long x, long y)
  */
 struct Packet *get_packet(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    player = get_player(plyr_idx);
+    struct PlayerInfo* player = get_player(plyr_idx);
     if (player_invalid(player))
         return INVALID_PACKET;
     if (player->packet_num >= PACKETS_COUNT)
@@ -182,34 +179,30 @@ struct Packet *get_packet_direct(long pckt_idx)
 
 void clear_packets(void)
 {
-    int i;
-    for (i=0; i < PACKETS_COUNT; i++) {
+    for (int i = 0; i < PACKETS_COUNT; i++)
+    {
         LbMemorySet(&game.packets[i], 0, sizeof(struct Packet));
     }
 }
 
 short set_packet_pause_toggle(void)
 {
-    struct PlayerInfo *player;
-    struct Packet *pckt;
-    player = get_my_player();
+    struct PlayerInfo* player = get_my_player();
     if (player_invalid(player))
         return false;
     if (player->packet_num >= PACKETS_COUNT)
         return false;
-    pckt = get_packet_direct(player->packet_num);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     set_packet_action(pckt, PckA_TogglePause, 0, 0, 0, 0);
     return true;
 }
 
 TbBigChecksum compute_player_checksum(struct PlayerInfo *player)
 {
-    struct Coord3d *mappos;
-    TbBigChecksum sum;
-    sum = 0;
+    TbBigChecksum sum = 0;
     if (((player->allocflags & PlaF_CompCtrl) == 0) && (player->acamera != NULL))
     {
-        mappos = &(player->acamera->mappos);
+        struct Coord3d* mappos = &(player->acamera->mappos);
         sum += (TbBigChecksum)player->instance_remain_rurns + (TbBigChecksum)player->instance_num;
         sum += (TbBigChecksum)mappos->x.val + (TbBigChecksum)mappos->z.val + (TbBigChecksum)mappos->y.val;
     }
@@ -222,16 +215,13 @@ TbBigChecksum compute_player_checksum(struct PlayerInfo *player)
  */
 TbBigChecksum compute_players_checksum(void)
 {
-    struct PlayerInfo *player;
-    int i;
-    TbBigChecksum sum;
-    sum = 0;
-    for (i=0; i<PLAYERS_COUNT; i++)
+    TbBigChecksum sum = 0;
+    for (int i = 0; i < PLAYERS_COUNT; i++)
     {
-      player = get_player(i);
-      if (player_exists(player))
-      {
-          sum += compute_player_checksum(player);
+        struct PlayerInfo* player = get_player(i);
+        if (player_exists(player))
+        {
+            sum += compute_player_checksum(player);
       }
     }
     return sum;
@@ -246,8 +236,7 @@ TbBigChecksum compute_players_checksum(void)
  */
 void player_packet_checksum_add(PlayerNumber plyr_idx, TbBigChecksum sum, const char *area_name)
 {
-    struct Packet *pckt;
-    pckt = get_packet(plyr_idx);
+    struct Packet* pckt = get_packet(plyr_idx);
     pckt->chksum += sum;
     SYNCDBG(9,"Checksum increase from %s is %06lX",area_name,(unsigned long)sum);
 }
@@ -258,42 +247,36 @@ void player_packet_checksum_add(PlayerNumber plyr_idx, TbBigChecksum sum, const 
  */
 short checksums_different(void)
 {
-  struct PlayerInfo *player;
-  struct Packet *pckt;
-  TbChecksum checksum;
-  unsigned short is_set;
-  int i;
-  checksum = 0;
-  is_set = false;
-  for (i=0; i<PLAYERS_COUNT; i++)
-  {
-    player = get_player(i);
-    if (player_exists(player) && ((player->allocflags & PlaF_CompCtrl) == 0))
+    TbChecksum checksum = 0;
+    unsigned short is_set = false;
+    for (int i = 0; i < PLAYERS_COUNT; i++)
     {
-        pckt = get_packet_direct(player->packet_num);
-        if (!is_set)
+        struct PlayerInfo* player = get_player(i);
+        if (player_exists(player) && ((player->allocflags & PlaF_CompCtrl) == 0))
         {
-          checksum = pckt->chksum;
-          is_set = true;
-        } else
-        if (checksum != pckt->chksum)
-        {
-          return true;
+            struct Packet* pckt = get_packet_direct(player->packet_num);
+            if (!is_set)
+            {
+                checksum = pckt->chksum;
+                is_set = true;
+            }
+            else if (checksum != pckt->chksum)
+            {
+                return true;
+            }
         }
-    }
   }
   return false;
 }
 
 void update_double_click_detection(long plyr_idx)
 {
-  struct Packet *pckt;
-  pckt = get_packet(plyr_idx);
-  if ((pckt->control_flags & PCtr_LBtnRelease) != 0)
-  {
-    if (packet_left_button_click_space_count[plyr_idx] < 5)
-      packet_left_button_double_clicked[plyr_idx] = 1;
-    packet_left_button_click_space_count[plyr_idx] = 0;
+    struct Packet* pckt = get_packet(plyr_idx);
+    if ((pckt->control_flags & PCtr_LBtnRelease) != 0)
+    {
+        if (packet_left_button_click_space_count[plyr_idx] < 5)
+            packet_left_button_double_clicked[plyr_idx] = 1;
+        packet_left_button_click_space_count[plyr_idx] = 0;
   }
   if ((pckt->control_flags & (PCtr_LBtnClick|PCtr_LBtnHeld)) == 0)
   {
@@ -304,22 +287,17 @@ void update_double_click_detection(long plyr_idx)
 
 struct Room *keeper_build_room(long stl_x,long stl_y,long plyr_idx,long rkind)
 {
-    struct PlayerInfo *player;
-    struct Dungeon *dungeon;
-    struct Room *room;
-    struct RoomStats *rstat;
-    struct Coord3d pos;
-    MapCoord x,y;
-    player = get_player(plyr_idx);
-    dungeon = get_players_dungeon(player);
-    rstat = room_stats_get_for_kind(rkind);
-    x = ((player->field_4A4+1) / 2) + slab_subtile(subtile_slab_fast(stl_x),0);
-    y = ((player->field_4A4+1) / 2) + slab_subtile(subtile_slab_fast(stl_y),0);
-    room = player_build_room_at(x, y, plyr_idx, rkind);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Dungeon* dungeon = get_players_dungeon(player);
+    struct RoomStats* rstat = room_stats_get_for_kind(rkind);
+    MapCoord x = ((player->field_4A4 + 1) / 2) + slab_subtile(subtile_slab_fast(stl_x), 0);
+    MapCoord y = ((player->field_4A4 + 1) / 2) + slab_subtile(subtile_slab_fast(stl_y), 0);
+    struct Room* room = player_build_room_at(x, y, plyr_idx, rkind);
     if (!room_is_invalid(room))
     {
         dungeon->camera_deviate_jump = 192;
-        set_coords_to_slab_center(&pos,subtile_slab_fast(stl_x),subtile_slab_fast(stl_y));
+        struct Coord3d pos;
+        set_coords_to_slab_center(&pos, subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
         create_price_effect(&pos, plyr_idx, rstat->cost);
     }
     return room;
@@ -327,13 +305,10 @@ struct Room *keeper_build_room(long stl_x,long stl_y,long plyr_idx,long rkind)
 
 TbBool process_dungeon_control_packet_spell_overcharge(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Dungeon *dungeon;
-    struct Packet *pckt;
-    player = get_player(plyr_idx);
-    dungeon = get_players_dungeon(player);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Dungeon* dungeon = get_players_dungeon(player);
     SYNCDBG(6,"Starting for player %d state %s",(int)plyr_idx,player_state_code_name(player->work_state));
-    pckt = get_packet_direct(player->packet_num);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     if ((pckt->control_flags & PCtr_LBtnHeld) != 0)
     {
       switch (player->work_state)
@@ -381,23 +356,17 @@ TbBool process_dungeon_control_packet_spell_overcharge(long plyr_idx)
 
 TbBool player_sell_room_at_subtile(long plyr_idx, long stl_x, long stl_y)
 {
-    struct Room *room;
-    struct RoomStats *rstat;
-    struct Coord3d pos;
-    long revenue;
-    room = subtile_room_get(stl_x, stl_y);
+    struct Room* room = subtile_room_get(stl_x, stl_y);
     if (room_is_invalid(room))
     {
         ERRORLOG("No room to delete at subtile (%d,%d)",(int)stl_x,(int)stl_y);
         return false;
     }
-    //TODO CONFIG sell revenue percentage should be inside config files
-    rstat = room_stats_get_for_room(room);
-    revenue = compute_value_percentage(rstat->cost, ROOM_SELL_REVENUE_PERCENT);
+    struct RoomStats* rstat = room_stats_get_for_room(room);
+    long revenue = compute_value_percentage(rstat->cost, gameadd.room_sale_percent);
     if (room->owner != game.neutral_player_num)
     {
-        struct Dungeon *dungeon;
-        dungeon = get_players_num_dungeon(room->owner);
+        struct Dungeon* dungeon = get_players_num_dungeon(room->owner);
         dungeon->rooms_destroyed++;
         dungeon->camera_deviate_jump = 192;
     }
@@ -406,7 +375,8 @@ TbBool player_sell_room_at_subtile(long plyr_idx, long stl_x, long stl_y)
         play_non_3d_sample(115);
     if (revenue != 0)
     {
-        set_coords_to_slab_center(&pos,subtile_slab_fast(stl_x),subtile_slab_fast(stl_y));
+        struct Coord3d pos;
+        set_coords_to_slab_center(&pos, subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
         create_price_effect(&pos, plyr_idx, revenue);
         player_add_offmap_gold(plyr_idx, revenue);
     }
@@ -415,13 +385,8 @@ TbBool player_sell_room_at_subtile(long plyr_idx, long stl_x, long stl_y)
 
 TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Packet *pckt;
-    struct SlabMap *slb;
-    MapSubtlCoord stl_x,stl_y;
-    MapCoord x,y;
-    player = get_player(plyr_idx);
-    pckt = get_packet_direct(player->packet_num);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -431,15 +396,15 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
         }
         return false;
     }
-    x = ((unsigned short)pckt->pos_x);
-    y = ((unsigned short)pckt->pos_y);
-    stl_x = coord_subtile(x);
-    stl_y = coord_subtile(y);
+    MapCoord x = ((unsigned short)pckt->pos_x);
+    MapCoord y = ((unsigned short)pckt->pos_y);
+    MapSubtlCoord stl_x = coord_subtile(x);
+    MapSubtlCoord stl_y = coord_subtile(y);
     player->field_4A4 = 1;
     if (is_my_player(player))
     {
       if (!game_is_busy_doing_gui())
-        tag_cursor_blocks_sell_area(player->id_number, stl_x, stl_y, player->field_4A4);
+        tag_cursor_blocks_sell_area(player->id_number, stl_x, stl_y, player->field_4A4, (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)));
     }
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
@@ -450,7 +415,7 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
       }
       return false;
     }
-    slb = get_slabmap_for_subtile(stl_x, stl_y);
+    struct SlabMap* slb = get_slabmap_for_subtile(stl_x, stl_y);
     if (slabmap_owner(slb) != plyr_idx)
     {
         WARNLOG("Player %d can't sell item on %s owned by player %d at subtile (%d,%d).",(int)plyr_idx,slab_code_name(slb->kind),(int)slabmap_owner(slb),(int)stl_x,(int)stl_y);
@@ -458,22 +423,44 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
         return false;
     }
     // Trying to sell room
-    if (subtile_is_sellable_room(plyr_idx, stl_x, stl_y))
+    if (!is_key_pressed(KC_LSHIFT, KMod_DONTCARE))
     {
-        player_sell_room_at_subtile(plyr_idx, stl_x, stl_y);
-    } else
-    // Trying to sell door
-    if (player_sell_door_at_subtile(plyr_idx, stl_x, stl_y))
+        if (subtile_is_sellable_room(plyr_idx, stl_x, stl_y))
+        {
+            player_sell_room_at_subtile(plyr_idx, stl_x, stl_y);
+        } else
+        // Trying to sell door
+        if (player_sell_door_at_subtile(plyr_idx, stl_x, stl_y))
+        {
+            // Nothing to do here - door already sold
+        } else
+        // Trying to sell trap
+        if (player_sell_trap_at_subtile(plyr_idx, stl_x, stl_y))
+        {
+            // Nothing to do here - trap already sold
+        } else
+        {
+            WARNLOG("Nothing to do for player %d request",(int)plyr_idx);
+        }
+    }
+    else
     {
-        // Nothing to do here - door already sold
-    } else
-    // Trying to sell trap
-    if (player_sell_trap_at_subtile(plyr_idx, stl_x, stl_y))
-    {
-        // Nothing to do here - trap already sold
-    } else
-    {
-        WARNLOG("Nothing to do for player %d request",(int)plyr_idx);
+        if (player_sell_trap_at_subtile(plyr_idx, stl_x, stl_y))
+        {
+            // Nothing to do here - trap already sold
+        } else
+        if (player_sell_door_at_subtile(plyr_idx, stl_x, stl_y))
+        {
+            // Nothing to do here - door already sold
+        } else
+        if (subtile_is_sellable_room(plyr_idx, stl_x, stl_y))
+        {
+            player_sell_room_at_subtile(plyr_idx, stl_x, stl_y);
+        }
+        else
+        {
+            WARNLOG("Nothing to do for player %d request",(int)plyr_idx);
+        }
     }
     unset_packet_control(pckt, PCtr_LBtnClick);
     return true;
@@ -481,18 +468,12 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
 
 TbBool process_dungeon_power_hand_state(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Thing *thing;
-    struct Packet *pckt;
-    MapSubtlCoord stl_x,stl_y;
-    MapCoord x,y;
-    long i;
-    player = get_player(plyr_idx);
-    pckt = get_packet_direct(player->packet_num);
-    x = ((unsigned short)pckt->pos_x);
-    y = ((unsigned short)pckt->pos_y);
-    stl_x = coord_subtile(x);
-    stl_y = coord_subtile(y);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
+    MapCoord x = ((unsigned short)pckt->pos_x);
+    MapCoord y = ((unsigned short)pckt->pos_y);
+    MapSubtlCoord stl_x = coord_subtile(x);
+    MapSubtlCoord stl_y = coord_subtile(y);
 
     player->field_3 &= ~Pf3F_Unkn02;
     if ((player->field_455 != P454_Unkn0) && (player->field_455 != P454_Unkn3))
@@ -502,7 +483,7 @@ TbBool process_dungeon_power_hand_state(long plyr_idx)
       }
       return false;
     }
-    thing = get_nearest_thing_for_hand_or_slap(plyr_idx, x, y);
+    struct Thing* thing = get_nearest_thing_for_hand_or_slap(plyr_idx, x, y);
     if (!thing_is_invalid(thing))
     {
       SYNCDBG(19,"Thing %d under hand at (%d,%d)",(int)thing->index,(int)thing->mappos.x.stl.num,(int)thing->mappos.y.stl.num);
@@ -516,7 +497,7 @@ TbBool process_dungeon_power_hand_state(long plyr_idx)
       if (player->hand_thing_idx == 0) {
         create_power_hand(player->id_number);
       }
-      i = thing_is_creature_special_digger(thing);
+      long i = thing_is_creature_special_digger(thing);
       if (can_drop_thing_here(stl_x, stl_y, player->id_number, i)
         || !can_dig_here(stl_x, stl_y, player->id_number))
       {
@@ -555,17 +536,12 @@ TbBool process_dungeon_power_hand_state(long plyr_idx)
 
 TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Packet *pckt;
-    MapSubtlCoord stl_x,stl_y;
-    MapCoord x,y;
-    long i;
-    player = get_player(plyr_idx);
-    pckt = get_packet_direct(player->packet_num);
-    x = ((unsigned short)pckt->pos_x);
-    y = ((unsigned short)pckt->pos_y);
-    stl_x = coord_subtile(x);
-    stl_y = coord_subtile(y);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
+    MapCoord x = ((unsigned short)pckt->pos_x);
+    MapCoord y = ((unsigned short)pckt->pos_y);
+    MapSubtlCoord stl_x = coord_subtile(x);
+    MapSubtlCoord stl_y = coord_subtile(y);
 
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
@@ -579,7 +555,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     player->field_4A4 = 1;
     if (is_my_player(player))
       gui_room_type_highlighted = player->chosen_room_kind;
-    i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4);
+    long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -605,17 +581,12 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
 
 TbBool process_dungeon_control_packet_dungeon_place_trap(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Packet *pckt;
-    MapSubtlCoord stl_x,stl_y;
-    MapCoord x,y;
-    long i;
-    player = get_player(plyr_idx);
-    pckt = get_packet_direct(player->packet_num);
-    x = ((unsigned short)pckt->pos_x);
-    y = ((unsigned short)pckt->pos_y);
-    stl_x = coord_subtile(x);
-    stl_y = coord_subtile(y);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
+    MapCoord x = ((unsigned short)pckt->pos_x);
+    MapCoord y = ((unsigned short)pckt->pos_y);
+    MapSubtlCoord stl_x = coord_subtile(x);
+    MapSubtlCoord stl_y = coord_subtile(y);
 
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
@@ -627,7 +598,7 @@ TbBool process_dungeon_control_packet_dungeon_place_trap(long plyr_idx)
         return false;
     }
     player->field_4A4 = 1;
-    i = tag_cursor_blocks_place_trap(player->id_number, stl_x, stl_y);
+    long i = tag_cursor_blocks_place_trap(player->id_number, stl_x, stl_y);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -655,24 +626,18 @@ TbBool process_dungeon_control_packet_dungeon_place_trap(long plyr_idx)
 
 TbBool process_dungeon_control_packet_dungeon_control(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Dungeon *dungeon;
     struct Thing *thing;
-    struct Packet *pckt;
-    MapSubtlCoord stl_x,stl_y;
-    MapSubtlCoord cx,cy;
-    MapCoord x,y;
-    long i;
-    player = get_player(plyr_idx);
-    dungeon = get_players_dungeon(player);
-    pckt = get_packet_direct(player->packet_num);
-    x = ((unsigned short)pckt->pos_x);
-    y = ((unsigned short)pckt->pos_y);
-    stl_x = coord_subtile(x);
-    stl_y = coord_subtile(y);
 
-    cx = stl_slab_starting_subtile(stl_x);
-    cy = stl_slab_starting_subtile(stl_y);
+    long i;
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Dungeon* dungeon = get_players_dungeon(player);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
+    MapCoord x = ((unsigned short)pckt->pos_x);
+    MapCoord y = ((unsigned short)pckt->pos_y);
+    MapSubtlCoord stl_x = coord_subtile(x);
+    MapSubtlCoord stl_y = coord_subtile(y);
+    MapSubtlCoord cx = stl_slab_starting_subtile(stl_x);
+    MapSubtlCoord cy = stl_slab_starting_subtile(stl_y);
     if ((pckt->control_flags & PCtr_LBtnAnyAction) == 0)
       player->field_455 = P454_Unkn0;
     player->field_454 = (unsigned short)(pckt->field_10 & PCAdV_ContextMask) >> 1;
@@ -760,7 +725,7 @@ TbBool process_dungeon_control_packet_dungeon_control(long plyr_idx)
               {
                 untag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
               } else
-              if (dungeon->field_E8F < 300)
+              if (dungeon->task_count < 300)
               {
                 tag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
               } else
@@ -775,7 +740,7 @@ TbBool process_dungeon_control_packet_dungeon_control(long plyr_idx)
               {
                 untag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
               } else
-              if (dungeon->field_E8F < 300)
+              if (dungeon->task_count < 300)
               {
                 if (can_dig_here(stl_x, stl_y, player->id_number))
                   tag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
@@ -835,7 +800,7 @@ TbBool process_dungeon_control_packet_dungeon_control(long plyr_idx)
             {
               untag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
             } else
-            if (300-dungeon->field_E8F >= 9)
+            if (300-dungeon->task_count >= 9)
             {
               tag_blocks_for_digging_in_rectangle_around(cx, cy, plyr_idx);
             } else
@@ -885,24 +850,16 @@ TbBool process_dungeon_control_packet_dungeon_control(long plyr_idx)
 
 TbBool process_dungeon_control_packet_clicks(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Packet *pckt;
     struct Thing *thing;
-    MapSubtlCoord stl_x,stl_y;
-    short influence_own_creatures;
-    TbBool ret;
-    MapCoord x,y;
     PowerKind pwkind;
-    long i,k;
-
-    player = get_player(plyr_idx);
-    pckt = get_packet_direct(player->packet_num);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     SYNCDBG(6,"Starting for player %d state %s",(int)plyr_idx,player_state_code_name(player->work_state));
     player->field_4A4 = 1;
     packet_left_button_double_clicked[plyr_idx] = 0;
     if ((pckt->control_flags & PCtr_Unknown4000) != 0)
       return false;
-    ret = true;
+    TbBool ret = true;
 
     process_dungeon_control_packet_spell_overcharge(plyr_idx);
     if ((pckt->control_flags & PCtr_RBtnHeld) != 0)
@@ -915,12 +872,16 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     }
     update_double_click_detection(plyr_idx);
     player->thing_under_hand = 0;
-    x = ((unsigned short)pckt->pos_x);
-    y = ((unsigned short)pckt->pos_y);
-    stl_x = coord_subtile(x);
-    stl_y = coord_subtile(y);
-    influence_own_creatures = false;
-
+    MapCoord x = ((unsigned short)pckt->pos_x);
+    MapCoord y = ((unsigned short)pckt->pos_y);
+    MapSubtlCoord stl_x = coord_subtile(x);
+    MapSubtlCoord stl_y = coord_subtile(y);
+    short influence_own_creatures = false;
+    struct SlabMap *slb;
+    long i;
+    struct Room* room;
+    MapSlabCoord slb_x = slab_subtile(subtile_slab_fast(stl_x), 0);
+    MapSlabCoord slb_y = slab_subtile(subtile_slab_fast(stl_y), 0);
     switch (player->work_state)
     {
     case PSt_CtrlDungeon:
@@ -933,14 +894,14 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     case PSt_MkGoodDigger:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-            create_owned_special_digger(x, y, game.hero_player_num);
+            create_owned_special_digger(x, y, get_selected_player_for_cheat(game.hero_player_num));
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
         break;
     case PSt_MkGoodCreatr:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-            create_random_hero_creature(x, y, game.hero_player_num, CREATURE_MAX_LEVEL);
+            create_random_hero_creature(x, y, get_selected_player_for_cheat(game.hero_player_num), CREATURE_MAX_LEVEL);
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
         break;
@@ -1011,7 +972,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         if (player->work_state == PSt_CtrlDirect)
             thing = get_creature_near_for_controlling(plyr_idx, x, y);
         else
-            thing = get_creature_near_for_controlling(plyr_idx, x, y); // TODO Change to allow controlling any owner
+            thing = get_creature_near(x, y);
         if (thing_is_invalid(thing))
           player->thing_under_hand = 0;
         else
@@ -1085,8 +1046,8 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         break;
     case PSt_OrderCreatr:
         influence_own_creatures = 1;
-        thing = get_creature_near_and_owned_by(x, y, plyr_idx);
-        if (thing_is_invalid(thing))
+        thing = get_creature_near(x, y);
+        if (!thing_is_creature(thing))
             player->thing_under_hand = 0;
         else
             player->thing_under_hand = thing->index;
@@ -1129,7 +1090,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     case PSt_MkBadCreatr:
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
         {
-            create_random_evil_creature(x, y, plyr_idx, CREATURE_MAX_LEVEL);
+            create_random_evil_creature(x, y, get_selected_player_for_cheat(plyr_idx), CREATURE_MAX_LEVEL);
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
         break;
@@ -1146,6 +1107,8 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         }
         break;
     case PSt_PlaceDoor:
+    {
+        long k;
         if ((pckt->control_flags & PCtr_MapCoordsValid) != 0)
         {
             player->field_4A4 = 1;
@@ -1168,6 +1131,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             }
         }
         break;
+    }
     case PSt_SpeedUp:
     case PSt_Armour:
     case PSt_Conceal:
@@ -1267,6 +1231,411 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             unset_packet_control(pckt, PCtr_LBtnRelease);
         }
         break;
+    case PSt_StealRoom:
+        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
+        {          
+            slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
+            if (slb->room_index)
+                {
+                    room = room_get(slb->room_index);
+                    i = get_selected_player_for_cheat(plyr_idx);
+                    if (is_key_pressed(KC_RALT, KMod_DONTCARE))
+                    {
+                        play_non_3d_sample(116);
+                        create_effects_on_room_slabs(room, imp_spangle_effects[i], 0, i);
+                    }
+                    {
+                        take_over_room(room, i);
+                    }
+                }
+            unset_packet_control(pckt, PCtr_LBtnRelease);
+        }
+        break;
+    case PSt_DestroyRoom:
+        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
+        {          
+            slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
+            if (slb->room_index)
+                {
+                    room = room_get(slb->room_index);
+                    destroy_room_leaving_unclaimed_ground(room);
+                }
+            unset_packet_control(pckt, PCtr_LBtnRelease);
+        }
+        break;
+    case PSt_KillCreatr:
+        thing = get_creature_near(x, y);
+        if (!thing_is_creature(thing))
+        {
+            player->thing_under_hand = 0;
+        }
+        else
+        {
+            player->thing_under_hand = thing->index;
+        }
+        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
+        {
+            if (player->thing_under_hand > 0)
+            {
+                kill_creature(thing, INVALID_THING, -1, CrDed_NoUnconscious);
+            }
+            unset_packet_control(pckt, PCtr_LBtnRelease);    
+        }
+        break;
+    case PSt_ConvertCreatr:
+        thing = get_creature_near(x, y);
+        if (!thing_is_creature(thing))
+        {
+            player->thing_under_hand = 0;
+        }
+        else
+        {
+            player->thing_under_hand = thing->index;
+        }
+        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
+        {
+            if (player->thing_under_hand > 0)
+            {
+                change_creature_owner(thing, get_selected_player_for_cheat(plyr_idx));
+            }
+            unset_packet_control(pckt, PCtr_LBtnRelease);    
+        }
+        break;
+    case PSt_StealSlab:
+        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
+        {          
+            slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
+            if (slb->kind >= SlbT_EARTH && slb->kind <= SlbT_CLAIMED)
+            {
+                short slbkind;
+                switch(slb->kind)
+                {
+                    case SlbT_PATH:
+                    {
+                        slbkind = SlbT_CLAIMED;
+                        break;
+                    }
+                    case SlbT_EARTH:
+                    {
+                        slbkind = rand() % (5) + 4;
+                        break;
+                    }
+                    case SlbT_TORCHDIRT:
+                    {
+                        slbkind = SlbT_WALLTORCH;
+                        break;
+                    }
+                    default:
+                    {
+                        slbkind = slb->kind;
+                        break;
+                    }
+                }
+                i = get_selected_player_for_cheat(plyr_idx);
+                if ((slbkind == SlbT_CLAIMED) || ((slbkind >= SlbT_WALLDRAPE) && (slbkind <= SlbT_WALLPAIRSHR)))
+                {
+                    if (is_key_pressed(KC_RALT, KMod_DONTCARE))
+                    {
+                        struct Coord3d pos;                    
+                        if (slbkind == SlbT_CLAIMED)
+                        {
+                            pos.x.val = subtile_coord_center(slab_subtile_center(subtile_slab(stl_x)));
+                            pos.y.val = subtile_coord_center(slab_subtile_center(subtile_slab(stl_y))); 
+                            pos.z.val = subtile_coord_center(1);
+                            play_non_3d_sample(76);
+                            create_effect(&pos, imp_spangle_effects[i], i);
+                        }
+                        else
+                        {
+                            play_non_3d_sample(41);
+                            for (long n = 0; n < SMALL_AROUND_LENGTH; n++)
+                            {
+                                pos.x.stl.pos = 128;
+                                pos.y.stl.pos = 128;
+                                pos.z.stl.pos = 128;
+                                pos.x.stl.num = stl_x + 2 * small_around[n].delta_x;
+                                pos.y.stl.num = stl_y + 2 * small_around[n].delta_y;
+                                struct Map* mapblk = get_map_block_at(pos.x.stl.num, pos.y.stl.num);
+                                if (map_block_revealed(mapblk, i) && ((mapblk->flags & SlbAtFlg_Blocking) == 0))
+                                {
+                                    pos.z.val = get_floor_height_at(&pos);
+                                    create_effect(&pos, imp_spangle_effects[i], i);
+                                    // thing = thing_get(player->hand_thing_idx);
+                                    // pos.z.val = get_thing_height_at(thing, &pos);   
+                                }
+                            }
+                        }
+                    }
+                }
+                place_slab_type_on_map(slbkind, slb_x, slb_y, i, 0);
+                do_slab_efficiency_alteration(subtile_slab(stl_x), subtile_slab(stl_y));
+            }
+            unset_packet_control(pckt, PCtr_LBtnRelease);
+        }
+        break;
+    case PSt_LevelCreatureUp:
+        thing = get_creature_near(x, y);
+        if (!thing_is_creature(thing))
+        {
+            player->thing_under_hand = 0;
+        }
+        else
+        {
+            player->thing_under_hand = thing->index;
+        }
+        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
+        {
+             if (player->thing_under_hand > 0)
+             {
+                creature_increase_level(thing);
+             }
+        unset_packet_control(pckt, PCtr_LBtnRelease);    
+        }
+        break;
+    case PSt_KillPlayer:
+          i = get_selected_player_for_cheat(-1);
+          struct PlayerInfo* PlayerToKill = get_player(i);
+          if (player_exists(PlayerToKill))
+          {
+              thing = get_player_soul_container(PlayerToKill->id_number);
+              if (thing_is_dungeon_heart(thing))
+              {
+                    thing->health = -1;
+              }
+          }
+        break;
+    case PSt_HeartHealth:
+        thing = get_player_soul_container(plyr_idx);
+        if (is_key_pressed(KC_ADD, KMod_ALT))
+        {
+            if (thing_is_dungeon_heart(thing))
+            {
+                thing->health++;
+            }
+        }
+        else if (is_key_pressed(KC_EQUALS, KMod_SHIFT))
+        {
+            if (thing_is_dungeon_heart(thing))
+            {
+                thing->health++;
+            }
+        }
+        else if (is_key_pressed(KC_PERIOD, KMod_SHIFT))
+        {
+            if (thing_is_dungeon_heart(thing))
+            {
+                thing->health = thing->health + 100;
+            }
+        }
+        else if (is_key_pressed(KC_COMMA, KMod_SHIFT))
+        {
+            if (thing_is_dungeon_heart(thing))
+            {
+                thing->health = thing->health - 100;
+            }
+        }
+        else if (is_key_pressed(KC_SUBTRACT, KMod_ALT))
+        {
+            if (thing_is_dungeon_heart(thing))
+            {
+                thing->health--;
+            }
+        }
+        else if (is_key_pressed(KC_MINUS, KMod_NONE))
+        {
+            if (thing_is_dungeon_heart(thing))
+            {
+                thing->health--;
+            }
+        }
+        else if (is_key_pressed(KC_SLASH, KMod_SHIFT))
+        {
+            if (thing_is_dungeon_heart(thing))
+            {
+                char hhealth[5];
+                itoa(thing->health, hhealth, 10);
+                message_add(plyr_idx, hhealth);
+                clear_key_pressed(KC_SLASH);
+            }
+        }
+        break;
+    case PSt_CreatrQueryAll:
+        influence_own_creatures = 1;
+        thing = get_creature_near(x, y);
+        if (thing_is_invalid(thing))
+        {
+            player->thing_under_hand = 0;
+        }
+        else
+        {
+            player->thing_under_hand = thing->index;
+        }
+        if ((pckt->control_flags & PCtr_LBtnRelease) != 0)
+        {
+            if (player->thing_under_hand > 0)
+            {
+                if (player->controlled_thing_idx != player->thing_under_hand)
+                {
+                    turn_off_all_panel_menus();
+                    initialise_tab_tags_and_menu(GMnu_CREATURE_QUERY1);
+                    turn_on_menu(GMnu_CREATURE_QUERY1);
+                    player->influenced_thing_idx = player->thing_under_hand;
+                    set_player_instance(player, PI_QueryCrtr, 0);
+                }
+            unset_packet_control(pckt, PCtr_LBtnRelease);
+            }
+        }
+        break;
+    case PSt_MkHappy:
+    case PSt_MkAngry:
+        influence_own_creatures = 1;
+        thing = get_creature_near(x, y);
+        if (!thing_is_creature(thing))
+        {
+            player->thing_under_hand = 0;
+        }
+        else
+        {
+            player->thing_under_hand = thing->index;
+        }
+        if ((pckt->control_flags & PCtr_LBtnRelease) != 0)
+        {
+            if (player->thing_under_hand > 0)
+            {
+                if (player->work_state == PSt_MkHappy)
+                {
+                    anger_set_creature_anger_all_types(thing, 0);
+                }
+                else if (player->work_state == PSt_MkAngry)
+                {
+                    anger_set_creature_anger_all_types(thing, 10000);
+                }
+                unset_packet_control(pckt, PCtr_LBtnRelease);
+            }
+        }
+        break;
+    case PSt_PlaceTerrain:
+        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && ((pckt->control_flags & PCtr_MapCoordsValid) != 0))
+        {          
+            slb = get_slabmap_block(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y));
+            short slbkind;
+            char s[3];
+            if (is_key_pressed(KC_SLASH, KMod_NONE))
+            {
+                 itoa(slb->kind, s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_SLASH);
+            }
+            else if (is_key_pressed(KC_SLASH, KMod_SHIFT))
+            {
+                 itoa(slabmap_owner(slb), s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_SLASH);
+            }
+            else if (is_key_pressed(KC_X, KMod_NONE))
+            {
+                 itoa(stl_x, s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_X);
+            }
+            else if (is_key_pressed(KC_Y, KMod_NONE))
+            {
+                 itoa(stl_y, s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_Y);
+            }
+            else if (is_key_pressed(KC_X, KMod_SHIFT))
+            {
+                 itoa(slb_x, s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_X);
+            }
+            else if (is_key_pressed(KC_Y, KMod_SHIFT))
+            {
+                 itoa(slb_y, s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_Y);
+            }
+            else if (is_key_pressed(KC_N, KMod_NONE))
+            {
+                 itoa(get_slab_number(subtile_slab(stl_x), subtile_slab(stl_y)), s, 10);
+                 message_add(plyr_idx, s);
+                 clear_key_pressed(KC_N);
+            }
+            else
+            {
+                if (is_key_pressed(KC_NUMPAD0, KMod_NONE))
+                {
+                    slbkind = SlbT_ROCK;
+                    clear_key_pressed(KC_NUMPAD0);
+                }
+                else if (is_key_pressed(KC_NUMPAD1, KMod_NONE))
+                {
+                    slbkind = SlbT_GOLD;
+                    clear_key_pressed(KC_NUMPAD1);
+                }
+                else if (is_key_pressed(KC_NUMPAD2, KMod_NONE))
+                {
+                    slbkind = SlbT_GEMS;
+                    clear_key_pressed(KC_NUMPAD2);
+                }
+                else if (is_key_pressed(KC_NUMPAD3, KMod_NONE))
+                {
+                    slbkind = SlbT_EARTH;
+                    clear_key_pressed(KC_NUMPAD3);
+                }
+                else if (is_key_pressed(KC_NUMPAD4, KMod_NONE))
+                {
+                    slbkind = SlbT_TORCHDIRT;
+                    clear_key_pressed(KC_NUMPAD4);
+                }
+                else if (is_key_pressed(KC_NUMPAD5, KMod_NONE))
+                {
+                    slbkind = SlbT_PATH;
+                    clear_key_pressed(KC_NUMPAD5);
+                }
+                else if (is_key_pressed(KC_NUMPAD6, KMod_NONE))
+                {
+                    slbkind = SlbT_CLAIMED;
+                    clear_key_pressed(KC_NUMPAD6);
+                }
+                else if (is_key_pressed(KC_NUMPAD7, KMod_NONE))
+                {
+                    slbkind = SlbT_LAVA;
+                    clear_key_pressed(KC_NUMPAD7);
+                }
+                else if (is_key_pressed(KC_NUMPAD8, KMod_NONE))
+                {
+                    slbkind = SlbT_WATER;
+                    clear_key_pressed(KC_NUMPAD8);
+                }
+                else if (is_key_pressed(KC_NUMPAD9, KMod_NONE))
+                {
+                    slbkind = rand() % (5) + 4;
+                    clear_key_pressed(KC_NUMPAD9);
+                }
+                else
+                {
+                    slbkind = 0;
+                }
+                if (subtile_is_room(stl_x, stl_y)) 
+                {
+                    room = subtile_room_get(stl_x, stl_y);
+                    delete_room_slab(subtile_slab_fast(stl_x), subtile_slab_fast(stl_y), true);
+                }
+                if (slab_kind_is_animated(slbkind))
+                {
+                    place_animating_slab_type_on_map(slbkind, 0, slb_x, slb_y, game.neutral_player_num);  
+                }
+                else
+                {
+                    place_slab_type_on_map(slbkind, slb_x, slb_y, game.neutral_player_num, 0);
+                }
+                do_slab_efficiency_alteration(subtile_slab(stl_x), subtile_slab(stl_y));
+            }
+        }
+        unset_packet_control(pckt, PCtr_LBtnRelease);
+        break;
     default:
         ERRORLOG("Unrecognized player %d work state: %d", (int)plyr_idx, (int)player->work_state);
         ret = false;
@@ -1303,13 +1672,10 @@ TbBigChecksum get_thing_simple_checksum(const struct Thing *tng)
 
   TbBigChecksum get_packet_save_checksum(void)
   {
-      TbBigChecksum sum;
-      struct Thing *tng;
-      long tng_idx;
-      sum = 0;
-      for (tng_idx=0; tng_idx < THINGS_COUNT; tng_idx++)
+      TbBigChecksum sum = 0;
+      for (long tng_idx = 0; tng_idx < THINGS_COUNT; tng_idx++)
       {
-          tng = thing_get(tng_idx);
+          struct Thing* tng = thing_get(tng_idx);
           if ((tng->alloc_flags & TAlF_Exists) != 0)
           {
               // It would be nice to completely ignore effects, but since
@@ -1334,9 +1700,6 @@ TbBool reinit_packets_after_load(void)
 
 TbBool open_new_packet_file_for_save(void)
 {
-    struct PlayerInfo *player;
-    struct CatalogueEntry centry;
-    int i;
     // Filling the header
     SYNCMSG("Starting packet saving, turn %lu",(unsigned long)game.play_gameturn);
     game.packet_save_head.game_ver_major = VER_MAJOR;
@@ -1347,9 +1710,9 @@ TbBool open_new_packet_file_for_save(void)
     game.packet_save_head.players_exist = 0;
     game.packet_save_head.players_comp = 0;
     game.packet_save_head.chksum_available = game.packet_checksum_verify;
-    for (i=0; i<PLAYERS_COUNT; i++)
+    for (int i = 0; i < PLAYERS_COUNT; i++)
     {
-        player = get_player(i);
+        struct PlayerInfo* player = get_player(i);
         if (player_exists(player))
         {
             game.packet_save_head.players_exist |= (1 << i) & 0xff;
@@ -1365,7 +1728,8 @@ TbBool open_new_packet_file_for_save(void)
         game.packet_fopened = 0;
         return false;
     }
-    fill_game_catalogue_entry(&centry,"Packet file");
+    struct CatalogueEntry centry;
+    fill_game_catalogue_entry(&centry, "Packet file");
     if (!save_packet_chunks(game.packet_save_fp,&centry))
     {
         WARNMSG("Cannot write to packet file, \"%s\".",game.packet_fname);
@@ -1380,15 +1744,11 @@ TbBool open_new_packet_file_for_save(void)
 
 void load_packets_for_turn(GameTurn nturn)
 {
-    struct Packet *pckt;
-    TbChecksum pckt_chksum;
-    TbBigChecksum tot_chksum;
-    long i;
     SYNCDBG(19,"Starting");
     const int turn_data_size = PACKET_TURN_SIZE;
     unsigned char pckt_buf[PACKET_TURN_SIZE+4];
-    pckt = get_packet(my_player_number);
-    pckt_chksum = pckt->chksum;
+    struct Packet* pckt = get_packet(my_player_number);
+    TbChecksum pckt_chksum = pckt->chksum;
     if (nturn >= game.turns_stored)
     {
         ERRORDBG(18,"Out of turns to load from Packet File");
@@ -1403,9 +1763,9 @@ void load_packets_for_turn(GameTurn nturn)
         return;
     }
     game.packet_file_pos += turn_data_size;
-    for (i=0; i < NET_PLAYERS_COUNT; i++)
-      LbMemoryCopy(&game.packets[i], &pckt_buf[i*sizeof(struct Packet)], sizeof(struct Packet));
-    tot_chksum = llong(&pckt_buf[NET_PLAYERS_COUNT*sizeof(struct Packet)]);
+    for (long i = 0; i < NET_PLAYERS_COUNT; i++)
+        LbMemoryCopy(&game.packets[i], &pckt_buf[i * sizeof(struct Packet)], sizeof(struct Packet));
+    TbBigChecksum tot_chksum = llong(&pckt_buf[NET_PLAYERS_COUNT * sizeof(struct Packet)]);
     if (game.turns_fastforward > 0)
         game.turns_fastforward--;
     if (game.packet_checksum_verify)
@@ -1429,10 +1789,8 @@ void load_packets_for_turn(GameTurn nturn)
 void process_pause_packet(long curr_pause, long new_pause)
 {
   struct PlayerInfo *player;
-  TbBool can;
-  long i;
-  can = true;
-  for (i=0; i < PLAYERS_COUNT; i++)
+  TbBool can = true;
+  for (long i = 0; i < PLAYERS_COUNT; i++)
   {
     player = get_player(i);
     if (player_exists(player) && (player->field_2C == 1))
@@ -1488,14 +1846,10 @@ void process_pause_packet(long curr_pause, long new_pause)
 
 void process_players_dungeon_control_packet_control(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Packet *pckt;
-    struct Camera *cam;
-    unsigned long zoom_min,zoom_max;
-    player = get_player(plyr_idx);
-    pckt = get_packet_direct(player->packet_num);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     SYNCDBG(6,"Processing player %d action %d",(int)plyr_idx,(int)pckt->action);
-    cam = player->acamera;
+    struct Camera* cam = player->acamera;
     long inter_val;
     switch (cam->view_mode)
     {
@@ -1544,8 +1898,8 @@ void process_players_dungeon_control_packet_control(long plyr_idx)
             break;
         }
     }
-    zoom_min = CAMERA_ZOOM_MIN;
-    zoom_max = CAMERA_ZOOM_MAX;
+    unsigned long zoom_min = adjust_min_camera_zoom(cam, game.operation_flags & GOF_ShowGui); // = CAMERA_ZOOM_MIN (+300 if gui is hidden in Isometric view)
+    unsigned long zoom_max = CAMERA_ZOOM_MAX;
     if (pckt->control_flags & PCtr_ViewZoomIn)
     {
         switch (cam->view_mode)
@@ -1588,10 +1942,8 @@ void process_players_dungeon_control_packet_control(long plyr_idx)
  */
 TbBool message_text_key_add(char * message, long maxlen, TbKeyCode key, TbKeyMods kmodif)
 {
-    char chr;
-    int chpos;
-    chr = key_to_ascii(key, kmodif);
-    chpos = strlen(message);
+    char chr = key_to_ascii(key, kmodif);
+    int chpos = strlen(message);
     if (key == KC_BACK)
     {
       if (chpos>0) {
@@ -1617,40 +1969,35 @@ TbBool message_text_key_add(char * message, long maxlen, TbKeyCode key, TbKeyMod
 
 void process_players_message_character(struct PlayerInfo *player)
 {
-  struct Packet *pcktd;
-  pcktd = get_packet(player->id_number);
-  if (pcktd->actn_par1 > 0)
-  {
-      message_text_key_add(player->mp_message_text, PLAYER_MP_MESSAGE_LEN, pcktd->actn_par1, pcktd->actn_par2);
-  }
+    struct Packet* pcktd = get_packet(player->id_number);
+    if (pcktd->actn_par1 > 0)
+    {
+        message_text_key_add(player->mp_message_text, PLAYER_MP_MESSAGE_LEN, pcktd->actn_par1, pcktd->actn_par2);
+    }
 }
 
 void process_quit_packet(struct PlayerInfo *player, short complete_quit)
 {
     struct PlayerInfo *swplyr;
-    struct PlayerInfo *myplyr;
-    short winning_quit;
+    struct PlayerInfo* myplyr = get_my_player();
     long plyr_count;
-    int i;
-
     plyr_count = 0;
-    myplyr = get_my_player();
     if ((game.system_flags & GSF_NetworkActive) != 0)
     {
-      winning_quit = winning_player_quitting(player, &plyr_count);
-      if (winning_quit)
-      {
-        // Set other players as losers
-        for (i=0; i < PLAYERS_COUNT; i++)
+        short winning_quit = winning_player_quitting(player, &plyr_count);
+        if (winning_quit)
         {
-          swplyr = get_player(i);
-          if (player_exists(swplyr))
-          {
-            if (swplyr->field_2C == 1)
-              if (swplyr->victory_state == VicS_Undecided)
-                swplyr->victory_state = VicS_WonLevel;
-          }
-        }
+            // Set other players as losers
+            for (int i = 0; i < PLAYERS_COUNT; i++)
+            {
+                swplyr = get_player(i);
+                if (player_exists(swplyr))
+                {
+                    if (swplyr->field_2C == 1)
+                        if (swplyr->victory_state == VicS_Undecided)
+                            swplyr->victory_state = VicS_WonLevel;
+                }
+            }
       }
 
       if ((player == myplyr) || (frontend_should_all_players_quit()))
@@ -1689,7 +2036,7 @@ void process_quit_packet(struct PlayerInfo *player, short complete_quit)
         exit_keeper = 1;
       if (frontend_should_all_players_quit())
       {
-        for (i=0; i < PLAYERS_COUNT; i++)
+        for (int i=0; i < PLAYERS_COUNT; i++)
         {
           swplyr = get_player(i);
           if (player_exists(swplyr))
@@ -1716,16 +2063,12 @@ void process_quit_packet(struct PlayerInfo *player, short complete_quit)
 TbBool process_players_global_packet_action(PlayerNumber plyr_idx)
 {
   //TODO PACKET add commands from beta
-  struct PlayerInfo *player;
-  struct PlayerInfo *myplyr;
-  struct Packet *pckt;
+  struct PlayerInfo* player = get_player(plyr_idx);
+  struct Packet* pckt = get_packet_direct(player->packet_num);
+  SYNCDBG(6,"Processing player %d action %d",(int)plyr_idx,(int)pckt->action);
   struct Dungeon *dungeon;
   struct Thing *thing;
-  struct Room *room;
   int i;
-  player = get_player(plyr_idx);
-  pckt = get_packet_direct(player->packet_num);
-  SYNCDBG(6,"Processing player %d action %d",(int)plyr_idx,(int)pckt->action);
   switch (pckt->action)
   {
   case PckA_Unknown001:
@@ -1862,9 +2205,11 @@ TbBool process_players_global_packet_action(PlayerNumber plyr_idx)
       //TODO: remake from beta
       return 0;
   case PckA_CheatRevealMap:
-      myplyr = get_my_player();
+  {
+      struct PlayerInfo* myplyr = get_my_player();
       reveal_whole_map(myplyr);
       return 0;
+  }
   case PckA_CheatCrAllSpls:
       //TODO: remake from beta
       return 0;
@@ -1915,9 +2260,10 @@ TbBool process_players_global_packet_action(PlayerNumber plyr_idx)
       event_move_player_towards_event(player, pckt->actn_par1);
       return 0;
   case PckA_ZoomToRoom:
+  {
       if (player->work_state == PSt_CreatrInfo)
-        turn_off_query(plyr_idx);
-      room = room_get(pckt->actn_par1);
+          turn_off_query(plyr_idx);
+      struct Room* room = room_get(pckt->actn_par1);
       player->zoom_to_pos_x = subtile_coord_center(room->central_stl_x);
       player->zoom_to_pos_y = subtile_coord_center(room->central_stl_y);
       set_player_instance(player, PI_ZoomToPos, 0);
@@ -1925,6 +2271,7 @@ TbBool process_players_global_packet_action(PlayerNumber plyr_idx)
           set_player_state(player, PSt_BuildRoom, room->kind);
       }
       return 0;
+  }
   case PckA_ZoomToTrap:
       if (player->work_state == PSt_CreatrInfo)
         turn_off_query(plyr_idx);
@@ -1947,7 +2294,7 @@ TbBool process_players_global_packet_action(PlayerNumber plyr_idx)
           set_player_state(player, PSt_PlaceDoor, thing->model);
       }
       return 0;
-  case PckA_Unknown087:
+  case PckA_ZoomToPosition:
       if (player->work_state == PSt_CreatrInfo)
         turn_off_query(plyr_idx);
       player->zoom_to_pos_x = pckt->actn_par1;
@@ -2063,11 +2410,9 @@ TbBool process_players_global_packet_action(PlayerNumber plyr_idx)
 
 void process_players_map_packet_control(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Packet *pckt;
     SYNCDBG(6,"Starting");
-    player = get_player(plyr_idx);
-    pckt = get_packet_direct(player->packet_num);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     // Get map coordinates
     process_map_packet_clicks(plyr_idx);
     player->cameras[CamIV_Parchment].mappos.x.val = pckt->pos_x;
@@ -2079,9 +2424,8 @@ void process_players_map_packet_control(long plyr_idx)
 void process_map_packet_clicks(long plyr_idx)
 {
     SYNCDBG(7,"Starting");
-    struct Packet *pckt;
     packet_left_button_double_clicked[plyr_idx] = 0;
-    pckt = get_packet(plyr_idx);
+    struct Packet* pckt = get_packet(plyr_idx);
     if ((pckt->control_flags & PCtr_Unknown4000) == 0)
     {
         update_double_click_detection(plyr_idx);
@@ -2095,16 +2439,14 @@ void process_map_packet_clicks(long plyr_idx)
  */
 void process_players_packet(long plyr_idx)
 {
-  struct PlayerInfo *player;
-  struct Packet *pckt;
-  player = get_player(plyr_idx);
-  pckt = get_packet_direct(player->packet_num);
-  SYNCDBG(6,"Processing player %d packet of type %d.",plyr_idx,(int)pckt->action);
-  player->input_crtr_control = ((pckt->field_10 & PCAdV_CrtrContrlPressed) != 0);
-  player->input_crtr_query = ((pckt->field_10 & PCAdV_CrtrQueryPressed) != 0);
-  if (((player->allocflags & PlaF_NewMPMessage) != 0) && (pckt->action == PckA_PlyrMsgChar))
-  {
-     process_players_message_character(player);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
+    SYNCDBG(6, "Processing player %d packet of type %d.", plyr_idx, (int)pckt->action);
+    player->input_crtr_control = ((pckt->field_10 & PCAdV_CrtrContrlPressed) != 0);
+    player->input_crtr_query = ((pckt->field_10 & PCAdV_CrtrQueryPressed) != 0);
+    if (((player->allocflags & PlaF_NewMPMessage) != 0) && (pckt->action == PckA_PlyrMsgChar))
+    {
+        process_players_message_character(player);
   } else
   if (!process_players_global_packet_action(plyr_idx))
   {
@@ -2138,10 +2480,8 @@ void process_players_packet(long plyr_idx)
 
 void process_players_creature_passenger_packet_action(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Packet *pckt;
-    player = get_player(plyr_idx);
-    pckt = get_packet_direct(player->packet_num);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     SYNCDBG(6,"Processing player %d action %d",(int)plyr_idx,(int)pckt->action);
     if (pckt->action == PckA_PasngrCtrlExit)
     {
@@ -2153,10 +2493,8 @@ void process_players_creature_passenger_packet_action(long plyr_idx)
 
 TbBool process_players_dungeon_control_packet_action(long plyr_idx)
 {
-    struct PlayerInfo *player;
-    struct Packet *pckt;
-    player = get_player(plyr_idx);
-    pckt = get_packet_direct(player->packet_num);
+    struct PlayerInfo* player = get_player(plyr_idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
     SYNCDBG(6,"Processing player %d action %d",(int)plyr_idx,(int)pckt->action);
     switch (pckt->action)
     {
@@ -2184,28 +2522,22 @@ TbBool process_players_dungeon_control_packet_action(long plyr_idx)
 
 void process_players_creature_control_packet_control(long idx)
 {
-    struct PlayerInfo *player;
-    struct Packet *pckt;
-    struct Thing *cctng;
-    struct CreatureControl *ccctrl;
     struct InstanceInfo *inst_inf;
-    struct CreatureStats *crstat;
-    long speed_limit;
-    long angle_limit,angle;
-    long i,k,n;
+    long i;
+    long n;
 
     SYNCDBG(6,"Starting");
-    player = get_player(idx);
-    pckt = get_packet_direct(player->packet_num);
-    cctng = thing_get(player->controlled_thing_idx);
+    struct PlayerInfo* player = get_player(idx);
+    struct Packet* pckt = get_packet_direct(player->packet_num);
+    struct Thing* cctng = thing_get(player->controlled_thing_idx);
     if (cctng->class_id != TCls_Creature)
         return;
-    ccctrl = creature_control_get_from_thing(cctng);
+    struct CreatureControl* ccctrl = creature_control_get_from_thing(cctng);
     if (creature_is_dying(cctng))
         return;
     if ((ccctrl->stateblock_flags != 0) || (cctng->active_state == CrSt_CreatureUnconscious))
         return;
-    speed_limit = get_creature_speed(cctng);
+    long speed_limit = get_creature_speed(cctng);
     if ((pckt->control_flags & PCtr_MoveUp) != 0)
     {
         if (!creature_control_invalid(ccctrl))
@@ -2287,15 +2619,15 @@ void process_players_creature_control_packet_control(long idx)
             }
         }
     }
-    crstat = creature_stats_get_from_thing(cctng);
+    struct CreatureStats* crstat = creature_stats_get_from_thing(cctng);
     i = pckt->pos_y;
     if (i < 5)
       i = 5;
     else
     if (i > 250)
       i = 250;
-    k = i - 127;
-    angle = (pckt->pos_x - 127) / player->field_14;
+    long k = i - 127;
+    long angle = (pckt->pos_x - 127) / player->field_14;
     if (angle != 0)
     {
       if (angle < -32)
@@ -2305,7 +2637,7 @@ void process_players_creature_control_packet_control(long idx)
           angle = 32;
       ccctrl->field_6C += 56 * angle / 32;
     }
-    angle_limit = crstat->max_angle_change;
+    long angle_limit = crstat->max_angle_change;
     if (angle_limit < 1)
         angle_limit = 1;
     angle = ccctrl->field_6C;
@@ -2327,7 +2659,8 @@ void process_players_creature_control_packet_action(long plyr_idx)
   struct PlayerInfo *player;
   struct Thing *thing;
   struct Packet *pckt;
-  long i,k;
+  long i;
+  long k;
   player = get_player(plyr_idx);
   pckt = get_packet_direct(player->packet_num);
   SYNCDBG(6,"Processing player %d action %d",(int)plyr_idx,(int)pckt->action);
@@ -2369,7 +2702,6 @@ void process_players_creature_control_packet_action(long plyr_idx)
 
 TbBool open_packet_file_for_load(char *fname, struct CatalogueEntry *centry)
 {
-    int i;
     LbMemorySet(centry, 0, sizeof(struct CatalogueEntry));
     strcpy(game.packet_fname, fname);
     game.packet_save_fp = LbFileOpen(game.packet_fname, Lb_FILE_MODE_READ_ONLY);
@@ -2379,7 +2711,7 @@ TbBool open_packet_file_for_load(char *fname, struct CatalogueEntry *centry)
         game.packet_fopened = 0;
         return false;
     }
-    i = load_game_chunks(game.packet_save_fp,centry);
+    int i = load_game_chunks(game.packet_save_fp, centry);
     if ((i != GLoad_PacketStart) && (i != GLoad_PacketContinue))
     {
         LbFileClose(game.packet_save_fp);
@@ -2406,11 +2738,11 @@ TbBool open_packet_file_for_load(char *fname, struct CatalogueEntry *centry)
 
 void post_init_packets(void)
 {
-    struct CatalogueEntry centry;
     SYNCDBG(6,"Starting");
     if ((game.packet_load_enable) && (game.numfield_149F47))
     {
-        open_packet_file_for_load(game.packet_fname,&centry);
+        struct CatalogueEntry centry;
+        open_packet_file_for_load(game.packet_fname, &centry);
         game.pckt_gameturn = 0;
     }
     clear_packets();
@@ -2421,7 +2753,6 @@ short save_packets(void)
     const int turn_data_size = PACKET_TURN_SIZE;
     unsigned char pckt_buf[PACKET_TURN_SIZE+4];
     TbBigChecksum chksum;
-    int i;
     SYNCDBG(6,"Starting");
     if (game.packet_checksum_verify)
       chksum = get_packet_save_checksum();
@@ -2429,7 +2760,7 @@ short save_packets(void)
       chksum = 0;
     LbFileSeek(game.packet_save_fp, 0, Lb_FILE_SEEK_END);
     // Prepare data in the buffer
-    for (i=0; i<NET_PLAYERS_COUNT; i++)
+    for (int i = 0; i < NET_PLAYERS_COUNT; i++)
         LbMemoryCopy(&pckt_buf[i*sizeof(struct Packet)], &game.packets[i], sizeof(struct Packet));
     LbMemoryCopy(&pckt_buf[NET_PLAYERS_COUNT*sizeof(struct Packet)], &chksum, sizeof(TbBigChecksum));
     // Write buffer into file
@@ -2457,8 +2788,7 @@ void close_packet_file(void)
 
 void dump_memory_to_file(const char * fname, const char * buf, size_t len)
 {
-    FILE *file;
-    file = fopen(fname, "w");
+    FILE* file = fopen(fname, "w");
     fwrite(buf, 1, len, file);
     fflush(file);
     fclose(file);
@@ -2485,48 +2815,47 @@ void write_debug_screenpackets(void)
  */
 void process_packets(void)
 {
-  int i,j,k;
-  struct Packet *pckt;
-  struct PlayerInfo *player;
-  SYNCDBG(5,"Starting");
-  // Do the network data exchange
-  lbDisplay.DrawColour = colours[15][15][15];
-  // Exchange packets with the network
-  if (game.game_kind != GKind_LocalGame)
-  {
-    player = get_my_player();
-    j=0;
-    for (i=0; i<4; i++)
+    int i;
+    struct PlayerInfo* player;
+    SYNCDBG(5, "Starting");
+    // Do the network data exchange
+    lbDisplay.DrawColour = colours[15][15][15];
+    // Exchange packets with the network
+    if (game.game_kind != GKind_LocalGame)
     {
-      if (network_player_active(i))
-        j++;
-    }
-    if ( !game.packet_load_enable || game.numfield_149F47 )
-    {
-      pckt = get_packet_direct(player->packet_num);
-      if (LbNetwork_Exchange(pckt) != 0)
-      {
-        ERRORLOG("LbNetwork_Exchange failed");
-      }
-    }
-    k=0;
-    for (i=0; i<4; i++)
-    {
-      if (network_player_active(i))
-        k++;
-    }
-    if (j != k)
-    {
-      for (i=0; i<4; i++)
-      {
-        player = get_player(i);
-        if (network_player_active(player->packet_num))
+        player = get_my_player();
+        int j = 0;
+        for (i = 0; i < 4; i++)
         {
-          player->allocflags |= PlaF_CompCtrl;
-          toggle_computer_player(i);
+            if (network_player_active(i))
+                j++;
         }
-      }
-    }
+        if (!game.packet_load_enable || game.numfield_149F47)
+        {
+            struct Packet* pckt = get_packet_direct(player->packet_num);
+            if (LbNetwork_Exchange(pckt) != 0)
+            {
+                ERRORLOG("LbNetwork_Exchange failed");
+            }
+        }
+        int k = 0;
+        for (i = 0; i < 4; i++)
+        {
+            if (network_player_active(i))
+                k++;
+        }
+        if (j != k)
+        {
+            for (i = 0; i < 4; i++)
+            {
+                player = get_player(i);
+                if (!network_player_active(player->packet_num))
+                {
+                    player->allocflags |= PlaF_CompCtrl;
+                    toggle_computer_player(i);
+                }
+            }
+        }
   }
   // Setting checksum problem flags
   switch (checksums_different())
@@ -2575,15 +2904,12 @@ void process_packets(void)
 
 void process_frontend_packets(void)
 {
-  struct ScreenPacket *nspckt;
-  struct PlayerInfo *player;
-  long i,k;
-  unsigned short c;
+  long i;
   for (i=0; i < NET_PLAYERS_COUNT; i++)
   {
     net_screen_packet[i].field_4 &= ~0x01;
   }
-  nspckt = &net_screen_packet[my_player_number];
+  struct ScreenPacket* nspckt = &net_screen_packet[my_player_number];
   set_flag_byte(&nspckt->field_4, 0x01, true);
   nspckt->field_5 = frontend_alliances;
   set_flag_byte(&nspckt->field_4, 0x01, true);
@@ -2633,66 +2959,71 @@ void process_frontend_packets(void)
   for (i=0; i < NET_PLAYERS_COUNT; i++)
   {
     nspckt = &net_screen_packet[i];
-    player = get_player(i);
+    struct PlayerInfo* player = get_player(i);
     if ((nspckt->field_4 & 0x01) != 0)
     {
-      switch (nspckt->field_4 >> 3)
-      {
-      case 2:
-        add_message(i, (char *)&nspckt->param1);
-        break;
-      case 3:
-        if (!validate_versions())
+        long k;
+        switch (nspckt->field_4 >> 3)
         {
-          versions_different_error();
-          break;
+        case 2:
+            add_message(i, (char*)&nspckt->param1);
+            break;
+        case 3:
+            if (!validate_versions())
+            {
+                versions_different_error();
+                break;
+            }
+            fe_network_active = 1;
+            frontend_set_state(FeSt_NETLAND_VIEW);
+            break;
+        case 4:
+            frontend_set_alliance(nspckt->param1, nspckt->param2);
+            break;
+        case 7:
+            fe_computer_players = nspckt->param1;
+            break;
+        case 8:
+        {
+            k = strlen(player->mp_message_text);
+            unsigned short c;
+            if (nspckt->param1 == KC_BACK)
+            {
+                if (k > 0)
+                {
+                    k--;
+                    player->mp_message_text[k] = '\0';
+                }
+            }
+            else if (nspckt->param1 == KC_RETURN)
+            {
+                if (k > 0)
+                {
+                    add_message(i, player->mp_message_text);
+                    k = 0;
+                    player->mp_message_text[k] = '\0';
+                }
+            }
+            else
+            {
+                c = key_to_ascii(nspckt->param1, nspckt->param2);
+                if ((c != 0) && (frontend_font_char_width(1, c) > 1) && (k < 62))
+                {
+                    player->mp_message_text[k] = c;
+                    k++;
+                    player->mp_message_text[k] = '\0';
+                }
+            }
+            if (frontend_font_string_width(1, player->mp_message_text) >= 420)
+            {
+                if (k > 0)
+                {
+                    k--;
+                    player->mp_message_text[k] = '\0';
+                }
+            }
+            break;
         }
-        fe_network_active = 1;
-        frontend_set_state(FeSt_NETLAND_VIEW);
-        break;
-      case 4:
-        frontend_set_alliance(nspckt->param1, nspckt->param2);
-        break;
-      case 7:
-        fe_computer_players = nspckt->param1;
-        break;
-      case 8:
-        k = strlen(player->mp_message_text);
-        if (nspckt->param1 == KC_BACK)
-        {
-          if (k > 0)
-          {
-            k--;
-            player->mp_message_text[k] = '\0';
-          }
-        } else
-        if (nspckt->param1 == KC_RETURN)
-        {
-          if (k > 0)
-          {
-            add_message(i, player->mp_message_text);
-            k = 0;
-            player->mp_message_text[k] = '\0';
-          }
-        } else
-        {
-          c = key_to_ascii(nspckt->param1, nspckt->param2);
-          if ((c != 0) && (frontend_font_char_width(1,c) > 1) && (k < 62))
-          {
-            player->mp_message_text[k] = c;
-            k++;
-            player->mp_message_text[k] = '\0';
-          }
-        }
-        if (frontend_font_string_width(1,player->mp_message_text) >= 420)
-        {
-          if (k > 0)
-          {
-            k--;
-            player->mp_message_text[k] = '\0';
-          }
-        }
-        break;
       default:
         break;
       }

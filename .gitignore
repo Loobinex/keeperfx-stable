@@ -11,3 +11,6 @@
 /tools/po2ngdat
 /tools/rnctools
 /tools/sndbanker
+.vs/
+build*/
+*.cache

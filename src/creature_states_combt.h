@@ -43,6 +43,8 @@ struct CombatWeapon {
     long range_max;
 };
 
+extern struct CombatWeapon offensive_weapon[];
+
 #pragma pack()
 /******************************************************************************/
 extern const CombatState combat_state[];

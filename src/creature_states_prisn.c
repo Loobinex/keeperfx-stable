@@ -21,6 +21,7 @@
 
 #include "bflib_math.h"
 #include "creature_states.h"
+#include "creature_states_spdig.h"
 #include "thing_list.h"
 #include "creature_control.h"
 #include "creature_instances.h"
@@ -51,17 +52,14 @@ DLLIMPORT long _DK_process_prison_food(struct Thing *creatng, struct Room *room)
 /******************************************************************************/
 TbBool jailbreak_possible(struct Room *room, long plyr_idx)
 {
-    unsigned long i;
-    unsigned long k;
-    struct SlabMap *slb;
     if (room->owner == plyr_idx) {
         return false;
     }
-    k = 0;
-    i = room->slabs_list;
+    unsigned long k = 0;
+    unsigned long i = room->slabs_list;
     while (i > 0)
     {
-        slb = get_slabmap_direct(i);
+        struct SlabMap* slb = get_slabmap_direct(i);
         if (slabmap_block_invalid(slb))
         {
             ERRORLOG("Jump to invalid room slab detected");
@@ -87,12 +85,10 @@ short cleanup_prison(struct Thing *thing)
 
 short creature_arrived_at_prison(struct Thing *creatng)
 {
-    struct CreatureControl *cctrl;
-    struct Room *room;
     TRACE_THING(creatng);
-    cctrl = creature_control_get_from_thing(creatng);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
     cctrl->target_room_id = 0;
-    room = get_room_thing_is_on(creatng);
+    struct Room* room = get_room_thing_is_on(creatng);
     if (!room_initially_valid_as_type_for_thing(room, get_room_for_job(Job_CAPTIVITY), creatng))
     {
         WARNLOG("Room %s owned by player %d is invalid for %s index %d",room_code_name(room->kind),(int)room->owner,thing_model_name(creatng),(int)creatng->index);
@@ -106,7 +102,7 @@ short creature_arrived_at_prison(struct Thing *creatng)
         set_start_state(creatng);
         return 0;
     }
-    cctrl->field_82 = game.play_gameturn;
+    cctrl->turns_at_job = game.play_gameturn;
     cctrl->imprison.start_gameturn = game.play_gameturn;
     cctrl->imprison.last_mood_sound_turn = game.play_gameturn;
     cctrl->flgfield_1 |= CCFlg_NoCompControl;
@@ -127,10 +123,8 @@ short creature_arrived_at_prison(struct Thing *creatng)
 
 short creature_drop_body_in_prison(struct Thing *thing)
 {
-    struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(thing);
-    struct Thing *dragtng;
-    dragtng = thing_get(cctrl->dragtng_idx);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
+    struct Thing* dragtng = thing_get(cctrl->dragtng_idx);
     if (!thing_exists(dragtng) || !creature_is_being_unconscious(dragtng)) {
         set_start_state(thing);
         return 0;
@@ -139,16 +133,18 @@ short creature_drop_body_in_prison(struct Thing *thing)
         set_start_state(thing);
         return 0;
     }
-    struct Room *room;
-    room = get_room_thing_is_on(thing);
-    if ((room->owner != thing->owner) || !room_role_matches(room->kind, RoRoF_Prison)) {
+    struct Room* room = get_room_thing_is_on(thing);
+    if ((room->owner != thing->owner) || !room_role_matches(room->kind, RoRoF_Prison) || (room->used_capacity >= room->total_capacity)) {
+        if (creature_drop_thing_to_another_room(thing, room, RoK_PRISON)) {
+            thing->continue_state = CrSt_CreatureDropBodyInPrison;
+            return 1;
+        }
         set_start_state(thing);
         return 0;
     }
     make_creature_conscious(dragtng);
     initialise_thing_state(dragtng, CrSt_CreatureArrivedAtPrison);
-    struct CreatureControl *dragctrl;
-    dragctrl = creature_control_get_from_thing(dragtng);
+    struct CreatureControl* dragctrl = creature_control_get_from_thing(dragtng);
     dragctrl->flgfield_1 |= CCFlg_NoCompControl;
     set_start_state(thing);
     return 1;
@@ -157,13 +153,9 @@ short creature_drop_body_in_prison(struct Thing *thing)
 
 struct Thing *find_prisoner_for_thing(struct Thing *creatng)
 {
-    struct CreatureControl *cctrl;
-    struct Thing *thing;
-    unsigned long k;
     long i;
     TRACE_THING(creatng);
-    struct Room *room;
-    room = INVALID_ROOM;
+    struct Room* room = INVALID_ROOM;
     if (!is_neutral_thing(creatng)) {
         room = find_nearest_room_for_thing_with_used_capacity(creatng, creatng->owner, RoK_PRISON, NavRtF_Default, 1);
     }
@@ -172,16 +164,14 @@ struct Thing *find_prisoner_for_thing(struct Thing *creatng)
     } else {
         i = 0;
     }
-    struct Thing *out_creatng;
-    long out_delay;
-    out_creatng = INVALID_THING;
-    out_delay = LONG_MAX;
-    k = 0;
+    struct Thing* out_creatng = INVALID_THING;
+    long out_delay = LONG_MAX;
+    unsigned long k = 0;
     while (i != 0)
     {
-        thing = thing_get(i);
+        struct Thing* thing = thing_get(i);
         TRACE_THING(thing);
-        cctrl = creature_control_get_from_thing(thing);
+        struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
         if (!creature_control_exists(cctrl))
         {
             ERRORLOG("Jump to invalid creature %ld detected",i);
@@ -189,8 +179,7 @@ struct Thing *find_prisoner_for_thing(struct Thing *creatng)
         }
         i = cctrl->next_in_room;
         // Per creature code
-        long dist, durt;
-        dist = get_2d_box_distance(&creatng->mappos, &thing->mappos);
+        long dist = get_2d_box_distance(&creatng->mappos, &thing->mappos);
         if (out_delay < 0)
         {
             // If we have a victim which isn't frozen, accept only other unfrozen creatures
@@ -202,7 +191,7 @@ struct Thing *find_prisoner_for_thing(struct Thing *creatng)
         if (creature_affected_by_spell(thing, SplK_Freeze))
         {
             // If the victim is frozen, select one which will unfreeze sooner
-            durt = get_spell_duration_left_on_thing(thing, SplK_Freeze);
+            long durt = get_spell_duration_left_on_thing(thing, SplK_Freeze);
             if ((durt > 0) && (out_delay > durt)) {
                 out_creatng = thing;
                 out_delay = durt;
@@ -226,8 +215,7 @@ struct Thing *find_prisoner_for_thing(struct Thing *creatng)
 
 short creature_freeze_prisonors(struct Thing *creatng)
 {
-    struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(creatng);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
     if (cctrl->instance_id != CrInst_NULL) {
         return 1;
     }
@@ -238,14 +226,12 @@ short creature_freeze_prisonors(struct Thing *creatng)
         }
         return 1;
     }
-    struct Thing *victng;
-    victng = find_prisoner_for_thing(creatng);
+    struct Thing* victng = find_prisoner_for_thing(creatng);
     if (thing_is_invalid(victng)) {
         set_start_state(creatng);
         return 0;
     }
-    long dist;
-    dist = get_combat_distance(creatng, victng);
+    long dist = get_combat_distance(creatng, victng);
     if (dist < 156) {
         creature_retreat_from_combat(creatng, victng, CrSt_CreatureFreezePrisoners, 0);
     } else
@@ -262,14 +248,13 @@ short creature_freeze_prisonors(struct Thing *creatng)
 
 CrStateRet process_prison_visuals(struct Thing *creatng, struct Room *room)
 {
-    struct CreatureControl *cctrl;
-    cctrl = creature_control_get_from_thing(creatng);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
     if (cctrl->instance_id != CrInst_NULL) {
         return CrStRet_Unchanged;
     }
-    if (game.play_gameturn - cctrl->field_82 > 200)
+    if (game.play_gameturn - cctrl->turns_at_job > 200)
     {
-        if (game.play_gameturn - cctrl->field_82 < 250)
+        if (game.play_gameturn - cctrl->turns_at_job < 250)
         {
             set_creature_instance(creatng, CrInst_MOAN, 1, 0, 0);
             if (game.play_gameturn - cctrl->imprison.last_mood_sound_turn > 32)
@@ -279,7 +264,7 @@ CrStateRet process_prison_visuals(struct Thing *creatng, struct Room *room)
             }
             return CrStRet_Modified;
         }
-        cctrl->field_82 = game.play_gameturn;
+        cctrl->turns_at_job = game.play_gameturn;
     }
     if (!creature_setup_adjacent_move_for_job_within_room(creatng, room, Job_CAPTIVITY)) {
         return CrStRet_Unchanged;
@@ -290,9 +275,8 @@ CrStateRet process_prison_visuals(struct Thing *creatng, struct Room *room)
 
 CrStateRet creature_in_prison(struct Thing *thing)
 {
-    struct Room *room;
     TRACE_THING(thing);
-    room = get_room_thing_is_on(thing);
+    struct Room* room = get_room_thing_is_on(thing);
     if (creature_job_in_room_no_longer_possible(room, Job_CAPTIVITY, thing))
     {
         remove_creature_from_work_room(thing);
@@ -319,13 +303,9 @@ CrStateRet creature_in_prison(struct Thing *thing)
 
 TbBool prison_convert_creature_to_skeleton(struct Room *room, struct Thing *thing)
 {
-    struct Dungeon *dungeon;
-    struct CreatureControl *cctrl;
-    struct Thing *crthing;
-    long crmodel;
-    cctrl = creature_control_get_from_thing(thing);
-    crmodel = get_room_create_creature_model(room->kind); // That normally returns skeleton breed
-    crthing = create_creature(&thing->mappos, crmodel, room->owner);
+    struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
+    long crmodel = get_room_create_creature_model(room->kind); // That normally returns skeleton breed
+    struct Thing* crthing = create_creature(&thing->mappos, crmodel, room->owner);
     if (thing_is_invalid(crthing))
     {
         ERRORLOG("Couldn't create creature %s in prison", creature_code_name(crmodel));
@@ -336,7 +316,7 @@ TbBool prison_convert_creature_to_skeleton(struct Room *room, struct Thing *thin
     if (creature_model_bleeds(thing->model))
       create_effect_around_thing(thing, TngEff_Unknown10);
     kill_creature(thing, INVALID_THING, -1, CrDed_NoEffects);
-    dungeon = get_dungeon(room->owner);
+    struct Dungeon* dungeon = get_dungeon(room->owner);
     if (!dungeon_invalid(dungeon)) {
         dungeon->lvstats.skeletons_raised++;
     }
@@ -345,8 +325,7 @@ TbBool prison_convert_creature_to_skeleton(struct Room *room, struct Thing *thin
 
 TbBool process_prisoner_skelification(struct Thing *thing, struct Room *room)
 {
-    struct CreatureStats *crstat;
-    crstat = creature_stats_get_from_thing(thing);
+    struct CreatureStats* crstat = creature_stats_get_from_thing(thing);
     if ((thing->health >= 0) || (!crstat->humanoid_creature)) {
         return false;
     }
@@ -371,19 +350,17 @@ long process_prison_food(struct Thing *thing, struct Room *room)
  */
 CrCheckRet process_prison_function(struct Thing *creatng)
 {
-  struct Room *room;
-  room = get_room_creature_works_in(creatng);
-  if (!room_still_valid_as_type_for_thing(room, RoK_PRISON, creatng))
-  {
-      WARNLOG("Room %s owned by player %d is bad work place for %s index %d owner %d",room_code_name(room->kind),(int)room->owner,thing_model_name(creatng),(int)creatng->index,(int)creatng->owner);
-      set_start_state(creatng);
-      return CrCkRet_Continue;
+    struct Room* room = get_room_creature_works_in(creatng);
+    if (!room_still_valid_as_type_for_thing(room, RoK_PRISON, creatng))
+    {
+        WARNLOG("Room %s owned by player %d is bad work place for %s index %d owner %d", room_code_name(room->kind), (int)room->owner, thing_model_name(creatng), (int)creatng->index, (int)creatng->owner);
+        set_start_state(creatng);
+        return CrCkRet_Continue;
   }
   process_creature_hunger(creatng);
   if ( process_prisoner_skelification(creatng,room) )
     return CrCkRet_Deleted;
-  struct CreatureControl *cctrl;
-  cctrl = creature_control_get_from_thing(creatng);
+  struct CreatureControl* cctrl = creature_control_get_from_thing(creatng);
   if ((cctrl->instance_id == CrInst_NULL) && process_prison_food(creatng, room) )
     return CrCkRet_Continue;
   // Breaking from jail is only possible once per some amount of turns,

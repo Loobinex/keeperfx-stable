@@ -67,6 +67,9 @@ enum ClassicBugFlags {
     ClscBug_NoHandPurgeOnDefeat    = 0x0010,
     ClscBug_MustObeyKeepsNotDoJobs = 0x0020,
     ClscBug_BreakNeutralWalls      = 0x0040,
+    ClscBug_AlwaysTunnelToRed      = 0x0080,
+    ClscBug_FullyHappyWithGold     = 0x0100,
+    ClscBug_FaintedImmuneToBoulder = 0x0200,
 };
 
 /******************************************************************************/
@@ -105,9 +108,12 @@ struct GameAdd {
     unsigned long time_in_prison_without_break;
     unsigned char prison_break_chance;
     unsigned short game_turns_unconscious;
+    unsigned char stun_enemy_chance_evil;
+    unsigned char stun_enemy_chance_good;
     long critical_health_permil;
     long friendly_fight_area_damage_permil;
     long friendly_fight_area_range_permil;
+    unsigned char torture_death_chance;
     unsigned char torture_convert_chance;
     TbBool scavenge_good_allowed;
     TbBool scavenge_neutral_allowed;
@@ -119,6 +125,11 @@ struct GameAdd {
     char quick_messages[QUICK_MESSAGES_COUNT][MESSAGE_TEXT_LEN];
     struct SacrificeRecipe sacrifice_recipes[MAX_SACRIFICE_RECIPES];
     struct LightSystemState lightst;
+    long digger_work_experience;
+    unsigned long gem_effectiveness;
+    long room_sale_percent;
+    unsigned long pay_day_speed;
+    TbBool place_traps_on_subtiles;
 };
 
 #pragma pack()

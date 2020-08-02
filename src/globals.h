@@ -26,6 +26,7 @@
 #include <ctype.h>
 #include <limits.h>
 #include <time.h>
+#include <assert.h>
 
 #if defined(unix) && !defined(GO32)
 #include <unistd.h>
@@ -157,6 +158,13 @@ extern "C" {
   #define SCRIPTDBG(dblv,format, ...)
   #define AIDBG(dblv,format, ...)
 #endif
+
+void replaceFn(void* oldFn, void* newFn);
+#define CONCAT_(x, y) x##y
+#define CONCAT(x, y) CONCAT_(x, y)
+#define HOOK_DK_FUNC(name) \
+	DLLIMPORT void _DK_##name(); \
+	__attribute__((constructor)) static void CONCAT(hookFn, __COUNTER__)(void) { replaceFn(&_DK_##name, &name); }
 
 #pragma pack(1)
 

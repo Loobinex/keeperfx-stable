@@ -69,7 +69,7 @@ enum CreatureSoundTypes {
 enum CreatureControlFlags {
     CCFlg_Exists        = 0x01,
     CCFlg_NoCompControl = 0x02,
-    CCFlg_PreventDamage      = 0x04,
+    CCFlg_PreventDamage = 0x04,
     CCFlg_Unknown08     = 0x08,
     CCFlg_Unknown10     = 0x10,
     CCFlg_IsInRoomList  = 0x20,
@@ -164,8 +164,8 @@ unsigned char field_37[2];
     unsigned char hunger_loss;
     long field_43;
     unsigned char field_47;
-    unsigned char field_48;
-    unsigned char field_49;
+    unsigned char paydays_owed;
+    unsigned char prepayments_received;
     long annoy_untrained_turn;
     unsigned long last_roar_turn;
    /** The game enumerates the elements of annoyance array periodically and looks for the highest value.
@@ -194,8 +194,8 @@ unsigned char field_67;
     short work_room_id;
     /** Target room index, used when creature is moving to a room or is attacking a room. */
     short target_room_id;
-    long field_82;
-    short field_86;
+    long turns_at_job;
+    short blocking_door_id;
     unsigned char move_flags;
 // Hard to tell where exactly, but somewhere here a kind-specific, job-specific or owner-specific data starts
   union {
@@ -560,7 +560,7 @@ struct CreatureStats { // These stats are not compatible with original DK - they
     unsigned char lair_size;
     unsigned char hurt_by_lava;
     unsigned char sleep_exp_slab;
-    unsigned char sleep_experience;
+    short sleep_experience;
     short exp_for_hitting;
     short gold_hold;
     short training_cost;

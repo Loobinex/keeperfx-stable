@@ -116,8 +116,8 @@ struct Thing {
       } food;
       struct {
         unsigned char num_shots;
-        long long_14t;
-        unsigned char byte_18t;
+        long rearm_turn;
+        unsigned char revealed;
         unsigned char byte_19t;
       } trap;
       struct {
@@ -153,13 +153,13 @@ struct Thing {
       long long_15;
       };
       struct {
-      short word_13;
+      short belongs_to;
       short word_15;
-      short word_17;
+      short size;
       };
       struct {
       unsigned char byte_13b;
-      short word_14;
+      short damagepoints;
       short word_16;
       unsigned char byte_18b;
       unsigned char byte_19b;

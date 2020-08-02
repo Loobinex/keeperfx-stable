@@ -118,9 +118,17 @@ enum PowerKinds {
  */
 enum ShotModelFlags {
     /** Set if the shot can be slapped with hand of evil of owning player. */
-    ShMF_Slappable  = 0x0001,
-    ShMF_Navigable  = 0x0002,
-    ShMF_Boulder    = 0x0004,
+    ShMF_Slappable      = 0x0001,
+    ShMF_Navigable      = 0x0002,
+    ShMF_Boulder        = 0x0004,
+    ShMF_ReboundImmune  = 0x0008,
+    ShMF_Digging        = 0x0010,
+    ShMF_LifeDrain      = 0x0020,
+    ShMF_GroupUp        = 0x0040,
+    ShMF_NoStun         = 0x0080,
+    ShMF_NoHit          = 0x0100,
+    ShMF_StrengthBased  = 0x0200,
+    ShMF_AlarmsUnits    = 0x0400,
 };
 
 enum PowerCanCastFlags {
@@ -227,6 +235,13 @@ struct ShotConfigStats {
     /** Type of the damage inflicted by this shot. */
     DamageType damage_type;
     struct ShotStats *old;
+    short firing_sound;
+    short shot_sound;
+    unsigned char firing_sound_variants;
+    short max_range;
+    unsigned short sprite_anim_idx;
+    unsigned short sprite_size_max;
+    unsigned char cast_spell_kind;
 };
 
 typedef unsigned char (*Expand_Check_Func)(void);
@@ -289,8 +304,8 @@ struct ShotHitConfig {
 
 struct ShotStats // sizeof = 101
 {
-  short sprite_anim_idx;
-  short sprite_size_max;
+  short sprite_anim_idx_UNUSED;
+  short sprite_size_max_UNUSED;
   unsigned char field_4[2];
   unsigned char field_6;
   unsigned char field_7;
@@ -307,16 +322,16 @@ struct ShotStats // sizeof = 101
   short damage;
   unsigned char destroy_on_first_hit;
   short speed;
-  short firing_sound;
-  unsigned char firing_sound_variants;
-  short shot_sound;
+  short firing_sound_UNUSED;
+  unsigned char firing_sound_variants_UNUSED;
+  short shot_sound_UNUSED;
   short field_20;
   short hit_sound;
   unsigned char field_24;
-  short cast_spell_kind;
-  unsigned char health_drain;
-  unsigned char cannot_hit_thing;
-  unsigned char field_29;
+  short cast_spell_kind_UNUSED;
+  unsigned char health_drain_UNUSED;
+  unsigned char cannot_hit_thing_UNUSED;
+  unsigned char rebound_immune_UNUSED;
   unsigned char push_on_hit;
   struct ShotHitConfig hit_generic;
   struct ShotHitConfig hit_door;
@@ -328,18 +343,18 @@ struct ShotStats // sizeof = 101
   unsigned char hit_lava_destroyed;
   short area_range_UNUSED;
   short area_damage_UNUSED;
-  short is_boulder;
+  short is_boulder_UNUSED;
   unsigned char field_47;
-  unsigned char is_melee;
-  unsigned char field_49;
+  unsigned char is_melee_UNUSED;
+  unsigned char is_digging_UNUSED;
   unsigned char area_hit_type_UNUSED;
-  unsigned char group_with_shooter;
-  unsigned char deals_magic_damage;
-  unsigned char cannot_make_target_unconscious;
+  unsigned char group_with_shooter_UNUSED;
+  unsigned char deals_magic_damage_UNUSED;
+  unsigned char cannot_make_target_unconscious_UNUSED;
   short experience_given_to_shooter;
-  short field_50;
-  unsigned char field_52;
-  unsigned char field_53;
+  short lightf_50;
+  unsigned char lightf_52;
+  unsigned char lightf_53;
   unsigned char field_54[4];
   unsigned char field_58[8];
   unsigned char field_60[4];

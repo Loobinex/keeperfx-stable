@@ -120,6 +120,11 @@ enum TbScriptCommands {
     Cmd_RUN_AFTER_VICTORY                 = 100,
     Cmd_LEVEL_UP_CREATURE                 = 101,
     Cmd_CHANGE_CREATURE_OWNER             = 102,
+    Cmd_SET_GAME_RULE                     = 103,
+    Cmd_SET_TRAP_CONFIGURATION            = 104,
+    Cmd_SET_DOOR_CONFIGURATION            = 105,
+    Cmd_SET_CREATURE_PROPERTY             = 106,
+    Cmd_SET_CREATURE_FEARSOME_FACTOR      = 107,
 };
 
 enum ScriptVariables {
@@ -165,7 +170,27 @@ enum ScriptVariables {
   SVar_CONTROLS_GOOD_CREATURES         = 43,
   SVar_CONTROLS_EVIL_CREATURES         = 44,
   SVar_CAMPAIGN_FLAG                   = 45,
-};
+  SVar_SLAB_OWNER                      = 46,
+  SVar_SLAB_TYPE                       = 47,
+  SVar_HEART_HEALTH                    = 48,
+  SVar_GHOSTS_RAISED                   = 49,
+  SVar_SKELETONS_RAISED                = 50,
+  SVar_VAMPIRES_RAISED                 = 51,
+  SVar_CREATURES_CONVERTED             = 52,
+  SVar_TIMES_ANNOYED_CREATURE          = 53,
+  SVar_TIMES_TORTURED_CREATURE         = 54,
+  SVar_TOTAL_DOORS_MANUFACTURED        = 55,
+  SVar_TOTAL_TRAPS_MANUFACTURED        = 56,
+  SVar_TOTAL_MANUFACTURED              = 57,
+  SVar_TOTAL_TRAPS_USED                = 58,
+  SVar_TOTAL_DOORS_USED                = 59,
+  SVar_KEEPERS_DESTROYED               = 60,
+  SVar_CREATURES_SACRIFICED            = 61,
+  SVar_CREATURES_FROM_SACRIFICE        = 62,
+  SVar_TIMES_LEVELUP_CREATURE          = 63,
+  SVar_TOTAL_SALARY                    = 64,
+  SVar_CURRENT_SALARY                  = 65,
+ };
 
 enum MapLocationTypes {
     MLoc_NONE = 0,
@@ -325,7 +350,7 @@ long script_support_create_thing_at_dungeon_heart(ThingClass tngclass, ThingMode
 TbBool script_support_send_tunneller_to_action_point(struct Thing *thing, long apt_idx);
 TbBool script_support_send_tunneller_to_dungeon(struct Thing *creatng, PlayerNumber plyr_idx);
 TbBool script_support_send_tunneller_to_dungeon_heart(struct Thing *creatng, PlayerNumber plyr_idx);
-long script_support_send_tunneller_to_appropriate_dungeon(struct Thing *thing);
+TbBool script_support_send_tunneller_to_appropriate_dungeon(struct Thing *creatng);
 struct Thing *script_create_new_creature(PlayerNumber plyr_idx, ThingModel crmodel, TbMapLocation location, long carried_gold, long crtr_level);
 TbBool process_activation_status(struct Condition *condt);
 long get_condition_value(PlayerNumber plyr_idx, unsigned char valtype, unsigned char a3);

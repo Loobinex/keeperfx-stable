@@ -82,7 +82,14 @@ struct Thing *create_gold_for_hand_grab(struct Thing *thing, long owner)
     {
         dungeon->field_14BC = thing->index;
         GoldAmount gold_req;
-        gold_req = thing->long_13 / 4 + 1;
+        if (lbKeyOn[KC_LCONTROL])
+        {
+            gold_req = thing->long_13;
+        }
+        else
+        {
+            gold_req = thing->long_13 / 4 + 1;
+        }
         if (gold_req <= 100)
             gold_req = 100;
         dungeon->field_14BE = gold_req;
@@ -317,10 +324,10 @@ void set_power_hand_graphic(long plyr_idx, long a2, long a3)
       thing = thing_get(player->hand_thing_idx);
       if ((a2 == 782) || (a2 == 781))
       {
-        set_thing_draw(thing, a2, a3, 300, 0, 0, 2);
+        set_thing_draw(thing, a2, a3, crtr_conf.sprite_size, 0, 0, 2);
       } else
       {
-        set_thing_draw(thing, a2, a3, 300, 1, 0, 2);
+        set_thing_draw(thing, a2, a3, crtr_conf.sprite_size, 1, 0, 2);
       }
       thing = get_first_thing_in_power_hand(player);
       set_power_hand_offset(player,thing);
@@ -358,7 +365,8 @@ struct Thing *get_first_thing_in_power_hand(struct PlayerInfo *player)
 TbBool remove_first_thing_from_power_hand_list(PlayerNumber plyr_idx)
 {
   struct Dungeon *dungeon;
-  long i, num_in_hand;
+  long i;
+  long num_in_hand;
   dungeon = get_dungeon(plyr_idx);
   num_in_hand = dungeon->num_things_in_hand;
   if (num_in_hand > MAX_THINGS_IN_HAND)
@@ -386,7 +394,8 @@ TbBool remove_first_thing_from_power_hand_list(PlayerNumber plyr_idx)
 TbBool remove_thing_from_power_hand_list(struct Thing *thing, PlayerNumber plyr_idx)
 {
     struct Dungeon *dungeon;
-    long i, num_in_hand;
+    long i;
+    long num_in_hand;
     dungeon = get_dungeon(plyr_idx);
     num_in_hand = dungeon->num_things_in_hand;
     if (num_in_hand > MAX_THINGS_IN_HAND)
@@ -512,7 +521,8 @@ void draw_power_hand(void)
     if (((game.operation_flags & GOF_ShowGui) != 0) && (game.small_map_state != 2)
       && mouse_is_over_pannel_map(player->minimap_pos_x, player->minimap_pos_y))
     {
-        MapSubtlCoord stl_x,stl_y;
+        MapSubtlCoord stl_x;
+        MapSubtlCoord stl_y;
         stl_x = game.hand_over_subtile_x;
         stl_y = game.hand_over_subtile_y;
         SYNCDBG(7,"Drawing over pannel map");
@@ -574,7 +584,8 @@ void draw_power_hand(void)
         }
       }
     }
-    long inputpos_x,inputpos_y;
+    long inputpos_x;
+    long inputpos_y;
     picktng = get_first_thing_in_power_hand(player);
     if ((!thing_is_invalid(picktng)) && ((picktng->field_4F & TF4F_Unknown01) == 0))
     {
@@ -686,7 +697,8 @@ TbBool object_is_slappable(const struct Thing *thing, long plyr_idx)
 
 long near_map_block_thing_filter_ready_for_hand_or_slap(const struct Thing *thing, MaxTngFilterParam param, long maximizer)
 {
-    long dist_x,dist_y;
+    long dist_x;
+    long dist_y;
     if (!thing_is_picked_up(thing)
         && (thing->active_state != CrSt_CreatureUnconscious))
     {
@@ -784,23 +796,42 @@ long gold_being_dropped_on_creature(long plyr_idx, struct Thing *goldtng, struct
     if (creature_is_taking_salary_activity(creatng))
     {
         cctrl = creature_control_get_from_thing(creatng);
-        if (cctrl->field_48 > 0)
-            cctrl->field_48--;
+        if (cctrl->paydays_owed > 0)
+            cctrl->paydays_owed--;
         set_start_state(creatng);
         taking_salary = true;
     }
+    GoldAmount salary;
+    salary = calculate_correct_creature_pay(creatng);
+    long tribute;
+    tribute = goldtng->valuable.gold_stored;
     drop_gold_coins(&pos, 0, plyr_idx);
+    if (tribute >= salary)
+    {
+        thing_play_sample(creatng, 34, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+    }
+    else if ((tribute * 2) >= salary)
+    {
+        thing_play_sample(creatng, 33, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
+    }
+    else
+    {
+        thing_play_sample(creatng, 32, NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS/2);
+    }
     if ( !taking_salary )
     {
         cctrl = creature_control_get_from_thing(creatng);
-        if (cctrl->field_49 < 255) {
-            cctrl->field_49++;
+        if (cctrl->prepayments_received < 255) {
+            cctrl->prepayments_received++;
         }
     }
     struct CreatureStats *crstat;
     crstat = creature_stats_get_from_thing(creatng);
-    anger_apply_anger_to_creature_all_types(creatng, crstat->annoy_got_wage);
-    anger_set_creature_anger_all_types(creatng, 0);
+    anger_apply_anger_to_creature_all_types(creatng, (crstat->annoy_got_wage*(tribute/salary)*2));
+    if (gameadd.classic_bugs_flags & ClscBug_FullyHappyWithGold)
+    {
+        anger_set_creature_anger_all_types(creatng, 0);
+    }
     if (can_change_from_state_to(creatng, get_creature_state_besides_interruptions(creatng), CrSt_CreatureBeHappy))
     {
         if (external_set_thing_state(creatng, CrSt_CreatureBeHappy)) {
@@ -840,7 +871,7 @@ void drop_held_thing_on_ground(struct Dungeon *dungeon, struct Thing *droptng, c
         if (is_my_player_number(dungeon->owner)) {
             play_creature_sound(droptng, 6, 3, 0);
         }
-        dungeon->field_14AE = game.play_gameturn;
+        dungeon->last_creature_dropped_gameturn = game.play_gameturn;
     } else
     if (thing_is_object(droptng))
     {
@@ -1050,13 +1081,15 @@ void draw_mini_things_in_hand(long x, long y)
         i = gui_panel_sprites[spr_idx].SWidth - button_sprite[184].SWidth;
     else
         i = 0;
-    long scrbase_x, scrbase_y;
+    long scrbase_x;
+    long scrbase_y;
     scrbase_x = x;
     scrbase_y = y - 58*units_per_pixel/16;
     expshift_x = (abs(i)*units_per_pixel/16) / 2;
     for (i = dungeon->num_things_in_hand-1; i >= 0; i--)
     {
-        int icol, irow;
+        int icol;
+        int irow;
         icol = i % 4;
         irow = (i / 4);
         struct Thing *thing;
@@ -1064,7 +1097,8 @@ void draw_mini_things_in_hand(long x, long y)
         if (!thing_exists(thing)) {
             continue;
         }
-        int scrpos_x, scrpos_y;
+        int scrpos_x;
+        int scrpos_y;
         int shift_y;
         if (thing->class_id == TCls_Creature)
         {

@@ -157,7 +157,6 @@ DLLIMPORT unsigned char _DK_tag_cursor_blocks_place_door(unsigned char a1, long 
 DLLIMPORT void _DK_tag_cursor_blocks_dig(unsigned char a1, long a2, long a3, long a4);
 DLLIMPORT void _DK_tag_cursor_blocks_thing_in_hand(unsigned char a1, long a2, long a3, int a4, long a5);
 DLLIMPORT long _DK_ceiling_init(unsigned long a1, unsigned long a2);
-DLLIMPORT void _DK_check_players_won(void);
 DLLIMPORT long _DK_apply_wallhug_force_to_boulder(struct Thing *thing);
 DLLIMPORT void __stdcall _DK_IsRunningMark(void);
 DLLIMPORT void __stdcall _DK_IsRunningUnmark(void);
@@ -278,7 +277,7 @@ void process_dungeon_destroy(struct Thing *heartng)
             efftng = create_effect(central_pos, TngEff_Unknown04, plyr_idx);
             if (!thing_is_invalid(efftng))
               efftng->byte_16 = 8;
-            efftng = create_effect(central_pos, TngEff_Unknown14, plyr_idx);
+            efftng = create_effect(central_pos, TngEff_WoPExplosion, plyr_idx);
             if (!thing_is_invalid(efftng))
                 efftng->byte_16 = 8;
             destroy_dungeon_heart_room(plyr_idx, heartng);
@@ -330,7 +329,8 @@ void clear_creature_pool(void)
 void give_shooter_drained_health(struct Thing *shooter, long health_delta)
 {
     struct CreatureControl *cctrl;
-    HitPoints max_health,health;
+    HitPoints max_health;
+    HitPoints health;
     if ( !thing_exists(shooter) )
         return;
     cctrl = creature_control_get_from_thing(shooter);
@@ -380,8 +380,10 @@ void process_keeper_spell_effect(struct Thing *thing)
     if (cctrl->field_2B0 == 7)
     {
         struct Coord3d pos;
-        long amp,direction;
-        long delta_x,delta_y;
+        long amp;
+        long direction;
+        long delta_x;
+        long delta_y;
         amp = 5 * thing->clipbox_size_xy / 8;
         direction = ACTION_RANDOM(2*LbFPMath_PI);
         delta_x = (amp * LbSinL(direction) >> 8);
@@ -571,13 +573,18 @@ long apply_wallhug_force_to_boulder(struct Thing *thing)
 void draw_flame_breath(struct Coord3d *pos1, struct Coord3d *pos2, long delta_step, long num_per_step)
 {
   //_DK_draw_flame_breath(pos1, pos2, a3, a4);
-    MapCoordDelta dist_x, dist_y, dist_z;
-    dist_x = pos2->x.val - (MapCoordDelta)pos1->x.val;
-    dist_y = pos2->y.val - (MapCoordDelta)pos1->y.val;
-    dist_z = pos2->z.val - (MapCoordDelta)pos1->z.val;
-    int delta_x, delta_y, delta_z;
-    if (dist_x >= 0) {
-        delta_x = delta_step;
+  MapCoordDelta dist_x;
+  MapCoordDelta dist_y;
+  MapCoordDelta dist_z;
+  dist_x = pos2->x.val - (MapCoordDelta)pos1->x.val;
+  dist_y = pos2->y.val - (MapCoordDelta)pos1->y.val;
+  dist_z = pos2->z.val - (MapCoordDelta)pos1->z.val;
+  int delta_x;
+  int delta_y;
+  int delta_z;
+  if (dist_x >= 0)
+  {
+      delta_x = delta_step;
     } else {
         dist_x = -dist_x;
         delta_x = -delta_step;
@@ -626,7 +633,8 @@ void draw_flame_breath(struct Coord3d *pos1, struct Coord3d *pos2, long delta_st
         }
         struct EffectElementStats *eestat;
         eestat = get_effect_element_model_stats(9);
-        int sprsize, delta_size;
+        int sprsize;
+        int delta_size;
         delta_size = ((eestat->sprite_size_max - eestat->sprite_size_min) << 8) / (nsteps+1);
         sprsize = (eestat->sprite_size_min << 8);
         int deviat;
@@ -668,11 +676,15 @@ void draw_flame_breath(struct Coord3d *pos1, struct Coord3d *pos2, long delta_st
 void draw_lightning(const struct Coord3d *pos1, const struct Coord3d *pos2, long eeinterspace, long eemodel)
 {
     //_DK_draw_lightning(pos1, pos2, a3, a4);
-    MapCoordDelta dist_x, dist_y, dist_z;
+    MapCoordDelta dist_x;
+    MapCoordDelta dist_y;
+    MapCoordDelta dist_z;
     dist_x = pos2->x.val - (MapCoordDelta)pos1->x.val;
     dist_y = pos2->y.val - (MapCoordDelta)pos1->y.val;
     dist_z = pos2->z.val - (MapCoordDelta)pos1->z.val;
-    int delta_x, delta_y, delta_z;
+    int delta_x;
+    int delta_y;
+    int delta_z;
     if (dist_x >= 0) {
         delta_x = eeinterspace;
     } else {
@@ -711,7 +723,9 @@ void draw_lightning(const struct Coord3d *pos1, const struct Coord3d *pos2, long
             delta_x = dist_x * delta_x / dist_y;
             delta_z = delta_z * dist_z / dist_y;
         }
-        int deviat_x, deviat_y, deviat_z;
+        int deviat_x;
+        int deviat_y;
+        int deviat_z;
         deviat_x = 0;
         deviat_y = 0;
         deviat_z = 0;
@@ -780,14 +794,16 @@ void draw_lightning(const struct Coord3d *pos1, const struct Coord3d *pos2, long
 TbBool setup_move_off_lava(struct Thing *thing)
 {
     //return _DK_setup_move_off_lava(thing);
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     slb_x = subtile_slab(thing->mappos.x.stl.num);
     slb_y = subtile_slab(thing->mappos.y.stl.num);
     long i;
     for (i=0; i < 32; i++)
     {
         struct MapOffset *sstep;
-        MapSubtlCoord cx,cy;
+        MapSubtlCoord cx;
+        MapSubtlCoord cy;
         sstep = &spiral_step[i];
         cx = slab_subtile_center(slb_x + sstep->h);
         cy = slab_subtile_center(slb_y + sstep->v);
@@ -800,12 +816,14 @@ TbBool setup_move_off_lava(struct Thing *thing)
         if (!slbattr->is_safe_land)
             continue;
         // Check all subtiles of the slab in random order
-        long k, n;
+        long k;
+        long n;
         n = ACTION_RANDOM(AROUND_TILES_COUNT);
         for (k=0; k < AROUND_TILES_COUNT; k++, n=(n + 1) % AROUND_TILES_COUNT)
         {
             struct Map *mapblk;
-            long stl_x,stl_y;
+            long stl_x;
+            long stl_y;
             stl_x = cx + around[k].delta_x;
             stl_y = cy + around[k].delta_y;
             mapblk = get_map_block_at(stl_x,stl_y);
@@ -1287,7 +1305,8 @@ TbBool engine_point_to_map(struct Camera *camera, long screen_x, long screen_y, 
 TbBool screen_to_map(struct Camera *camera, long screen_x, long screen_y, struct Coord3d *mappos)
 {
     TbBool result;
-    long x,y;
+    long x;
+    long y;
     SYNCDBG(19,"Starting");
     result = false;
     if (camera != NULL)
@@ -1423,7 +1442,8 @@ void reinit_tagged_blocks_for_player(PlayerNumber plyr_idx)
 {
     //_DK_reinit_tagged_blocks_for_player(plyr_idx); return;
     // Clear tagged blocks
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     for (stl_y=0; stl_y < map_subtiles_y; stl_y++)
     {
         for (stl_x=0; stl_x < map_subtiles_x; stl_x++)
@@ -1438,11 +1458,12 @@ void reinit_tagged_blocks_for_player(PlayerNumber plyr_idx)
     struct Dungeon *dungeon;
     dungeon = get_dungeon(plyr_idx);
     int task_idx;
-    for (task_idx = 0; task_idx < dungeon->field_AF7; task_idx++)
+    for (task_idx = 0; task_idx < dungeon->highest_task_number; task_idx++)
     {
         struct MapTask  *mtask;
         mtask = &dungeon->task_list[task_idx];
-        MapSubtlCoord taskstl_x, taskstl_y;
+        MapSubtlCoord taskstl_x;
+        MapSubtlCoord taskstl_y;
         taskstl_x = stl_num_decode_x(mtask->coords);
         taskstl_y = stl_num_decode_y(mtask->coords);
         switch (mtask->kind)
@@ -1485,8 +1506,10 @@ void instant_instance_selected(CrInstance check_inst_id)
     ctrltng = thing_get(player->controlled_thing_idx);
     struct CreatureStats *crstat;
     crstat = creature_stats_get_from_thing(ctrltng);
-    long i,k;
-    int avail_pos, match_avail_pos;
+    long i;
+    long k;
+    int avail_pos;
+    int match_avail_pos;
     avail_pos = 0;
     match_avail_pos = 0;
     for (i=0; i < CREATURE_MAX_LEVEL; i++)
@@ -1517,7 +1540,7 @@ short zoom_to_next_annoyed_creature(void)
     {
       return false;
     }
-    set_players_packet_action(player, PckA_Unknown087, thing->mappos.x.val, thing->mappos.y.val, 0, 0);
+    set_players_packet_action(player, PckA_ZoomToPosition, thing->mappos.x.val, thing->mappos.y.val, 0, 0);
     return true;
 }
 
@@ -1715,7 +1738,9 @@ void init_keepers_map_exploration(void)
 void clear_players_for_save(void)
 {
     struct PlayerInfo *player;
-    unsigned short id_mem,mem2,memflg;
+    unsigned short id_mem;
+    unsigned short mem2;
+    unsigned short memflg;
     struct Camera cammem;
     int i;
     for (i=0; i < PLAYERS_COUNT; i++)
@@ -1814,7 +1839,8 @@ void clear_game_for_save(void)
 
 void reset_creature_max_levels(void)
 {
-    int i,k;
+    int i;
+    int k;
     for (i=0; i < DUNGEONS_COUNT; i++)
     {
         struct Dungeon *dungeon;
@@ -1833,7 +1859,8 @@ void reset_creature_max_levels(void)
 void reset_script_timers_and_flags(void)
 {
     struct Dungeon *dungeon;
-    int plyr_idx,k;
+    int plyr_idx;
+    int k;
     for (plyr_idx=0; plyr_idx < PLAYERS_COUNT; plyr_idx++)
     {
         add_power_to_player(PwrK_HAND, plyr_idx);
@@ -1928,7 +1955,8 @@ TbBool set_gamma(char corrlvl, TbBool do_set)
 
 void centre_engine_window(void)
 {
-    long x1,y1;
+    long x1;
+    long y1;
     struct PlayerInfo *player=get_my_player();
     if ((game.operation_flags & GOF_ShowGui) != 0)
       x1 = (MyScreenWidth-player->engine_window_width-status_panel_width) / 2 + status_panel_width;
@@ -1977,7 +2005,8 @@ void find_map_location_coords(long location, long *x, long *y, const char *func_
 {
     struct ActionPoint *apt;
     struct Thing *thing;
-    long pos_x,pos_y;
+    long pos_x;
+    long pos_y;
     long i;
     SYNCDBG(15,"From %s; Location %ld, pos(%ld,%ld)",func_name, location, *x, *y);
     pos_y = 0;
@@ -2051,7 +2080,8 @@ void find_map_location_coords(long location, long *x, long *y, const char *func_
 void set_general_information(long msg_id, long target, long x, long y)
 {
     struct PlayerInfo *player;
-    long pos_x,pos_y;
+    long pos_x;
+    long pos_y;
     player = get_my_player();
     find_map_location_coords(target, &x, &y, __func__);
     pos_x = 0;
@@ -2067,7 +2097,8 @@ void set_general_information(long msg_id, long target, long x, long y)
 void set_quick_information(long msg_id, long target, long x, long y)
 {
     struct PlayerInfo *player;
-    long pos_x,pos_y;
+    long pos_x;
+    long pos_y;
     player = get_my_player();
     find_map_location_coords(target, &x, &y, __func__);
     pos_x = 0;
@@ -2088,7 +2119,8 @@ void set_general_objective(long msg_id, long target, long x, long y)
 void process_objective(const char *msg_text, long target, long x, long y)
 {
     struct PlayerInfo *player;
-    long pos_x,pos_y;
+    long pos_x;
+    long pos_y;
     player = get_my_player();
     find_map_location_coords(target, &x, &y, __func__);
     pos_y = y;
@@ -2100,7 +2132,9 @@ void process_objective(const char *msg_text, long target, long x, long y)
 short winning_player_quitting(struct PlayerInfo *player, long *plyr_count)
 {
     struct PlayerInfo *swplyr;
-    int i,k,n;
+    int i;
+    int k;
+    int n;
     if (player->victory_state == VicS_LostLevel)
     {
       return 0;
@@ -2243,7 +2277,36 @@ void set_mouse_light(struct PlayerInfo *player)
 void check_players_won(void)
 {
   SYNCDBG(8,"Starting");
-  _DK_check_players_won();
+
+    if (!(game.system_flags & GSF_NetworkActive))
+        return;
+
+    unsigned int playerIdx = 0;
+    for (; playerIdx < PLAYERS_COUNT; ++playerIdx)
+    {
+        PlayerInfo* curPlayer = get_player(playerIdx);
+        if (!player_exists(curPlayer) || curPlayer->field_2C != 1 || curPlayer->victory_state != VicS_Undecided)
+            continue;
+
+        // check if any other player is still alive
+        for (unsigned int secondPlayerIdx = 0; secondPlayerIdx < PLAYERS_COUNT; ++secondPlayerIdx)
+        {
+            if (secondPlayerIdx == playerIdx)
+                continue;
+
+            PlayerInfo* otherPlayer = get_player(secondPlayerIdx);
+            if (player_exists(otherPlayer) && otherPlayer->field_2C == 1)
+            {
+                Thing* heartng = get_player_soul_container(secondPlayerIdx);
+                if (heartng->active_state != ObSt_BeingDestroyed)
+                    goto continueouterloop;
+            }
+        }
+        break;
+    continueouterloop:
+        ;
+    }
+    set_player_as_won_level(&game.players[playerIdx]);
 }
 
 void check_players_lost(void)
@@ -2321,8 +2384,10 @@ void process_dungeon_devastation_effects(void)
         dungeon->devastation_turn++;
         if (dungeon->devastation_turn >= max(map_tiles_x,map_tiles_y))
             continue;
-        MapSlabCoord slb_x, slb_y;
-        int i,range;
+        MapSlabCoord slb_x;
+        MapSlabCoord slb_y;
+        int i;
+        int range;
         slb_x = subtile_slab(dungeon->devastation_centr_x) - dungeon->devastation_turn;
         slb_y = subtile_slab(dungeon->devastation_centr_y) - dungeon->devastation_turn;
         range = 2*dungeon->devastation_turn;
@@ -2366,12 +2431,12 @@ void count_players_creatures_being_paid(int *creatures_count)
             {
                 struct CreatureControl *cctrl;
                 cctrl = creature_control_get_from_thing(thing);
-                if (cctrl->field_49 > 0)
+                if (cctrl->prepayments_received > 0)
                 {
-                    cctrl->field_49--;
+                    cctrl->prepayments_received--;
                 } else
                 {
-                    cctrl->field_48++;
+                    cctrl->paydays_owed++;
                     creatures_count[thing->owner]++;
                 }
             }
@@ -2389,7 +2454,7 @@ void count_players_creatures_being_paid(int *creatures_count)
 void process_payday(void)
 {
     //_DK_process_payday();
-    game.field_15033A++;
+    game.pay_day_progress = game.pay_day_progress + (gameadd.pay_day_speed / 100);
     PlayerNumber plyr_idx;
     for (plyr_idx=0; plyr_idx < PLAYERS_COUNT; plyr_idx++)
     {
@@ -2403,10 +2468,10 @@ void process_payday(void)
             compute_and_update_player_payday_total(plyr_idx);
         }
     }
-    if (game.pay_day_gap <= game.field_15033A)
+    if (game.pay_day_gap <= game.pay_day_progress)
     {
         output_message(SMsg_Payday, 0, true);
-        game.field_15033A = 0;
+        game.pay_day_progress = 0;
         // Prepare a list which counts how many creatures of each owner needs pay
         int player_paid_creatures_count[PLAYERS_EXT_COUNT];
         PlayerNumber plyr_idx;
@@ -2488,6 +2553,10 @@ void process_level_script(void)
 
 void update_player_camera_fp(struct Camera *cam, struct Thing *thing)
 {
+    struct CreatureStatsOLD *creature_stats_OLD = &game.creature_stats_OLD[thing->model];
+    struct CreatureStats* crstat = creature_stats_get_from_thing(thing);
+    struct CreatureControl *cctrl = creature_control_get_from_thing(thing);
+    creature_stats_OLD->eye_height = crstat->eye_height + (crstat->eye_height * crtr_conf.exp.size_increase_on_exp * cctrl->explevel) / 100;
     _DK_update_player_camera_fp(cam, thing);
 }
 
@@ -2897,7 +2966,8 @@ long update_cave_in(struct Thing *thing)
         }
     }
 
-    GameTurnDelta turns_between, turns_alive;
+    GameTurnDelta turns_between;
+    GameTurnDelta turns_alive;
     turns_between = pwrdynst->time / 5;
     turns_alive = game.play_gameturn - thing->creation_turn;
     if ((turns_alive != 0) && ((turns_between < 1) || (3 * turns_between / 4 == turns_alive % turns_between)))
@@ -3085,7 +3155,10 @@ void scale_tmap2(long a1, long flags, long a3, long a4x, long a4y, long a6x, lon
     if ((a6x == 0) || (a6y == 0)) {
         return;
     }
-    long xstart, ystart, xend, yend;
+    long xstart;
+    long ystart;
+    long xend;
+    long yend;
     char orient;
     switch (flags)
     {
@@ -3148,7 +3221,8 @@ void scale_tmap2(long a1, long flags, long a3, long a4x, long a4y, long a6x, lon
     default:
           return;
     }
-    long v10, v12;
+    long v10;
+    long v12;
     v10 = a4x;
     if (v10 < 0)
     {
@@ -3209,8 +3283,10 @@ void scale_tmap2(long a1, long flags, long a3, long a4x, long a4y, long a6x, lon
         dbuf = &vec_screen[v10 + v12 * vec_screen_width];
         block = block_ptrs[a1];
         ylim = hlimits;
-        long px, py;
-        int srcx, srcy;
+        long px;
+        long py;
+        int srcx;
+        int srcy;
         unsigned char *d;
         if ( a3 >= 0 )
         {
@@ -3266,8 +3342,10 @@ void scale_tmap2(long a1, long flags, long a3, long a4x, long a4y, long a6x, lon
         dbuf = &vec_screen[v10 + v12 * vec_screen_width];
         block = block_ptrs[a1];
         ylim = wlimits;
-        long px, py;
-        int srcx, srcy;
+        long px;
+        long py;
+        int srcx;
+        int srcy;
         unsigned char *d;
         if ( a3 >= 0 )
         {
@@ -3377,12 +3455,18 @@ void update_block_pointed(int i,long x, long x_frac, long y, long y_frac)
 
 void update_blocks_pointed(void)
 {
-    long x,y;
-    long x_frac,y_frac;
-    long hori_ptr_y,vert_ptr_y;
-    long hori_hdelta_y,vert_hdelta_y;
-    long hori_ptr_x,vert_ptr_x;
-    long hvdiv_x,hvdiv_y;
+    long x;
+    long y;
+    long x_frac;
+    long y_frac;
+    long hori_ptr_y;
+    long vert_ptr_y;
+    long hori_hdelta_y;
+    long vert_hdelta_y;
+    long hori_ptr_x;
+    long vert_ptr_x;
+    long hvdiv_x;
+    long hvdiv_y;
     long long lltmp;
     long k;
     int i;
@@ -3657,10 +3741,50 @@ int can_thing_be_queried(struct Thing *thing, long a2)
   return _DK_can_thing_be_queried(thing, a2);
 }
 
-void tag_cursor_blocks_sell_area(unsigned char a1, long a2, long a3, long a4)
+TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4, TbBool Subtile)
 {
     SYNCDBG(7,"Starting");
-    _DK_tag_cursor_blocks_sell_area(a1, a2, a3, a4);
+    // _DK_tag_cursor_blocks_sell_area(plyr_idx, stl_x, stl_y, a4);
+    MapSlabCoord slb_x = subtile_slab_fast(stl_x);
+    MapSlabCoord slb_y = subtile_slab_fast(stl_y);
+    int v6 = slab_subtile(slb_x, 0);
+    int v7 = slab_subtile(slb_y, 0);
+    struct SlabMap *slb;
+    slb = get_slabmap_block(slb_x, slb_y);
+    struct SlabAttr *slbattr;
+    slbattr = get_slab_attrs(slb);
+    signed int parl;
+    TbBool allowed = false;
+    if (!subtile_revealed(stl_x, stl_y, plyr_idx)
+        || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
+    {
+        parl = temp_cluedo_mode < 1u ? 5 : 2;
+    }
+    else if (slab_kind_is_liquid(slb->kind))
+    {
+        parl = 0;
+    }
+    else
+    {
+        if ( ( ((subtile_is_sellable_room(plyr_idx, stl_x, stl_y)) || ( (slabmap_owner(slb) == plyr_idx) && ( (slab_is_door(slb_x, slb_y)) 
+            || (Subtile ? (subtile_has_trap_on(stl_x, stl_y)) : (slab_has_trap_on(slb_x, slb_y))) ) ) ) )
+            && ( slb->kind != SlbT_ENTRANCE && slb->kind != SlbT_DUNGHEART ) )
+        {
+            allowed = true;
+        }
+        parl = 1;
+    }
+    if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
+    {
+        map_volume_box.visible = 1;
+        map_volume_box.beg_x = Subtile ? (subtile_coord(stl_x,0)) : (v6 << 8);
+        map_volume_box.beg_y = Subtile ? (subtile_coord(stl_y,0)) : (v7 << 8);
+        map_volume_box.field_13 = parl;
+        map_volume_box.end_x = Subtile ? (subtile_coord(stl_x+1,0)) : ((v6 + 2 * a4 + 1) << 8);
+        map_volume_box.color = allowed;
+        map_volume_box.end_y = Subtile ? (subtile_coord(stl_y+1,0)) : ((v7 + 2 * a4 + 1) << 8);
+    }
+    return allowed;
 }
 
 long packet_place_door(MapSubtlCoord stl_x, MapSubtlCoord stl_y, PlayerNumber plyr_idx, ThingModel tngmodel, unsigned char a5)
@@ -3678,17 +3802,75 @@ long packet_place_door(MapSubtlCoord stl_x, MapSubtlCoord stl_y, PlayerNumber pl
     return 1;
 }
 
-unsigned char tag_cursor_blocks_place_door(unsigned char a1, long a2, long a3)
+TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y)
 {
     SYNCDBG(7,"Starting");
-    return _DK_tag_cursor_blocks_place_door(a1, a2, a3);
+    // return _DK_tag_cursor_blocks_place_door(a1, a2, a3);
+    MapSlabCoord slb_x = subtile_slab_fast(stl_x);
+    MapSlabCoord slb_y = subtile_slab_fast(stl_y);
+    struct SlabMap *slb;
+    slb = get_slabmap_block(slb_x, slb_y);
+    struct SlabAttr *slbattr;
+    slbattr = get_slab_attrs(slb);
+    signed int parl;
+    TbBool allowed = false;
+    char Orientation;
+    TbBool Check = false;
+    if (!subtile_revealed(stl_x, stl_y, plyr_idx) || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
+    {
+        parl = temp_cluedo_mode < 1u ? 5 : 2;
+    }
+    else if (slab_kind_is_liquid(slb->kind))
+    {
+        parl = 0;
+    }
+    else 
+    {
+        Orientation = find_door_angle(stl_x, stl_y, plyr_idx);
+        if (gameadd.place_traps_on_subtiles)
+        {
+            switch(Orientation)
+            {
+                case 0:
+                {
+                    Check = (!slab_middle_row_has_trap_on(slb_x, slb_y) );
+                    break;
+                }
+                case 1:
+                {
+                    Check = (!slab_middle_column_has_trap_on(slb_x, slb_y) );
+                    break;
+                }
+            }
+        }
+        if ( ( (slabmap_owner(slb) == plyr_idx) && (slb->kind == SlbT_CLAIMED) )
+            && (Orientation != -1)
+            && ( ( (gameadd.place_traps_on_subtiles) ? (Check) : (!slab_has_trap_on(slb_x, slb_y) ) ) && (!slab_has_door_thing_on(stl_x, stl_y) ) ) 
+            )
+        {
+            allowed = true;
+        }
+        parl = 1;
+    }
+    if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
+    {
+        map_volume_box.visible = 1;
+        map_volume_box.beg_x = subtile_coord(slab_subtile(slb_x, 0), 0);
+        map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0), 0);
+        map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3), 0);
+        map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3), 0);
+        map_volume_box.field_13 = parl;
+        map_volume_box.color = allowed;
+    }
+    return allowed;
 }
 
 TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4)
 {
     SYNCDBG(7,"Starting");
     //return _DK_tag_cursor_blocks_place_room(plyr_idx, a2, a3, a4);
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     slb_x = subtile_slab_fast(stl_x);
     slb_y = subtile_slab_fast(stl_y);
     struct SlabMap *slb;
@@ -3734,19 +3916,22 @@ void initialise_map_collides(void)
 {
     SYNCDBG(7,"Starting");
     //_DK_initialise_map_collides(); return;
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     for (slb_y=0; slb_y < map_tiles_y; slb_y++)
     {
         for (slb_x=0; slb_x < map_tiles_x; slb_x++)
         {
             struct SlabMap *slb;
             slb = get_slabmap_block(slb_x, slb_y);
-            int ssub_x, ssub_y;
+            int ssub_x;
+            int ssub_y;
             for (ssub_y=0; ssub_y < STL_PER_SLB; ssub_y++)
             {
                 for (ssub_x=0; ssub_x < STL_PER_SLB; ssub_x++)
                 {
-                    MapSubtlCoord stl_x, stl_y;
+                    MapSubtlCoord stl_x;
+                    MapSubtlCoord stl_y;
                     stl_x = slab_subtile(slb_x,ssub_x);
                     stl_y = slab_subtile(slb_y,ssub_y);
                     struct Map *mapblk;
@@ -3763,7 +3948,8 @@ void initialise_map_health(void)
 {
     SYNCDBG(7,"Starting");
     //_DK_initialise_map_health();
-    MapSlabCoord slb_x, slb_y;
+    MapSlabCoord slb_x;
+    MapSlabCoord slb_y;
     for (slb_y=0; slb_y < map_tiles_y; slb_y++)
     {
         for (slb_x=0; slb_x < map_tiles_x; slb_x++)
@@ -3812,7 +3998,8 @@ long ceiling_init(unsigned long a1, unsigned long a2)
 {
     return _DK_ceiling_init(a1, a2);
     //TODO Fix, then enable rewritten version
-    MapSubtlCoord stl_x, stl_y;
+    MapSubtlCoord stl_x;
+    MapSubtlCoord stl_y;
     for (stl_y=0; stl_y < map_subtiles_y; stl_y++)
     {
         for (stl_x=0; stl_x < map_subtiles_x; stl_x++)
@@ -3850,7 +4037,8 @@ long ceiling_init(unsigned long a1, unsigned long a2)
                 {
                     struct MapOffset *sstep;
                     sstep = &spiral_step[i];
-                    MapSubtlCoord cstl_x, cstl_y;
+                    MapSubtlCoord cstl_x;
+                    MapSubtlCoord cstl_y;
                     cstl_x = stl_x + sstep->h;
                     cstl_y = stl_y + sstep->v;
                     if ((cstl_x >= 0) && (cstl_x <= map_subtiles_x))
@@ -3860,7 +4048,8 @@ long ceiling_init(unsigned long a1, unsigned long a2)
                             filled_h = ceiling_block_is_solid_including_corners_return_height(sstep->both + get_subtile_number(stl_x,stl_y), cstl_x, cstl_y);
                             if (filled_h > -1)
                             {
-                                int delta_tmp, delta_max;
+                                int delta_tmp;
+                                int delta_max;
                                 delta_tmp = abs(stl_x - cstl_x);
                                 delta_max = abs(stl_y - cstl_y);
                                 if (delta_max <= delta_tmp)
@@ -3982,7 +4171,7 @@ void init_level(void)
     init_messages();
     game.creatures_tend_imprison = 0;
     game.creatures_tend_flee = 0;
-    game.field_15033A = 0;
+    game.pay_day_progress = 0;
     game.chosen_room_kind = 0;
     game.chosen_room_spridx = 0;
     game.chosen_room_tooltip = 0;
@@ -4063,6 +4252,11 @@ void startup_saved_packet_game(void)
     post_init_level();
     post_init_players();
     set_selected_level_number(0);
+    if (is_key_pressed(KC_LALT, KMod_NONE))
+    {
+        struct PlayerInfo* player = get_my_player();
+        set_engine_view(player, PVM_FrontView);
+    }
 }
 
 void faststartup_saved_packet_game(void)
@@ -4087,7 +4281,7 @@ void startup_network_game(TbBool local)
     setup_count_players();
     player = get_my_player();
     flgmem = player->field_2C;
-    if ((campaign.human_player >= 0) && (!force_player_num))
+    if (local && (campaign.human_player >= 0) && (!force_player_num))
     {
         default_loc_player = campaign.human_player;
         game.local_plyr_idx = default_loc_player;
@@ -4553,7 +4747,16 @@ short process_command_line(unsigned short argc, char *argv[])
   }
 
   if (level_num == LEVELNUMBER_ERROR)
-    level_num = first_singleplayer_level();
+  {
+      if (first_singleplayer_level() > 0)
+      {
+          level_num = first_singleplayer_level();
+      }
+      else
+      {
+          level_num = 1;
+      }
+  }
   start_params.selected_level_number = level_num;
   my_player_number = default_loc_player;
   return (bad_param==0);
@@ -4595,7 +4798,8 @@ int LbBullfrogMain(unsigned short argc, char *argv[])
     {
       if ((install_info.lang_id == Lang_Japanese) ||
           (install_info.lang_id == Lang_ChineseInt) ||
-          (install_info.lang_id == Lang_ChineseTra))
+          (install_info.lang_id == Lang_ChineseTra) ||
+          (install_info.lang_id == Lang_Korean))
       {
         switch (install_info.lang_id)
         {
@@ -4607,6 +4811,9 @@ int LbBullfrogMain(unsigned short argc, char *argv[])
             break;
         case Lang_ChineseTra:
             dbc_set_language(3);
+            break;
+        case Lang_Korean:
+            dbc_set_language(4);
             break;
         }
         if (dbc_initialize("fxdata"))
@@ -4695,7 +4902,9 @@ int main(int argc, char *argv[])
 #if (BFDEBUG_LEVEL > 1)
   if (sizeof(struct Game) != SIZEOF_Game)
   {
-      long delta1,delta2,delta3;
+      long delta1;
+      long delta2;
+      long delta3;
       if (sizeof(struct PlayerInfo) != SIZEOF_PlayerInfo)
       {
           text = buf_sprintf("Bad compilation - struct PlayerInfo has wrong size!\nThe difference is %d bytes.\n",sizeof(struct PlayerInfo)-SIZEOF_PlayerInfo);
