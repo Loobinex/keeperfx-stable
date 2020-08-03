@@ -1254,6 +1254,10 @@ short get_creature_control_action_inputs(void)
                 {
                     TeleDest = 19;
                 }
+                else if (is_key_pressed(KC_COMMA,KMod_DONTCARE))
+                {
+                    TeleDest = 0;
+                }
     // In possession sets the screen blue when frozen, and to default when not.
     if (creature_affected_by_spell(thing, SplK_Freeze)) 
     {
