@@ -171,14 +171,15 @@ long get_flee_position(struct Thing *creatng, struct Coord3d *pos)
         return 0;
     }
     // Other creatures can flee to heart or their lair
-    if (cctrl->lairtng_idx > 0)
+    struct Thing* lairtng = thing_get(cctrl->lairtng_idx);
+    if ( (!thing_is_invalid(lairtng)) && (creature_can_navigate_to_with_storage(creatng, &lairtng->mappos, NavRtF_Default)) )
     {
-        struct Thing* lairtng = thing_get(cctrl->lairtng_idx);
         TRACE_THING(lairtng);
         pos->x.val = lairtng->mappos.x.val;
         pos->y.val = lairtng->mappos.y.val;
         pos->z.val = lairtng->mappos.z.val;
-    } else
+    }
+    else
     if (creature_can_get_to_dungeon(creatng, creatng->owner))
     {
         struct Thing* heartng = get_player_soul_container(creatng->owner);
