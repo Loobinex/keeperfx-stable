@@ -362,6 +362,6 @@ void frontend_draw_mappack_select_button(struct GuiButton *gbtn)
     tx_units_per_px = (gbtn->height*13/11) * 16 / LbTextLineHeight();
     i = LbTextLineHeight() * tx_units_per_px / 16;
     LbTextSetWindow(gbtn->scr_pos_x, gbtn->scr_pos_y, gbtn->width, i);
-    LbTextDrawResized(0, 0, tx_units_per_px, get_string(btn_idx-45+884));
+    LbTextDrawResized(0, 0, tx_units_per_px, get_string(btn_idx-45+968));
 }
 /******************************************************************************/
