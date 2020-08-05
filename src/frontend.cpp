@@ -305,6 +305,12 @@ struct FrontEndButtonData frontend_button_info[] = {
     {GUIStr_MnuLandSelection, 0}, // [108]
     {GUIStr_MnuCampaigns, 2}, // [109]
     {GUIStr_MnuAddComputer, 1}, // [110]
+    {GUIStr_MnuDeeperDungeons, 0},
+    {GUIStr_MnuDeeperDungeons, 1},
+    {GUIStr_MnuDungeonKeeperLevels, 0},
+    {GUIStr_MnuDungeonKeeperLevels, 1},
+    {GUIStr_MnuKeeperFXLevels, 0},
+    {GUIStr_MnuKeeperFXLevels, 1},
 };
 
 struct EventTypeInfo event_button_info[] = {
