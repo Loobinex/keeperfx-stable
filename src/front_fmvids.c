@@ -70,6 +70,19 @@ short play_smacker_file(char *filename, FrontendMenuState nstate)
       movie_flags |= 0x84;
     }
   }
+  // Smacker Flags
+  unsigned int disable_sound = 0x01;
+  unsigned int unskippable_video = 0x02;
+  unsigned int double_height = 0x04;
+  unsigned int double_height_interlaced = 0x08;
+  unsigned int double_width = 0x80;
+  
+  unsigned int scale_video_full = 0x10; // default full screen (stretch - ignores aspect ratio difference between source and destination)
+  unsigned int fit_video = 0x20; // fit to fullscreen, using letterbox and pillarbox as necessary (use with scale_video_full for crop instead of fit - no letterbox or pillarbox)
+  unsigned int video_oldschool_arcorrect = 0x40; // stretch 320x200 to 4:3
+
+  movie_flags |= resize_legacy_settings(); // get new scaling settings from command line
+  
   if ( SoundDisabled )
     movie_flags |= 0x01;
 
