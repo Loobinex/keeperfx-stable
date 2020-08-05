@@ -2570,7 +2570,7 @@ void frontend_shutdown_state(FrontendMenuState pstate)
         frontend_level_list_unload();
         break;
     case FeSt_MAPPACK_SELECT:
-        turn_off_menu(FeSt_MAPPACK_SELECT);
+        turn_off_menu(GMnu_MAPPACK_SELECT);
         break;
     case FeSt_CAMPAIGN_SELECT:
         turn_off_menu(GMnu_FECAMPAIGN_SELECT);

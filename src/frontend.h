@@ -60,7 +60,7 @@ enum FrontendMenuStates {
   FeSt_START_KPRLEVEL,
   FeSt_START_MPLEVEL,
   FeSt_UNKNOWN09,
-  FeSt_LOAD_GAME,
+  FeSt_LOAD_GAME, // 10
   FeSt_INTRO,
   FeSt_STORY_POEM,
   FeSt_CREDITS,
@@ -70,7 +70,7 @@ enum FrontendMenuStates {
   FeSt_LEVEL_STATS,
   FeSt_HIGH_SCORES,
   FeSt_TORTURE,
-  FeSt_UNKNOWN20,
+  FeSt_UNKNOWN20, // 20
   FeSt_OUTRO,
   FeSt_UNKNOWN22,
   FeSt_UNKNOWN23,
@@ -80,11 +80,11 @@ enum FrontendMenuStates {
   FeSt_FEOPTIONS,
   FeSt_UNKNOWN28,
   FeSt_STORY_BIRTHDAY,
-  FeSt_LEVEL_SELECT,
-  FeSt_MAPPACK_SELECT,
+  FeSt_LEVEL_SELECT, //30
   FeSt_CAMPAIGN_SELECT,
   FeSt_DRAG,
   FeSt_CAMPAIGN_INTRO,
+  FeSt_MAPPACK_SELECT,
   // Special testing states
   FeSt_FONT_TEST          = 255,
 };
