@@ -336,6 +336,11 @@ void frontend_mappack_select(struct GuiButton *gbtn)
         frontend_set_state(FeSt_KEEPERFX_LEVEL_SELECT);
         return;
     }
+    if (i == 3)
+    {
+        frontend_set_state(FeSt_NET_SERVICE);
+        return;
+    }
 }
 
 void frontend_campaign_select_update(void)
@@ -389,6 +394,9 @@ void frontend_draw_mappack_select_button(struct GuiButton *gbtn)
         break;
     case 2: // Keeper FX user maps
         buttonText = GUIStr_MnuKeeperFXLevels;
+        break;
+    case 3: // Multiplayer
+        buttonText = GUIStr_MnuMultiplayer;
         break;
     case 0: // The Deeper Dungeons
     default:

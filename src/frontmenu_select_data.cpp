@@ -124,6 +124,7 @@ struct GuiButtonInit frontend_select_mappack_buttons[] = {
   { 0,  0, 0, 0, frontend_mappack_select,NULL,frontend_over_button,  0,  95, 167,  95, 169,424, 22, frontend_draw_mappack_select_button,0,GUIStr_Empty, 0,      {45},            0, frontend_campaign_select_maintain},
   { 0,  0, 0, 0, frontend_mappack_select,NULL,frontend_over_button,  0,  95, 189,  95, 191,424, 22, frontend_draw_mappack_select_button,0,GUIStr_Empty, 0,      {46},            0, frontend_campaign_select_maintain},
   { 0,  0, 0, 0, frontend_mappack_select,NULL,frontend_over_button,  0,  95, 211,  95, 213,424, 22, frontend_draw_mappack_select_button,0,GUIStr_Empty, 0,      {47},            0, frontend_campaign_select_maintain},
+  { 0,  0, 0, 0, frontend_mappack_select,NULL,frontend_over_button,  0,  95, 233,  95, 235,424, 22, frontend_draw_mappack_select_button,0,GUIStr_Empty, 0,      {48},            0, frontend_campaign_select_maintain},
   { 0,  0, 0, 0, frontend_change_state,NULL,frontend_over_button,     1, 999, 404, 999, 404,371, 46, frontend_draw_large_menu_button,   0, GUIStr_Empty,  0,       {6},            0, NULL},
   {-1,  0, 0, 0, NULL,               NULL,        NULL,               0,   0,   0,   0,   0,  0,  0, NULL,                              0, GUIStr_Empty,  0,       {0},            0, NULL },
 };
