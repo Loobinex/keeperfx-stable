@@ -312,6 +312,7 @@ struct FrontEndButtonData frontend_button_info[] = {
     {GUIStr_MnuDungeonKeeperLevels, 1},
     {GUIStr_MnuKeeperFXLevels, 0},
     {GUIStr_MnuKeeperFXLevels, 1},
+    {GUIStr_MnuFreePlayLevels, 2},
 };
 
 struct EventTypeInfo event_button_info[] = {
