@@ -408,6 +408,7 @@ enum GUIStrings {
     GUIStr_MnuDeeperDungeons = STRINGS_MAX+968,
     GUIStr_MnuDungeonKeeperLevels = STRINGS_MAX+969,
     GUIStr_MnuKeeperFXLevels = STRINGS_MAX+970,
+    GUIStr_MnuReturnToFreePlay = STRINGS_MAX+971,
 };
 
 enum CampaignStrings {
