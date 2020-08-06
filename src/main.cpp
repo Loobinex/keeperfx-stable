@@ -2950,7 +2950,6 @@ TbBool setup_move_out_of_cave_in(struct Thing *thing)
     j = ACTION_RANDOM(AROUND_TILES_COUNT);
     for (k=0; k < AROUND_TILES_COUNT; k++, j=(j + 1) % AROUND_TILES_COUNT)
     {
-        JUSTMSG("TESTLOG: do we get here?");
         MapSubtlCoord stl_x = cx + around[j].delta_x;
         MapSubtlCoord stl_y = cy + around[j].delta_y;
         struct Map *mapblk = get_map_block_at(stl_x,stl_y);
