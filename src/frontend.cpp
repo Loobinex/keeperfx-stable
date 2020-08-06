@@ -187,6 +187,8 @@ struct GuiMenu *menu_list[] = {
     &frontend_error_box,
     &frontend_add_session_box,
     &frontend_select_mappack_menu,
+    &frontend_select_level_keeper_menu,
+    &frontend_select_level_keeperfx_menu,
     NULL,
 };
 
@@ -1953,6 +1955,8 @@ short is_toggleable_menu(short mnu_idx)
   case GMnu_AUTOPILOT:
   case GMnu_FEOPTION:
   case GMnu_DD_LEVEL_SELECT:
+  case GMnu_KP_LEVEL_SELECT:
+  case GMnu_KFX_LEVEL_SELECT:
   case GMnu_MAPPACK_SELECT:
   case GMnu_FECAMPAIGN_SELECT:
   case GMnu_FEERROR_BOX:
@@ -2577,6 +2581,14 @@ void frontend_shutdown_state(FrontendMenuState pstate)
         turn_off_menu(GMnu_DD_LEVEL_SELECT);
         frontend_level_list_unload();
         break;
+    case FeSt_KEEPER_LEVEL_SELECT:
+        turn_off_menu(GMnu_KP_LEVEL_SELECT);
+        frontend_level_list_unload();
+        break;
+    case FeSt_KEEPERFX_LEVEL_SELECT:
+        turn_off_menu(GMnu_KFX_LEVEL_SELECT);
+        frontend_level_list_unload();
+        break;
     case FeSt_MAPPACK_SELECT:
         turn_off_menu(GMnu_MAPPACK_SELECT);
         break;
@@ -2724,6 +2736,16 @@ FrontendMenuState frontend_setup_state(FrontendMenuState nstate)
     case FeSt_DEEPER_LEVEL_SELECT:
         turn_on_menu(GMnu_DD_LEVEL_SELECT);
         frontend_level_list_load(MpC_DEEPER);
+        set_pointer_graphic_menu();
+        break;
+    case FeSt_KEEPER_LEVEL_SELECT:
+        turn_on_menu(GMnu_KP_LEVEL_SELECT);
+        frontend_level_list_load(MpC_KEEPER);
+        set_pointer_graphic_menu();
+        break;
+    case FeSt_KEEPERFX_LEVEL_SELECT:
+        turn_on_menu(GMnu_KFX_LEVEL_SELECT);
+        frontend_level_list_load(MpC_KEEPERFX);
         set_pointer_graphic_menu();
         break;
     case FeSt_MAPPACK_SELECT:
@@ -3204,6 +3226,8 @@ short frontend_draw(void)
     case FeSt_UNKNOWN20:
     case FeSt_FEOPTIONS:
     case FeSt_DEEPER_LEVEL_SELECT:
+    case FeSt_KEEPER_LEVEL_SELECT:
+    case FeSt_KEEPERFX_LEVEL_SELECT:
     case FeSt_MAPPACK_SELECT:
     case FeSt_CAMPAIGN_SELECT:
         frontend_copy_background();
@@ -3434,6 +3458,12 @@ void frontend_update(short *finish_menu)
         PlayMusicPlayer(3);
         break;
     case FeSt_DEEPER_LEVEL_SELECT:
+        frontend_level_select_update();
+        break;
+    case FeSt_KEEPER_LEVEL_SELECT:
+        frontend_level_select_update();
+        break;
+    case FeSt_KEEPERFX_LEVEL_SELECT:
         frontend_level_select_update();
         break;
     case FeSt_CAMPAIGN_SELECT:

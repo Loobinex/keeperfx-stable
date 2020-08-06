@@ -40,6 +40,8 @@ struct GuiButton;
 /******************************************************************************/
 #define frontend_select_level_items_visible  7
 extern struct GuiMenu frontend_select_level_deeper_menu;
+extern struct GuiMenu frontend_select_level_keeper_menu;
+extern struct GuiMenu frontend_select_level_keeperfx_menu;
 #define frontend_select_campaign_items_visible  7
 extern struct GuiMenu frontend_select_campaign_menu;
 #define frontend_select_mappack_items_visible  7
