@@ -313,36 +313,6 @@ void frontend_campaign_select(struct GuiButton *gbtn)
     frontend_set_state(FeSt_CAMPAIGN_INTRO);
 }
 
-void frontend_mappack_select(struct GuiButton *gbtn)
-{
-    long i;
-    long btn_idx;
-    if (gbtn == NULL)
-        return;
-    btn_idx = (long)gbtn->content;
-    i = select_campaign_scroll_offset + btn_idx-45;
-    if (i == 0)
-    {
-        frontend_set_state(FeSt_DEEPER_LEVEL_SELECT);
-        return;
-    }
-    if (i == 1)
-    {
-        frontend_set_state(FeSt_KEEPER_LEVEL_SELECT);
-        return;
-    }
-    if (i == 2)
-    {
-        frontend_set_state(FeSt_KEEPERFX_LEVEL_SELECT);
-        return;
-    }
-    if (i == 3)
-    {
-        frontend_set_state(FeSt_NET_SERVICE);
-        return;
-    }
-}
-
 void frontend_campaign_select_update(void)
 {
     if (campaigns_list.items_num <= 0)
@@ -416,5 +386,35 @@ void frontend_draw_mappack_select_button(struct GuiButton *gbtn)
     i = LbTextLineHeight() * tx_units_per_px / 16;
     LbTextSetWindow(gbtn->scr_pos_x, gbtn->scr_pos_y, gbtn->width, i);
     LbTextDrawResized(0, 0, tx_units_per_px, get_string(buttonText));
+}
+
+void frontend_mappack_select(struct GuiButton *gbtn)
+{
+    long i;
+    long btn_idx;
+    if (gbtn == NULL)
+        return;
+    btn_idx = (long)gbtn->content;
+    i = select_campaign_scroll_offset + btn_idx-45;
+    if (i == 0)
+    {
+        frontend_set_state(FeSt_DEEPER_LEVEL_SELECT);
+        return;
+    }
+    if (i == 1)
+    {
+        frontend_set_state(FeSt_KEEPER_LEVEL_SELECT);
+        return;
+    }
+    if (i == 2)
+    {
+        frontend_set_state(FeSt_KEEPERFX_LEVEL_SELECT);
+        return;
+    }
+    if (i == 3)
+    {
+        frontend_set_state(FeSt_NET_SERVICE);
+        return;
+    }
 }
 /******************************************************************************/

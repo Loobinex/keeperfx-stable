@@ -71,11 +71,13 @@ void frontend_campaign_select_up_maintain(struct GuiButton *gbtn);
 void frontend_campaign_select_down_maintain(struct GuiButton *gbtn);
 void frontend_campaign_select_maintain(struct GuiButton *gbtn);
 void frontend_draw_campaign_select_button(struct GuiButton *gbtn);
-void frontend_draw_mappack_select_button(struct GuiButton *gbtn);
 void frontend_campaign_select(struct GuiButton *gbtn);
-void frontend_mappack_select(struct GuiButton *gbtn);
 void frontend_campaign_select_update(void);
 void frontend_draw_campaign_scroll_tab(struct GuiButton *gbtn);
+
+// Map pack selection screen
+void frontend_draw_mappack_select_button(struct GuiButton *gbtn);
+void frontend_mappack_select(struct GuiButton *gbtn);
 /******************************************************************************/
 #ifdef __cplusplus
 }
