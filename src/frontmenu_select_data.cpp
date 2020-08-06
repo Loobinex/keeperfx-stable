@@ -93,7 +93,7 @@ struct GuiButtonInit frontend_select_mappack_buttons[] = {
 struct GuiMenu frontend_select_mappack_menu =
  { GMnu_MAPPACK_SELECT,     0, 1, frontend_select_mappack_buttons,   POS_SCRCTR, POS_SCRCTR, 640, 480, NULL, 0, NULL,    NULL,                    0, 0, 0,};
  struct GuiMenu frontend_select_level_deeper_menu =
- { GMnu_FELEVEL_SELECT,     0, 1, frontend_select_level_deeper_buttons,   POS_SCRCTR, POS_SCRCTR, 640, 480, NULL, 0, NULL,    NULL,                    0, 0, 0,};
+ { GMnu_DD_LEVEL_SELECT,     0, 1, frontend_select_level_deeper_buttons,   POS_SCRCTR, POS_SCRCTR, 640, 480, NULL, 0, NULL,    NULL,                    0, 0, 0,};
 struct GuiMenu frontend_select_campaign_menu =
  { GMnu_FECAMPAIGN_SELECT,  0, 1, frontend_select_campaign_buttons,POS_SCRCTR, POS_SCRCTR, 640, 480, NULL, 0, NULL,    NULL,                    0, 0, 0,};
 

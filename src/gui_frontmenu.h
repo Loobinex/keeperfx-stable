@@ -69,7 +69,7 @@ enum GUI_Menus {
   GMnu_AUTOPILOT          = 37,
   GMnu_SPELL_LOST         = 38,
   GMnu_FEOPTION           = 39,
-  GMnu_FELEVEL_SELECT     = 40,
+  GMnu_DD_LEVEL_SELECT    = 40,
   GMnu_FECAMPAIGN_SELECT  = 41,
   GMnu_FEERROR_BOX        = 42,
   GMnu_FEADD_SESSION      = 43,

@@ -327,7 +327,7 @@ void frontend_mappack_select(struct GuiButton *gbtn)
         campgn = &campaigns_list.items[i];
     if (i == 0)
     {
-        frontend_set_state(FeSt_LEVEL_SELECT);
+        frontend_set_state(FeSt_DEEPER_LEVEL_SELECT);
         return;
     }
     if (campgn == NULL)

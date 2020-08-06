@@ -1952,7 +1952,7 @@ short is_toggleable_menu(short mnu_idx)
   case GMnu_FEDEFINE_KEYS:
   case GMnu_AUTOPILOT:
   case GMnu_FEOPTION:
-  case GMnu_FELEVEL_SELECT:
+  case GMnu_DD_LEVEL_SELECT:
   case GMnu_MAPPACK_SELECT:
   case GMnu_FECAMPAIGN_SELECT:
   case GMnu_FEERROR_BOX:
@@ -2573,8 +2573,8 @@ void frontend_shutdown_state(FrontendMenuState pstate)
         turn_off_menu(GMnu_FEOPTION);
         StopMusicPlayer();
         break;
-    case FeSt_LEVEL_SELECT:
-        turn_off_menu(GMnu_FELEVEL_SELECT);
+    case FeSt_DEEPER_LEVEL_SELECT:
+        turn_off_menu(GMnu_DD_LEVEL_SELECT);
         frontend_level_list_unload();
         break;
     case FeSt_MAPPACK_SELECT:
@@ -2721,8 +2721,8 @@ FrontendMenuState frontend_setup_state(FrontendMenuState nstate)
           turn_on_menu(GMnu_FEOPTION);
           set_pointer_graphic_menu();
           break;
-    case FeSt_LEVEL_SELECT:
-        turn_on_menu(GMnu_FELEVEL_SELECT);
+    case FeSt_DEEPER_LEVEL_SELECT:
+        turn_on_menu(GMnu_DD_LEVEL_SELECT);
         frontend_level_list_load(MpC_DEEPER);
         set_pointer_graphic_menu();
         break;
@@ -3203,7 +3203,7 @@ short frontend_draw(void)
     case FeSt_HIGH_SCORES:
     case FeSt_UNKNOWN20:
     case FeSt_FEOPTIONS:
-    case FeSt_LEVEL_SELECT:
+    case FeSt_DEEPER_LEVEL_SELECT:
     case FeSt_MAPPACK_SELECT:
     case FeSt_CAMPAIGN_SELECT:
         frontend_copy_background();
@@ -3433,7 +3433,7 @@ void frontend_update(short *finish_menu)
     case FeSt_FEOPTIONS:
         PlayMusicPlayer(3);
         break;
-    case FeSt_LEVEL_SELECT:
+    case FeSt_DEEPER_LEVEL_SELECT:
         frontend_level_select_update();
         break;
     case FeSt_CAMPAIGN_SELECT:
@@ -3460,7 +3460,7 @@ FrontendMenuState get_menu_state_based_on_last_level(LevelNumber lvnum)
     } else
     if (is_freeplay_level(lvnum))
     {
-        return FeSt_LEVEL_SELECT;
+        return FeSt_DEEPER_LEVEL_SELECT;
     } else
     {
         return FeSt_MAIN_MENU;
