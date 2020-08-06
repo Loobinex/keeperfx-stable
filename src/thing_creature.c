@@ -81,6 +81,7 @@
 #include "kjm_input.h"
 #include "front_input.h"
 #include "frontmenu_ingame_tabs.h"
+#include "thing_navigate.h"
 
 #include "keeperfx.hpp"
 
@@ -1262,79 +1263,9 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                         desttng = thing_get(cctrl->lairtng_idx);
                         break;
                     }
-                    case 1:
-                    {
-                        rkind = RoK_TREASURE;
-                        break;
-                    }
-                    case 2:
-                    {
-                        rkind = RoK_LIBRARY;
-                        break;
-                    }
-                    case 3:
-                    {
-                        rkind = RoK_LAIR;
-                        break;
-                    }   
-                    case 4:
-                    {
-                        rkind = RoK_PRISON;
-                        break;
-                    }
-                    case 5:
-                    {
-                        rkind = RoK_TORTURE;
-                        break;
-                    }
-                    case 6:
-                    {
-                        rkind = RoK_TRAINING;
-                        break;
-                    }
                     case 7:
                     {
                         newpos = dungeon_get_essential_pos(thing->owner);
-                        break;
-                    }
-                    case 8:
-                    {
-                        rkind = RoK_WORKSHOP;
-                        break;
-                    }
-                    case 9:
-                    {
-                        rkind = RoK_SCAVENGER;
-                        break;
-                    }
-                    case 10:
-                    {
-                        rkind = RoK_TEMPLE;
-                        break;
-                    }
-                    case 11:
-                    {
-                        rkind = RoK_GRAVEYARD;
-                        break;
-                    }
-                    case 12:
-                    {
-                        rkind = RoK_BARRACKS;
-                        break;
-                    }
-                    case 13:
-                    {
-                        rkind = RoK_GARDEN;
-                        break;
-                    }
-                    case 14:
-                    {
-                        rkind = RoK_GUARDPOST;
-                        break;
-                    }
-                    case 15:
-                    {
-                        rkind = RoK_BRIDGE;
                         break;
                     }
                     case 16:
@@ -1398,9 +1329,9 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                         cta_pos.x.val = subtile_coord_center(dungeon->cta_stl_x);
                         cta_pos.y.val = subtile_coord_center(dungeon->cta_stl_y);
                         cta_pos.z.val = subtile_coord(1,0);
-                        if (creature_can_navigate_to_with_storage(thing, &cta_pos, NavRtF_Default))
+                        if (creature_can_navigate_to(thing, &cta_pos, NavRtF_NoOwner))
                         {
-                        pos = cta_pos;
+                            pos = cta_pos;
                         }
                         else
                         {
@@ -1413,6 +1344,10 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                         desttng = find_hero_door_hero_can_navigate_to(thing);
                         allowed = (!thing_is_invalid(desttng));
                         break;
+                    }
+                    default:
+                    {
+                        rkind = zoom_key_room_order[TeleDest-1];
                     }
                 }
             }
