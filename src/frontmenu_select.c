@@ -375,18 +375,26 @@ void frontend_draw_campaign_scroll_tab(struct GuiButton *gbtn)
 
 void frontend_draw_mappack_select_button(struct GuiButton *gbtn)
 {
-    struct GameCampaign *campgn;
     long btn_idx;
     long i;
     if (gbtn == NULL)
       return;
     btn_idx = (long)gbtn->content;
-    i = select_campaign_scroll_offset + btn_idx-45;
-    campgn = NULL;
-    if ((i >= 0) && (i < campaigns_list.items_num))
-      campgn = &campaigns_list.items[i];
-    if (campgn == NULL)
-      return;
+    long buttonText;
+    i = btn_idx-45;
+    switch(i)
+    {
+    case 1: // Vanilla user maps
+        buttonText = GUIStr_MnuDungeonKeeperLevels;
+        break;
+    case 2: // Keeper FX user maps
+        buttonText = GUIStr_MnuKeeperFXLevels;
+        break;
+    case 0: // The Deeper Dungeons
+    default:
+        buttonText = GUIStr_MnuDeeperDungeons;
+        break;
+    }
     if ((btn_idx > 0) && (frontend_mouse_over_button == btn_idx))
       i = 2;
     else
@@ -399,6 +407,6 @@ void frontend_draw_mappack_select_button(struct GuiButton *gbtn)
     tx_units_per_px = (gbtn->height*13/11) * 16 / LbTextLineHeight();
     i = LbTextLineHeight() * tx_units_per_px / 16;
     LbTextSetWindow(gbtn->scr_pos_x, gbtn->scr_pos_y, gbtn->width, i);
-    LbTextDrawResized(0, 0, tx_units_per_px, get_string(btn_idx-45+968));
+    LbTextDrawResized(0, 0, tx_units_per_px, get_string(buttonText));
 }
 /******************************************************************************/
