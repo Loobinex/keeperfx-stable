@@ -2722,7 +2722,7 @@ FrontendMenuState frontend_setup_state(FrontendMenuState nstate)
           break;
     case FeSt_LEVEL_SELECT:
         turn_on_menu(GMnu_FELEVEL_SELECT);
-        frontend_level_list_load();
+        frontend_level_list_load(MpC_DEEPER);
         set_pointer_graphic_menu();
         break;
     case FeSt_MAPPACK_SELECT:

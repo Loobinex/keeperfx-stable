@@ -27,6 +27,12 @@ extern "C" {
 /******************************************************************************/
 #pragma pack(1)
 
+typedef enum {
+    MpC_DEEPER, // The Deeper Dungeons (single player maps)
+    MpC_KEEPER, // user maps (vanilla)
+    MpC_KEEPERFX, // user maps (keeperFX)
+} MapPackCategories;
+
 struct GuiMenu;
 struct GuiButton;
 
@@ -49,9 +55,11 @@ void frontend_level_select_scroll(struct GuiButton *gbtn);
 void frontend_level_select_up_maintain(struct GuiButton *gbtn);
 void frontend_level_select_down_maintain(struct GuiButton *gbtn);
 void frontend_level_select_maintain(struct GuiButton *gbtn);
-void frontend_level_list_load(void);
+void frontend_level_list_load(MapPackCategories mappack);
 void frontend_level_list_unload(void);
 void frontend_level_select_update(void);
+int frontend_get_mappack_levelcount();
+long frontend_get_mappack_levelnum(long level_num);
 
 // Campaign selection screen
 void frontend_campaign_select_up(struct GuiButton *gbtn);

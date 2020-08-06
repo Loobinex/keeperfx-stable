@@ -39,6 +39,7 @@
 int select_level_scroll_offset = 0;
 int select_campaign_scroll_offset = 0;
 int number_of_freeplay_levels = 0;
+MapPackCategories current_mappack;
 /******************************************************************************/
 void frontend_level_select_up(struct GuiButton *gbtn)
 {
@@ -93,8 +94,8 @@ void frontend_draw_level_select_button(struct GuiButton *gbtn)
     long btn_idx = (long)gbtn->content;
     long i = btn_idx + select_level_scroll_offset - 45;
     long lvnum = 0;
-    if ((i >= 0) && (i < campaign.freeplay_levels_count))
-      lvnum = campaign.freeplay_levels[i];
+    if ((i >= 0) && (i < number_of_freeplay_levels))
+      lvnum = frontend_get_mappack_levelnum(i);
     struct LevelInformation* lvinfo = get_level_info(lvnum);
     if (lvinfo == NULL)
       return;
@@ -124,13 +125,50 @@ void frontend_level_select(struct GuiButton *gbtn)
     // Find the level number
     long i = (long)gbtn->content + select_level_scroll_offset - 45;
     long lvnum = 0;
-    if (i < campaign.freeplay_levels_count)
-      lvnum = campaign.freeplay_levels[i];
+    if (i < number_of_freeplay_levels)
+      lvnum = frontend_get_mappack_levelnum(i);
     if (lvnum <= 0)
         return;
     game.selected_level_number = lvnum;
     game.flags_font |= FFlg_unk80;
     frontend_set_state(FeSt_START_KPRLEVEL);
+}
+int frontend_get_mappack_levelcount()
+{
+    int levels_count = 0;
+    switch(current_mappack) //what category of maps are being used?
+    {
+    case MpC_KEEPER: // user maps (vanilla)
+        levels_count = campaign.single_levels_count;
+        break;
+    case MpC_KEEPERFX: // user maps (keeperFX)
+        levels_count = campaign.single_levels_count;
+        break;
+    case MpC_DEEPER: // deeper dungeons
+    default:
+        levels_count = campaign.freeplay_levels_count;
+        break;
+    }
+    return levels_count;
+}
+
+long frontend_get_mappack_levelnum(long level_index)
+{
+    long lvnum = 0;
+    switch(current_mappack) //what category of maps are being used?
+    {
+    case MpC_KEEPER: // user maps (vanilla)
+        lvnum = campaign.single_levels[level_index];
+        break;
+    case MpC_KEEPERFX: // user maps (keeperFX)
+        lvnum = campaign.single_levels[level_index];
+        break;
+    case MpC_DEEPER: // deeper dungeons
+    default:
+        lvnum = campaign.freeplay_levels[level_index];
+        break;
+    }
+    return lvnum;
 }
 
 void frontend_level_list_unload(void)
@@ -139,14 +177,15 @@ void frontend_level_list_unload(void)
   number_of_freeplay_levels = 0;
 }
 
-void frontend_level_list_load(void)
+void frontend_level_list_load(MapPackCategories mappack)
 {
     // Load the default campaign (free play levels should be played with default campaign settings)
     if (!change_campaign("")) {
         number_of_freeplay_levels = 0;
         return;
     }
-    number_of_freeplay_levels = campaign.freeplay_levels_count;
+    current_mappack = mappack;
+    number_of_freeplay_levels = frontend_get_mappack_levelcount();
 }
 
 void frontend_level_select_update(void)
