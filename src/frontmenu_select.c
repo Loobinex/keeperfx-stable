@@ -317,27 +317,15 @@ void frontend_mappack_select(struct GuiButton *gbtn)
 {
     long i;
     long btn_idx;
-    struct GameCampaign *campgn;
     if (gbtn == NULL)
         return;
     btn_idx = (long)gbtn->content;
     i = select_campaign_scroll_offset + btn_idx-45;
-    campgn = NULL;
-    if ((i >= 1) && (i < campaigns_list.items_num))
-        campgn = &campaigns_list.items[i];
     if (i == 0)
     {
         frontend_set_state(FeSt_DEEPER_LEVEL_SELECT);
         return;
     }
-    if (campgn == NULL)
-        return;
-    if (!frontend_start_new_campaign(campgn->fname))
-    {
-        ERRORLOG("Unable to start new campaign");
-        return;
-    }
-    frontend_set_state(FeSt_CAMPAIGN_INTRO);
 }
 
 void frontend_campaign_select_update(void)
