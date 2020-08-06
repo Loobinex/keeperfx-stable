@@ -30,8 +30,8 @@ extern "C" {
 /******************************************************************************/
 // Limits for GUI arrays
 #define ACTIVE_BUTTONS_COUNT        86
-#define MENU_LIST_ITEMS_COUNT       46
-#define FRONTEND_BUTTON_INFO_COUNT 117
+#define MENU_LIST_ITEMS_COUNT       48
+#define FRONTEND_BUTTON_INFO_COUNT 119
 #define NET_MESSAGES_COUNT           8
 #define NET_MESSAGE_LEN             64
 // Sprite limits

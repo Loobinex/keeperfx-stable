@@ -5711,3 +5711,7 @@ msgstr "Dungeon Keeper user maps"
 msgctxt "Menu interface item"
 msgid "Toggle Message"
 msgstr "KeeperFX user maps"
+#: guitext:971
+msgctxt "Menu interface item"
+msgid "Toggle Message"
+msgstr "Return to Free Play levels"
