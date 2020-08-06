@@ -182,7 +182,7 @@ struct GuiMenu *menu_list[] = {
     &autopilot_menu,
     &spell_lost_menu,
     &frontend_option_menu,
-    &frontend_select_level_menu,//40
+    &frontend_select_level_deeper_menu,//40
     &frontend_select_campaign_menu,
     &frontend_error_box,
     &frontend_add_session_box,

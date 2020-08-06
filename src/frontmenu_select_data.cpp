@@ -37,7 +37,7 @@
 extern "C" {
 #endif
 /******************************************************************************/
-struct GuiButtonInit frontend_select_level_buttons[] = {
+struct GuiButtonInit frontend_select_level_deeper_buttons[] = {
   { 0,  0, 0, 0, NULL,               NULL,        NULL,               0, 999,  30, 999,  30,371, 46, frontend_draw_large_menu_button,   0, GUIStr_Empty,  0,     {111},            0, NULL},
   { 0,  0, 0, 0, NULL,               NULL,        NULL,               0,  82, 128,  82, 128,220, 26, frontend_draw_scroll_box_tab,      0, GUIStr_Empty,  0,      {28},            0, NULL},
   { 0,  0, 0, 0, NULL,               NULL,        NULL,               0,  82, 154,  82, 154,450,180, frontend_draw_scroll_box,          0, GUIStr_Empty,  0,      {26},            0, NULL},
@@ -92,8 +92,8 @@ struct GuiButtonInit frontend_select_mappack_buttons[] = {
 
 struct GuiMenu frontend_select_mappack_menu =
  { GMnu_MAPPACK_SELECT,     0, 1, frontend_select_mappack_buttons,   POS_SCRCTR, POS_SCRCTR, 640, 480, NULL, 0, NULL,    NULL,                    0, 0, 0,};
- struct GuiMenu frontend_select_level_menu =
- { GMnu_FELEVEL_SELECT,     0, 1, frontend_select_level_buttons,   POS_SCRCTR, POS_SCRCTR, 640, 480, NULL, 0, NULL,    NULL,                    0, 0, 0,};
+ struct GuiMenu frontend_select_level_deeper_menu =
+ { GMnu_FELEVEL_SELECT,     0, 1, frontend_select_level_deeper_buttons,   POS_SCRCTR, POS_SCRCTR, 640, 480, NULL, 0, NULL,    NULL,                    0, 0, 0,};
 struct GuiMenu frontend_select_campaign_menu =
  { GMnu_FECAMPAIGN_SELECT,  0, 1, frontend_select_campaign_buttons,POS_SCRCTR, POS_SCRCTR, 640, 480, NULL, 0, NULL,    NULL,                    0, 0, 0,};
 
