@@ -326,6 +326,16 @@ void frontend_mappack_select(struct GuiButton *gbtn)
         frontend_set_state(FeSt_DEEPER_LEVEL_SELECT);
         return;
     }
+    if (i == 1)
+    {
+        frontend_set_state(FeSt_KEEPER_LEVEL_SELECT);
+        return;
+    }
+    if (i == 2)
+    {
+        frontend_set_state(FeSt_KEEPERFX_LEVEL_SELECT);
+        return;
+    }
 }
 
 void frontend_campaign_select_update(void)
