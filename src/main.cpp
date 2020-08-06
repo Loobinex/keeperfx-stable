@@ -2956,24 +2956,17 @@ TbBool setup_move_out_of_cave_in(struct Thing *thing)
         struct Map *mapblk = get_map_block_at(stl_x,stl_y);
         if (!map_block_invalid(mapblk))
         {
-            JUSTMSG("TESTLOG: Valid block again");
             if (subtile_is_blocking_wall_or_lava(stl_x, stl_y, thing->owner) == 0)
             {
-                JUSTMSG("TESTLOG: This one is not even blocking");
                 if (setup_person_move_to_position(thing, stl_x, stl_y, 0)) 
                 {
-                    JUSTMSG("TESTLOG: OK, we move someplace at k=%d and j=%d",k,j);
                     return true;
                 }
-                JUSTMSG("TESTLOG: setup move failed");
             }
-            JUSTMSG("TESTLOG: we found a blocking place");
         }
-        JUSTMSG("TESTLOG: Loop %d did nothing",k);
     }
   }
   }
-  JUSTMSG("TESTLOG: return false");
   return false;
 }
 
