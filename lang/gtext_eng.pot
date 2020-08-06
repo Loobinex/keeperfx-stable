@@ -5699,3 +5699,15 @@ msgstr ""
 msgctxt "Menu interface item"
 msgid "Toggle Message"
 msgstr ""
+#: guitext:968
+msgctxt "Menu interface item"
+msgid "Toggle Message"
+msgstr "The Deeper Dungeons"
+#: guitext:969
+msgctxt "Menu interface item"
+msgid "Toggle Message"
+msgstr "Dungeon Keeper user maps"
+#: guitext:970
+msgctxt "Menu interface item"
+msgid "Toggle Message"
+msgstr "KeeperFX user maps"
