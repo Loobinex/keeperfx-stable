@@ -1321,9 +1321,6 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     case 17:
                     {
                         room = room_get(cctrl->last_work_room_id);
-                        room_pos.x.val = subtile_coord_center(room->central_stl_x);
-                        room_pos.y.val = subtile_coord_center(room->central_stl_y); 
-                        allowed = (!room_is_invalid(room)); //) && (creature_can_navigate_to(thing, &room_pos, NavRtF_NoOwner)) );
                         break;
                     }
                     case 18:
@@ -1357,18 +1354,20 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                 if (rkind > 0)
                 {
                     room = nearest ? find_room_nearest_to_position(thing->owner, rkind, &thing->mappos, &distance) : room_get(find_next_room_of_type(thing->owner, rkind));
-                    if (!room_is_invalid(room))
+                }
+                if (!room_is_invalid(room))
                     {
                         room_pos.x.val = subtile_coord_center(room->central_stl_x);
                         room_pos.y.val = subtile_coord_center(room->central_stl_y);
-                        // room_pos.z.val = 0;
-                        // allowed = creature_can_navigate_to(thing, &room_pos, NavRtF_NoOwner);
+                        allowed = creature_can_navigate_to(thing, &room_pos, NavRtF_NoOwner);
+                        if (!allowed)
+                        {
+                            if (find_random_valid_position_for_thing_in_room(thing, room, &room_pos))
+                            {
+                                allowed = creature_can_navigate_to(thing, &room_pos, NavRtF_NoOwner);
+                            }
+                        }
                     }
-                    else
-                    {
-                        allowed = false;
-                    }
-                }
             if (!allowed)
             {
                 desttng = thing_get(cctrl->lairtng_idx);
