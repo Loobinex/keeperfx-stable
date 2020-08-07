@@ -1255,6 +1255,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
         if (thing_in_wall_at(thing, &pos))
         {
             const struct Coord3d* newpos = NULL;
+            struct Coord3d room_pos;
             {
                 switch(TeleDest)
                 {
@@ -1290,7 +1291,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                                 {
                                     struct Thing* tng = thing_get(battle->first_creatr);
                                     TRACE_THING(tng);
-                                    if (creature_can_navigate_to_with_storage(thing, &tng->mappos, NavRtF_Default))
+                                    if (creature_can_navigate_to(thing, &tng->mappos, NavRtF_NoOwner))
                                     {
                                         pos.x.val = tng->mappos.x.val;
                                         pos.y.val = tng->mappos.y.val;
@@ -1320,7 +1321,9 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     case 17:
                     {
                         room = room_get(cctrl->last_work_room_id);
-                        allowed = (!room_is_invalid(room));
+                        room_pos.x.val = subtile_coord_center(room->central_stl_x);
+                        room_pos.y.val = subtile_coord_center(room->central_stl_y); 
+                        allowed = (!room_is_invalid(room)); //) && (creature_can_navigate_to(thing, &room_pos, NavRtF_NoOwner)) );
                         break;
                     }
                     case 18:
@@ -1351,18 +1354,40 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     }
                 }
             }
+                if (rkind > 0)
+                {
+                    room = nearest ? find_room_nearest_to_position(thing->owner, rkind, &thing->mappos, &distance) : room_get(find_next_room_of_type(thing->owner, rkind));
+                    if (!room_is_invalid(room))
+                    {
+                        room_pos.x.val = subtile_coord_center(room->central_stl_x);
+                        room_pos.y.val = subtile_coord_center(room->central_stl_y);
+                        // room_pos.z.val = 0;
+                        // allowed = creature_can_navigate_to(thing, &room_pos, NavRtF_NoOwner);
+                    }
+                    else
+                    {
+                        allowed = false;
+                    }
+                }
             if (!allowed)
             {
-                pos = thing->mappos;
+                desttng = thing_get(cctrl->lairtng_idx);
+                if (thing_is_object(desttng))
+                {
+                    newpos = &desttng->mappos;
+                }
+                else
+                {
+                    newpos = dungeon_get_essential_pos(thing->owner);
+                }
+                pos.x.val = newpos->x.val;
+                pos.y.val = newpos->y.val;
+                pos.z.val = newpos->z.val;
             }
             else
             {
                 if ( (pos.x.val == subtile_coord_center(cctrl->teleport_x)) && (pos.y.val == subtile_coord_center(cctrl->teleport_y)) )
                 {
-                    if (rkind > 0)
-                    {
-                        room = nearest ? find_room_nearest_to_position(thing->owner, rkind, &thing->mappos, &distance) : room_get(find_next_room_of_type(thing->owner, rkind));
-                    }
                     if (thing_is_object(desttng))
                     {
                         newpos = &desttng->mappos;
@@ -1375,8 +1400,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     }
                     else if (!room_is_invalid(room))
                     {
-                        pos.x.stl.num = room->central_stl_x;
-                        pos.y.stl.num = room->central_stl_y;
+                        pos = room_pos;
                     }
                     else if ( (room_is_invalid(room)) && (newpos == NULL) )
                     {
