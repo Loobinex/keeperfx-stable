@@ -884,7 +884,8 @@ void external_activate_trap_shot_at_angle(struct Thing *thing, long a2, struct T
         ERRORLOG("Cannot activate trap with shot model %d",(int)trapstat->created_itm_model);
         return;
     }
-    if (trapstat->activation_type != TrpAcT_CreatureShot)
+    if ((trapstat->activation_type != TrpAcT_CreatureShot)
+        && (trapstat->activation_type != TrpAcT_HeadforTarget90))
     {
         activate_trap(thing, hand);
         if (thing->byte_13 != 255)
