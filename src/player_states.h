@@ -63,7 +63,7 @@ enum PlayerStates {
     PSt_TurnChicken,
     PSt_MkGoldPot, // 28
     PSt_TimeBomb,
-    PSt_FreeDestroyWalls,
+    PSt_FreeDestroyWalls, // 30
     PSt_FreeCastDisease,
     PSt_FreeTurnChicken,
     PSt_FreeCtrlPassngr,
@@ -73,7 +73,7 @@ enum PlayerStates {
     PSt_KillCreatr,
     PSt_ConvertCreatr,
     PSt_StealSlab,
-    PSt_LevelCreatureUp,
+    PSt_LevelCreatureUp, // 40
     PSt_KillPlayer,
     PSt_HeartHealth,
     PSt_CreatrQueryAll,

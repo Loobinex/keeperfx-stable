@@ -227,6 +227,71 @@ static char *cmd_strtok(char *tail)
     return next;
 }
 
+void cmd_save_tng()
+{
+    size_t tng_num = 0;
+    int i;
+    short count = 0;
+    struct Thing *thing;
+    FILE *F = fopen("save.tng", "wb");
+    for (i = 1; i < THINGS_COUNT; i++)
+    {
+        thing = thing_get(i);
+        if (thing_exists(thing))
+        {
+            count++;
+        }
+    }
+    fwrite(&count, sizeof(short), 1, F);
+    for (i = 1; i < THINGS_COUNT; i++)
+    {
+        thing = thing_get(i);
+        if (thing_exists(thing))
+        {
+            InitThing out = {0};
+            struct CreatureControl* cctrl;
+            LbMemoryCopy(&out.mappos, &thing->mappos, sizeof(struct Coord3d));
+            out.oclass = thing->oclass;
+            out.model = thing->model;
+            out.owner = thing->owner;
+            switch (thing->oclass)
+            {
+            case TCls_Object:
+                out.index = thing->index;
+                if (object_is_hero_gate(thing))
+                {
+                    out.params[1] = thing->byte_13;
+                }
+                break;
+            case TCls_Creature:
+                cctrl = creature_control_get_from_thing(thing);
+                out.params[1] = cctrl->explevel;
+                break;
+            case TCls_EffectGen:
+                out.index = thing->index;
+                out.range = thing->
+                break;
+            case TCls_Trap:
+                out.index = thing->index;
+                break;
+            case TCls_Door:
+                out.params[0] = thing->door.orientation;
+                out.params[1] = thing->door.is_locked;
+                break;
+            case TCls_Unkn10:
+            case TCls_Unkn11:
+                out.index = thing->index;
+                break;
+            default:
+                ERRRORLOG("Unknown thing oclass: %d", thing->oclass);
+            }
+
+            fwrite(&out, sizeof(out), 1, F);
+        }
+    }
+    fclose(F);
+}
+
 TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
 {
     SYNCDBG(2,"Command %d: %s",(int)plyr_idx,text);
@@ -342,6 +407,9 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             script_process_value(Cmd_DOOR_AVAILABLE, plyr_idx, id, 1, 1);
             update_trap_tab_to_config();
             message_add(plyr_idx, "done!");
+            return true;
+        } else if (strcmp(parstr, "save.tng") == 0)
+            cmd_save_tng();
             return true;
         }
     }

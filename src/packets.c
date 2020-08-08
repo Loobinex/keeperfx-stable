@@ -1523,45 +1523,13 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             char s[3];
             if (is_key_pressed(KC_SLASH, KMod_NONE))
             {
-                 itoa(slb->kind, s, 10);
-                 message_add(plyr_idx, s);
+                 message_add_fmt(plyr_idx,
+                    "stl_pos:(%d,%d) slb_pos:(%d, %d) pack: %d kind:%d owner:%d",
+                    stl_x, stl_y,
+                    slb_x, slb_y,
+                    get_slab_number(subtile_slab(stl_x), subtile_slab(stl_y))
+                    slb->kind, slabmap_owner(slb));
                  clear_key_pressed(KC_SLASH);
-            }
-            else if (is_key_pressed(KC_SLASH, KMod_SHIFT))
-            {
-                 itoa(slabmap_owner(slb), s, 10);
-                 message_add(plyr_idx, s);
-                 clear_key_pressed(KC_SLASH);
-            }
-            else if (is_key_pressed(KC_X, KMod_NONE))
-            {
-                 itoa(stl_x, s, 10);
-                 message_add(plyr_idx, s);
-                 clear_key_pressed(KC_X);
-            }
-            else if (is_key_pressed(KC_Y, KMod_NONE))
-            {
-                 itoa(stl_y, s, 10);
-                 message_add(plyr_idx, s);
-                 clear_key_pressed(KC_Y);
-            }
-            else if (is_key_pressed(KC_X, KMod_SHIFT))
-            {
-                 itoa(slb_x, s, 10);
-                 message_add(plyr_idx, s);
-                 clear_key_pressed(KC_X);
-            }
-            else if (is_key_pressed(KC_Y, KMod_SHIFT))
-            {
-                 itoa(slb_y, s, 10);
-                 message_add(plyr_idx, s);
-                 clear_key_pressed(KC_Y);
-            }
-            else if (is_key_pressed(KC_N, KMod_NONE))
-            {
-                 itoa(get_slab_number(subtile_slab(stl_x), subtile_slab(stl_y)), s, 10);
-                 message_add(plyr_idx, s);
-                 clear_key_pressed(KC_N);
             }
             else
             {
