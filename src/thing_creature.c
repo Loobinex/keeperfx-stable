@@ -62,6 +62,7 @@
 #include "thing_physics.h"
 #include "lens_api.h"
 #include "light_data.h"
+#include "room_list.h"
 #include "room_jobs.h"
 #include "map_utils.h"
 #include "map_blocks.h"
@@ -1323,18 +1324,33 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     break;
                 }
                 case 18:
+                if (rkind > 0)
                 {
                     struct Coord3d cta_pos;
                     cta_pos.x.val = subtile_coord_center(dungeon->cta_stl_x);
                     cta_pos.y.val = subtile_coord_center(dungeon->cta_stl_y);
                     cta_pos.z.val = subtile_coord(1,0);
                     if (creature_can_navigate_to(thing, &cta_pos, NavRtF_NoOwner))
+                    long count = 0;
+                    if (nearest)
                     {
                         pos = cta_pos;
+                        room = find_room_nearest_to_position(thing->owner, rkind, &thing->mappos, &distance);
                     }
                     else
                     {
                         allowed = false;
+                        do
+                        {
+                            if (count >= count_player_rooms_of_type(thing->owner, rkind))
+                            {
+                                break;
+                            }
+                            room = room_get(find_next_room_of_type(thing->owner, rkind));
+                            find_first_valid_position_for_thing_anywhere_in_room(thing, room, &room_pos);
+                            count++;
+                        }
+                        while (!creature_can_navigate_to(thing, &room_pos, NavRtF_NoOwner));
                     }
                     break;
                 }
