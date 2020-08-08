@@ -469,7 +469,7 @@ void activate_trap_spawn_creature(struct Thing *traptng, const struct TrapStats 
 // Try to move thing out of the solid wall if it's inside one
     if (thing_in_wall_at(thing, &thing->mappos))
     {
-        ERRORLOG("Trap have to create creature, but creation failed");
+        ERRORLOG("Trap has to create creature, but creation failed");
         delete_thing_structure(thing, 0);
         return;
     }
@@ -663,12 +663,6 @@ TngUpdateRet update_trap_trigger(struct Thing *traptng)
                 }
                 traptng->field_4F &= TF4F_Unknown10; // Transparency
                 traptng->field_4F |= TF4F_Unknown20;
-//                if (mconf->)
-//                {
-                    // NonRechargable trap
-//                    traptng->health = -1;
-//                }
-//                else
                 if (!is_neutral_thing(traptng) && !is_hero_thing(traptng)) 
                 {
                     if (placing_offmap_workshop_item(traptng->owner, TCls_Trap, traptng->model))
