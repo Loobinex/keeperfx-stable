@@ -469,7 +469,7 @@ void activate_trap_spawn_creature(struct Thing *traptng, const struct TrapStats 
 // Try to move thing out of the solid wall if it's inside one
     if (thing_in_wall_at(thing, &thing->mappos))
     {
-        ERRORLOG("Trap have to create creature, but creation failed");
+        ERRORLOG("Trap has to create creature, but creation failed");
         delete_thing_structure(thing, 0);
         return;
     }
