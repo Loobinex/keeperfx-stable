@@ -30,6 +30,7 @@
 #include "keeperfx.hpp"
 #include "player_computer.h"
 #include "slab_data.h"
+#include "thing_factory.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -248,13 +249,13 @@ void cmd_save_tng()
         thing = thing_get(i);
         if (thing_exists(thing))
         {
-            InitThing out = {0};
+            struct InitThing out = {0};
             struct CreatureControl* cctrl;
-            LbMemoryCopy(&out.mappos, &thing->mappos, sizeof(struct Coord3d));
-            out.oclass = thing->oclass;
+            memcpy(&out.mappos, &thing->mappos, sizeof(struct Coord3d));
+            out.oclass = thing->class_id;
             out.model = thing->model;
             out.owner = thing->owner;
-            switch (thing->oclass)
+            switch (thing->class_id)
             {
             case TCls_Object:
                 out.index = thing->index;
@@ -269,7 +270,8 @@ void cmd_save_tng()
                 break;
             case TCls_EffectGen:
                 out.index = thing->index;
-                out.range = thing->
+                // TODO: Not implemented yet
+                out.range = 0;
                 break;
             case TCls_Trap:
                 out.index = thing->index;
@@ -283,7 +285,7 @@ void cmd_save_tng()
                 out.index = thing->index;
                 break;
             default:
-                ERRRORLOG("Unknown thing oclass: %d", thing->oclass);
+                ERRORLOG("Unknown thing oclass: %d", thing->class_id);
             }
 
             fwrite(&out, sizeof(out), 1, F);
@@ -409,6 +411,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             message_add(plyr_idx, "done!");
             return true;
         } else if (strcmp(parstr, "save.tng") == 0)
+        {
             cmd_save_tng();
             return true;
         }
