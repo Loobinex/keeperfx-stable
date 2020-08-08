@@ -1523,13 +1523,13 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             char s[3];
             if (is_key_pressed(KC_SLASH, KMod_NONE))
             {
-                 message_add_fmt(plyr_idx,
-                    "stl_pos:(%d,%d) slb_pos:(%d, %d) pack: %d kind:%d owner:%d",
+                message_add_fmt(plyr_idx, "   kind:%d owner:%d", slb->kind, slabmap_owner(slb));
+                message_add_fmt(plyr_idx,
+                    "stl_pos:(%d,%d) slb_pos:(%d, %d) pack: %d",
                     stl_x, stl_y,
                     slb_x, slb_y,
-                    get_slab_number(subtile_slab(stl_x), subtile_slab(stl_y)),
-                    slb->kind, slabmap_owner(slb));
-                 clear_key_pressed(KC_SLASH);
+                    get_slab_number(subtile_slab(stl_x), subtile_slab(stl_y)));
+                clear_key_pressed(KC_SLASH);
             }
             else
             {
