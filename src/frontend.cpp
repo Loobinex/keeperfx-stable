@@ -3439,6 +3439,9 @@ void frontend_update(short *finish_menu)
     case FeSt_CAMPAIGN_SELECT:
         frontend_campaign_select_update();
         break;
+    case FeSt_MAPPACK_SELECT:
+        frontend_mappack_select_update();
+        break;
     default:
         break;
     }
