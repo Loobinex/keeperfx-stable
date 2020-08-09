@@ -227,12 +227,12 @@ TbBool find_and_load_lif_files(void)
         return false;
   }
   short result = false;
-  char* fname = prepare_file_path(FGrp_VarLevels, "*.lif");
+  char* fname = prepare_file_path(FGrp_CmpgLvls, "*.lif");
   struct TbFileFind fileinfo;
   int rc = LbFileFindFirst(fname, &fileinfo, 0x21u);
   while (rc != -1)
   {
-    fname = prepare_file_path(FGrp_VarLevels,fileinfo.Filename);
+    fname = prepare_file_path(FGrp_CmpgLvls,fileinfo.Filename);
     long i = LbFileLength(fname);
     if ((i < 0) || (i >= MAX_LIF_SIZE))
     {
@@ -517,12 +517,12 @@ TbBool find_and_load_lof_files(void)
       return false;
     }
     short result = false;
-    char* fname = prepare_file_path(FGrp_VarLevels, "*.lof");
+    char* fname = prepare_file_path(FGrp_CmpgLvls, "*.lof");
     struct TbFileFind fileinfo;
     int rc = LbFileFindFirst(fname, &fileinfo, 0x21u);
     while (rc != -1)
     {
-        fname = prepare_file_path(FGrp_VarLevels,fileinfo.Filename);
+        fname = prepare_file_path(FGrp_CmpgLvls,fileinfo.Filename);
         long i = LbFileLength(fname);
         if ((i < 0) || (i >= MAX_LIF_SIZE))
         {
