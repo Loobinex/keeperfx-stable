@@ -38,6 +38,7 @@
 /******************************************************************************/
 int select_level_scroll_offset = 0;
 int select_campaign_scroll_offset = 0;
+int select_mappack_scroll_offset = 0;
 int number_of_freeplay_levels = 0;
 /******************************************************************************/
 void frontend_level_select_up(struct GuiButton *gbtn)
@@ -353,5 +354,91 @@ void frontend_draw_mappack_select_button(struct GuiButton *gbtn)
     i = LbTextLineHeight() * tx_units_per_px / 16;
     LbTextSetWindow(gbtn->scr_pos_x, gbtn->scr_pos_y, gbtn->width, i);
     LbTextDrawResized(0, 0, tx_units_per_px, campgn->name);
+}
+
+
+
+void frontend_mappack_select_up(struct GuiButton *gbtn)
+{
+  if (select_mappack_scroll_offset > 0)
+      select_mappack_scroll_offset--;
+}
+
+void frontend_mappack_select_down(struct GuiButton *gbtn)
+{
+  if (select_mappack_scroll_offset < mappacks_list.items_num-frontend_select_mappack_items_visible+1)
+      select_mappack_scroll_offset++;
+}
+
+void frontend_mappack_select_scroll(struct GuiButton *gbtn)
+{
+    select_mappack_scroll_offset = frontend_scroll_tab_to_offset(gbtn, GetMouseY(), frontend_select_mappack_items_visible-2, mappacks_list.items_num);
+}
+
+void frontend_mappack_select_up_maintain(struct GuiButton *gbtn)
+{
+    if (gbtn == NULL)
+        return;
+    if (select_mappack_scroll_offset != 0)
+        gbtn->flags |= LbBtnF_Enabled;
+    else
+        gbtn->flags &=  ~LbBtnF_Enabled;
+}
+
+void frontend_mappack_select_down_maintain(struct GuiButton *gbtn)
+{
+    if (gbtn == NULL)
+        return;
+    if (select_mappack_scroll_offset < mappacks_list.items_num-frontend_select_mappack_items_visible+1)
+        gbtn->flags |= LbBtnF_Enabled;
+    else
+        gbtn->flags &=  ~LbBtnF_Enabled;
+}
+
+void frontend_mappack_select_maintain(struct GuiButton *gbtn)
+{
+  if (gbtn == NULL)
+    return;
+  long btn_idx = (long)gbtn->content;
+  long i = select_mappack_scroll_offset + btn_idx - 45;
+  if (i < mappacks_list.items_num)
+      gbtn->flags |= LbBtnF_Enabled;
+  else
+      gbtn->flags &=  ~LbBtnF_Enabled;
+}
+
+void frontend_mappack_select_update(void)
+{
+    if (mappacks_list.items_num <= 0)
+    {
+        select_mappack_scroll_offset = 0;
+    } else
+    if (select_mappack_scroll_offset < 0)
+    {
+        select_mappack_scroll_offset = 0;
+    } else
+    if (select_mappack_scroll_offset > mappacks_list.items_num-frontend_select_mappack_items_visible+1)
+    {
+        select_mappack_scroll_offset = mappacks_list.items_num-frontend_select_mappack_items_visible+1;
+    }
+    if (wheel_scrolled_down || (is_key_pressed(KC_DOWN,KMod_NONE)))
+    {
+        if (select_mappack_scroll_offset < mappacks_list.items_num-frontend_select_mappack_items_visible+1)
+        {
+            select_mappack_scroll_offset++;
+        }
+    }
+    if (wheel_scrolled_up || (is_key_pressed(KC_UP,KMod_NONE)))
+    {
+        if (select_mappack_scroll_offset > 0)
+        {
+            select_mappack_scroll_offset--;
+        }
+    }
+}
+
+void frontend_draw_mappack_scroll_tab(struct GuiButton *gbtn)
+{
+    frontend_draw_scroll_tab(gbtn, select_mappack_scroll_offset, frontend_select_mappack_items_visible-2, mappacks_list.items_num);
 }
 /******************************************************************************/
