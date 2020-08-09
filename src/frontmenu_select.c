@@ -367,7 +367,7 @@ void frontend_mappack_select(struct GuiButton *gbtn)
     if (gbtn == NULL)
         return;
     btn_idx = (long)gbtn->content;
-    i = select_campaign_scroll_offset + btn_idx-45;
+    i = select_mappack_scroll_offset + btn_idx-45;
     campgn = NULL;
     if ((i >= 0) && (i < mappacks_list.items_num))
         campgn = &mappacks_list.items[i];
@@ -384,7 +384,7 @@ void frontend_draw_mappack_select_button(struct GuiButton *gbtn)
     if (gbtn == NULL)
       return;
     btn_idx = (long)gbtn->content;
-    i = select_campaign_scroll_offset + btn_idx-45;
+    i = select_mappack_scroll_offset + btn_idx-45;
     campgn = NULL;
     if ((i >= 0) && (i < mappacks_list.items_num))
       campgn = &mappacks_list.items[i];
