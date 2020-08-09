@@ -970,14 +970,14 @@ short parse_campaign_map_blocks(struct GameCampaign *campgn, char *buf, long len
     return 1;
 }
 
-TbBool load_campaign(const char *cmpgn_fname,struct GameCampaign *campgn,unsigned short flags)
+TbBool load_campaign(const char *cmpgn_fname,struct GameCampaign *campgn,unsigned short flags, short fgroup)
 {
     // Preparing campaign file name and checking the file
     clear_campaign(campgn);
     LbStringCopy(campgn->fname,cmpgn_fname,DISKPATH_SIZE);
     LbStringCopy(campgn->name,cmpgn_fname,DISKPATH_SIZE);
     SYNCDBG(0,"%s campaign file \"%s\".",((flags & CnfLd_ListOnly) == 0)?"Reading":"Parsing",cmpgn_fname);
-    char* fname = prepare_file_path(FGrp_Campgn, cmpgn_fname);
+    char* fname = prepare_file_path(fgroup, cmpgn_fname);
     long len = LbFileLengthRnc(fname);
     if (len < 2)
     {
@@ -1038,10 +1038,11 @@ TbBool change_campaign(const char *cmpgn_fname)
     if ((campaign.fname[0] != '\0') && (strcasecmp(campaign.fname,cmpgn_fname) == 0))
         return true;
     free_campaign(&campaign);
+    short fgroup = FGrp_Campgn; //use this as a default
     if ((cmpgn_fname != NULL) && (cmpgn_fname[0] != '\0'))
-        result = load_campaign(cmpgn_fname,&campaign,CnfLd_Standard);
+        result = load_campaign(cmpgn_fname,&campaign,CnfLd_Standard, fgroup);
     else
-        result = load_campaign(keeper_campaign_file,&campaign,CnfLd_Standard);
+        result = load_campaign(keeper_campaign_file,&campaign,CnfLd_Standard, fgroup);
     // Configs which may change within a level should be initialized outside
     //load_computer_player_config(CnfLd_Standard);
     //load_stats_files();
@@ -1121,14 +1122,14 @@ TbBool free_campaigns_list_entries(struct CampaignsList *clist)
   return true;
 }
 
-TbBool load_campaign_to_list(const char *cmpgn_fname,struct CampaignsList *clist)
+TbBool load_campaign_to_list(const char *cmpgn_fname,struct CampaignsList *clist, short fgroup)
 {
     if (clist->items_num >= clist->items_count)
       grow_campaigns_list_entries(clist, CAMPAIGNS_LIST_GROW_DELTA);
     if (clist->items_num >= clist->items_count)
       return false;
     struct GameCampaign* campgn = &clist->items[clist->items_num];
-    if (load_campaign(cmpgn_fname,campgn,CnfLd_ListOnly))
+    if (load_campaign(cmpgn_fname,campgn,CnfLd_ListOnly, fgroup))
     {
         if (campgn->single_levels_count > 0)
         {
@@ -1204,14 +1205,14 @@ void sort_campaigns(struct CampaignsList *clist,const char *fname_first)
 TbBool load_campaigns_list(void)
 {
     init_campaigns_list_entries(&campaigns_list, CAMPAIGNS_LIST_GROW_DELTA);
-    char* fname = prepare_file_path(FGrp_Campgn, "*.cfg");
+    char* fname = prepare_file_path(FGrp_Campgn, "*.cfg"); // add campaigns
     struct TbFileFind fileinfo;
     int rc = LbFileFindFirst(fname, &fileinfo, 0x21u);
     long cnum_all = 0;
     long cnum_ok = 0;
     while (rc != -1)
     {
-        if (load_campaign_to_list(fileinfo.Filename, &campaigns_list))
+        if (load_campaign_to_list(fileinfo.Filename, &campaigns_list, FGrp_Campgn))
         {
             cnum_ok++;
         }
