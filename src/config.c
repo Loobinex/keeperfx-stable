@@ -981,12 +981,13 @@ short file_group_needs_cd(short fgroup)
 
 short get_level_fgroup(LevelNumber lvnum)
 {
+    /* We never want to allow levels to be in the base /levels/ folder now, so remove this (there should always be a levels folder defined for a campaign or map pack)
     struct LevelInformation* lvinfo = get_level_info(lvnum);
     if (lvinfo == NULL)
         return FGrp_VarLevels;
     if (lvinfo->location == LvLc_Campaign)
-        return FGrp_CmpgLvls;
-    return FGrp_VarLevels;
+        return FGrp_CmpgLvls;*/
+    return FGrp_CmpgLvls;
 }
 
 /**
