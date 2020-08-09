@@ -40,6 +40,9 @@ int select_level_scroll_offset = 0;
 int select_campaign_scroll_offset = 0;
 int select_mappack_scroll_offset = 0;
 int number_of_freeplay_levels = 0;
+int frontend_select_level_items_visible = 0;
+int frontend_select_campaign_items_visible = 0;
+int frontend_select_mappack_items_visible = 0;
 /******************************************************************************/
 void frontend_level_select_up(struct GuiButton *gbtn)
 {
@@ -148,6 +151,7 @@ void frontend_level_list_load(void)
         return;
     }*/
     number_of_freeplay_levels = campaign.freeplay_levels_count;
+    frontend_select_level_items_visible = (campaign.freeplay_levels_count < frontend_select_level_items_max_visible)?campaign.freeplay_levels_count+1:frontend_select_level_items_max_visible;
 }
 
 void frontend_level_select_update(void)
@@ -320,6 +324,12 @@ void frontend_draw_campaign_scroll_tab(struct GuiButton *gbtn)
     frontend_draw_scroll_tab(gbtn, select_campaign_scroll_offset, frontend_select_campaign_items_visible-2, campaigns_list.items_num);
 }
 
+void frontend_mappack_list_load(void)
+{
+    select_level_scroll_offset = 0; // Reset the scroll of the level select screen here, as it should only be reset when user returns to map pack select screen (Not from exiting level etc).
+    frontend_select_mappack_items_visible = (mappacks_list.items_num < frontend_select_mappack_items_max_visible)?mappacks_list.items_num+1:frontend_select_mappack_items_max_visible;
+}
+
 void frontend_mappack_select_up(struct GuiButton *gbtn)
 {
   if (select_mappack_scroll_offset > 0)
@@ -450,5 +460,10 @@ void frontend_mappack_select_update(void)
 void frontend_draw_mappack_scroll_tab(struct GuiButton *gbtn)
 {
     frontend_draw_scroll_tab(gbtn, select_mappack_scroll_offset, frontend_select_mappack_items_visible-2, mappacks_list.items_num);
+}
+
+void frontend_campaign_list_load(void)
+{
+    frontend_select_campaign_items_visible = (campaigns_list.items_num < frontend_select_campaign_items_max_visible)?campaigns_list.items_num+1:frontend_select_campaign_items_max_visible;
 }
 /******************************************************************************/

@@ -32,11 +32,11 @@ struct GuiButton;
 
 #pragma pack()
 /******************************************************************************/
-#define frontend_select_level_items_visible  7
+#define frontend_select_level_items_max_visible  7
 extern struct GuiMenu frontend_select_level_menu;
-#define frontend_select_campaign_items_visible  7
+#define frontend_select_campaign_items_max_visible  7
 extern struct GuiMenu frontend_select_campaign_menu;
-#define frontend_select_mappack_items_visible  7
+#define frontend_select_mappack_items_max_visible  7
 extern struct GuiMenu frontend_select_mappack_menu;
 /******************************************************************************/
 // Level list selection screen
@@ -65,6 +65,7 @@ void frontend_draw_campaign_select_button(struct GuiButton *gbtn);
 void frontend_campaign_select(struct GuiButton *gbtn);
 void frontend_campaign_select_update(void);
 void frontend_draw_campaign_scroll_tab(struct GuiButton *gbtn);
+void frontend_campaign_list_load(void);
 
 // Map pack selection screen
 void frontend_mappack_select_up(struct GuiButton *gbtn);
@@ -77,6 +78,7 @@ void frontend_draw_mappack_select_button(struct GuiButton *gbtn);
 void frontend_mappack_select(struct GuiButton *gbtn);
 void frontend_mappack_select_update(void);
 void frontend_draw_mappack_scroll_tab(struct GuiButton *gbtn);
+void frontend_mappack_list_load(void);
 /******************************************************************************/
 #ifdef __cplusplus
 }

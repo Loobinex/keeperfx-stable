@@ -2728,10 +2728,12 @@ FrontendMenuState frontend_setup_state(FrontendMenuState nstate)
         break;
     case FeSt_MAPPACK_SELECT:
         turn_on_menu(GMnu_MAPPACK_SELECT);
+        frontend_mappack_list_load();
         set_pointer_graphic_menu();
         break;
     case FeSt_CAMPAIGN_SELECT:
         turn_on_menu(GMnu_FECAMPAIGN_SELECT);
+        frontend_campaign_list_load();
         set_pointer_graphic_menu();
         break;
   #if (BFDEBUG_LEVEL > 0)
