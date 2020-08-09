@@ -142,11 +142,11 @@ void frontend_level_list_unload(void)
 
 void frontend_level_list_load(void)
 {
-    // Load the default campaign (free play levels should be played with default campaign settings)
+    /*// Load the default campaign (free play levels should be played with default campaign settings)
     if (!change_campaign("deepdngn.cfg")) {
         number_of_freeplay_levels = 0;
         return;
-    }
+    }*/
     number_of_freeplay_levels = campaign.freeplay_levels_count;
 }
 
@@ -382,6 +382,8 @@ void frontend_mappack_select(struct GuiButton *gbtn)
     if ((i >= 0) && (i < mappacks_list.items_num))
         campgn = &mappacks_list.items[i];
     if (campgn == NULL)
+        return;
+    if (!change_campaign(campgn->fname))
         return;
     frontend_set_state(FeSt_LEVEL_SELECT);
 }
