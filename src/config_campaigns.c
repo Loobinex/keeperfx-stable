@@ -1027,13 +1027,13 @@ TbBool load_campaign(const char *cmpgn_fname,struct GameCampaign *campgn,unsigne
         if (!result)
           WARNMSG("Parsing campaign file \"%s\" strings block failed.",cmpgn_fname);
     }
-    if ((result) && ((flags & CnfLd_ListOnly) == 0))
+    if ((result) && ((flags & CnfLd_ListOnly) == 0) && (fgroup == FGrp_Campgn))
     {
         result = parse_campaign_speech_blocks(campgn, buf, len);
         if (!result)
           WARNMSG("Parsing campaign file \"%s\" speech block failed.",cmpgn_fname);
     }
-    if ((result) && ((flags & CnfLd_ListOnly) == 0))
+    if ((result) && ((flags & CnfLd_ListOnly) == 0) && (fgroup == FGrp_Campgn))
     {
         result = parse_campaign_map_blocks(campgn, buf, len);
         if (!result)
