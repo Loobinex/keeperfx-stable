@@ -37,6 +37,7 @@ extern "C" {
 #endif
 /******************************************************************************/
 const char keeper_campaign_file[]="keeporig.cfg";
+const char deeper_mappack_file[]="deepdngn.cfg";
 
 const struct NamedCommand cmpgn_common_commands[] = {
   {"NAME",                1},
@@ -109,6 +110,7 @@ const struct NamedCommand cmpgn_human_player_options[] = {
 /******************************************************************************/
 struct GameCampaign campaign;
 struct CampaignsList campaigns_list;
+struct CampaignsList mappacks_list;
 
 /******************************************************************************/
 /*
@@ -1026,8 +1028,11 @@ TbBool load_campaign(const char *cmpgn_fname,struct GameCampaign *campgn,unsigne
         setup_campaign_strings_data(campgn);
         setup_campaign_credits_data(campgn);
     }
-    if (result)
+    if (result && fgroup == FGrp_Campgn)
         return (campgn->single_levels_count > 0) || (campgn->multi_levels_count > 0);
+    if (result && fgroup == FGrp_VarLevels){
+        return (true);
+    }
     return false;
 }
 
@@ -1038,7 +1043,10 @@ TbBool change_campaign(const char *cmpgn_fname)
     if ((campaign.fname[0] != '\0') && (strcasecmp(campaign.fname,cmpgn_fname) == 0))
         return true;
     free_campaign(&campaign);
+    // Determine type of campaign (currently campaign and mappack)
     short fgroup = FGrp_Campgn; //use this as a default
+    if (is_campaign_in_list(cmpgn_fname, &mappacks_list)) // check if this is a map pack CFG file
+        fgroup = FGrp_VarLevels;
     if ((cmpgn_fname != NULL) && (cmpgn_fname[0] != '\0'))
         result = load_campaign(cmpgn_fname,&campaign,CnfLd_Standard, fgroup);
     else
@@ -1048,8 +1056,17 @@ TbBool change_campaign(const char *cmpgn_fname)
     //load_stats_files();
     //check_and_auto_fix_stats();
     // Make sure all additional levels are loaded
-    find_and_load_lif_files();
-    find_and_load_lof_files();
+    //   Only the original campaign need to list the multiplayer levels 
+    //   (until there are multiplayer mappacks) as all multi maps go on 
+    //   the same "campaign" screen (and need to be in the same list to do so)
+    if (strcasecmp(campaign.fname,keeper_campaign_file) == 0)
+    {
+        find_and_load_lof_files();
+    }
+    if (fgroup == FGrp_VarLevels)
+    {
+        find_and_load_lif_files();
+    }
     load_or_create_high_score_table();
     // Update GUI arrays to new config
     update_room_tab_to_config();
@@ -1131,10 +1148,20 @@ TbBool load_campaign_to_list(const char *cmpgn_fname,struct CampaignsList *clist
     struct GameCampaign* campgn = &clist->items[clist->items_num];
     if (load_campaign(cmpgn_fname,campgn,CnfLd_ListOnly, fgroup))
     {
-        if (campgn->single_levels_count > 0)
+        switch(fgroup)
         {
-            clist->items_num++;
-            return true;
+         case FGrp_VarLevels:
+                clist->items_num++;
+                return true;
+            break;
+         case FGrp_Campgn:
+         default:
+             if (campgn->single_levels_count > 0)
+            {
+                clist->items_num++;
+                return true;
+            }
+            break;
         }
     }
     return false;
@@ -1225,6 +1252,47 @@ TbBool load_campaigns_list(void)
     return (campaigns_list.items_num > 0);
 }
 
+/**
+ * Searches for map pack files and creates a list of map packs.
+ */
+TbBool load_mappacks_list(void)
+{
+    init_campaigns_list_entries(&mappacks_list, CAMPAIGNS_LIST_GROW_DELTA);
+    char* fname = prepare_file_path(FGrp_VarLevels, "*.cfg"); // add map packs
+    struct TbFileFind fileinfo;
+    int rc = LbFileFindFirst(fname, &fileinfo, 0x21u);
+    long cnum_all = 0;
+    long cnum_ok = 0;
+    while (rc != -1)
+    {
+        if (load_campaign_to_list(fileinfo.Filename, &mappacks_list, FGrp_VarLevels))
+        {
+            cnum_ok++;
+        }
+      rc = LbFileFindNext(&fileinfo);
+      cnum_all++;
+    }
+    LbFileFindEnd(&fileinfo);
+    SYNCDBG(0,"Found %d map pack files, properly loaded %d.",cnum_all,cnum_ok);
+    sort_campaigns(&mappacks_list,deeper_mappack_file);
+    return (mappacks_list.items_num > 0);
+}
+
+TbBool is_campaign_in_list(const char *cmpgn_fname, struct CampaignsList *clist)
+{
+    if (clist->items == NULL || clist->items_num < 1)
+    {
+        return false;
+    }
+    for (int i = 0; i < clist->items_num; i++)
+    {
+        if (strcasecmp(clist->items[i].fname,cmpgn_fname) == 0)
+        {
+            return true;
+        }
+    }
+    return false;
+}
 /******************************************************************************/
 #ifdef __cplusplus
 }
