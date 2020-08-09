@@ -180,6 +180,16 @@ void frontend_level_select_update(void)
   }
 }
 
+void frontend_draw_level_select_mappack(struct GuiButton *gbtn)
+{
+    const char *text;
+    if (campaign.name != NULL)
+        text = campaign.name;
+    else
+        text = frontend_button_caption_text(gbtn);
+    frontend_draw_button(gbtn, 1, text, Lb_TEXT_HALIGN_CENTER);
+}
+
 void frontend_campaign_select_up(struct GuiButton *gbtn)
 {
   if (select_campaign_scroll_offset > 0)

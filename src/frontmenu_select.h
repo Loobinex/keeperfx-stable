@@ -52,6 +52,7 @@ void frontend_level_select_maintain(struct GuiButton *gbtn);
 void frontend_level_list_load(void);
 void frontend_level_list_unload(void);
 void frontend_level_select_update(void);
+void frontend_draw_level_select_mappack(struct GuiButton *gbtn);
 
 // Campaign selection screen
 void frontend_campaign_select_up(struct GuiButton *gbtn);
