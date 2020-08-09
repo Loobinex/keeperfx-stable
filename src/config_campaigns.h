@@ -149,6 +149,7 @@ struct CampaignsList {
 /******************************************************************************/
 extern struct GameCampaign campaign;
 extern struct CampaignsList campaigns_list;
+extern struct CampaignsList mappacks_list;
 extern const struct NamedCommand cmpgn_map_commands[];
 extern const struct NamedCommand cmpgn_map_cmnds_options[];
 extern const struct NamedCommand cmpgn_map_cmnds_kind[];
@@ -171,8 +172,10 @@ TbBool init_campaigns_list_entries(struct CampaignsList *clist, long num_entries
 TbBool grow_campaigns_list_entries(struct CampaignsList *clist, long add_entries);
 TbBool free_campaigns_list_entries(struct CampaignsList *clist);
 TbBool load_campaigns_list(void);
+TbBool load_mappacks_list(void);
 TbBool change_campaign(const char *cmpgn_fname);
 TbBool is_campaign_loaded(void);
+TbBool is_campaign_in_list(const char *cmpgn_fname, struct CampaignsList *clist);
 /******************************************************************************/
 #ifdef __cplusplus
 }
