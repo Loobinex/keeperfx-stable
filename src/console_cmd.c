@@ -284,6 +284,12 @@ void cmd_save_tng()
             case TCls_Unkn11:
                 out.index = thing->index;
                 break;
+            case TCls_EffectElem:
+            case TCls_DeadCreature:
+            case TCls_Effect:
+            case TCls_AmbientSnd:
+            case TCls_CaveIn:
+                continue;
             default:
                 ERRORLOG("Unknown thing oclass: %d", thing->class_id);
             }
