@@ -59,6 +59,7 @@ const struct NamedCommand cmpgn_common_commands[] = {
   {"OUTRO_MOVIE",        17},
   {"LAND_MARKERS",       18},
   {"HUMAN_PLAYER",       19},
+  {"NAME_TEXT_ID",       20},
   {NULL,                  0},
   };
 
@@ -629,6 +630,23 @@ short parse_campaign_common_blocks(struct GameCampaign *campgn,char *buf,long le
           if (n < 1)
               CONFWRNLOG("Couldn't read \"%s\" command parameter in %s file.",
                 COMMAND_TEXT(cmd_num),config_textname);
+          break;
+      case 20: // NAME_TEXT_ID
+          i = get_conf_parameter_whole(buf,&pos,len,word_buf,sizeof(word_buf));
+          if (i <= 0) {
+              CONFWRNLOG("Couldn't read \"%s\" command parameter in %s file.",
+                COMMAND_TEXT(cmd_num),config_textname);
+          }
+          else {
+              k = atoi(word_buf);
+                if (k > 0) {
+                    LbStringCopy(campgn->name,get_string(STRINGS_MAX+k),LINEMSG_SIZE); // use the index provided in the config file to get a specific UI string
+                }
+                else {
+                    CONFWRNLOG("Couldn't read \"%s\" command parameter in %s file. Not a valid number.",
+                      COMMAND_TEXT(cmd_num),config_textname);
+                }
+          }
           break;
       case 0: // comment
           break;
