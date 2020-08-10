@@ -399,48 +399,6 @@ static LPCTSTR MsResourceMapping(int index)
   }
 }
 
-static TbResult LbScreenActivationUpdate(void)
-{
-    SDL_Event ev;
-    // ev.type = SDL_ACTIVEEVENT;
-    // ev.active.state = SDL_APPACTIVE;
-    // ev.active.gain = ((SDL_GetAppState() & ev.active.state) != 0);
-    // SDL_PushEvent(&ev);
-    return Lb_SUCCESS;
-}
-
-/** Updates icon of the application.
- *  Icon index is stored in lbIconIndex global variable; this function maps
- *  the index into OS-specific resource and applies it to engine process.
- *
- * @return If icon was updated, Lb_SUCCESS is returned.
- */
-TbResult LbScreenUpdateIcon(void)
-{
-    //TODO BFLIB replace with portable version
-/*
-    Uint32          colorkey;
-    SDL_Surface     *image;
-    image = SDL_LoadBMP("keeperfx_icon.bmp");
-    colorkey = SDL_MapRGB(image->format, 255, 0, 255);
-    SDL_SetColorKey(image, SDL_SRCCOLORKEY, colorkey);
-    SDL_WM_SetIcon(image,NULL);
- */
-    SDL_SysWMinfo wmInfo;
-
-    SDL_VERSION(&wmInfo.version);
-    // if (SDL_GetWMInfo(&wmInfo) < 0) {
-    //     WARNLOG("Couldn't get SDL window info, therefore cannot set icon");
-    //     return Lb_FAIL;
-    // }
-
-    HINSTANCE lbhInstance = GetModuleHandle(NULL);
-    HICON hIcon = LoadIcon(lbhInstance, MsResourceMapping(lbIconIndex));
-    // SendMessage(wmInfo.window, WM_SETICON, ICON_BIG,  (LPARAM)hIcon);
-    // SendMessage(wmInfo.window, WM_SETICON, ICON_SMALL,(LPARAM)hIcon);
-    return Lb_SUCCESS;
-}
-
 TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord height,
     unsigned char *palette, short buffers_count, TbBool wscreen_vid)
 {
@@ -500,12 +458,10 @@ TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord hei
         return Lb_FAIL;
     }
 
-    LbScreenUpdateIcon();
-
     // Create secondary surface if necessary, that is if BPP != lbEngineBPP.
     if (mdinfo->BitsPerPixel != lbEngineBPP)
     {
-        lbDrawSurface = SDL_CreateRGBSurface(SDL_SWSURFACE, mdinfo->Width, mdinfo->Height, lbEngineBPP, 0, 0, 0, 0);
+        lbDrawSurface = SDL_CreateRGBSurface(0, mdinfo->Width, mdinfo->Height, lbEngineBPP, 0, 0, 0, 0);
         if (lbDrawSurface == NULL) {
             ERRORLOG("Can't create secondary surface: %s",SDL_GetError());
             LbScreenReset();
@@ -542,7 +498,6 @@ TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord hei
         if (msspr != NULL)
           LbMouseChangeSpriteAndHotspot(msspr, hot_x, hot_y);
     }
-    LbScreenActivationUpdate();
     SYNCDBG(8,"Finished");
     return Lb_SUCCESS;
 }

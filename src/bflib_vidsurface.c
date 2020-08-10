@@ -51,7 +51,7 @@ TbResult LbScreenSurfaceCreate(struct SSurface *surf,unsigned long w,unsigned lo
         format = lbDrawSurface->format;
     }
     //SDL_HWSURFACE
-    surf->surf_data = SDL_CreateRGBSurface(SDL_TRUE , w, h, format->BitsPerPixel,
+    surf->surf_data = SDL_CreateRGBSurface(0 , w, h, format->BitsPerPixel,
         format->Rmask, format->Gmask, format->Bmask, format->Amask);
 
     if (surf->surf_data == NULL) {
