@@ -405,10 +405,8 @@ enum GUIStrings {
     GUIStr_CreatureHealthDesc = STRINGS_MAX+965,
     GUIStr_CreatureMaxHealthDesc = STRINGS_MAX+966,
     GUIStr_ToggleMessage = STRINGS_MAX+967,
-    GUIStr_MnuDeeperDungeons = STRINGS_MAX+968,
-    GUIStr_MnuDungeonKeeperLevels = STRINGS_MAX+969,
-    GUIStr_MnuKeeperFXLevels = STRINGS_MAX+970,
-    GUIStr_MnuReturnToFreePlay = STRINGS_MAX+971,
+    GUIStr_MnuReturnToFreePlay = STRINGS_MAX + 968,
+    GUIStr_MnuDungeonKeeperLevels = STRINGS_MAX+969, // range 969..974
 };
 
 enum CampaignStrings {

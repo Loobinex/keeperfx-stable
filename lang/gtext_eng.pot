@@ -5699,19 +5699,38 @@ msgstr ""
 msgctxt "Menu interface item"
 msgid "Toggle Message"
 msgstr ""
+
 #: guitext:968
 msgctxt "Menu interface item"
 msgid "Toggle Message"
-msgstr "The Deeper Dungeons"
+msgstr "Return to Free Play levels"
+
 #: guitext:969
 msgctxt "Menu interface item"
-msgid "Toggle Message"
-msgstr "Dungeon Keeper user maps"
+msgid "The Deeper Dungeons"
+msgstr ""
+
 #: guitext:970
 msgctxt "Menu interface item"
-msgid "Toggle Message"
-msgstr "KeeperFX user maps"
+msgid "Standard Levels"
+msgstr ""
+
 #: guitext:971
 msgctxt "Menu interface item"
-msgid "Toggle Message"
-msgstr "Return to Free Play levels"
+msgid "Classic Levels"
+msgstr ""
+
+#: guitext:972
+msgctxt "Menu interface item"
+msgid "Legacy Levels"
+msgstr ""
+
+#: guitext:973
+msgctxt "Menu interface item"
+msgid "Personal Levels"
+msgstr ""
+
+#: guitext:973
+msgctxt "Menu interface item"
+msgid "Lost Levels"
+msgstr ""
