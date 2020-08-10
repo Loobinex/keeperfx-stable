@@ -82,7 +82,7 @@ struct GuiButtonInit frontend_select_mappack_buttons[] = {
   { 1,  0, 0, 0, frontend_mappack_select_up,NULL,frontend_over_button,0, 532, 153, 532, 153, 26, 14, frontend_draw_slider_button,       0, GUIStr_Empty,  0,      {17},            0, frontend_mappack_select_up_maintain},
   { 1,  0, 0, 0, frontend_mappack_select_down,NULL,frontend_over_button,0,532,321,532,  321, 26, 14, frontend_draw_slider_button,       0, GUIStr_Empty,  0,      {18},            0, frontend_mappack_select_down_maintain},
   { 0,  0, 0, 0, frontend_mappack_select_scroll,NULL,NULL,            0, 536, 167, 536, 167, 20,154, frontend_draw_mappack_scroll_tab,  0, GUIStr_Empty,  0,      {40},            0, NULL},
-  { 0,  0, 0, 0, NULL,               NULL,        NULL,               0, 102, 129, 102, 129,220, 26, frontend_draw_text,                0, GUIStr_Empty,  0,     {109},            0, NULL},
+  { 0,  0, 0, 0, NULL,               NULL,        NULL,               0, 102, 129, 102, 129,220, 26, frontend_draw_text,                0, GUIStr_Empty,  0,     {112},            0, NULL},
   { 0,  0, 0, 0, frontend_mappack_select,NULL,frontend_over_button,   0,  95, 167,  95, 169,424, 22, frontend_draw_mappack_select_button,0,GUIStr_Empty,  0,      {45},            0, frontend_mappack_select_maintain},
   { 0,  0, 0, 0, frontend_mappack_select,NULL,frontend_over_button,   0,  95, 189,  95, 191,424, 22, frontend_draw_mappack_select_button,0,GUIStr_Empty,  0,      {46},            0, frontend_mappack_select_maintain},
   { 0,  0, 0, 0, frontend_mappack_select,NULL,frontend_over_button,   0,  95, 211,  95, 213,424, 22, frontend_draw_mappack_select_button,0,GUIStr_Empty,  0,      {47},            0, frontend_mappack_select_maintain},

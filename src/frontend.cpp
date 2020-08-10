@@ -306,6 +306,7 @@ struct FrontEndButtonData frontend_button_info[] = {
     {GUIStr_MnuCampaigns, 2}, // [109]
     {GUIStr_MnuAddComputer, 1}, // [110]
     {GUIStr_MnuReturnToFreePlay, 1},
+    {GUIStr_MnuMapPacks, 2},
 };
 
 struct EventTypeInfo event_button_info[] = {

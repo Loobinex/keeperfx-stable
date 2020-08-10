@@ -406,7 +406,8 @@ enum GUIStrings {
     GUIStr_CreatureMaxHealthDesc = STRINGS_MAX+966,
     GUIStr_ToggleMessage = STRINGS_MAX+967,
     GUIStr_MnuReturnToFreePlay = STRINGS_MAX + 968,
-    GUIStr_MnuDungeonKeeperLevels = STRINGS_MAX+969, // range 969..974
+    GUIStr_MnuMapPacks = STRINGS_MAX + 969,
+    GUIStr_MnuDungeonKeeperLevels = STRINGS_MAX+970, // range 970..975
 };
 
 enum CampaignStrings {
