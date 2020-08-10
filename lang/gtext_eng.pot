@@ -5702,8 +5702,8 @@ msgstr ""
 
 #: guitext:968
 msgctxt "Menu interface item"
-msgid "Toggle Message"
-msgstr "Return to Free Play levels"
+msgid "Return to Free Play levels"
+msgstr ""
 
 #: guitext:969
 msgctxt "Menu interface item"

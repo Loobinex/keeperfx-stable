@@ -52,7 +52,7 @@ struct GuiButtonInit frontend_select_level_buttons[] = {
   { 0,  0, 0, 0, frontend_level_select,NULL,frontend_over_button,     0,  95, 255,  95, 257,424, 22, frontend_draw_level_select_button, 0, GUIStr_Empty,  0,      {49},            0, frontend_level_select_maintain},
   { 0,  0, 0, 0, frontend_level_select,NULL,frontend_over_button,     0,  95, 277,  95, 279,424, 22, frontend_draw_level_select_button, 0, GUIStr_Empty,  0,      {50},            0, frontend_level_select_maintain},
   { 0,  0, 0, 0, frontend_level_select,NULL,frontend_over_button,     0,  95, 299,  95, 301,424, 22, frontend_draw_level_select_button, 0, GUIStr_Empty,  0,      {51},            0, frontend_level_select_maintain},
-  { 0,  0, 0, 0, frontend_change_state,NULL,frontend_over_button,    34, 999, 404, 999, 404,371, 46, frontend_draw_large_menu_button,   0, GUIStr_Empty,  0,     {118},            0, NULL},
+  { 0,  0, 0, 0, frontend_change_state,NULL,frontend_over_button,    34, 999, 404, 999, 404,371, 46, frontend_draw_large_menu_button,   0, GUIStr_Empty,  0,     {111},            0, NULL},
   {-1,  0, 0, 0, NULL,               NULL,        NULL,               0,   0,   0,   0,   0,  0,  0, NULL,                              0, GUIStr_Empty,  0,       {0},            0, NULL },
 };
 
