@@ -100,7 +100,7 @@ struct GuiButtonInit frontend_main_menu_buttons[] = {
   { 0,  0, 0, 0, NULL,               NULL,        NULL,                 0, 999,  26, 999,  26, 371, 46, frontend_draw_large_menu_button,  0, GUIStr_Empty,  0,       {1},            0, NULL },
   { 0,  0, 0, 0, frontend_start_new_game,NULL,frontend_over_button,     3, 999,  92, 999,  92, 371, 46, frontend_draw_large_menu_button,  0, GUIStr_Empty,  0,       {2},            0, NULL },
   { 0,  0, 0, 0, frontend_load_continue_game,NULL,frontend_over_button, 0, 999, 138, 999, 138, 371, 46, frontend_draw_large_menu_button,  0, GUIStr_Empty,  0,       {8},            0, frontend_continue_game_maintain },
-  { 0,  0, 0, 0, frontend_change_state,NULL,frontend_over_button,34,999,184,999,184,371, 46, frontend_draw_large_menu_button,  0, GUIStr_Empty,  0,     {106},            0, NULL },
+  { 0,  0, 0, 0, frontend_load_mappacks,NULL,frontend_over_button,     34, 999, 184, 999, 184, 371, 46, frontend_draw_large_menu_button,  0, GUIStr_Empty,  0,     {106},            0, frontend_mappacks_maintain },
   { 0,  0, 0, 0, frontend_change_state,NULL, frontend_over_button,    2, 999, 230,   999, 230, 371, 46, frontend_draw_large_menu_button,  0, GUIStr_Empty,  0,       {3},            0, frontend_main_menu_load_game_maintain },
   { 0,  0, 0, 0, frontend_netservice_change_state,NULL, frontend_over_button,4,999,276,999,276,371, 46, frontend_draw_large_menu_button,  0, GUIStr_Empty,  0,       {4},            0, frontend_main_menu_netservice_maintain },
   { 0,  0, 0, 0, frontend_change_state,NULL, frontend_over_button,   27, 999, 322,   999, 322, 371, 46, frontend_draw_large_menu_button,  0, GUIStr_Empty,  0,      {97},            0, NULL },
@@ -807,6 +807,14 @@ void frontend_continue_game_maintain(struct GuiButton *gbtn)
 void frontend_main_menu_load_game_maintain(struct GuiButton *gbtn)
 {
     if (number_of_saved_games > 0)
+        gbtn->flags |= LbBtnF_Enabled;
+    else
+        gbtn->flags &= ~LbBtnF_Enabled;
+}
+
+void frontend_mappacks_maintain(struct GuiButton *gbtn)
+{
+    if (mappacks_list.items_num > 0)
         gbtn->flags |= LbBtnF_Enabled;
     else
         gbtn->flags &= ~LbBtnF_Enabled;
@@ -1692,6 +1700,32 @@ void frontend_start_new_game(struct GuiButton *gbtn)
     } else
     { // If there's more campaigns, go to selection screen
       frontend_set_state(FeSt_CAMPAIGN_SELECT);
+    }
+}
+
+void frontend_load_mappacks(struct GuiButton *gbtn)
+{
+    const char *cmpgn_fname;
+    SYNCDBG(6,"Clicked");
+    // Check if we can show some levels without showing the map pack selection screen
+    if (mappacks_list.items_num < 1)
+      cmpgn_fname = lbEmptyString;
+    else
+    if (mappacks_list.items_num == 1)
+      cmpgn_fname = mappacks_list.items[0].fname;
+    else
+      cmpgn_fname = NULL;
+    if (cmpgn_fname != NULL)
+    { // If there's only one map pack, then just show the levels
+      if (!change_campaign(cmpgn_fname))
+      {
+        ERRORLOG("Unable to load map pack list");
+        return;
+      }
+      frontend_set_state(FeSt_LEVEL_SELECT);
+    } else
+    { // If there's more map packs, go to selection screen
+      frontend_set_state(FeSt_MAPPACK_SELECT);
     }
 }
 
