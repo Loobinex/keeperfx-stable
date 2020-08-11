@@ -1339,12 +1339,14 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     }
                     break;
                 }
+                /*
                 case 19:
                 {
                     desttng = find_hero_door_hero_can_navigate_to(thing);
                     allowed = ( (!thing_is_invalid(desttng)) && (subtile_revealed(desttng->mappos.x.stl.num, desttng->mappos.y.stl.num, thing->owner)) );
                     break;
                 }
+                */
                 default:
                 {
                     rkind = zoom_key_room_order[TeleDest-1];
