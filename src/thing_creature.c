@@ -1264,12 +1264,12 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     desttng = thing_get(cctrl->lairtng_idx);
                     break;
                 }
-                case 7:
+                case 7: // Dungeon Heart
                 {
                     newpos = dungeon_get_essential_pos(thing->owner);
                     break;
                 }
-                case 15:
+                case 15: // Fight
                 {
                     if (active_battle_exists(thing->owner))
                     {
@@ -1318,12 +1318,12 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     }
                     break;
                 }
-                case 16:
+                case 16: // Last work room
                 {
                     room = room_get(cctrl->last_work_room_id);
                     break;
                 }
-                case 17:
+                case 17: // Call to Arms
                 {
                     struct Coord3d cta_pos;
                     cta_pos.x.val = subtile_coord_center(dungeon->cta_stl_x);
@@ -1375,7 +1375,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                 {
                     if (find_random_valid_position_for_thing_in_room(thing, room, &room_pos))
                     {
-                        allowed = creature_can_navigate_to(thing, &room_pos, NavRtF_NoOwner);
+                        allowed = (creature_can_navigate_to(thing, &room_pos, NavRtF_NoOwner) || rkind == RoK_DUNGHEART);
                     }
                 }
             }
