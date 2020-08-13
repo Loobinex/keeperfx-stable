@@ -1283,7 +1283,11 @@ TbBool load_mappacks_list(void)
     long cnum_ok = 0;
     while (rc != -1)
     {
-        if (load_campaign_to_list(fileinfo.Filename, &mappacks_list, FGrp_VarLevels))
+        if (is_campaign_in_list(fileinfo.Filename, &campaigns_list))
+        {
+                WARNMSG("Couldn't load Map Pack \"%s\", as it is a duplicate of an existing Campaign.", fileinfo.Filename);
+        }
+        else if (load_campaign_to_list(fileinfo.Filename, &mappacks_list, FGrp_VarLevels))
         {
             cnum_ok++;
         }
