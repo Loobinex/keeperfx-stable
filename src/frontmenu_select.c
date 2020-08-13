@@ -191,7 +191,12 @@ void frontend_draw_level_select_mappack(struct GuiButton *gbtn)
         text = campaign.name;
     else
         text = frontend_button_caption_text(gbtn);
-    frontend_draw_button(gbtn, 1, text, Lb_TEXT_HALIGN_CENTER);
+    lbDisplay.DrawFlags = Lb_TEXT_HALIGN_LEFT;
+    LbTextSetFont(frontend_font[2]);
+    int tx_units_per_px;
+    tx_units_per_px = gbtn->height * 16 / LbTextLineHeight();
+    LbTextSetWindow(gbtn->scr_pos_x, gbtn->scr_pos_y, gbtn->width, gbtn->height);
+    LbTextDrawResized(0, 0, tx_units_per_px, text);
 }
 
 void frontend_campaign_select_up(struct GuiButton *gbtn)
