@@ -1239,8 +1239,8 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
 {
     struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
     struct SpellConfig* splconf = &game.spells_config[SplK_Teleport];
-    const struct Room* room;
-    const struct Thing* desttng;
+    const struct Room* room = NULL;
+    const struct Thing* desttng = NULL;
     long distance = LONG_MAX;
     struct Dungeon *dungeon = get_players_num_dungeon(thing->owner);
     TbBool nearest = is_key_pressed(KC_LALT,KMod_DONTCARE);
