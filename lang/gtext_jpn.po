@@ -6288,7 +6288,7 @@ msgstr "貴方のクリーチャーは必要な部屋に到達出来ません"
 #, fuzzy
 msgctxt "Game event description"
 msgid "Work room unreachable: LMB toggle. RMB delete."
-msgstr "作業室が到達不能な: 左クリックで切り替え。右クリックで削除。"
+msgstr "作業室が到達不能: 左クリックで切り替え。右クリックで削除。"
 
 #: guitext:947
 msgctxt "Game event name"
@@ -6299,7 +6299,7 @@ msgstr "貴方のインプは何かを置く部屋に達す出来ません"
 #, fuzzy
 msgctxt "Game event description"
 msgid "Storage room unreachable: LMB toggle. RMB delete."
-msgstr "貯蔵室が到達不能な: 左クリックで切り替え。右クリックで削除。"
+msgstr "貯蔵室が到達不能: 左クリックで切り替え。右クリックで削除。"
 
 #: guitext:949
 msgctxt "In-game interface description"
@@ -6321,7 +6321,7 @@ msgstr "忠誠：敵に因る洗脳に対して抵抗。"
 #: guitext:952
 msgctxt "In-game interface description"
 msgid "Research Skill: unused."
-msgstr "研究技能：未使用な。"
+msgstr "研究技能：未使用。"
 
 #: guitext:953
 #, fuzzy
