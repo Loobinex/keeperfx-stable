@@ -6322,7 +6322,7 @@ msgstr "忠誠：敵に因る洗脳に対して抵抗。"
 msgctxt "In-game interface description"
 msgid "Research Skill: How fast the creature works in Library. The higher the Skill level, "
 "the better the creature's performance."
-msgstr "研究技能: このクリーチャーが研究をこなす能。"
+msgstr "研究技能: このクリーチャーが研究をこなす能力。"
 
 #: guitext:953
 #, fuzzy
@@ -6338,7 +6338,7 @@ msgctxt "In-game interface description"
 msgid ""
 "Training Skill: How fast the creature works on training. The higher the "
 "Skill level, the better the creature's performance."
-msgstr "訓練技能: このクリーチャーが訓練をこなす能。 [23.14]"
+msgstr "訓練技能: このクリーチャーが訓練をこなす能力。 [23.14]"
 
 #: guitext:955
 #, fuzzy
@@ -6346,7 +6346,7 @@ msgctxt "In-game interface description"
 msgid ""
 "Scavenge Skill: How fast the creature works on scavenging. The higher the "
 "Skill level, the better the creature's performance."
-msgstr "洗脳技能: このクリーチャーが洗脳をこなす能。 [23.14]"
+msgstr "洗脳技能: このクリーチャーが洗脳をこなす能力。 [23.14]"
 
 #: guitext:956
 msgctxt "In-game interface description"
