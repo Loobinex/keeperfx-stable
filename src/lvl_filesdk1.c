@@ -170,9 +170,6 @@ long level_lif_entry_parse(char *fname, char *buf)
     WARNMSG("Can't read level name from \"%s\"", fname);
     return 0;
   }
-  // check if the level isn't added as other type of level
-  if (is_campaign_level(lvnum))
-    return (cbuf-buf)+i;
   // Store level name
   if (add_freeplay_level_to_campaign(&campaign,lvnum) < 0)
   {
