@@ -1205,23 +1205,6 @@ void gui_go_to_next_creature_activity(struct GuiButton *gbtn)
 
 RoomIndex find_my_next_room_of_type(RoomKind rkind)
 {
-    /*
-    static RoomIndex next_room[ROOM_TYPES_COUNT];
-    if (next_room[rkind] > 0)
-    {
-        struct Room* room = room_get(next_room[rkind]);
-        if (room_exists(room) && (room->owner == my_player_number) && (room->kind == rkind))
-          next_room[rkind] = room->next_of_owner;
-        else
-          next_room[rkind] = 0;
-    }
-    if (next_room[rkind] <= 0)
-    {
-        struct Dungeon* dungeon = get_my_dungeon();
-        next_room[rkind] = dungeon->room_kind[rkind];
-    }
-    return next_room[rkind];
-    */
     return find_next_room_of_type(my_player_number, rkind);
 }
 

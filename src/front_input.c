@@ -1238,27 +1238,21 @@ short get_creature_control_action_inputs(void)
             if (is_game_key_pressed(Gkey_ZoomRoom00 + i, &val, false))
             {
                 clear_key_pressed(val);
-                TeleDest = i + 1;
+                teleport_destination = i;
             }
         
         }
         if (is_key_pressed(KC_SEMICOLON,KMod_DONTCARE))
         {
-            TeleDest = 17; // Last work room
+            teleport_destination = 16; // Last work room
         }
         else if (is_key_pressed(KC_SLASH,KMod_DONTCARE))
         {
-            TeleDest = 18; // Call to Arms
+            teleport_destination = 17; // Call to Arms
         }
-        /*
-        else if (is_key_pressed(KC_PERIOD,KMod_DONTCARE))
-        {
-            TeleDest = 19;
-        }
-        */
         else if (is_key_pressed(KC_COMMA,KMod_DONTCARE))
         {
-            TeleDest = 0;
+            teleport_destination = 0;
         }
     // In possession sets the screen blue when frozen, and to default when not.
     if (creature_affected_by_spell(thing, SplK_Freeze)) 

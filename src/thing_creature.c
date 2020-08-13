@@ -92,7 +92,7 @@ extern "C" {
 
 /******************************************************************************/
 int creature_swap_idx[CREATURE_TYPES_COUNT];
-unsigned char TeleDest = 0;
+unsigned char teleport_destination = 0;
 BattleIndex battleid = 1;
 
 struct Creatures creatures_NEW[] = {
@@ -1257,7 +1257,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
         {
             const struct Coord3d* newpos = NULL;
             struct Coord3d room_pos;
-            switch(TeleDest)
+            switch(teleport_destination)
             {
                 case 0:
                 {
@@ -1269,7 +1269,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     newpos = dungeon_get_essential_pos(thing->owner);
                     break;
                 }
-                case 16:
+                case 15:
                 {
                     if (active_battle_exists(thing->owner))
                     {
@@ -1318,12 +1318,12 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     }
                     break;
                 }
-                case 17:
+                case 16:
                 {
                     room = room_get(cctrl->last_work_room_id);
                     break;
                 }
-                case 18:
+                case 17:
                 {
                     struct Coord3d cta_pos;
                     cta_pos.x.val = subtile_coord_center(dungeon->cta_stl_x);
@@ -1339,17 +1339,9 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                     }
                     break;
                 }
-                /*
-                case 19:
-                {
-                    desttng = find_hero_door_hero_can_navigate_to(thing);
-                    allowed = ( (!thing_is_invalid(desttng)) && (subtile_revealed(desttng->mappos.x.stl.num, desttng->mappos.y.stl.num, thing->owner)) );
-                    break;
-                }
-                */
                 default:
                 {
-                    rkind = zoom_key_room_order[TeleDest-1];
+                    rkind = zoom_key_room_order[teleport_destination];
                 }
             }
             if (rkind > 0)
@@ -1357,7 +1349,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
                 long count = 0;
                 if (nearest)
                 {
-                    room = find_room_nearest_to_position(thing->owner, rkind, &thing->mappos, &distance);
+                    room = find_room_nearest_to_position(thing->owner, rkind, &thing->mappos, &distance); 
                 }
                 else
                 {
@@ -1442,7 +1434,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
             thing->veloc_push_add.z.val += ACTION_RANDOM(96) + 40;
             thing->state_flags |= TF1_PushAdd;
         }
-        TeleDest = 0;
+        teleport_destination = 0;
     }
 }
 
