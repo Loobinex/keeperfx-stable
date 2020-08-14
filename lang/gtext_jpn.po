@@ -6282,7 +6282,7 @@ msgstr "コンピュータ追加"
 #: guitext:945
 msgctxt "Game event name"
 msgid "Your creature cannot reach the room it needs"
-msgstr "貴方のクリーチャーは必要な部屋に到達出来ません"
+msgstr "クリーチャーは必要な部屋に到達出来ません"
 
 #: guitext:946
 #, fuzzy
@@ -6293,7 +6293,7 @@ msgstr "作業室に到達され不能: 左クリックで切り替え。右ク�
 #: guitext:947
 msgctxt "Game event name"
 msgid "Your Imp cannot reach a room to drag something into"
-msgstr "貴方のインプは何かを置く部屋に達す出来ません"
+msgstr "インプは何かを置く部屋に達す出来ません"
 
 #: guitext:948
 #, fuzzy
