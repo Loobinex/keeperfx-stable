@@ -176,6 +176,7 @@ TbBool load_mappacks_list(void);
 TbBool change_campaign(const char *cmpgn_fname);
 TbBool is_campaign_loaded(void);
 TbBool is_campaign_in_list(const char *cmpgn_fname, struct CampaignsList *clist);
+TbBool check_lif_files_in_mappack(struct GameCampaign *campgn);
 /******************************************************************************/
 #ifdef __cplusplus
 }
