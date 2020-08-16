@@ -312,7 +312,7 @@ TbResult game_action(PlayerNumber plyr_idx, unsigned short gaction, unsigned sho
         break;
     case GA_UsePwrHandPick:
         thing = thing_get(param1);
-        return magic_use_available_power_on_thing(plyr_idx, PwrK_HAND, 0,thing->mappos.x.stl.num, thing->mappos.y.stl.num, thing);
+        return magic_use_available_power_on_thing(plyr_idx, PwrK_HAND, 0,thing->mappos.x.stl.num, thing->mappos.y.stl.num, thing, PwMod_Default);
     case GA_UsePwrHandDrop:
         // Note that we can drop things even if we have no hand power
         if (!dump_first_held_thing_on_map(plyr_idx, stl_x, stl_y, 0))
@@ -323,10 +323,10 @@ TbResult game_action(PlayerNumber plyr_idx, unsigned short gaction, unsigned sho
     case GA_UsePwrSight:
         return magic_use_available_power_on_subtile(plyr_idx, PwrK_SIGHT, alevel, stl_x, stl_y, PwCast_Unrevealed);
     case GA_UsePwrObey:
-        return magic_use_available_power_on_level(plyr_idx, PwrK_OBEY, alevel);
+        return magic_use_available_power_on_level(plyr_idx, PwrK_OBEY, alevel, PwMod_Default);
     case GA_UsePwrHealCrtr:
         thing = thing_get(param1);
-        return magic_use_available_power_on_thing(plyr_idx, PwrK_HEALCRTR, alevel, stl_x, stl_y, thing);
+        return magic_use_available_power_on_thing(plyr_idx, PwrK_HEALCRTR, alevel, stl_x, stl_y, thing, PwMod_Default);
     case GA_UsePwrCall2Arms:
         return magic_use_available_power_on_subtile(plyr_idx, PwrK_CALL2ARMS, alevel, stl_x, stl_y, PwCast_Unrevealed);
     case GA_UsePwrCaveIn:
@@ -374,28 +374,28 @@ TbResult game_action(PlayerNumber plyr_idx, unsigned short gaction, unsigned sho
     case GA_SellDoor:
         return player_sell_door_at_subtile(plyr_idx, stl_x, stl_y);
     case GA_UsePwrLightning:
-        return magic_use_available_power_on_subtile(plyr_idx, PwrK_LIGHTNING, alevel, stl_x, stl_y, PwCast_None);
+        return magic_use_available_power_on_subtile(plyr_idx, PwrK_LIGHTNING, alevel, stl_x, stl_y, PwMod_Default);
     case GA_UsePwrSpeedUp:
         thing = thing_get(param1);
-        return magic_use_available_power_on_thing(plyr_idx, PwrK_SPEEDCRTR, alevel, stl_x, stl_y, thing);
+        return magic_use_available_power_on_thing(plyr_idx, PwrK_SPEEDCRTR, alevel, stl_x, stl_y, thing, PwMod_Default);
     case GA_UsePwrArmour:
         thing = thing_get(param1);
-        return magic_use_available_power_on_thing(plyr_idx, PwrK_PROTECT, alevel, stl_x, stl_y, thing);
+        return magic_use_available_power_on_thing(plyr_idx, PwrK_PROTECT, alevel, stl_x, stl_y, thing, PwMod_Default);
     case GA_UsePwrConceal:
         thing = thing_get(param1);
-        return magic_use_available_power_on_thing(plyr_idx, PwrK_CONCEAL, alevel, stl_x, stl_y, thing);
+        return magic_use_available_power_on_thing(plyr_idx, PwrK_CONCEAL, alevel, stl_x, stl_y, thing, PwMod_Default);
     case GA_UsePwrHoldAudnc:
-        return magic_use_available_power_on_level(plyr_idx, PwrK_HOLDAUDNC, alevel);
+        return magic_use_available_power_on_level(plyr_idx, PwrK_HOLDAUDNC, alevel, PwMod_Default);
     case GA_UsePwrDisease:
         thing = thing_get(param1);
-        return magic_use_available_power_on_thing(plyr_idx, PwrK_DISEASE, alevel, stl_x, stl_y, thing);
+        return magic_use_available_power_on_thing(plyr_idx, PwrK_DISEASE, alevel, stl_x, stl_y, thing, PwMod_Default);
     case GA_UsePwrChicken:
         thing = thing_get(param1);
-        return magic_use_available_power_on_thing(plyr_idx, PwrK_CHICKEN, alevel, stl_x, stl_y, thing);
+        return magic_use_available_power_on_thing(plyr_idx, PwrK_CHICKEN, alevel, stl_x, stl_y, thing, PwMod_Default);
     case GA_UseSlap:
     case GA_UsePwrSlap:
         thing = thing_get(param1);
-        return magic_use_available_power_on_thing(plyr_idx, PwrK_SLAP, alevel, stl_x, stl_y, thing);
+        return magic_use_available_power_on_thing(plyr_idx, PwrK_SLAP, alevel, stl_x, stl_y, thing, PwMod_Default);
     default:
         ERRORLOG("Unknown game action %d", (int)gaction);
         break;
@@ -1958,8 +1958,6 @@ long task_dig_to_gold(struct Computer2 *comp, struct ComputerTask *ctask)
         if (slb->kind == SlbT_GEMS)
         {
             SYNCDBG(7, "Player %d is digging around gems (%d %d)", (int)dungeon->owner, slb_x, slb_y);
-            const char *func_name = "task_dig_to_gold";
-
             for (int y = -1; y < 2; y++)
             {
                 for (int x = -1; x < 2; x++)
@@ -1978,10 +1976,7 @@ long task_dig_to_gold(struct Computer2 *comp, struct ComputerTask *ctask)
                             TbResult res = game_action(dungeon->owner, GA_MarkDig, 0, stl_x, stl_y, 1, 1);
                             if (res <= Lb_OK)
                             {
-                                ERRORLOG("%s: Couldn't do game action - cannot dig around gems (%d %d) %d %d -> %d",
-                                  func_name,
-                                  stl_x, stl_y,
-                                  slb_x + x, slb_y + y, res);
+                                WARNLOG("Game action GA_MarkDig returned code %d - location %d,%d around gem not marked for digging", res, slb_x + x, slb_y + y);
                             }
                         }
                     }
@@ -2103,7 +2098,7 @@ long task_dig_to_attack(struct Computer2 *comp, struct ComputerTask *ctask)
         comp->task_state = CTaskSt_Select;
         suspend_task_process(comp, ctask);
         break;
-      case 0:
+    case 0:
         for (i = 0; i < SMALL_AROUND_MID_LENGTH; i++)
         {
             MapSubtlCoord stl_x;
@@ -2116,8 +2111,10 @@ long task_dig_to_attack(struct Computer2 *comp, struct ComputerTask *ctask)
             }
         }
         if (i == SMALL_AROUND_MID_LENGTH)
+        {
             break;
-        // no break
+        }
+        // fall through
     case -1:
         {
             struct ComputerProcess *cproc;
@@ -2982,13 +2979,14 @@ long task_attack_magic(struct Computer2 *comp, struct ComputerTask *ctask)
 
 long task_sell_traps_and_doors(struct Computer2 *comp, struct ComputerTask *ctask)
 {
-    struct Dungeon *dungeon;
+    struct Dungeon *dungeon = comp->dungeon;
     const struct TrapDoorSelling *tdsell;
     TbBool item_sold;
     long value;
     long model;
     long i;
-    dungeon = comp->dungeon;
+    struct DungeonAdd *dungeonadd = get_dungeonadd(dungeon->owner);
+
     if (dungeon_invalid(dungeon)) {
         ERRORLOG("Invalid dungeon in computer player");
         return 0;
@@ -3006,11 +3004,11 @@ long task_sell_traps_and_doors(struct Computer2 *comp, struct ComputerTask *ctas
             {
             case TDSC_DoorCrate:
                 model = tdsell->model;
-                if ((model <= 0) || (model >= DOOR_TYPES_COUNT)) {
+                if ((model <= 0) || (model >= trapdoor_conf.door_types_count)) {
                     ERRORLOG("Internal error - invalid door model %d in slot %d",(int)model,(int)i);
                     break;
                 }
-                if (dungeon->door_amount_placeable[model] > 0)
+                if (dungeonadd->mnfct_info.door_amount_placeable[model] > 0)
                 {
                     int crate_source;
                     crate_source = remove_workshop_item_from_amount_stored(dungeon->owner, TCls_Door, model, WrkCrtF_Default);
@@ -3019,30 +3017,30 @@ long task_sell_traps_and_doors(struct Computer2 *comp, struct ComputerTask *ctas
                     case WrkCrtS_Offmap:
                         remove_workshop_item_from_amount_placeable(dungeon->owner, TCls_Door, model);
                         item_sold = true;
-                        value = game.doors_config[model].selling_value;
+                        value = gameadd.doors_config[model].selling_value;
                         SYNCDBG(9,"Offmap door %s crate sold for %d gold",door_code_name(model),(int)value);
                         break;
                     case WrkCrtS_Stored:
                         remove_workshop_item_from_amount_placeable(dungeon->owner, TCls_Door, model);
                         remove_workshop_object_from_player(dungeon->owner, door_crate_object_model(model));
                         item_sold = true;
-                        value = game.doors_config[model].selling_value;
+                        value = gameadd.doors_config[model].selling_value;
                         SYNCDBG(9,"Stored door %s crate sold for %ld gold by player %d",door_code_name(model),(long)value,(int)dungeon->owner);
                         break;
                     default:
                         WARNLOG("Placeable door %s amount for player %d was incorrect; fixed",door_code_name(model),(int)dungeon->owner);
-                        dungeon->door_amount_placeable[model] = 0;
+                        dungeonadd->mnfct_info.door_amount_placeable[model] = 0;
                         break;
                     }
                 }
                 break;
             case TDSC_TrapCrate:
                 model = tdsell->model;
-                if ((model <= 0) || (model >= TRAP_TYPES_COUNT)) {
+                if ((model <= 0) || (model >= trapdoor_conf.trap_types_count)) {
                     ERRORLOG("Internal error - invalid trap model %d in slot %d",(int)model,(int)i);
                     break;
                 }
-                if (dungeon->trap_amount_placeable[model] > 0)
+                if (dungeonadd->mnfct_info.trap_amount_placeable[model] > 0)
                 {
                     int crate_source;
                     crate_source = remove_workshop_item_from_amount_stored(dungeon->owner, TCls_Trap, model, WrkCrtF_Default);
@@ -3051,19 +3049,19 @@ long task_sell_traps_and_doors(struct Computer2 *comp, struct ComputerTask *ctas
                     case WrkCrtS_Offmap:
                         remove_workshop_item_from_amount_placeable(dungeon->owner, TCls_Trap, model);
                         item_sold = true;
-                        value = game.traps_config[model].selling_value;
+                        value = gameadd.traps_config[model].selling_value;
                         SYNCDBG(9,"Offmap trap %s crate sold for %ld gold",trap_code_name(model),value);
                         break;
                     case WrkCrtS_Stored:
                         remove_workshop_item_from_amount_placeable(dungeon->owner, TCls_Trap, model);
                         remove_workshop_object_from_player(dungeon->owner, trap_crate_object_model(model));
                         item_sold = true;
-                        value = game.traps_config[model].selling_value;
+                        value = gameadd.traps_config[model].selling_value;
                         SYNCDBG(9,"Stored trap %s crate sold for %ld gold by player %d",trap_code_name(model),(long)value,(int)dungeon->owner);
                         break;
                     default:
                         WARNLOG("Placeable trap %s amount for player %d was incorrect; fixed",trap_code_name(model),(int)dungeon->owner);
-                        dungeon->trap_amount_placeable[model] = 0;
+                        dungeonadd->mnfct_info.trap_amount_placeable[model] = 0;
                         break;
                     }
                 }
@@ -3072,7 +3070,7 @@ long task_sell_traps_and_doors(struct Computer2 *comp, struct ComputerTask *ctas
                 if (!ctask->sell_traps_doors.allow_deployed)
                     break;
                 model = tdsell->model;
-                if ((model <= 0) || (model >= DOOR_TYPES_COUNT)) {
+                if ((model <= 0) || (model >= trapdoor_conf.door_types_count)) {
                     ERRORLOG("Internal error - invalid door model %d in slot %d",(int)model,(int)i);
                     break;
                 }
@@ -3085,7 +3083,7 @@ long task_sell_traps_and_doors(struct Computer2 *comp, struct ComputerTask *ctas
                         item_sold = true;
                         stl_x = stl_slab_center_subtile(doortng->mappos.x.stl.num);
                         stl_y = stl_slab_center_subtile(doortng->mappos.y.stl.num);
-                        value = game.doors_config[model].selling_value;
+                        value = gameadd.doors_config[model].selling_value;
                         destroy_door(doortng);
                         if (is_my_player_number(dungeon->owner))
                             play_non_3d_sample(115);
@@ -3108,7 +3106,7 @@ long task_sell_traps_and_doors(struct Computer2 *comp, struct ComputerTask *ctas
                 if (!ctask->sell_traps_doors.allow_deployed)
                     break;
                 model = tdsell->model;
-                if ((model <= 0) || (model >= TRAP_TYPES_COUNT)) {
+                if ((model <= 0) || (model >= trapdoor_conf.trap_types_count)) {
                     ERRORLOG("Internal error - invalid trap model %d in slot %d",(int)model,(int)i);
                     break;
                 }
