@@ -442,7 +442,7 @@ TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord hei
     unsigned long sdlFlags = 0;
     sdlFlags |= SDL_SWSURFACE;
     if ((mdinfo->VideoFlags & Lb_VF_WINDOWED) == 0) {
-        sdlFlags |= SDL_WINDOW_FULLSCREEN_DESKTOP;
+        sdlFlags |= SDL_WINDOW_FULLSCREEN;
     }
 
     lbWindow = SDL_CreateWindow(lbDrawAreaTitle, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mdinfo->Width, mdinfo->Height, sdlFlags);
