@@ -145,11 +145,6 @@ void frontend_level_list_unload(void)
 
 void frontend_level_list_load(void)
 {
-    /*// Load the default campaign (free play levels should be played with default campaign settings)
-    if (!change_campaign("deepdngn.cfg")) {
-        number_of_freeplay_levels = 0;
-        return;
-    }*/
     number_of_freeplay_levels = campaign.freeplay_levels_count;
     frontend_select_level_items_visible = (campaign.freeplay_levels_count < frontend_select_level_items_max_visible)?campaign.freeplay_levels_count+1:frontend_select_level_items_max_visible;
 }
