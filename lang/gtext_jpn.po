@@ -6424,6 +6424,46 @@ msgctxt "Menu interface item"
 msgid "Toggle Message"
 msgstr "メッセージ見・削除"
 
+#: guitext:968
+msgctxt "Menu interface item"
+msgid "Return to Free Play levels"
+msgstr "ディーパーダンジョンに戻る"
+
+#: guitext:969
+msgctxt "Menu interface item"
+msgid "Map packs"
+msgstr "マップパック"
+
+#: guitext:970
+msgctxt "Menu interface item"
+msgid "The Deeper Dungeons"
+msgstr "ディーパーダンジョン"
+
+#: guitext:971
+msgctxt "Menu interface item"
+msgid "Standard Levels"
+msgstr "規格なレベル"
+
+#: guitext:972
+msgctxt "Menu interface item"
+msgid "Classic Levels"
+msgstr "旧典なレベル"
+
+#: guitext:973
+msgctxt "Menu interface item"
+msgid "Legacy Levels"
+msgstr "レガシーのレベル"
+
+#: guitext:974
+msgctxt "Menu interface item"
+msgid "Personal Levels"
+msgstr "個人的なレベル"
+
+#: guitext:975
+msgctxt "Menu interface item"
+msgid "Lost Levels"
+msgstr "失われたレベル"
+
 #~ msgctxt "In-game message"
 #~ msgid "Your manufacturers have crafted the Lava Trap."
 #~ msgstr "工房のクリーチャーが溶岩の罠を作った。"
