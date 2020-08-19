@@ -205,7 +205,7 @@ void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, 
             in_height = (int)(in_height * 1.2);
         }
         
-        if ((flags & SMK_FullscreenCrop) != 0) // fill screen (will crop)
+        if ((flags & SMK_FullscreenCrop) != 0 && !((flags & SMK_FullscreenFit) != 0)) // fill screen (will crop)
         {
             comparison_ratio = relative_ar_difference;
         }
@@ -220,6 +220,10 @@ void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, 
         else
         {
             units_per_px = (scanline>nlines?nlines:scanline)/((in_width>in_height?in_height:in_width)/16.0);
+        }
+        if ((flags & SMK_FullscreenCrop) != 0 && ((flags & SMK_FullscreenFit) != 0)) // Find the highest integer scale possible
+        {
+            units_per_px = ((int)(units_per_px / 16.0) * 16); // scale to the nearest integer multiple of the source resolution.
         }
         // Starting point coords and width for the destination buffer (based on desired aspect ratio)
         spw = (int)((scanline - in_width * units_per_px / 16.0) / 2.0);
