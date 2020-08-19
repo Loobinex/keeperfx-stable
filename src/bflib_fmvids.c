@@ -203,7 +203,7 @@ void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, 
         float comparison_ratio = 1; // when keeping aspect ratio, instead of stretching, this is inverted depending on if we want to crop or fit
         if (((flags & SMK_FullscreenStretch) != 0) && ((flags & SMK_FullscreenFit) != 0)) // stretch source from 320x200(16:10) to 320x240 (4:3) (i.e. vertical x 1.2) - "preserve *original* aspect ratio mode"
         {
-            if (in_width == 320 && in_height == 200) {// make sure the source is 320x200
+            if (src_width == 320 && src_height == 200) {// make sure the source is 320x200
                 in_height = (int)(in_height * 1.2);
             }
         }
@@ -227,7 +227,7 @@ void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, 
         if ((flags & SMK_FullscreenCrop) != 0 && ((flags & SMK_FullscreenFit) != 0)) // Find the highest integer scale possible
         {
             if ((flags & SMK_FullscreenStretch) != 0) { //4:3 stretch mode (crop off to the nearest 5x/6x scale
-                if (in_width == 320 && in_height == 200) {// make sure the source is 320x200
+                if (src_width == 320 && src_height == 200) {// make sure the source is 320x200
                     units_per_px = (max(5, (int)(units_per_px / 16.0 / 5.0) * 5) * 16); // make sure the multiple is integer divisible by 5. Use 5x as a minimum, otherwise there will be no video (resolutions smaller than 1600x1200 will have a cropped image from a buffer of that size).
                 }
             }
