@@ -1215,6 +1215,7 @@ TbResult magic_use_power_imp(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubt
         ERRORLOG("There was place to create new creature, but creation failed");
         return Lb_OK;
     }
+    EVM_CREATURE_EVENT("joined", plyr_idx, thing);
     thing->veloc_push_add.x.val += ACTION_RANDOM(161) - 80;
     thing->veloc_push_add.y.val += ACTION_RANDOM(161) - 80;
     thing->veloc_push_add.z.val += 160;
@@ -1677,6 +1678,7 @@ TbResult magic_use_power_slap_thing(PlayerNumber plyr_idx, struct Thing *thing, 
     if ((player->instance_num == PI_Whip) || (game.play_gameturn - dungeon->last_creature_dropped_gameturn <= 10)) {
         return Lb_OK;
     }
+    EVM_CREATURE_EVENT("slap", plyr_idx, thing);
     player->influenced_thing_idx = thing->index;
     player->influenced_thing_creation = thing->creation_turn;
     set_player_instance(player, PI_Whip, 0);
@@ -2086,25 +2088,25 @@ TbResult magic_use_power_on_subtile(PlayerNumber plyr_idx, PowerKind pwkind,
         switch (pwkind)
         {
         case PwrK_MKDIGGER:
-            ret = magic_use_power_imp(plyr_idx, stl_x, stl_y, PwMod_Default);
+            ret = magic_use_power_imp(plyr_idx, stl_x, stl_y, allow_flags);
             break;
         case PwrK_SIGHT:
-            ret = magic_use_power_sight(plyr_idx, stl_x, stl_y, splevel, PwMod_Default);
+            ret = magic_use_power_sight(plyr_idx, stl_x, stl_y, splevel, allow_flags);
             break;
         case PwrK_CALL2ARMS:
-            ret = magic_use_power_call_to_arms(plyr_idx, stl_x, stl_y, splevel, PwMod_Default);
+            ret = magic_use_power_call_to_arms(plyr_idx, stl_x, stl_y, splevel, allow_flags);
             break;
         case PwrK_CAVEIN:
-            ret = magic_use_power_cave_in(plyr_idx, stl_x, stl_y, splevel, PwMod_Default);
+            ret = magic_use_power_cave_in(plyr_idx, stl_x, stl_y, splevel, allow_flags);
             break;
         case PwrK_LIGHTNING:
-            ret = magic_use_power_lightning(plyr_idx, stl_x, stl_y, splevel, PwMod_Default);
+            ret = magic_use_power_lightning(plyr_idx, stl_x, stl_y, splevel, allow_flags);
             break;
         case PwrK_DESTRWALLS:
-            ret = magic_use_power_destroy_walls(plyr_idx, stl_x, stl_y, splevel, PwMod_Default);
+            ret = magic_use_power_destroy_walls(plyr_idx, stl_x, stl_y, splevel, allow_flags);
             break;
         case PwrK_TIMEBOMB:
-            ret = magic_use_power_time_bomb(plyr_idx, stl_x, stl_y, splevel, PwMod_Default);
+            ret = magic_use_power_time_bomb(plyr_idx, stl_x, stl_y, splevel, allow_flags);
             break;
         default:
             ERRORLOG("Power not supported here: %d", (int)pwkind);

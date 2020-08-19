@@ -1,14 +1,14 @@
 /******************************************************************************/
 // Free implementation of Bullfrog's Dungeon Keeper strategy game.
 /******************************************************************************/
-/** @file music_player.h
- *     Header file for music_player.c.
+/** @file event_monitoring.h
+ *     Header file for event_monitoring.c
  * @par Purpose:
- *     ogg music player.
+ *     Implement remote logging of game events for advanced testing
  * @par Comment:
- *     Uses SDL_mixer
- * @author   Lukas Niemeier
- * @date     20 Feb 2014
+ *     Just a header file - #defines, typedefs, function prototypes etc.
+ * @author   Sim
+ * @date     16 Jul 2020 - 16 Jul 2020
  * @par  Copying and copyrights:
  *     This program is free software; you can redistribute it and/or modify
  *     it under the terms of the GNU General Public License as published by
@@ -16,24 +16,16 @@
  *     (at your option) any later version.
  */
 /******************************************************************************/
-#ifndef DK_MUSICPLAYER_H
-#define DK_MUSICPLAYER_H
-
-#include "globals.h"
-#include <SDL2/SDL_mixer.h>
+#ifndef DK_EVENT_MON_H
+#define DK_EVENT_MON_H
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 
-#define FIRST_TRACK 2
-extern int max_track;
-
-int InitializeMusicPlayer(void);
-void ShutdownMusicPlayer(void);
-void PlayMusicPlayer(int track);
-void StopMusicPlayer(void);
-void SetMusicPlayerVolume(int volume);
+extern void evm_init(char *hostport, int client_no);
+extern void evm_done();
+extern void evm_stat(int force_new, const char *event_fmt, ...);
 
 #ifdef __cplusplus
 }
