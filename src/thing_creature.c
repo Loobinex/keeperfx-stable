@@ -1259,7 +1259,7 @@ void process_thing_spell_teleport_effects(struct Thing *thing, struct CastedSpel
             struct Coord3d room_pos;
             switch(teleport_destination)
             {
-                case 7: // Dungeon Heart
+                case 6: // Dungeon Heart
                 {
                     newpos = dungeon_get_essential_pos(thing->owner);
                     break;
