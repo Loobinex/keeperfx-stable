@@ -6262,7 +6262,7 @@ msgstr "Moo2"
 #, fuzzy
 msgctxt "Menu interface, Main Menu item"
 msgid "Free Play levels"
-msgstr "ディーパーダンジョン"
+msgstr "自由遊びのレベル"
 
 #: guitext:942
 msgctxt "Menu interface item"
@@ -6427,7 +6427,7 @@ msgstr "メッセージ見・削除"
 #: guitext:968
 msgctxt "Menu interface item"
 msgid "Return to Free Play levels"
-msgstr "ディーパーダンジョンに戻る"
+msgstr "自由遊びのレベルに戻る"
 
 #: guitext:969
 msgctxt "Menu interface item"
