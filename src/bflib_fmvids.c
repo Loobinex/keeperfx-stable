@@ -19,6 +19,7 @@
 /******************************************************************************/
 #include "bflib_fmvids.h"
 
+#include <math.h>
 #include <string.h>
 #include <stdio.h>
 #include <stdarg.h>
@@ -200,9 +201,11 @@ void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, 
         float units_per_px = 0;
         float relative_ar_difference = (in_width * 1.0 / in_height * 1.0) / (scanline * 1.0 / nlines * 1.0); // relative aspect ratio difference between the source frame and destination frame
         float comparison_ratio = 1; // when keeping aspect ratio, instead of stretching, this is inverted depending on if we want to crop or fit
-        if (((flags & SMK_FullscreenStretch) != 0) && ((flags & SMK_FullscreenFit) != 0)) // stretch source from 320x200(16:10) to 32x240 (4:3) (i.e. vertical x 1.2) - "preserve *original* aspect ratio mode"
+        if (((flags & SMK_FullscreenStretch) != 0) && ((flags & SMK_FullscreenFit) != 0)) // stretch source from 320x200(16:10) to 320x240 (4:3) (i.e. vertical x 1.2) - "preserve *original* aspect ratio mode"
         {
-            in_height = (int)(in_height * 1.2);
+            if (in_width == 320 && in_height == 200) {// make sure the source is 320x200
+                in_height = (int)(in_height * 1.2);
+            }
         }
         
         if ((flags & SMK_FullscreenCrop) != 0 && !((flags & SMK_FullscreenFit) != 0)) // fill screen (will crop)
@@ -223,6 +226,11 @@ void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, 
         }
         if ((flags & SMK_FullscreenCrop) != 0 && ((flags & SMK_FullscreenFit) != 0)) // Find the highest integer scale possible
         {
+            if ((flags & SMK_FullscreenStretch) != 0) { //4:3 stretch mode (crop off to the nearest 5x/6x scale
+                if (in_width == 320 && in_height == 200) {// make sure the source is 320x200
+                    units_per_px = (max(5, (int)(units_per_px / 16.0 / 5.0) * 5) * 16); // make sure the multiple is integer divisible by 5. Use 5x as a minimum, otherwise there will be no video (resolutions smaller than 1600x1200 will have a cropped image from a buffer of that size).
+                }
+            }
             units_per_px = ((int)(units_per_px / 16.0) * 16); // scale to the nearest integer multiple of the source resolution.
         }
         // Starting point coords and width for the destination buffer (based on desired aspect ratio)
