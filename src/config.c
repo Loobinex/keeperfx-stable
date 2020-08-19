@@ -116,11 +116,6 @@ const struct NamedCommand conf_commands[] = {
   {"ATMOS_SAMPLES",       13},
   {"RESIZE_MOVIES",       14},
   {"MUSIC_TRACKS",        15},
-  {"ED_LEGACY_RESIZE",               16},
-  {"ED_LEGACY_RESIZE_STRETCH",       17},
-  {"ED_LEGACY_RESIZE_CROP",          18},
-  {"ED_LEGACY_RESIZE_FIT",           19},
-  {"ED_LEGACY_RESIZE_AR_CORRECT",    20},
   {NULL,                   0},
   };
 
@@ -135,6 +130,16 @@ const struct NamedCommand logicval_type[] = {
   {"NO",       2},
   {NULL,       0},
   };
+
+  const struct NamedCommand vidscale_type[] = {
+  {"OFF",     256}, // = 0x100 = No scaling of Smacker Video
+  {"FIT",      16}, // = 0x10 = SMK_FullscreenFit - fit to fullscreen, using letterbox and pillarbox as necessary
+  {"STRETCH",  32}, // = 0x20 = SMK_FullscreenStretch  - stretch to fullscreen - ignores aspect ratio difference between source and destination
+  {"CROP",     64}, // = 0x40 = SMK_FullscreenCrop - fill fullscreen and crop - no letterbox or pillarbox
+  {"4BY3",     48}, // = 0x10 & 0x20 = [Aspect Ratio correction mode] - stretch 320x200 to 4:3 (i.e. increase height by 1.2)
+  {NULL,        0},
+  };
+unsigned int vid_scale_flags = 0;
 
 unsigned long features_enabled = 0;
 /** Line number, used when loading text files. */
@@ -197,38 +202,6 @@ TbBool atmos_sounds_enabled(void)
 TbBool resize_movies_enabled(void)
 {
   return ((features_enabled & Ft_Resizemovies) != 0);
-}
-/**
- * Returns settings for "Legacy Scaling" of smacker videos (etc?).
- */
-unsigned int resize_legacy_settings(void)
-{
-  unsigned int legacy_scale_mode = 0x0100;
-  unsigned int movie_flags = 0;
-  unsigned int scale_video_full = 0x10; // default full screen (stretch - ignores aspect ratio difference between source and destination)
-  unsigned int fit_video = 0x20; // fit to fullscreen, using letterbox and pillarbox as necessary (use with scale_video_full for crop instead of fit - no letterbox or pillarbox)
-  unsigned int video_oldschool_arcorrect = 0x40; // stretch 320x200 to 4:3
-  if(is_feature_on(Ft_LegacyScale))
-  {
-      movie_flags = fit_video; //default incase other sub-options are not turned on
-      if ((features_enabled & Ft_LegacyStretch) != 0)
-      {
-          movie_flags = scale_video_full;
-      }
-      if ((features_enabled & Ft_LegacyCrop) != 0)
-      {
-          movie_flags = scale_video_full | fit_video;
-      }
-      if ((features_enabled & Ft_LegacyCorrect) != 0)
-      {
-          movie_flags = fit_video | video_oldschool_arcorrect;
-      }
-      if ((features_enabled & Ft_LegacyFit) != 0)
-      {
-          movie_flags = fit_video;
-      }
-  }
-  return movie_flags;
 }
 
 TbBool is_feature_on(unsigned long feature)
@@ -784,16 +757,19 @@ short load_configuration(void)
           }
           break;
       case 14: // Resize Movies
-          i = recognize_conf_parameter(buf,&pos,len,logicval_type);
-          if (i <= 0)
+          i = recognize_conf_parameter(buf,&pos,len,vidscale_type);
+          if (i <= 0 || i > 256)
           {
             CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",COMMAND_TEXT(cmd_num),config_textname);
             break;
           }
-          if (i == 1)
-              features_enabled |= Ft_Resizemovies;
-          else
-              features_enabled &= ~Ft_Resizemovies;
+          if (i < 256) {
+            features_enabled |= Ft_Resizemovies;
+            vid_scale_flags = i;
+          }
+          else {
+            features_enabled &= ~Ft_Resizemovies;
+          }
           break;
       case 15: // MUSIC_TRACKS
           if (get_conf_parameter_single(buf,&pos,len,word_buf,sizeof(word_buf)) > 0)
@@ -806,66 +782,6 @@ short load_configuration(void)
               CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",
                 COMMAND_TEXT(cmd_num),config_textname);
           }
-          break;
-      case 16: // Resize Movies (New version)
-          i = recognize_conf_parameter(buf,&pos,len,logicval_type);
-          if (i <= 0)
-          {
-            CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",COMMAND_TEXT(cmd_num),config_textname);
-            break;
-          }
-          if (i == 1)
-              features_enabled |= Ft_LegacyScale;
-          else
-              features_enabled &= ~Ft_LegacyScale;
-          break;
-      case 17: // Resize Movies (New version)
-          i = recognize_conf_parameter(buf,&pos,len,logicval_type);
-          if (i <= 0)
-          {
-            CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",COMMAND_TEXT(cmd_num),config_textname);
-            break;
-          }
-          if (i == 1)
-            features_enabled |= Ft_LegacyStretch;
-          else
-            features_enabled &= ~Ft_LegacyStretch;
-          break;
-      case 18: // Resize Movies (New version)
-          i = recognize_conf_parameter(buf,&pos,len,logicval_type);
-          if (i <= 0)
-          {
-              CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",COMMAND_TEXT(cmd_num),config_textname);
-              break;
-          }
-          if (i == 1)
-              features_enabled |= Ft_LegacyCrop;
-          else
-              features_enabled &= ~Ft_LegacyCrop;
-          break;
-      case 19: // Resize Movies (New version)
-          i = recognize_conf_parameter(buf,&pos,len,logicval_type);
-          if (i <= 0)
-          {
-            CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",COMMAND_TEXT(cmd_num),config_textname);
-            break;
-          }
-          if (i == 1)
-              features_enabled |= Ft_LegacyFit;
-          else
-              features_enabled &= ~Ft_LegacyFit;
-          break;
-      case 20: // Resize Movies (New version)
-          i = recognize_conf_parameter(buf,&pos,len,logicval_type);
-          if (i <= 0)
-          {
-            CONFWRNLOG("Couldn't recognize \"%s\" command parameter in %s file.",COMMAND_TEXT(cmd_num),config_textname);
-            break;
-          }
-          if (i == 1)
-              features_enabled |= Ft_LegacyCorrect;
-          else
-              features_enabled &= ~Ft_LegacyCorrect;
           break;
       case 0: // comment
           break;

@@ -178,14 +178,8 @@ void SmackSimulate(unsigned long sim)
     ((FARPROCU_V)proc)(sim);
 }
 
-void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, int src_width, int src_height, int scale_mode)
+void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, int src_width, int src_height, int flags)
 {
-    // int scale_mode :-
-    // 0 = stretch to fullscreen - ignores aspect ratio difference between source and destination
-    // 1 = fill fullscreen and crop - no letterbox or pillarbox
-    // 2 = fit to fullscreen, using letterbox and pillarbox as necessary
-    // 3 =  stretch 320x200 to 4:3 (i.e. increase height by 1.2)
-    
     // Compute scaling ratio -> Output co-ordinates and output size
     int scanline = lbDisplay.GraphicsScreenWidth;
     int nlines = lbDisplay.GraphicsScreenHeight;
@@ -194,7 +188,7 @@ void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, 
     int dst_width = 0;
     int dst_height = 0;
 
-    if (scale_mode == 0) // Use full screen resolution and fill the whole canvas by "stretching"
+    if ((flags & SMK_FullscreenStretch) != 0 && !((flags & SMK_FullscreenFit) != 0)) // Use full screen resolution and fill the whole canvas by "stretching"
     {
         dst_width = scanline;
         dst_height = nlines;
@@ -206,12 +200,12 @@ void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, 
         float units_per_px = 0;
         float relative_ar_difference = (in_width * 1.0 / in_height * 1.0) / (scanline * 1.0 / nlines * 1.0); // relative aspect ratio difference between the source frame and destination frame
         float comparison_ratio = 1; // when keeping aspect ratio, instead of stretching, this is inverted depending on if we want to crop or fit
-        if (scale_mode == 3) // stretch source from 320x200(16:10) to 32x240 (4:3) (i.e. vertical x 1.2) - "preserve *original* aspect ratio mode"
+        if (((flags & SMK_FullscreenStretch) != 0) && ((flags & SMK_FullscreenFit) != 0)) // stretch source from 320x200(16:10) to 32x240 (4:3) (i.e. vertical x 1.2) - "preserve *original* aspect ratio mode"
         {
             in_height = (int)(in_height * 1.2);
         }
         
-        if (scale_mode == 1) // fill screen (will crop)
+        if ((flags & SMK_FullscreenCrop) != 0) // fill screen (will crop)
         {
             comparison_ratio = relative_ar_difference;
         }
@@ -227,7 +221,6 @@ void copy_to_screen_px_ar_scale(unsigned char *src_buf, unsigned char *dst_buf, 
         {
             units_per_px = (scanline>nlines?nlines:scanline)/((in_width>in_height?in_height:in_width)/16.0);
         }
-
         // Starting point coords and width for the destination buffer (based on desired aspect ratio)
         spw = (int)((scanline - in_width * units_per_px / 16.0) / 2.0);
         sph = (int)((nlines - in_height * units_per_px / 16.0) / 2.0);
@@ -460,23 +453,7 @@ void copy_to_screen_scaled(unsigned char *srcbuf, unsigned long width, unsigned 
 {
     unsigned char *dstbuf;
     dstbuf = &lbDisplay.WScreen[0];
-    int scale_mode = 0;
-    if ((flags & 0x20) != 0)
-    {
-        if ((flags & 0x10) != 0)
-        {
-            scale_mode = 1;
-        }
-        else 
-        {
-            scale_mode = 2;
-        }
-    }
-    if ((flags & 0x40) != 0)
-    {
-        scale_mode = 3;
-    }
-    copy_to_screen_px_ar_scale(srcbuf, dstbuf, width, height, scale_mode);
+    copy_to_screen_px_ar_scale(srcbuf, dstbuf, width, height, flags);
     if (smack_draw_callback != NULL) {
       smack_draw_callback(lbDisplay.WScreen, lbDisplay.GraphicsScreenWidth, lbDisplay.GraphicsScreenHeight);
     }
@@ -519,7 +496,7 @@ short play_smk_via_buffer(char *fname, int smkflags, int plyflags)
         SmackDoFrame(smktag);
         if (LbScreenLock() == Lb_SUCCESS)
         {
-          if ( (plyflags & 0x10) != 0 || (plyflags & 0x20) != 0 ) // new scaling mode
+          if ( (plyflags & SMK_FullscreenFit) != 0 || (plyflags & SMK_FullscreenStretch) != 0 || (plyflags & SMK_FullscreenCrop) != 0 ) // new scaling mode
           {
               copy_to_screen_scaled(buf, smktag->Width, smktag->Height, plyflags);
           }
@@ -527,7 +504,6 @@ short play_smk_via_buffer(char *fname, int smkflags, int plyflags)
           {
               copy_to_screen(buf, smktag->Width, smktag->Height, plyflags);
           }
-          
           LbScreenUnlock();
           //LbDoMultitasking();
           if ( reset_pal )

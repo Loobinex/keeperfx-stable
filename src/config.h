@@ -73,11 +73,6 @@ enum TbFeature {
     Ft_Censorship   =  0x0020,
     Ft_Atmossounds  =  0x0040,
     Ft_Resizemovies =  0x0080,
-    Ft_LegacyScale  =  0x0100,
-    Ft_LegacyStretch=  0x0200,
-    Ft_LegacyCrop   =  0x0400,
-    Ft_LegacyFit    =  0x0800,
-    Ft_LegacyCorrect=  0x1000,
 };
 
 enum TbExtraLevels {
@@ -175,6 +170,7 @@ extern unsigned short AtmosRepeat;
 extern unsigned short AtmosStart;
 extern unsigned short AtmosEnd;
 
+extern unsigned int vid_scale_flags;
 /******************************************************************************/
 DLLIMPORT extern float _DK_phase_of_moon;
 #define phase_of_moon _DK_phase_of_moon
@@ -207,7 +203,6 @@ TbBool is_feature_on(unsigned long feature);
 TbBool censorship_enabled(void);
 TbBool atmos_sounds_enabled(void);
 TbBool resize_movies_enabled(void);
-unsigned int resize_legacy_settings(void);
 short load_configuration(void);
 short calculate_moon_phase(short do_calculate,short add_to_log);
 void load_or_create_high_score_table(void);
