@@ -53,6 +53,9 @@
 extern "C" {
 #endif
 
+// Max length of the command line
+#define CMDLN_MAXLEN 259
+
 #define LEGAL_WIDTH  640
 #define LEGAL_HEIGHT 480
 

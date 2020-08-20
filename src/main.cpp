@@ -136,8 +136,6 @@
 
 int test_variable;
 
-// Max length of the command line
-#define CMDLN_MAXLEN 259
 char cmndline[CMDLN_MAXLEN+1];
 unsigned short bf_argc;
 char *bf_argv[CMDLN_MAXLEN+1];
