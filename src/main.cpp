@@ -136,8 +136,6 @@
 
 int test_variable;
 
-// Max length of the command line
-#define CMDLN_MAXLEN 259
 char cmndline[CMDLN_MAXLEN+1];
 unsigned short bf_argc;
 char *bf_argv[CMDLN_MAXLEN+1];
@@ -4488,12 +4486,33 @@ void wait_at_frontend(void)
       game.packet_load_enable = 0;
     }
     game.numfield_15 = -1;
-    // Make sure campaign is loaded
+    // Make sure campaigns are loaded
     if (!load_campaigns_list())
     {
       ERRORLOG("No valid campaign files found");
       exit_keeper = 1;
       return;
+    }
+    // Make sure mappacks are loaded
+    if (!load_mappacks_list())
+    {
+      WARNMSG("No valid mappack files found");
+    }
+    //Set level number and campaign (for single level mode: GOF_SingleLevel)
+    if ((start_params.operation_flags & GOF_SingleLevel) != 0) {
+        if (!change_campaign(strcat(start_params.selected_campaign,".cfg"))) {
+            if (!change_campaign("")) {
+                ERRORLOG("Unable to load default campaign for the specified level CMD Line parameter");
+            }
+            else {
+                ERRORLOG("Unable to load campaign associated with the specified level CMD Line parameter, default loaded.");
+            }
+        }
+        set_selected_level_number(start_params.selected_level_number);
+        //game.selected_level_number = start_params.selected_level_number;
+    }
+    else {
+        set_selected_level_number(first_singleplayer_level());
     }
     // Init load/save catalogue
     initialise_load_game_slots();
@@ -4815,6 +4834,11 @@ short process_command_line(unsigned short argc, char *argv[])
       {
         set_flag_byte(&start_params.operation_flags,GOF_SingleLevel,true);
         level_num = atoi(pr2str);
+        narg++;
+      } else
+      if ( strcasecmp(parstr,"campaign") == 0 )
+      {
+        strcpy(start_params.selected_campaign, pr2str);
         narg++;
       } else
       if ( strcasecmp(parstr,"ppropoly") == 0 )
