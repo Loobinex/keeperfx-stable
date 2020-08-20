@@ -2156,12 +2156,11 @@ msgid ""
 msgstr "Angst: Niet gebruikt"
 
 #: guitext:232
-#, fuzzy
 msgctxt "Creature spell"
 msgid ""
 "Sight: Allows the creature to temporarely increase its awareness and notice "
 "the invisible."
-msgstr "Duivelsoog: Niet gebruikt"
+msgstr "Duivelsoog: Laat het wezen onzichtbare vijanden zien."
 
 #: guitext:233
 #, fuzzy
@@ -2899,37 +2898,37 @@ msgstr "LADEN"
 #: guitext:345
 msgctxt "Menu interface, Main Menu item"
 msgid "Load Game"
-msgstr "SPEL LADEN"
+msgstr "Spel Laden"
 
 #: guitext:346
 msgctxt "Menu interface, Main Menu item"
 msgid "Continue Game"
-msgstr "SPEL VOORTZETTEN"
+msgstr "Spel Voortzetten"
 
 #: guitext:347
 msgctxt "Menu interface, Main Menu item"
 msgid "Multiplayer"
-msgstr "MEERSPELER"
+msgstr "Meerspeler"
 
 #: guitext:348
 msgctxt "Menu interface item"
 msgid "Return to Main Menu"
-msgstr "TERUG NAAR HET HOOFDMENU"
+msgstr "Terug naar Hoofdmenu"
 
 #: guitext:349
 msgctxt "Menu interface item"
 msgid "Play Intro"
-msgstr "TOON INTRO"
+msgstr "Toon Intro"
 
 #: guitext:350
 msgctxt "Menu interface item"
 msgid "Service Menu"
-msgstr "SERVICE"
+msgstr "Service"
 
 #: guitext:351
 msgctxt "Menu interface item"
 msgid "Session Menu"
-msgstr "SESSIE"
+msgstr "Sessie"
 
 #: guitext:352
 msgctxt "Menu interface item"
@@ -3334,37 +3333,37 @@ msgstr "Wezen meenemen"
 #: guitext:430
 msgctxt "Menu interface item"
 msgid "Bonus"
-msgstr "BONUS"
+msgstr "Bonus"
 
 #: guitext:431
 msgctxt "Menu interface, Main Menu item"
 msgid "High Score Table"
-msgstr "SCORELIJST"
+msgstr "Scorelijst"
 
 #: guitext:432
 msgctxt "Menu interface item"
 msgid "Go to Query Mode"
-msgstr "GA NAAR HET HOOFDSCHERM INFO"
+msgstr "Ga naar Info Modus"
 
 #: guitext:433
 msgctxt "Menu interface item"
 msgid "More information"
-msgstr "MEER INFORMATIE"
+msgstr "Meer Informatie"
 
 #: guitext:434
 msgctxt "Menu interface item"
 msgid "Back to main Query Screen"
-msgstr "TERUG NAAR HOOFDSCHERM INFO"
+msgstr "Terug naar Hoofdscherm Info"
 
 #: guitext:435
 msgctxt "Menu interface item"
 msgid "Selected action"
-msgstr "GEKOZEN ACTIE"
+msgstr "Gekozen Actie"
 
 #: guitext:436
 msgctxt "Menu interface item"
 msgid "Choose party"
-msgstr "KIES PARTIJ"
+msgstr "Kies Partij"
 
 #: guitext:437
 msgctxt "Menu interface item"
@@ -3906,27 +3905,27 @@ msgstr "Onbekende fout"
 #: guitext:537
 msgctxt "Network game message"
 msgid "No Carrier"
-msgstr "GEEN CARRIER"
+msgstr "Geen Carrier"
 
 #: guitext:538
 msgctxt "Network game message"
 msgid "No Dial Tone"
-msgstr "GEEN KIESTOON"
+msgstr "Geen Kiestoon"
 
 #: guitext:539
 msgctxt "Network game message"
 msgid "No Response"
-msgstr "GEEN REACTIE"
+msgstr "Geen Reactie"
 
 #: guitext:540
 msgctxt "Network game message"
 msgid "No Server"
-msgstr "GEEN SERVER"
+msgstr "Geen Server"
 
 #: guitext:541
 msgctxt "Network game message"
 msgid "Unable to initialise"
-msgstr "KAN NIET INITIALISEREN"
+msgstr "Kan Niet Initialiseren"
 
 #: guitext:542
 msgctxt "Network game message"
@@ -3936,7 +3935,7 @@ msgstr "Kan spel niet creëren"
 #: guitext:543
 msgctxt "Network game message"
 msgid "Unable to join game"
-msgstr "KAN NIET MEEDOEN"
+msgstr "Kan Niet Meedoen"
 
 #: guitext:544
 #, fuzzy
