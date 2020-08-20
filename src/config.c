@@ -134,6 +134,7 @@ const struct NamedCommand logicval_type[] = {
   const struct NamedCommand vidscale_type[] = {
   {"OFF",     256}, // = 0x100 = No scaling of Smacker Video
   {"FIT",      16}, // = 0x10 = SMK_FullscreenFit - fit to fullscreen, using letterbox and pillarbox as necessary
+  {"ON",       16}, // TEMPORARY = duplicates FIT
   {"STRETCH",  32}, // = 0x20 = SMK_FullscreenStretch  - stretch to fullscreen - ignores aspect ratio difference between source and destination
   {"CROP",     64}, // = 0x40 = SMK_FullscreenCrop - fill fullscreen and crop - no letterbox or pillarbox
   {"4BY3",     48}, // = 0x10 & 0x20 = [Aspect Ratio correction mode] - stretch 320x200 to 4:3 (i.e. increase height by 1.2)
