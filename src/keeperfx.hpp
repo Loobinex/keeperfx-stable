@@ -133,6 +133,7 @@ struct StartupParameters {
     unsigned char packet_checksum_verify;
     unsigned char force_ppro_poly;
     int frame_skip;
+    char selected_campaign[CMDLN_MAXLEN+1];
 #ifdef AUTOTESTING
     unsigned char autotest_flags;
     unsigned long autotest_exit_turn;
