@@ -445,7 +445,7 @@ TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord hei
         cflags = SDL_GetWindowFlags(lbWindow);
         SDL_GetWindowSize(lbWindow, &cw, &ch);
         TbBool sameResolution = mdinfo->Width == cw && mdinfo->Height == ch;
-        TbBool sameWindowMode = cflags & sdlFlags != 0;
+        TbBool sameWindowMode = (cflags & sdlFlags != 0);
         TbBool stillInWindowedMode = (int)(sdlFlags & 1) == 0 && (int)(cflags & 1) == 0; // it is hard to detect if windowed mode (flag = 0) is still the same (i.e. no change of mode, still in windowed mode)
         if (stillInWindowedMode) {
             sameWindowMode = sameWindowMode || stillInWindowedMode;
