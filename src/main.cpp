@@ -4476,12 +4476,19 @@ void wait_at_frontend(void)
     }
     //Set level number and campaign (for single level mode: GOF_SingleLevel)
     if ((start_params.operation_flags & GOF_SingleLevel) != 0) {
-        if (!change_campaign(strcat(start_params.selected_campaign,".cfg"))) {
+        TbBool result = false;
+        if (start_params.selected_campaign[0] != '\0') {
+            result = change_campaign(strcat(start_params.selected_campaign,".cfg"));
+        }
+        if (!result) {
             if (!change_campaign("")) {
-                ERRORLOG("Unable to load default campaign for the specified level CMD Line parameter");
+                WARNMSG("Unable to load default campaign for the specified level CMD Line parameter");
+            }
+            else if (start_params.selected_campaign[0] != '\0') { // only show this log message if the user actually specified a campaign
+                WARNMSG("Unable to load campaign associated with the specified level CMD Line parameter, default loaded.");
             }
             else {
-                ERRORLOG("Unable to load campaign associated with the specified level CMD Line parameter, default loaded.");
+                JUSTLOG("No campaign specified. Default campaign loaded for selected level (%d).", start_params.selected_level_number);
             }
         }
         set_selected_level_number(start_params.selected_level_number);
