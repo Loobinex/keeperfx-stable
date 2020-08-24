@@ -969,6 +969,12 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         break;
     case PSt_CtrlDirect:
     case PSt_FreeCtrlDirect:
+    if (is_key_pressed(KC_LALT, KMod_DONTCARE))
+    {
+        level_lost_go_first_person(plyr_idx);        
+    }
+    else
+    {
         influence_own_creatures = 1;
         if (player->work_state == PSt_CtrlDirect)
             thing = get_creature_near_for_controlling(plyr_idx, x, y);
@@ -994,6 +1000,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             unset_packet_control(pckt, PCtr_RBtnRelease);
           }
         }
+    }
         break;
     case PSt_CreatrQuery:
     case PSt_CreatrInfo:
