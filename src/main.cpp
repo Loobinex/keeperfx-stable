@@ -4758,6 +4758,7 @@ short process_command_line(unsigned short argc, char *argv[])
   bad_param = 0;
   unsigned short narg;
   level_num = LEVELNUMBER_ERROR;
+  TbBool one_player_mode = 0;
   narg = 1;
   while ( narg < argc )
   {
@@ -4794,7 +4795,7 @@ short process_command_line(unsigned short argc, char *argv[])
       if (strcasecmp(parstr, "1player") == 0)
       {
           start_params.one_player = 1;
-          AssignCpuKeepers = 1;
+          one_player_mode = 1;
       } else
       if ((strcasecmp(parstr, "s") == 0) || (strcasecmp(parstr, "nosound") == 0))
       {
@@ -4955,6 +4956,11 @@ short process_command_line(unsigned short argc, char *argv[])
       else
       {
           level_num = 1;
+      }
+  }
+  else {
+      if (one_player_mode) {
+          AssignCpuKeepers = 1;
       }
   }
   start_params.selected_level_number = level_num;
