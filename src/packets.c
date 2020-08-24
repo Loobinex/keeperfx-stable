@@ -969,7 +969,7 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
         break;
     case PSt_CtrlDirect:
     case PSt_FreeCtrlDirect:
-    if (is_key_pressed(KC_LALT, KMod_DONTCARE))
+    if ((is_key_pressed(KC_LALT, KMod_DONTCARE)) && (game.flags_font & FFlg_AlexCheat))
     {
         level_lost_go_first_person(plyr_idx);        
     }
