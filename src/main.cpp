@@ -4404,16 +4404,20 @@ void startup_network_game(TbBool local)
     player = get_my_player();
     player->field_2C = flgmem;
     //if (game.flagfield_14EA4A == 2) //was wrong because init_level sets this to 2. global variables are evil (though perhaps that's why they were chosen for DK? ;-))
+    TbBool ShouldAssignCpuKeepers = 0;
     if (local)
     {
         game.game_kind = GKind_LocalGame;
         init_players_local_game();
+        if (AssignCpuKeepers || campaign.assignCpuKeepers) {
+            ShouldAssignCpuKeepers = 1;
+        }
     } else
     {
         game.game_kind = GKind_MultiGame;
         init_players_network_game();
     }
-    if (fe_computer_players)
+    if (fe_computer_players || ShouldAssignCpuKeepers)
     {
         SYNCDBG(5,"Setting up uninitialized players as computer players");
         setup_computer_players();
@@ -4742,6 +4746,7 @@ short process_command_line(unsigned short argc, char *argv[])
   else
       strcpy(keeper_runtime_directory, ".");
 
+  AssignCpuKeepers = 0;
   SoundDisabled = 0;
   // Note: the working log file is set up in LbBullfrogMain
   LbErrorLogSetup(0, 0, 1);
@@ -4789,6 +4794,7 @@ short process_command_line(unsigned short argc, char *argv[])
       if (strcasecmp(parstr, "1player") == 0)
       {
           start_params.one_player = 1;
+          AssignCpuKeepers = 1;
       } else
       if ((strcasecmp(parstr, "s") == 0) || (strcasecmp(parstr, "nosound") == 0))
       {
