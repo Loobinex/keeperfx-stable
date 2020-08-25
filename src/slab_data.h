@@ -137,10 +137,18 @@ TbBool slab_is_wall(MapSlabCoord slb_x, MapSlabCoord slb_y);
 
 TbBool can_build_room_at_slab(PlayerNumber plyr_idx, RoomKind rkind,
     MapSlabCoord slb_x, MapSlabCoord slb_y);
-    
+
 int can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
     MapSlabCoord slb_x, MapSlabCoord slb_y, int radius, TbBool even);
-    
+
+int calc_distance_from_centre(int totalDistance, TbBool offset);
+
+int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height);
+
+int find_biggest_room_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord *slb_x, MapSlabCoord *slb_y, int *width, int *height, short slabCost, int totalMoney);
+
 void clear_slabs(void);
 void reveal_whole_map(struct PlayerInfo *player);
 void update_blocks_in_area(MapSubtlCoord sx, MapSubtlCoord sy, MapSubtlCoord ex, MapSubtlCoord ey);

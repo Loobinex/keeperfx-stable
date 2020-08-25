@@ -304,6 +304,94 @@ int can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
     return count;
 }
 
+int calc_distance_from_centre(int totalDistance, TbBool offset)
+{
+    return ((totalDistance - 1 + offset) / 2);
+}
+
+int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height)
+{
+    MapCoord buildx;
+    MapCoord buildy;
+    int count = 0;
+    for (buildy = slb_y - calc_distance_from_centre(height,0); buildy <= slb_y + calc_distance_from_centre(height,(height % 2 == 0)); buildy++)
+    {
+        for (buildx = slb_x - calc_distance_from_centre(width,0); buildx <= slb_x + calc_distance_from_centre(width,(width % 2 == 0)); buildx++)
+        {
+            if (can_build_room_at_slab(plyr_idx, rkind, buildx, buildy))
+            {
+                count++;
+            }
+        }
+    }
+    return count;
+}
+
+int find_biggest_room_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord *slb_x, MapSlabCoord *slb_y, int *width, int *height, short roomCost, int totalMoney)
+{
+    int maxRoomRadius = 5; // 9x9 Room
+    int max_width = ((maxRoomRadius * 2) - 1);
+    int slabs = 0;
+    int biggestRoom = 0, brX = 0, brY = 0, brW = 0, brH = 0;
+    TbBool foundBiggestRoomForSlab = 0;
+    // loop through the slabs in the search radius
+    for (int r = (*slb_y) - maxRoomRadius; r <= (*slb_y) + maxRoomRadius; r++)
+    {
+        for (int c = (*slb_x) - maxRoomRadius; c <= (*slb_x) + maxRoomRadius; c++)
+        {
+            // loop through the room sizes, from biggest to smallest
+            for (int w = max_width; w > 0; w--)
+            {
+                if (foundBiggestRoomForSlab)
+                {
+                    foundBiggestRoomForSlab = 0;
+                    break; // choose another slab within the search radius
+                }
+                for (int h = max_width; h > 0; h--)
+                {
+                    // get the extents of the current room
+                    int RectX1 = c - ((w - 1 - (w % 2 == 0)) / 2);
+                    int RectX2 = c + ((w     - (w % 2 != 0)) / 2);
+                    int RectY1 = r - ((h - 1 - (h % 2 == 0)) / 2);
+                    int RectY2 = r + ((h     - (h % 2 != 0)) / 2);
+                    // check if cursor isn't in the current room
+                    if (((*slb_x) >= RectX1 && (*slb_x) <= RectX2 && (*slb_y) >= RectY1 && (*slb_y) <= RectY2) == 0)
+                    {
+                        continue;
+                    }
+                    // check aspect ratio
+                    float minimumRatio = (2.0 / 5.0);
+                    if (((min(w,h) * 1.0) / (max(w,h) * 1.0)) < minimumRatio) 
+                    {
+                        continue;
+                    }
+                    slabs = w * h;
+                    if ((can_build_room_of_dimensions(plyr_idx, rkind, c, r, w, h) == slabs) && (( slabs * roomCost) <= totalMoney))
+                    {
+                        if (slabs > biggestRoom) 
+                        {
+                            biggestRoom = slabs;
+                            brX = c;
+                            brY = r;
+                            brW = w;
+                            brH = h;
+                        }
+                        foundBiggestRoomForSlab = 1;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    (*width) = brW;
+    (*height) = brH;
+    (*slb_x) = brX;
+    (*slb_y) = brY;
+    return biggestRoom;
+}
+
 /**
  * Clears all SlabMap structures in the map.
  */

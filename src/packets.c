@@ -608,8 +608,9 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapCoord y = ((unsigned short)pckt->pos_y);
     MapSubtlCoord stl_x = coord_subtile(x);
     MapSubtlCoord stl_y = coord_subtile(y);
-    int radius;
-    TbBool even;
+    MapSlabCoord slb_x = subtile_slab(stl_x);
+    MapSlabCoord slb_y = subtile_slab(stl_y);
+    int width = 1, height = 1;
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -624,81 +625,44 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         gui_room_type_highlighted = player->chosen_room_kind;
     if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
     {
-        radius = 0;
-        even = true;
+        width = height = 2;
     }
     else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
     {
-        radius = 1;
-        even = false;
+        width = height = 3;
     }
     else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
     {
-        radius = 1;
-        even = true;
+        width = height = 4;
     }
     else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
     {
-        radius = 2;
-        even = false;
+        width = height = 5;
     }
     else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
     {
-        radius = 2;
-        even = true;
+        width = height = 6;
     }
     else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
     {
-        radius = 3;
-        even = false;
+        width = height = 7;
     }
     else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
     {
-        radius = 3;
-        even = true;
+        width = height = 8;
     }
     else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
     {
-        radius = 4;
-        even = false;
+        width = height = 9;
     }
-    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible square room
+    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room
     {
-        int tiles;
         struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
         struct Dungeon* dungeon = get_players_dungeon(player);
-        even = false;
-        for (radius = 0; radius < 5; radius++)
-        {
-            tiles = (1 + radius + radius + 1) * (1 + radius + radius + 1);
-            if ((can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), radius, 1) == tiles) && (( tiles * rstat->cost) <= dungeon->total_money_owned))
-            {
-                even = true;
-                tiles = (1 + radius + radius + 2) * (1 + radius + radius + 2);
-                if ((can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), radius+1, 0) == tiles) && ((tiles * rstat->cost) <= dungeon->total_money_owned))
-                {
-                    even = false;
-                }
-                else
-                {
-                    break;
-                }
-
-            }
-            else
-            {
-                break;
-            }
-        }
+        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned);
     }
-    else
-    {
-        radius = 0;
-        even = false;
-    }
-
-    player->boxsize = can_build_room_of_radius(plyr_idx, player->chosen_room_kind, subtile_slab(stl_x), subtile_slab(stl_y), radius, even); //number of slabs to build, corrected for blocked tiles
-    long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4, radius, even);
+    player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height); //number of slabs to build, corrected for blocked tiles
+    long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -717,18 +681,15 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
       }
       return false;
     }
-     
-    int dist = radius * 3;
-    char evendist = even * 3;
-    MapSubtlCoord buildx;
-    MapSubtlCoord buildy;
+    MapSlabCoord buildx;
+    MapSlabCoord buildy;
     if (player->boxsize > 0)
     {
-        for (buildy = stl_y - dist; buildy <= stl_y + dist + evendist; buildy += 3)
+        for (buildy = slb_y - calc_distance_from_centre(height,0); buildy <= slb_y + calc_distance_from_centre(height,(height % 2 == 0)); buildy++)
         {
-            for (buildx = stl_x - dist; buildx <= stl_x + dist + evendist; buildx += 3)
+            for (buildx = slb_x - calc_distance_from_centre(width,0); buildx <= slb_x + calc_distance_from_centre(width,(width % 2 == 0)); buildx++)
             {
-                keeper_build_room(buildx,buildy,plyr_idx,player->chosen_room_kind);
+                keeper_build_room((buildx * 3), (buildy * 3), plyr_idx, player->chosen_room_kind);
             }
         }
     }
