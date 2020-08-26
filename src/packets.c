@@ -611,6 +611,11 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapSlabCoord slb_x = subtile_slab(stl_x);
     MapSlabCoord slb_y = subtile_slab(stl_y);
     int width = 1, height = 1;
+    int paintMode = 0;
+    if ((pckt->control_flags & PCtr_LBtnHeld) != PCtr_LBtnHeld)
+    {
+        paintMode = 4;
+    }
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -659,24 +664,35 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     {
         struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
         struct Dungeon* dungeon = get_players_dungeon(player);
-        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 1);
+        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 1 | paintMode);
     }
     else if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Find biggest possible room (loose)
     {
         struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
         struct Dungeon* dungeon = get_players_dungeon(player);
-        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 2);
+        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 2 | paintMode);
     }
     player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, 0); //number of slabs to build, corrected for blocked tiles
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
-    if ((pckt->control_flags & PCtr_LBtnClick) == 0)
+    
+    if ((pckt->control_flags & PCtr_LBtnHeld) != PCtr_LBtnHeld)
     {
-      if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
-      {
-        player->field_4AF = 0;
-        unset_packet_control(pckt, PCtr_LBtnRelease);
-      }
-      return false;
+        if ((pckt->control_flags & PCtr_LBtnClick) == 0)
+        {
+        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
+        {
+            player->field_4AF = 0;
+            unset_packet_control(pckt, PCtr_LBtnRelease);
+        }
+            return false;
+        }
+    }
+    else
+    {
+        if (player->boxsize == 0)
+        {
+            return false; //stops attempts at invalid rooms, if left mouse button held (i.e. don't repeat failure sound repeatedly in paint mode)
+        }
     }
     if (i == 0)
     {

@@ -320,28 +320,27 @@ int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
         for (buildx = slb_x - calc_distance_from_centre(width,0); buildx <= slb_x + calc_distance_from_centre(width,(width % 2 == 0)); buildx++)
         {
             struct SlabMap* slb = get_slabmap_block(buildx, buildy);
-            switch (mode)
-            {
-                case 2: // "loose blocking"
+                if ((mode & 2) == 2) // "loose blocking"
+                {
                     if ( slb->kind == SlbT_ROCK || !slab_is_wall(buildx, buildy) )
                     {
                         count++;
                     }
-                    break;
-                case 1: // "strict blocking"
+                }
+                else if ((mode & 1) == 1) // "strict blocking"
+                {
                     if ( !slab_is_door(buildx, buildy) && !slab_is_liquid(buildx, buildy) && !slab_is_wall(buildx, buildy) )
                     {
                         count++;
                     }
-                    break;
-                default: // "all blocking"
+                }
+                else // "all blocking"
+                {
                     if ( can_build_room_at_slab(plyr_idx, rkind, buildx, buildy) )
                     {
                         count++;
                     }
-                    break;
-                
-            }
+                }
         }
     }
     return count;
@@ -370,10 +369,13 @@ int find_biggest_room_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
                 }
                 for (int h = max_width; h > 0; h--)
                 {
-                    // reject 1x1 and 1x2 rooms
-                    if (max(w,h) == 1 || (max(w,h) == 2 && min(w,h) == 1)) 
+                    if ((mode & 4) >= 0) // not in painting mode (check disabled: (mode & 4) == 4 to enable)
                     {
-                        continue;
+                        // reject 1x1 and 1x2 rooms
+                        if (max(w,h) == 1 || (max(w,h) == 2 && min(w,h) == 1)) 
+                        {
+                            continue;
+                        }
                     }
                     // get the extents of the current room
                     int RectX1 = c - ((w - 1 - (w % 2 == 0)) / 2);
@@ -392,7 +394,7 @@ int find_biggest_room_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
                         continue;
                     }
                     slabs = w * h;
-                    int leniency = (mode == 2) ? 0 : 0; // mode=2 :- "loose blocking" (setting to 1 would allow e.g. 1 dirt block in the room)
+                    int leniency = ((mode & 2) == 2) ? 0 : 0; // mode=2 :- "loose blocking" (setting to 1 would allow e.g. 1 dirt block in the room)
                     if ( ((can_build_room_of_dimensions(plyr_idx, rkind, c, r, w, h, mode)) >= slabs - leniency) && ((slabs * roomCost) <= totalMoney) )
                     {
                         if (slabs > biggestRoom) 
