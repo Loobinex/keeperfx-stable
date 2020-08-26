@@ -304,6 +304,137 @@ int can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
     return count;
 }
 
+int calc_distance_from_centre(int totalDistance, TbBool offset)
+{
+    return ((totalDistance - 1 + offset) / 2);
+}
+
+int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height, int mode)
+{
+    MapCoord buildx;
+    MapCoord buildy;
+    int count = 0;
+    int airBlocks = 0;
+    int RectX1 = slb_x - calc_distance_from_centre(width,0);
+    int RectX2 = slb_x + calc_distance_from_centre(width,(width % 2 == 0));
+    int RectY1 = slb_y - calc_distance_from_centre(height,0);
+    int RectY2 = slb_y + calc_distance_from_centre(height,(height % 2 == 0));
+    
+    for (buildy = RectY1; buildy <= RectY2; buildy++)
+    {
+        for (buildx = RectX1; buildx <= RectX2; buildx++)
+        {
+            struct SlabMap* slb = get_slabmap_block(buildx, buildy);
+            struct SlabAttr* slbattr = get_slab_attrs(slb);
+            if ((mode & 2) == 2) // "loose blocking"
+            {
+                if ( !slab_is_wall(buildx, buildy)) //!((slbattr->block_flags & SlbAtFlg_Blocking) == SlbAtFlg_Blocking) ) // && !slab_is_wall(buildx, buildy)) // || slb->kind == SlbT_ROCK)
+                {
+                    count++;
+                    if (((mode & 8) == 8) && (slab_is_liquid(buildx, buildy))) // || slb->kind == SlbT_ROCK)) // "air" blocks (in air block ignoring mode)
+                    {
+                        airBlocks++;
+                    }
+                }
+            }
+            else if ((mode & 1) == 1) // "strict blocking" (not in use in current build)
+            {
+                if (!slab_is_wall(buildx, buildy) && !slab_is_liquid(buildx, buildy)) //!slab_is_door(buildx, buildy) && !slab_is_wall(buildx, buildy) )
+                {
+                    count++;
+                }
+            }
+            else // "all blocking"
+            {
+                if ( can_build_room_at_slab(plyr_idx, rkind, buildx, buildy) )
+                {
+                    count++;
+                }
+            }
+        }
+    }
+    if ((mode & 8) == 8) // "air" blocks mode (reject room if there is at least 1 column/row's worth of air blocks)
+    {
+        if (airBlocks >= max(width,height))
+            return 0;
+    }
+    return count;
+}
+
+int find_biggest_room_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord *slb_x, MapSlabCoord *slb_y, int *width, int *height, short roomCost, int totalMoney, int mode)
+{
+    int maxRoomRadius = 5; // 9x9 Room
+    int max_width = ((maxRoomRadius * 2) - 1);
+    int slabs = 0;
+    int biggestRoom = 0, brX = 0, brY = 0, brW = 0, brH = 0;
+    TbBool foundBiggestRoomForSlab = 0;
+    // loop through the slabs in the search radius
+    for (int r = (*slb_y) - maxRoomRadius; r <= (*slb_y) + maxRoomRadius; r++)
+    {
+        for (int c = (*slb_x) - maxRoomRadius; c <= (*slb_x) + maxRoomRadius; c++)
+        {
+            // loop through the room sizes, from biggest to smallest
+            for (int w = max_width; w > 0; w--)
+            {
+                if (foundBiggestRoomForSlab)
+                {
+                    foundBiggestRoomForSlab = 0;
+                    break; // choose another slab within the search radius
+                }
+                for (int h = max_width; h > 0; h--)
+                {
+                    if ((mode & 4) >= 0) // not in painting mode (check disabled: (mode & 4) == 4 to enable)
+                    {
+                        // reject 1x1 and 1x2 rooms
+                        if (max(w,h) == 1 || (max(w,h) == 2 && min(w,h) == 1)) 
+                        {
+                            continue;
+                        }
+                    }
+                    // get the extents of the current room
+                    int RectX1 = c - ((w - 1 - (w % 2 == 0)) / 2);
+                    int RectX2 = c + ((w     - (w % 2 != 0)) / 2);
+                    int RectY1 = r - ((h - 1 - (h % 2 == 0)) / 2);
+                    int RectY2 = r + ((h     - (h % 2 != 0)) / 2);
+                    // check if cursor isn't in the current room
+                    if (((*slb_x) >= RectX1 && (*slb_x) <= RectX2 && (*slb_y) >= RectY1 && (*slb_y) <= RectY2) == 0)
+                    {
+                        continue;
+                    }
+                    // check aspect ratio
+                    float minimumRatio = (2.0 / 5.0);
+                    if (((min(w,h) * 1.0) / (max(w,h) * 1.0)) < minimumRatio) 
+                    {
+                        continue;
+                    }
+                    slabs = w * h;
+                    int leniency = ((mode & 2) == 2) ? 0 : 0; // mode=2 :- "loose blocking" (setting to 1 would allow e.g. 1 dirt block in the room)
+                    if ( ((can_build_room_of_dimensions(plyr_idx, rkind, c, r, w, h, mode)) >= slabs - leniency) && ((slabs * roomCost) <= totalMoney) )
+                    {
+                        if (slabs > biggestRoom) 
+                        {
+                            biggestRoom = slabs;
+                            brX = c;
+                            brY = r;
+                            brW = w;
+                            brH = h;
+                        }
+                        foundBiggestRoomForSlab = 1;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+    (*width) = brW;
+    (*height) = brH;
+    (*slb_x) = brX;
+    (*slb_y) = brY;
+    return biggestRoom;
+}
+
 /**
  * Clears all SlabMap structures in the map.
  */
