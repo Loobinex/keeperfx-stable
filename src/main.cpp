@@ -4003,7 +4003,7 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         allowed = true;
     }
     int roomslabs = width * height;
-    int canbuild = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height);
+    int canbuild = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, 0);
     int color = 0;
     if (canbuild > 0)
     {

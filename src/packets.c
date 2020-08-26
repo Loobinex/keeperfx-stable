@@ -655,13 +655,19 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     {
         width = height = 9;
     }
-    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room
+    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room (strict)
     {
         struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
         struct Dungeon* dungeon = get_players_dungeon(player);
-        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned);
+        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 1);
     }
-    player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height); //number of slabs to build, corrected for blocked tiles
+    else if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Find biggest possible room (loose)
+    {
+        struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
+        struct Dungeon* dungeon = get_players_dungeon(player);
+        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 2);
+    }
+    player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, 0); //number of slabs to build, corrected for blocked tiles
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {

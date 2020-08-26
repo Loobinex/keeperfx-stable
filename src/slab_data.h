@@ -144,10 +144,10 @@ int can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
 int calc_distance_from_centre(int totalDistance, TbBool offset);
 
 int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height);
+    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height, int mode);
 
 int find_biggest_room_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord *slb_x, MapSlabCoord *slb_y, int *width, int *height, short slabCost, int totalMoney);
+    MapSlabCoord *slb_x, MapSlabCoord *slb_y, int *width, int *height, short slabCost, int totalMoney, int mode);
 
 void clear_slabs(void);
 void reveal_whole_map(struct PlayerInfo *player);
