@@ -612,6 +612,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapSlabCoord slb_y = subtile_slab(stl_y);
     int width = 1, height = 1;
     int paintMode = 0;
+    int mode = -1;
     if ((is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) && ((pckt->control_flags & PCtr_LBtnHeld) == PCtr_LBtnHeld))
     {
         paintMode = 4;
@@ -628,44 +629,66 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     player->field_4A4 = 1;
     if (is_my_player(player))
         gui_room_type_highlighted = player->chosen_room_kind;
+    if (is_key_pressed(KC_NUMPAD1, KMod_DONTCARE))
+    {
+        mode = (0 | paintMode | 0);
+    }
     if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
     {
-        width = height = 2;
+        //width = height = 2;
+        mode = (1 | paintMode | 0);
     }
     else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
     {
-        width = height = 3;
+        //width = height = 3;
+        mode = (2 | paintMode | 0);
     }
     else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
     {
-        width = height = 4;
+        //width = height = 4;
+        mode = (2 | paintMode | 8);
     }
     else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
     {
-        width = height = 5;
+        //width = height = 5;
+        //mode = (2 | paintMode | 8);
     }
     else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
     {
-        width = height = 6;
+        //width = height = 6;
+        //mode = (1 | paintMode | 0 | 16);
     }
     else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
     {
-        width = height = 7;
+        //width = height = 7;
     }
     else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
     {
-        width = height = 8;
+        //width = height = 8;
     }
     else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
     {
-        width = height = 9;
+        //width = height = 9;
     }
-    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room
+    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room (strict)
     {
-        struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
+        /*struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
         struct Dungeon* dungeon = get_players_dungeon(player);
-        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 2 | paintMode | 8);
+        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 1 | paintMode | 0);*/
+        mode = (1 | paintMode | 0);
     }
+    else if (is_key_pressed(KC_LALT, KMod_DONTCARE)) // Find biggest possible room (loose)
+    {
+        /*struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
+        struct Dungeon* dungeon = get_players_dungeon(player);
+        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 2 | paintMode | 8);*/
+        mode = (2 | paintMode | 8);
+    }
+    
+    struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
+    struct Dungeon* dungeon = get_players_dungeon(player);
+    if (mode != -1) find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, mode);
+    
     player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, 0); //number of slabs to build, corrected for blocked tiles
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
     
@@ -1936,7 +1959,7 @@ void process_pause_packet(long curr_pause, long new_pause)
   for (long i = 0; i < PLAYERS_COUNT; i++)
   {
     player = get_player(i);
-    if (player_exists(player) && (player->field_2C == 1))
+    if (player_exists(player) && (player->is_active == 1))
     {
         if ((player->allocflags & PlaF_CompCtrl) == 0)
         {
@@ -2136,7 +2159,7 @@ void process_quit_packet(struct PlayerInfo *player, short complete_quit)
                 swplyr = get_player(i);
                 if (player_exists(swplyr))
                 {
-                    if (swplyr->field_2C == 1)
+                    if (swplyr->is_active == 1)
                         if (swplyr->victory_state == VicS_Undecided)
                             swplyr->victory_state = VicS_WonLevel;
                 }
