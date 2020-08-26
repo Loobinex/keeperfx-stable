@@ -961,6 +961,7 @@ void init_keeper(void)
     game.field_14EA2A = 256;
     game.field_14EA2C = 256;
     game.field_14EA2E = 256;
+    map_volume_box.field_17 = 1;
     if (game.generate_speed <= 0)
       game.generate_speed = game.default_generate_speed;
     poly_pool_end = &poly_pool[sizeof(poly_pool)-128];
@@ -3840,20 +3841,21 @@ int can_thing_be_queried(struct Thing *thing, long a2)
   return _DK_can_thing_be_queried(thing, a2);
 }
 
-TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4, TbBool Subtile)
+TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4, TbBool Subtile, char radius, TbBool even)
 {
     SYNCDBG(7,"Starting");
     // _DK_tag_cursor_blocks_sell_area(plyr_idx, stl_x, stl_y, a4);
     MapSlabCoord slb_x = subtile_slab_fast(stl_x);
     MapSlabCoord slb_y = subtile_slab_fast(stl_y);
-    int v6 = slab_subtile(slb_x, 0);
-    int v7 = slab_subtile(slb_y, 0);
+    // int v6 = slab_subtile(slb_x, 0);
+    // int v7 = slab_subtile(slb_y, 0);
     struct SlabMap *slb;
     slb = get_slabmap_block(slb_x, slb_y);
     struct SlabAttr *slbattr;
     slbattr = get_slab_attrs(slb);
     signed int parl;
     TbBool allowed = false;
+    long dist = radius * 3;
     if (!subtile_revealed(stl_x, stl_y, plyr_idx)
         || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
     {
@@ -3876,12 +3878,13 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
     {
         map_volume_box.visible = 1;
-        map_volume_box.beg_x = Subtile ? (subtile_coord(stl_x,0)) : (v6 << 8);
-        map_volume_box.beg_y = Subtile ? (subtile_coord(stl_y,0)) : (v7 << 8);
+        map_volume_box.beg_x = Subtile ? (subtile_coord(stl_x,0)) : (subtile_coord(slab_subtile(slb_x, 0) - dist,0));
+        map_volume_box.beg_y = Subtile ? (subtile_coord(stl_y,0)) : (subtile_coord(slab_subtile(slb_y, 0) - dist,0));
         map_volume_box.field_13 = parl;
-        map_volume_box.end_x = Subtile ? (subtile_coord(stl_x+1,0)) : ((v6 + 2 * a4 + 1) << 8);
+        map_volume_box.end_x = Subtile ? (subtile_coord(stl_x+1,0)) : (subtile_coord(slab_subtile(slb_x, 3*a4) + (dist + (((char)even)*3)), 0));
         map_volume_box.color = allowed;
-        map_volume_box.end_y = Subtile ? (subtile_coord(stl_y+1,0)) : ((v7 + 2 * a4 + 1) << 8);
+        map_volume_box.end_y = Subtile ? (subtile_coord(stl_y+1,0)) : (subtile_coord(slab_subtile(slb_y, 3*a4) + (dist + (((char)even)*3)), 0));
+        map_volume_box.field_17 = 1+ (2 * radius) + even;
     }
     return allowed;
 }
@@ -3964,7 +3967,7 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     return allowed;
 }
 
-TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4)
+TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4, int width, int height)
 {
     SYNCDBG(7,"Starting");
     //return _DK_tag_cursor_blocks_place_room(plyr_idx, a2, a3, a4);
@@ -3997,16 +4000,36 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         allowed = true;
     } else {
         SYNCDBG(7,"Cannot build %s on slab (%d,%d)",slab_code_name(slb->kind),room_code_name(player->chosen_room_kind),(int)slb_x,(int)slb_y);
+        allowed = true;
+    }
+    int roomslabs = width * height;
+    int canbuild = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, 0);
+    int color = 0;
+    if (canbuild > 0)
+    {
+        if(roomslabs == canbuild)
+        {
+            color = 1;
+        }
+        else if (canbuild * 2 < roomslabs)
+        {
+            color = 8;
+        }
+        else
+        {
+            color = 4;
+        }
     }
     if (is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && (game.small_map_state != 2))
     {
         map_volume_box.visible = 1;
-        map_volume_box.beg_x = subtile_coord(slab_subtile(slb_x, 0), 0);
-        map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0), 0);
+        map_volume_box.beg_x = subtile_coord(slab_subtile(slb_x, 0) - (calc_distance_from_centre(width, 0) * 3), 0);
+        map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0) - (calc_distance_from_centre(height, 0) * 3), 0);
         map_volume_box.field_13 = par1;
-        map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 2*a4+1), 0);
-        map_volume_box.color = allowed;
-        map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 2*a4+1), 0);
+        map_volume_box.field_17 = max(width, height);
+        map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_centre(width, (width % 2 == 0)) * 3), 0);
+        map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_centre(height,(height % 2 == 0)) * 3), 0);
+        map_volume_box.color = color;
     }
     return allowed;
 }
