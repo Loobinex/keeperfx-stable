@@ -320,27 +320,28 @@ int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
         for (buildx = slb_x - calc_distance_from_centre(width,0); buildx <= slb_x + calc_distance_from_centre(width,(width % 2 == 0)); buildx++)
         {
             struct SlabMap* slb = get_slabmap_block(buildx, buildy);
-                if ((mode & 2) == 2) // "loose blocking"
+            struct SlabAttr* slbattr = get_slab_attrs(slb);
+            if ((mode & 2) == 2) // "loose blocking"
+            {
+                if ( !slab_is_wall(buildx, buildy) ) //!((slbattr->block_flags & SlbAtFlg_Blocking) == SlbAtFlg_Blocking) ) // && !slab_is_wall(buildx, buildy)) // || slb->kind == SlbT_ROCK)
                 {
-                    if ( slb->kind == SlbT_ROCK || !slab_is_wall(buildx, buildy) )
-                    {
-                        count++;
-                    }
+                    count++;
                 }
-                else if ((mode & 1) == 1) // "strict blocking"
+            }
+            else if ((mode & 1) == 1) // "strict blocking"
+            {
+                if ( !slab_is_wall(buildx, buildy) && !slab_is_liquid(buildx, buildy) ) //!slab_is_door(buildx, buildy) && !slab_is_wall(buildx, buildy) )
                 {
-                    if ( !slab_is_door(buildx, buildy) && !slab_is_liquid(buildx, buildy) && !slab_is_wall(buildx, buildy) )
-                    {
-                        count++;
-                    }
+                    count++;
                 }
-                else // "all blocking"
+            }
+            else // "all blocking"
+            {
+                if ( can_build_room_at_slab(plyr_idx, rkind, buildx, buildy) )
                 {
-                    if ( can_build_room_at_slab(plyr_idx, rkind, buildx, buildy) )
-                    {
-                        count++;
-                    }
+                    count++;
                 }
+            }
         }
     }
     return count;
