@@ -612,7 +612,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapSlabCoord slb_y = subtile_slab(stl_y);
     int width = 1, height = 1;
     int paintMode = 0;
-    if ((pckt->control_flags & PCtr_LBtnHeld) != PCtr_LBtnHeld)
+    if ((is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) && ((pckt->control_flags & PCtr_LBtnHeld) == PCtr_LBtnHeld))
     {
         paintMode = 4;
     }
@@ -660,22 +660,16 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     {
         width = height = 9;
     }
-    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room (strict)
+    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room
     {
         struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
         struct Dungeon* dungeon = get_players_dungeon(player);
-        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 1 | paintMode);
-    }
-    else if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Find biggest possible room (loose)
-    {
-        struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
-        struct Dungeon* dungeon = get_players_dungeon(player);
-        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 2 | paintMode);
+        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 2 | paintMode | 8);
     }
     player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, 0); //number of slabs to build, corrected for blocked tiles
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
     
-    if ((pckt->control_flags & PCtr_LBtnHeld) != PCtr_LBtnHeld)
+    if (paintMode == 0)
     {
         if ((pckt->control_flags & PCtr_LBtnClick) == 0)
         {
@@ -687,7 +681,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
             return false;
         }
     }
-    else
+    else if ((pckt->control_flags & PCtr_LBtnHeld) == PCtr_LBtnHeld)
     {
         if (player->boxsize == 0)
         {

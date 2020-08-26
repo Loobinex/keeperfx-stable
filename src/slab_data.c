@@ -315,22 +315,32 @@ int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
     MapCoord buildx;
     MapCoord buildy;
     int count = 0;
-    for (buildy = slb_y - calc_distance_from_centre(height,0); buildy <= slb_y + calc_distance_from_centre(height,(height % 2 == 0)); buildy++)
+    int airBlocks = 0;
+    int RectX1 = slb_x - calc_distance_from_centre(width,0);
+    int RectX2 = slb_x + calc_distance_from_centre(width,(width % 2 == 0));
+    int RectY1 = slb_y - calc_distance_from_centre(height,0);
+    int RectY2 = slb_y + calc_distance_from_centre(height,(height % 2 == 0));
+    
+    for (buildy = RectY1; buildy <= RectY2; buildy++)
     {
-        for (buildx = slb_x - calc_distance_from_centre(width,0); buildx <= slb_x + calc_distance_from_centre(width,(width % 2 == 0)); buildx++)
+        for (buildx = RectX1; buildx <= RectX2; buildx++)
         {
             struct SlabMap* slb = get_slabmap_block(buildx, buildy);
             struct SlabAttr* slbattr = get_slab_attrs(slb);
             if ((mode & 2) == 2) // "loose blocking"
             {
-                if ( !slab_is_wall(buildx, buildy) ) //!((slbattr->block_flags & SlbAtFlg_Blocking) == SlbAtFlg_Blocking) ) // && !slab_is_wall(buildx, buildy)) // || slb->kind == SlbT_ROCK)
+                if ( !slab_is_wall(buildx, buildy)) //!((slbattr->block_flags & SlbAtFlg_Blocking) == SlbAtFlg_Blocking) ) // && !slab_is_wall(buildx, buildy)) // || slb->kind == SlbT_ROCK)
                 {
                     count++;
+                    if (((mode & 8) == 8) && (slab_is_liquid(buildx, buildy))) // || slb->kind == SlbT_ROCK)) // "air" blocks (in air block ignoring mode)
+                    {
+                        airBlocks++;
+                    }
                 }
             }
-            else if ((mode & 1) == 1) // "strict blocking"
+            else if ((mode & 1) == 1) // "strict blocking" (not in use in current build)
             {
-                if ( !slab_is_wall(buildx, buildy) && !slab_is_liquid(buildx, buildy) ) //!slab_is_door(buildx, buildy) && !slab_is_wall(buildx, buildy) )
+                if (!slab_is_wall(buildx, buildy) && !slab_is_liquid(buildx, buildy)) //!slab_is_door(buildx, buildy) && !slab_is_wall(buildx, buildy) )
                 {
                     count++;
                 }
@@ -343,6 +353,11 @@ int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
                 }
             }
         }
+    }
+    if ((mode & 8) == 8) // "air" blocks mode (reject room if there is at least 1 column/row's worth of air blocks)
+    {
+        if (airBlocks >= max(width,height))
+            return 0;
     }
     return count;
 }
