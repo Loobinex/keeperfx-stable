@@ -4023,13 +4023,13 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     if (is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && (game.small_map_state != 2))
     {
         map_volume_box.visible = 1;
+        map_volume_box.color = color;
         map_volume_box.beg_x = subtile_coord(slab_subtile(slb_x, 0) - (calc_distance_from_centre(width, 0) * 3), 0);
         map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0) - (calc_distance_from_centre(height, 0) * 3), 0);
-        map_volume_box.field_13 = par1;
-        map_volume_box.field_17 = max(width, height);
         map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_centre(width, (width % 2 == 0)) * 3), 0);
         map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_centre(height,(height % 2 == 0)) * 3), 0);
-        map_volume_box.color = color;
+        map_volume_box.field_13 = par1;
+        map_volume_box.field_17 = max(width, height);
     }
     return allowed;
 }
