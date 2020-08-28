@@ -6068,7 +6068,7 @@ void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width
     }
     vstart = 0;
     coord_z -= (stl_width >> 1);
-    vend = stl_width;
+    vend = stl_width * box_width;
     delta[0] = 0;
     delta[1] = slb_height;
     delta[2] = depth;
@@ -6078,11 +6078,11 @@ void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width
     {
       if (!is_free_space_in_poly_pool(4))
         break;
-      create_line_element(coord_x + vstart,    coord_y + delta[0],  coord_x + (vend * box_width),      coord_y + delta[0], coord_z,             map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[1],  coord_x + (vend * box_width),      coord_y + delta[1], coord_z - slb_height, map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[2],  coord_x + (vend * box_width),      coord_y + delta[2], coord_z,             map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[3],  coord_x + (vend * box_width),      coord_y + delta[3], coord_z - slb_height, map_volume_box.color);
-      vend += stl_width;
+      create_line_element(coord_x + vstart,    coord_y + delta[0],  coord_x + (vend),      coord_y + delta[0], coord_z,             map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[1],  coord_x + (vend),      coord_y + delta[1], coord_z - slb_height, map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[2],  coord_x + (vend),      coord_y + delta[2], coord_z,             map_volume_box.color);
+      create_line_element(coord_x + vstart,    coord_y + delta[3],  coord_x + (vend),      coord_y + delta[3], coord_z - slb_height, map_volume_box.color);
+      vend += stl_width * box_width;
       vstart += stl_width * box_width;
     }
     // Now the rectangles at left and right
