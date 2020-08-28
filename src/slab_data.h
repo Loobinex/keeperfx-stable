@@ -113,6 +113,7 @@ struct RoomMap {
     MapSlabCoord centreX;
     MapSlabCoord centreY;
     int slabCount;
+    TbBool isRoomABox;
 };
 
 #pragma pack()

@@ -681,7 +681,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
 
     struct RoomMap best_room;
-    TbBool isRoomABox = true;
+    best_room.isRoomABox = true;
     if (mode != -1) // room auto-detection mode
     {
         struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
@@ -693,9 +693,10 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         slb_y = best_room.centreY;
         if (best_room.slabCount != (width * height))
         {
-            isRoomABox = false;
+            best_room.isRoomABox = false;
         }
     }
+    //render_room = best_room;
     player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, 0); //number of slabs to build, corrected for blocked tiles
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
     
@@ -736,7 +737,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         {
             for (buildx = slb_x - calc_distance_from_centre(width,0); buildx <= slb_x + calc_distance_from_centre(width,(width % 2 == 0)); buildx++)
             {
-                if (!isRoomABox) // if the room shape is not a perfect square/rectangle...
+                if (!best_room.isRoomABox) // if the room shape is not a perfect square/rectangle...
                 {
                     if (best_room.room_grid[room_x][room_y] == false) // check the slab is part of the room
                     {
