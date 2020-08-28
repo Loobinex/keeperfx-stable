@@ -612,7 +612,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapSlabCoord slb_y = subtile_slab(stl_y);
     int width = 1, height = 1;
     int paintMode = 0;
-    int mode = -1;
+    int mode = -1; // (default) do not use room auto-detect mode
     if ((is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) && ((pckt->control_flags & PCtr_LBtnHeld) == PCtr_LBtnHeld))
     {
         paintMode = 4;
@@ -651,56 +651,63 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
     {
         //width = height = 5;
-        //mode = (2 | paintMode | 8);
+        mode = (1 | 0 | 32);
     }
     else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
     {
         //width = height = 6;
-        //mode = (1 | paintMode | 0 | 16);
+        mode = (2 | 0 | 32);
     }
     else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
     {
         //width = height = 7;
+        mode = (2 | 0 | 16 | 32);
     }
     else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
     {
-        //width = height = 8;
+        width = height = 8;
     }
     else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
     {
-        //width = height = 9;
+        width = height = 9;
     }
     else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room (strict)
     {
-        /*struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
-        struct Dungeon* dungeon = get_players_dungeon(player);
-        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 1 | paintMode | 0);*/
         mode = (1 | paintMode | 0);
     }
     else if (is_key_pressed(KC_LALT, KMod_DONTCARE)) // Find biggest possible room (loose)
     {
-        /*struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
-        struct Dungeon* dungeon = get_players_dungeon(player);
-        find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, 2 | paintMode | 8);*/
         mode = (2 | paintMode | 8);
     }
-    
-    struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
-    struct Dungeon* dungeon = get_players_dungeon(player);
-    if (mode != -1) find_biggest_room_dimensions(plyr_idx, player->chosen_room_kind, &slb_x, &slb_y, &width, &height, rstat->cost, dungeon->total_money_owned, mode);
-    
+
+    struct RoomMap best_room;
+    TbBool isRoomABox = true;
+    if (mode != -1) // room auto-detection mode
+    {
+        struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
+        struct Dungeon* dungeon = get_players_dungeon(player);
+        best_room = get_biggest_room(plyr_idx, player->chosen_room_kind, slb_x, slb_y, rstat->cost, dungeon->total_money_owned, mode);
+        width = best_room.width;
+        height = best_room.height;
+        slb_x = best_room.centreX;
+        slb_y = best_room.centreY;
+        if (best_room.slabCount != (width * height))
+        {
+            isRoomABox = false;
+        }
+    }
     player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, 0); //number of slabs to build, corrected for blocked tiles
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
     
-    if (paintMode == 0)
+    if (paintMode == 0) // allows the user to hold the left mouse to use "paint mode"
     {
         if ((pckt->control_flags & PCtr_LBtnClick) == 0)
         {
-        if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
-        {
-            player->field_4AF = 0;
-            unset_packet_control(pckt, PCtr_LBtnRelease);
-        }
+            if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
+            {
+                player->field_4AF = 0;
+                unset_packet_control(pckt, PCtr_LBtnRelease);
+            }
             return false;
         }
     }
@@ -720,16 +727,28 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
       }
       return false;
     }
-    MapSlabCoord buildx;
-    MapSlabCoord buildy;
     if (player->boxsize > 0)
     {
+        MapSlabCoord buildx;
+        MapSlabCoord buildy;
+        int room_x = 0, room_y = 0; // these store the coordinates of best_room.room_grid[][], rather than the in-game map coordinates
         for (buildy = slb_y - calc_distance_from_centre(height,0); buildy <= slb_y + calc_distance_from_centre(height,(height % 2 == 0)); buildy++)
         {
             for (buildx = slb_x - calc_distance_from_centre(width,0); buildx <= slb_x + calc_distance_from_centre(width,(width % 2 == 0)); buildx++)
             {
+                if (!isRoomABox) // if the room shape is not a perfect square/rectangle...
+                {
+                    if (best_room.room_grid[room_x][room_y] == false) // check the slab is part of the room
+                    {
+                        room_x++;
+                        continue; // skip to the next tile if the current tile is not part of the room
+                    }
+                }
                 keeper_build_room((buildx * 3), (buildy * 3), plyr_idx, player->chosen_room_kind);
+                room_x++;
             }
+            room_y++;
+            room_x = 0;
         }
     }
     else

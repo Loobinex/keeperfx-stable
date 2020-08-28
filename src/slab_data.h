@@ -29,6 +29,7 @@ extern "C" {
 /******************************************************************************/
 #define SLABSET_COUNT        1304
 #define SLABOBJS_COUNT        512
+#define MAX_ROOM_WIDTH         20
 
 enum SlabTypes {
     SlbT_ROCK               =   0,
@@ -101,6 +102,19 @@ struct SlabObj { // sizeof = 13
   unsigned char sofield_C;
 };
 
+struct RoomMap {
+    TbBool room_grid[MAX_ROOM_WIDTH][MAX_ROOM_WIDTH];
+    int width;
+    int height;
+    MapSlabCoord left;
+    MapSlabCoord top;
+    MapSlabCoord right;
+    MapSlabCoord bottom;
+    MapSlabCoord centreX;
+    MapSlabCoord centreY;
+    int slabCount;
+};
+
 #pragma pack()
 /******************************************************************************/
 #define INVALID_SLABMAP_BLOCK (&bad_slabmap_block)
@@ -146,8 +160,8 @@ int calc_distance_from_centre(int totalDistance, TbBool offset);
 int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
     MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height, int mode);
 
-int find_biggest_room_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord *slb_x, MapSlabCoord *slb_y, int *width, int *height, short slabCost, int totalMoney, int mode);
+struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord cursor_x, MapSlabCoord cursor_y, short slabCost, int totalMoney, int mode);
 
 void clear_slabs(void);
 void reveal_whole_map(struct PlayerInfo *player);

@@ -396,77 +396,178 @@ int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
     return count;
 }
 
-int find_biggest_room_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord *slb_x, MapSlabCoord *slb_y, int *width, int *height, short roomCost, int totalMoney, int mode)
+struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord cursor_x, MapSlabCoord cursor_y, short slabCost, int totalMoney, int mode)
 {
     int maxRoomRadius = 5; // 9x9 Room
-    int max_width = ((maxRoomRadius * 2) - 1);
-    int slabs = 0;
-    int biggestRoom = 0, brX = 0, brY = 0, brW = 0, brH = 0;
-    TbBool foundBiggestRoomForSlab = 0;
-    // loop through the slabs in the search radius
-    for (int r = (*slb_y) - maxRoomRadius; r <= (*slb_y) + maxRoomRadius; r++)
+    int maxRoomWidth = ((maxRoomRadius * 2) - 1);
+    int minRoomWidth = 2; // Don't look for rooms smaller than 2x2
+    int min_width = minRoomWidth, min_height = minRoomWidth;
+    struct RoomMap bestRooms[3];
+    int bestRoomsCount = 0;
+    struct RoomMap best_room;
+    struct RoomMap current_biggest_room;
+    // Set default "room" - i.e. 1x1 slabs, centred on the cursor
+    current_biggest_room.slabCount = 1;
+    current_biggest_room.width = 1;
+    current_biggest_room.height = 1;
+    current_biggest_room.centreX = cursor_x;
+    current_biggest_room.centreY = cursor_y;
+    current_biggest_room.room_grid[0][0] = true;
+    best_room = current_biggest_room;
+
+    // Find the biggest room
+    // =====================
+
+    // loop through the 3 sub rooms, that are used to construct the meta room (mode 32 only, otherwise it only loops once)
+    do
     {
-        for (int c = (*slb_x) - maxRoomRadius; c <= (*slb_x) + maxRoomRadius; c++)
+        // loop through the slabs in the search radius
+        for (int r = cursor_y - maxRoomRadius; r <= cursor_y + maxRoomRadius; r++)
         {
-            // loop through the room sizes, from biggest to smallest
-            for (int w = max_width; w > 0; w--)
+            for (int c = cursor_x - maxRoomRadius; c <= cursor_x + maxRoomRadius; c++)
             {
-                if (foundBiggestRoomForSlab)
+                // for each tile within the search radius, taken as the centre of a "room" :- loop through the room sizes, from biggest width/height to smallest width/height
+                for (int w = maxRoomWidth; w >= min_width; w--)
                 {
-                    foundBiggestRoomForSlab = 0;
-                    break; // choose another slab within the search radius
+                    if ((w * maxRoomWidth) < current_biggest_room.slabCount) { break; } // sanity check, to stop pointless iterations of the loop
+
+                    for (int h = maxRoomWidth; h >= min_height; h--)
+                    {
+                        if ((w * h) < current_biggest_room.slabCount) { break; } // sanity check, to stop pointless iterations of the loop
+
+                        // check aspect ratio of the new room
+                        float minimumRatio = (2.0 / 5.0);
+                        if (((mode & 32) == 32))
+                        {
+                            minimumRatio = 0.0; //accept any ratio in mode 32
+                        }
+                        if (((min(w,h) * 1.0) / (max(w,h) * 1.0)) < minimumRatio) 
+                        {
+                            continue; //don't make super long rooms (avoids detecting corridors)
+                        }
+                        // get the extents of the current room
+                        int leftExtent = c - ((w - 1 - (w % 2 == 0)) / 2);
+                        int rightExtent = c + ((w     - (w % 2 != 0)) / 2);
+                        int topExtent = r - ((h - 1 - (h % 2 == 0)) / 2);
+                        int bottomExtent = r + ((h     - (h % 2 != 0)) / 2);
+                        // check if cursor is not in the current room
+                        if ((cursor_x >= leftExtent && cursor_x <= rightExtent && cursor_y >= topExtent && cursor_y <= bottomExtent) == 0)
+                        {
+                            continue; // not a valid room
+                        }
+                        // check to see if the room collides with any walls (etc)
+                        int slabs = w * h;
+                        int leniency = (((mode & 16) == 16) && bestRoomsCount == 0) ? 1 : 0; // mode=16 :- (setting to 1 would allow e.g. 1 dirt block in the room)
+                        int roomarea = can_build_room_of_dimensions(plyr_idx, rkind, c, r, w, h, mode);
+                        if (((roomarea) >= slabs - leniency) && ((roomarea * slabCost) <= totalMoney))
+                        {
+                            if (roomarea > current_biggest_room.slabCount)
+                            {
+                                current_biggest_room.slabCount = roomarea;
+                                current_biggest_room.centreX = c;
+                                current_biggest_room.centreY = r;
+                                current_biggest_room.width = w;
+                                current_biggest_room.height = h;
+                                current_biggest_room.left = leftExtent;
+                                current_biggest_room.right = rightExtent;
+                                current_biggest_room.top = topExtent;
+                                current_biggest_room.bottom = bottomExtent;
+                            }
+                            break;
+                        }
+                    }
                 }
-                for (int h = max_width; h > 0; h--)
+                // end loop of room sizes
+            }
+        }
+        // end loop of search area
+
+        if (((mode & 32) == 32)) // new auto placement mode
+        {
+            // new auto placement mode - it scans for the biggest room, then the biggest room that is wider, then the biggest room that is taller...
+            // ...then combines these in to one meta room (which is stored in a 2D array of booleans [1BPP array])
+
+            // get the information on the biggest room just found
+            // if no room was found, this info describes the previously found biggest room (so no empty values)
+            // if no room is ever found, current_biggest_room is the the default defined above (a single slab)
+            bestRooms[bestRoomsCount] = current_biggest_room;
+            if (bestRoomsCount == 0) // check for wider rooms
+            {
+                min_width = min(maxRoomWidth,max(bestRooms[0].width + 1, minRoomWidth));
+                min_height = 2;
+            }
+            else if (bestRoomsCount == 1) // check for taller rooms
+            {
+                min_width = 2;
+                min_height = min(maxRoomWidth,max(bestRooms[0].height + 1, minRoomWidth));
+            }
+            bestRoomsCount++;
+            current_biggest_room.slabCount = 1; // reset biggest recorded room to a single slab
+        }
+    }
+    while(((mode & 32) == 32) && (bestRoomsCount < 3)); // loop again, if in mode 32, for the 2 extra room checks
+
+    // Return the best_room to the calling function
+    // ============================================
+
+    if ((mode & 32) == 32) // new auto placement mode
+    {  
+        // find the extents of the new meta room
+        int minX = bestRooms[0].left;
+        int maxX = bestRooms[0].right;
+        int minY = bestRooms[0].top;
+        int maxY = bestRooms[0].bottom;
+        for (int j = 1; j < bestRoomsCount; j++)
+        {
+            if (((maxX - minX) < MAX_ROOM_WIDTH) && (bestRooms[j].left < minX)) minX = bestRooms[j].left;
+            if (((maxX - minX) < MAX_ROOM_WIDTH) && (bestRooms[j].right > maxX)) maxX = bestRooms[j].right;
+            if (((maxY - minY) < MAX_ROOM_WIDTH) && (bestRooms[j].top < minY)) minY = bestRooms[j].top;
+            if (((maxY - minY) < MAX_ROOM_WIDTH) && (bestRooms[j].bottom > maxY)) maxY = bestRooms[j].bottom;
+        }
+        int metaRoomWidth = (maxX - minX + 1);
+        int metaRoomHeight = (maxY - minY + 1);
+        // idiot check for empty room
+        if ((metaRoomWidth * metaRoomHeight) <= 1) 
+        {
+            return best_room; // if no room is found, return the default room (a single slab) [set at the start of this function]
+        }
+        // else, populate best_room
+        best_room.width = metaRoomWidth;
+        best_room.height = metaRoomHeight;
+        best_room.centreX = minX + ((best_room.width - 1 - (best_room.width % 2 == 0)) / 2);
+        best_room.centreY = minY + ((best_room.height - 1 - (best_room.height % 2 == 0)) / 2);
+        best_room.slabCount = 0;
+        // loop through all of the tiles within the extents of the meta room, and check if they are in any of the sub rooms
+        for (int y = 0; y <= best_room.height; y++)
+        {
+            int current_y = minY + y;
+            for (int x = 0; x <= best_room.width; x++)
+            {
+                int current_x = minX + x;
+                best_room.room_grid[x][y] = false; // set to false by default
+                for (int j = 0; j < bestRoomsCount; j++)
                 {
-                    if ((mode & 4) >= 0) // not in painting mode (check disabled: (mode & 4) == 4 to enable)
+                    if (current_x >= bestRooms[j].left && current_x <= bestRooms[j].right && current_y >= bestRooms[j].top && current_y <= bestRooms[j].bottom)
                     {
-                        // reject 1x1 and 1x2 rooms
-                        if (max(w,h) == 1 || (max(w,h) == 2 && min(w,h) == 1)) 
-                        {
-                            continue;
-                        }
-                    }
-                    // get the extents of the current room
-                    int RectX1 = c - ((w - 1 - (w % 2 == 0)) / 2);
-                    int RectX2 = c + ((w     - (w % 2 != 0)) / 2);
-                    int RectY1 = r - ((h - 1 - (h % 2 == 0)) / 2);
-                    int RectY2 = r + ((h     - (h % 2 != 0)) / 2);
-                    // check if cursor isn't in the current room
-                    if (((*slb_x) >= RectX1 && (*slb_x) <= RectX2 && (*slb_y) >= RectY1 && (*slb_y) <= RectY2) == 0)
-                    {
-                        continue;
-                    }
-                    // check aspect ratio
-                    float minimumRatio = (2.0 / 5.0);
-                    if (((min(w,h) * 1.0) / (max(w,h) * 1.0)) < minimumRatio) 
-                    {
-                        continue;
-                    }
-                    slabs = w * h;
-                    int leniency = ((mode & 16) == 16) ? 1 : 0; // mode=2 :- "loose blocking" (setting to 1 would allow e.g. 1 dirt block in the room)
-                    if ( ((can_build_room_of_dimensions(plyr_idx, rkind, c, r, w, h, mode)) >= slabs - leniency) && ((slabs * roomCost) <= totalMoney) )
-                    {
-                        if (slabs > biggestRoom) 
-                        {
-                            biggestRoom = slabs;
-                            brX = c;
-                            brY = r;
-                            brW = w;
-                            brH = h;
-                        }
-                        foundBiggestRoomForSlab = 1;
+                        best_room.room_grid[x][y] = true; //set to true if the current slab is found in any of the sub rooms
+                        best_room.slabCount++;
                         break;
                     }
                 }
             }
         }
     }
-    (*width) = brW;
-    (*height) = brH;
-    (*slb_x) = brX;
-    (*slb_y) = brY;
-    return biggestRoom;
+    else // not mode 32 (not new auto placement mode)
+    {
+        if (current_biggest_room.slabCount > 3)
+        {
+            // return biggest square/rectangular room
+            best_room = current_biggest_room;
+        }
+        // if area less than 4, then no room was found (default of a single slab is returned instead)
+    }
+    return best_room;
 }
 
 /**
