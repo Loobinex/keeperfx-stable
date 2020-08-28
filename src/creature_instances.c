@@ -29,6 +29,7 @@
 #include "thing_traps.h"
 #include "thing_stats.h"
 #include "creature_control.h"
+#include "creature_states.h"
 #include "config_creature.h"
 #include "config_effects.h"
 #include "room_data.h"
@@ -806,10 +807,17 @@ long instf_tunnel(struct Thing *creatng, long *param)
         return 0;
     }
     thing_play_sample(creatng, 69+UNSYNC_RANDOM(3), NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
-    if (slb->health > 1) {
-      slb->health--;
-    } else {
-      dig_out_block(stl_x, stl_y, creatng->owner);
+    if ( (slabmap_owner(slb) == creatng->owner) || (slb->kind == SlbT_EARTH) )
+    {
+        if (slb->health > 1) {
+        slb->health--;
+        } else {
+        dig_out_block(stl_x, stl_y, creatng->owner);
+        }
+    }
+    else
+    {
+        set_start_state(creatng);
     }
     return 1;
 }
