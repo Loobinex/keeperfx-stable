@@ -320,9 +320,10 @@ int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
     int airBlocks = 0;
     int airBlocksX1 = 0, airBlocksX2 = 0, airBlocksY1 = 0, airBlocksY2 = 0;
     int RectX1 = slb_x - calc_distance_from_centre(width,0);
-    int RectX2 = slb_x + calc_distance_from_centre(width,((width - 1) & 1 == 0));
+    int RectX2 = slb_x + calc_distance_from_centre(width,(width % 2 == 0));
     int RectY1 = slb_y - calc_distance_from_centre(height,0);
-    int RectY2 = slb_y + calc_distance_from_centre(height,((height - 1) & 1 == 0));
+    int RectY2 = slb_y + calc_distance_from_centre(height,(height % 2 == 0));
+    //int THEAIRBLOCKS
     
     for (buildy = RectY1; buildy <= RectY2; buildy++)
     {
