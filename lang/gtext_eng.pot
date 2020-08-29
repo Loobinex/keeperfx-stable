@@ -5801,11 +5801,21 @@ msgid "Power Trap"
 msgstr ""
 
 #: guitext:992
+msgctxt "Trap names"
+msgid "Switch"
+msgstr ""
+
+#: guitext:993
+msgctxt "Trap names"
+msgid "Hidden Switch"
+msgstr ""
+
+#: guitext:994
 msgctxt "Door name"
 msgid "Special Door"
 msgstr ""
 
-#: guitext:993
+#: guitext:995
 msgctxt "Door name"
 msgid "Hidden Door"
 msgstr ""
