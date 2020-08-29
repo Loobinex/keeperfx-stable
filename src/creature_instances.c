@@ -807,7 +807,7 @@ long instf_tunnel(struct Thing *creatng, long *param)
         return 0;
     }
     thing_play_sample(creatng, 69+UNSYNC_RANDOM(3), NORMAL_PITCH, 0, 3, 0, 2, FULL_LOUDNESS);
-    if ( (slabmap_owner(slb) == creatng->owner) || (slb->kind == SlbT_EARTH) )
+    if ( (slabmap_owner(slb) == creatng->owner) || (slb->kind == SlbT_EARTH) || (slb->kind == SlbT_TORCHDIRT) )
     {
         if (slb->health > 1) {
         slb->health--;
