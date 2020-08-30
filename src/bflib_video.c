@@ -52,7 +52,6 @@ volatile TbBool lbHasSecondSurface;
 TbBool lbDoubleBufferingRequested;
 /** Name of the video driver to be used. Must be set before LbScreenInitialize().
  * Under Win32 and with SDL, choises are windib or directx. */
-char lbVideoDriver[16];
 /** Colour palette buffer, to be used inside lbDisplay. */
 unsigned char lbPalette[PALETTE_SIZE];
 /** Driver-specific colour palette buffer. */
@@ -415,11 +414,6 @@ TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord hei
     SDL_Surface* prevScreenSurf = lbScreenSurface;
     LbMouseChangeSprite(NULL);
 
-    if (lbWindow != NULL) {
-        SDL_DestroyWindow(lbWindow);
-        lbWindow = NULL;
-    }
-
     if (lbHasSecondSurface) {
         SDL_FreeSurface(lbDrawSurface);
     }
@@ -444,8 +438,25 @@ TbResult LbScreenSetup(TbScreenMode mode, TbScreenCoord width, TbScreenCoord hei
     if ((mdinfo->VideoFlags & Lb_VF_WINDOWED) == 0) {
         sdlFlags |= SDL_WINDOW_FULLSCREEN;
     }
-
-    lbWindow = SDL_CreateWindow(lbDrawAreaTitle, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mdinfo->Width, mdinfo->Height, sdlFlags);
+    if (lbWindow != NULL) {
+        // We only need to create a new window if we now have a different resolution/mode to the existing window, so check new/old resolution and mode...
+        int cw, ch, cflags;
+        cflags = SDL_GetWindowFlags(lbWindow);
+        SDL_GetWindowSize(lbWindow, &cw, &ch);
+        TbBool sameResolution = mdinfo->Width == cw && mdinfo->Height == ch;
+        TbBool sameWindowMode = (cflags & sdlFlags) != 0;
+        TbBool stillInWindowedMode = (int)(sdlFlags & 1) == 0 && (int)(cflags & 1) == 0; // it is hard to detect if windowed mode (flag = 0) is still the same (i.e. no change of mode, still in windowed mode)
+        if (stillInWindowedMode) {
+            sameWindowMode = sameWindowMode || stillInWindowedMode;
+        }
+        if (!sameResolution || !sameWindowMode) { //.. and only destroy the exisiting one if the res/mode has changed
+            SDL_DestroyWindow(lbWindow);
+            lbWindow = NULL;
+        }
+    }
+    if (lbWindow == NULL) { // Only create a new window if we don't have a valid one already
+        lbWindow = SDL_CreateWindow(lbDrawAreaTitle, SDL_WINDOWPOS_UNDEFINED, SDL_WINDOWPOS_UNDEFINED, mdinfo->Width, mdinfo->Height, sdlFlags);
+    }
     if (lbWindow == NULL) {
         ERRORLOG("SDL_CreateWindow: %s", SDL_GetError());
         return Lb_FAIL;
@@ -617,19 +628,6 @@ TbResult LbSetIcon(unsigned short nicon)
   return Lb_SUCCESS;
 }
 
-TbResult LbScreenHardwareConfig(const char *driver, short engine_bpp)
-{
-    if (driver != NULL)
-    {
-        if (strlen(driver) > sizeof(lbVideoDriver)-1)
-            return Lb_FAIL;
-        strcpy(lbVideoDriver,driver);
-    }
-    if (engine_bpp != 0)
-        lbEngineBPP = engine_bpp;
-    return Lb_SUCCESS;
-}
-
 TbScreenModeInfo *LbScreenGetModeInfo(TbScreenMode mode)
 {
     if (mode < lbScreenModeInfoNum)
@@ -651,10 +649,6 @@ TbResult LbScreenReset(void)
         SDL_FreeSurface(lbDrawSurface);
     }
     //do not free screen surface, it is freed automatically on SDL_Quit or next call to set video mode
-    if (lbWindow != NULL) {
-        SDL_DestroyWindow(lbWindow);
-        lbWindow = NULL;
-    }
     lbHasSecondSurface = false;
     lbDrawSurface = NULL;
     lbScreenSurface = NULL;
