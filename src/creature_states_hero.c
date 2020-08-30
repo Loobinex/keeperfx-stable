@@ -1109,25 +1109,25 @@ short tunneller_doing_nothing(struct Thing *creatng)
     }
     if ( (player_exists(plyr_idx)) && (player_has_heart(plyr_idx)) )
     {
-    struct Dungeon* dungeon = get_dungeon(plyr_idx);
-    struct Coord3d pos;
-    if ((dungeon->num_active_creatrs > 0) || (dungeon->num_active_diggers > 0))
-    {
-        get_random_position_in_dungeon_for_creature(plyr_idx, CrWaS_WithinDungeon, creatng, &pos);
-        send_tunneller_to_point_in_dungeon(creatng, plyr_idx, &pos);
-    } else
-    {
-        struct Thing* heartng = get_player_soul_container(plyr_idx);
-        if (creature_can_navigate_to_with_storage(creatng, &heartng->mappos, NavRtF_Default))
-        {
-            good_setup_wander_to_dungeon_heart(creatng, plyr_idx);
-        }
-        else
+        struct Dungeon* dungeon = get_dungeon(plyr_idx);
+        struct Coord3d pos;
+        if ((dungeon->num_active_creatrs > 0) || (dungeon->num_active_diggers > 0))
         {
             get_random_position_in_dungeon_for_creature(plyr_idx, CrWaS_WithinDungeon, creatng, &pos);
             send_tunneller_to_point_in_dungeon(creatng, plyr_idx, &pos);
+        } else
+        {
+            struct Thing* heartng = get_player_soul_container(plyr_idx);
+            if (creature_can_navigate_to_with_storage(creatng, &heartng->mappos, NavRtF_Default))
+            {
+                good_setup_wander_to_dungeon_heart(creatng, plyr_idx);
+            }
+            else
+            {
+                get_random_position_in_dungeon_for_creature(plyr_idx, CrWaS_WithinDungeon, creatng, &pos);
+                send_tunneller_to_point_in_dungeon(creatng, plyr_idx, &pos);
+            }
         }
-    }
     }
     return 1;
 }
