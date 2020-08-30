@@ -51,6 +51,7 @@
 #include "gui_topmsg.h"
 #include "gui_parchment.h"
 #include "power_hand.h"
+#include "thing_creature.h"
 #include "thing_traps.h"
 #include "room_workshop.h"
 #include "kjm_input.h"
@@ -151,16 +152,21 @@ short get_players_message_inputs(void)
         set_players_packet_action(player, PckA_PlyrMsgEnd, 0, 0, 0, 0);
         clear_key_pressed(KC_RETURN);
         return true;
-  }
-  LbTextSetFont(winfont);
-  int msg_width = pixel_size * LbTextStringWidth(player->mp_message_text);
-  if ( (is_key_pressed(KC_BACK,KMod_DONTCARE)) || (msg_width < 450) )
-  {
-      set_players_packet_action(player,PckA_PlyrMsgChar,lbInkey,key_modifiers,0,0);
-      clear_key_pressed(lbInkey);
-      return true;
-  }
-  return false;
+    } else if (is_key_pressed(KC_ESCAPE, KMod_DONTCARE))
+    {
+        set_players_packet_action(player, PckA_PlyrMsgClear, 0, 0, 0, 0);
+        clear_key_pressed(KC_ESCAPE);
+        return true;
+    }
+    LbTextSetFont(winfont);
+    int msg_width = pixel_size * LbTextStringWidth(player->mp_message_text);
+    if ( (is_key_pressed(KC_BACK,KMod_DONTCARE)) || (msg_width < 450) )
+    {
+        set_players_packet_action(player,PckA_PlyrMsgChar,lbInkey,key_modifiers,0,0);
+        clear_key_pressed(lbInkey);
+        return true;
+    }
+    return false;
 }
 
 /**
@@ -1025,10 +1031,10 @@ short get_creature_control_action_inputs(void)
     struct Thing* thing = thing_get(player->controlled_thing_idx);
     if (menu_is_active(GMnu_CREATURE_QUERY1))
     {
-      if ( ( (is_key_pressed(KC_7,KMod_NONE) || (is_key_pressed(KC_NUMPAD7,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,6) > 0) ) ||
-           ( (is_key_pressed(KC_8,KMod_NONE) || (is_key_pressed(KC_NUMPAD8,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,7) > 0) ) ||
-           ( (is_key_pressed(KC_9,KMod_NONE) || (is_key_pressed(KC_NUMPAD9,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,8) > 0) ) ||
-           ( (is_key_pressed(KC_0,KMod_NONE) || (is_key_pressed(KC_NUMPAD0,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,9) > 0) )  )
+      if ( ( (is_key_pressed(KC_7,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD7,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,6) > 0) ) ||
+           ( (is_key_pressed(KC_8,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD8,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,7) > 0) ) ||
+           ( (is_key_pressed(KC_9,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD9,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,8) > 0) ) ||
+           ( (is_key_pressed(KC_0,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD0,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,9) > 0) )  )
       {
         turn_off_menu(GMnu_CREATURE_QUERY1);
         turn_on_menu(GMnu_CREATURE_QUERY2);
@@ -1058,10 +1064,10 @@ short get_creature_control_action_inputs(void)
     }
     if (menu_is_active(GMnu_CREATURE_QUERY2))
     {
-      if ( ( (is_key_pressed(KC_1,KMod_NONE) || (is_key_pressed(KC_NUMPAD1,KMod_NONE))) ) ||
-           ( (is_key_pressed(KC_2,KMod_NONE) || (is_key_pressed(KC_NUMPAD2,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,1) > 0) ) ||
-           ( (is_key_pressed(KC_3,KMod_NONE) || (is_key_pressed(KC_NUMPAD3,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,2) > 0) ) ||
-           ( (is_key_pressed(KC_4,KMod_NONE) || (is_key_pressed(KC_NUMPAD4,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,3) > 0) )  )
+      if ( ( (is_key_pressed(KC_1,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD1,KMod_DONTCARE))) ) ||
+           ( (is_key_pressed(KC_2,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD2,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,1) > 0) ) ||
+           ( (is_key_pressed(KC_3,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD3,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,2) > 0) ) ||
+           ( (is_key_pressed(KC_4,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD4,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,3) > 0) )  )
       {
         turn_off_menu(GMnu_CREATURE_QUERY2);
         turn_on_menu(GMnu_CREATURE_QUERY1);
@@ -1085,18 +1091,18 @@ short get_creature_control_action_inputs(void)
     }
     if (menu_is_active(GMnu_CREATURE_QUERY3))
     {
-      if ( ( (is_key_pressed(KC_1,KMod_NONE) || (is_key_pressed(KC_NUMPAD1,KMod_NONE))) ) ||
-           ( (is_key_pressed(KC_2,KMod_NONE) || (is_key_pressed(KC_NUMPAD2,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,1) > 0) ) ||
-           ( (is_key_pressed(KC_3,KMod_NONE) || (is_key_pressed(KC_NUMPAD3,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,2) > 0) ) ||
-           ( (is_key_pressed(KC_4,KMod_NONE) || (is_key_pressed(KC_NUMPAD4,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,3) > 0) )  )
+      if ( ( (is_key_pressed(KC_1,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD1,KMod_DONTCARE))) ) ||
+           ( (is_key_pressed(KC_2,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD2,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,1) > 0) ) ||
+           ( (is_key_pressed(KC_3,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD3,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,2) > 0) ) ||
+           ( (is_key_pressed(KC_4,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD4,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,3) > 0) )  )
       {
         turn_off_menu(GMnu_CREATURE_QUERY3);
         turn_on_menu(GMnu_CREATURE_QUERY1);
       }
-      if ( ( (is_key_pressed(KC_7,KMod_NONE) || (is_key_pressed(KC_NUMPAD7,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,6) > 0) ) ||
-           ( (is_key_pressed(KC_8,KMod_NONE) || (is_key_pressed(KC_NUMPAD8,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,7) > 0) ) ||
-           ( (is_key_pressed(KC_9,KMod_NONE) || (is_key_pressed(KC_NUMPAD9,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,8) > 0) ) ||
-           ( (is_key_pressed(KC_0,KMod_NONE) || (is_key_pressed(KC_NUMPAD0,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,9) > 0) )  )
+      if ( ( (is_key_pressed(KC_7,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD7,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,6) > 0) ) ||
+           ( (is_key_pressed(KC_8,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD8,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,7) > 0) ) ||
+           ( (is_key_pressed(KC_9,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD9,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,8) > 0) ) ||
+           ( (is_key_pressed(KC_0,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD0,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,9) > 0) )  )
       {
         turn_off_menu(GMnu_CREATURE_QUERY3);
         turn_on_menu(GMnu_CREATURE_QUERY2);
@@ -1126,18 +1132,18 @@ short get_creature_control_action_inputs(void)
     }
     if (menu_is_active(GMnu_CREATURE_QUERY4))
     {
-      if ( ( (is_key_pressed(KC_1,KMod_NONE) || (is_key_pressed(KC_NUMPAD1,KMod_NONE))) ) ||
-           ( (is_key_pressed(KC_2,KMod_NONE) || (is_key_pressed(KC_NUMPAD2,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,1) > 0) ) ||
-           ( (is_key_pressed(KC_3,KMod_NONE) || (is_key_pressed(KC_NUMPAD3,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,2) > 0) ) ||
-           ( (is_key_pressed(KC_4,KMod_NONE) || (is_key_pressed(KC_NUMPAD4,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,3) > 0) )  )
+      if ( ( (is_key_pressed(KC_1,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD1,KMod_DONTCARE))) ) ||
+           ( (is_key_pressed(KC_2,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD2,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,1) > 0) ) ||
+           ( (is_key_pressed(KC_3,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD3,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,2) > 0) ) ||
+           ( (is_key_pressed(KC_4,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD4,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,3) > 0) )  )
       {
         turn_off_menu(GMnu_CREATURE_QUERY4);
         turn_on_menu(GMnu_CREATURE_QUERY1);
       }
-      if ( ( (is_key_pressed(KC_7,KMod_NONE) || (is_key_pressed(KC_NUMPAD7,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,6) > 0) ) ||
-           ( (is_key_pressed(KC_8,KMod_NONE) || (is_key_pressed(KC_NUMPAD8,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,7) > 0) ) ||
-           ( (is_key_pressed(KC_9,KMod_NONE) || (is_key_pressed(KC_NUMPAD9,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,8) > 0) ) ||
-           ( (is_key_pressed(KC_0,KMod_NONE) || (is_key_pressed(KC_NUMPAD0,KMod_NONE))) & (creature_instance_get_available_id_for_pos(thing,9) > 0) )  )
+      if ( ( (is_key_pressed(KC_7,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD7,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,6) > 0) ) ||
+           ( (is_key_pressed(KC_8,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD8,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,7) > 0) ) ||
+           ( (is_key_pressed(KC_9,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD9,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,8) > 0) ) ||
+           ( (is_key_pressed(KC_0,KMod_DONTCARE) || (is_key_pressed(KC_NUMPAD0,KMod_DONTCARE))) & (creature_instance_get_available_id_for_pos(thing,9) > 0) )  )
       {
         turn_off_menu(GMnu_CREATURE_QUERY4);
         turn_on_menu(GMnu_CREATURE_QUERY2);
@@ -1172,7 +1178,7 @@ short get_creature_control_action_inputs(void)
     int numkey = -1;
     for (keycode=KC_1; keycode <= KC_0; keycode++)
     {
-        if (is_key_pressed(keycode,KMod_NONE))
+        if (is_key_pressed(keycode,KMod_DONTCARE))
         {
             clear_key_pressed(keycode);
             numkey = keycode-KC_1;
@@ -1181,57 +1187,79 @@ short get_creature_control_action_inputs(void)
     }
     if (numkey == -1)
     {   
-        if (is_key_pressed(79,KMod_NONE))
+        if (is_key_pressed(79,KMod_DONTCARE))
         {
             clear_key_pressed(79);
             numkey = 0;
         } else 
-        if (is_key_pressed(80,KMod_NONE))
+        if (is_key_pressed(80,KMod_DONTCARE))
         {
             clear_key_pressed(80);
             numkey = 1;
         } else 
-        if (is_key_pressed(81,KMod_NONE))
+        if (is_key_pressed(81,KMod_DONTCARE))
         {
             clear_key_pressed(81);
             numkey = 2;
         } else 
-        if (is_key_pressed(75,KMod_NONE))
+        if (is_key_pressed(75,KMod_DONTCARE))
         {
             clear_key_pressed(75);
             numkey = 3;
         } else 
-        if (is_key_pressed(76,KMod_NONE))
+        if (is_key_pressed(76,KMod_DONTCARE))
         {
             clear_key_pressed(76);
             numkey = 4;
         } else 
-        if (is_key_pressed(77,KMod_NONE))
+        if (is_key_pressed(77,KMod_DONTCARE))
         {
             clear_key_pressed(77);
             numkey = 5;
         } else 
-        if (is_key_pressed(71,KMod_NONE))
+        if (is_key_pressed(71,KMod_DONTCARE))
         {
             clear_key_pressed(71);
             numkey = 6;
         } else 
-        if (is_key_pressed(72,KMod_NONE))
+        if (is_key_pressed(72,KMod_DONTCARE))
         {
             clear_key_pressed(72);
             numkey = 7;
         } else 
-        if (is_key_pressed(73,KMod_NONE))
+        if (is_key_pressed(73,KMod_DONTCARE))
         {
             clear_key_pressed(73);
             numkey = 8;
         } else 
-        if (is_key_pressed(82,KMod_NONE))
+        if (is_key_pressed(82,KMod_DONTCARE))
         {
             clear_key_pressed(82);
             numkey = 9;
         }
     }
+        long val;
+        for (int i = 0; i <= 15; i++)
+        {
+            if (is_game_key_pressed(Gkey_ZoomRoom00 + i, &val, false))
+            {
+                clear_key_pressed(val);
+                teleport_destination = i;
+            }
+        
+        }
+        if (is_key_pressed(KC_SEMICOLON,KMod_DONTCARE))
+        {
+            teleport_destination = 16; // Last work room
+        }
+        else if (is_key_pressed(KC_SLASH,KMod_DONTCARE))
+        {
+            teleport_destination = 17; // Call to Arms
+        }
+        else if (is_key_pressed(KC_COMMA,KMod_DONTCARE))
+        {
+            teleport_destination = 18;
+        }
     // In possession sets the screen blue when frozen, and to default when not.
     if (creature_affected_by_spell(thing, SplK_Freeze)) 
     {
@@ -2040,7 +2068,7 @@ short get_inputs(void)
     }
     if (player->victory_state == VicS_LostLevel)
     {
-        if (player->field_2C != 1)
+        if (player->is_active != 1)
         {
             get_level_lost_inputs();
             return true;
@@ -2151,8 +2179,7 @@ void input(void)
       pckt->field_10 &= ~PCAdV_CrtrQueryPressed;
 
     get_inputs();
-    // Debug code to write a savegame on given turn
-    //if (game.play_gameturn == 141940) { save_game(0); }
+
     SYNCDBG(7,"Finished");
 }
 

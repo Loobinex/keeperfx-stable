@@ -1207,18 +1207,23 @@ void gui_go_to_next_creature_activity(struct GuiButton *gbtn)
 
 RoomIndex find_my_next_room_of_type(RoomKind rkind)
 {
+    return find_next_room_of_type(my_player_number, rkind);
+}
+
+RoomIndex find_next_room_of_type(PlayerNumber plyr_idx, RoomKind rkind)
+{
     static RoomIndex next_room[ROOM_TYPES_COUNT];
     if (next_room[rkind] > 0)
     {
         struct Room* room = room_get(next_room[rkind]);
-        if (room_exists(room) && (room->owner == my_player_number) && (room->kind == rkind))
+        if (room_exists(room) && (room->owner == plyr_idx) && (room->kind == rkind))
           next_room[rkind] = room->next_of_owner;
         else
           next_room[rkind] = 0;
     }
     if (next_room[rkind] <= 0)
     {
-        struct Dungeon* dungeon = get_my_dungeon();
+        struct Dungeon* dungeon = get_dungeon(plyr_idx);
         next_room[rkind] = dungeon->room_kind[rkind];
     }
     return next_room[rkind];
@@ -1771,7 +1776,9 @@ void maintain_event_button(struct GuiButton *gbtn)
     if ((dungeon->visible_event_idx != 0) && (evidx == dungeon->visible_event_idx))
     {
         turn_on_event_info_panel_if_necessary(dungeon->visible_event_idx);
-        if (is_game_key_pressed(Gkey_ToggleMessage, &keycode, false))
+        //TODO: that should be not here, Keys should be processed at one place
+        if (is_game_key_pressed(Gkey_ToggleMessage, &keycode, false)
+            && ((get_player(my_player_number)->allocflags & PlaF_NewMPMessage) == 0))
         {
             gui_kill_event(gbtn);
             clear_key_pressed(keycode);
@@ -1781,7 +1788,8 @@ void maintain_event_button(struct GuiButton *gbtn)
     {
         if (dungeon->visible_event_idx == 0)
         {
-            if (is_game_key_pressed(Gkey_ToggleMessage, &keycode, false))
+            if (is_game_key_pressed(Gkey_ToggleMessage, &keycode, false)
+                && ((get_player(my_player_number)->allocflags & PlaF_NewMPMessage) == 0))
             {
                 int i = EVENT_BUTTONS_COUNT;
                 for (i=EVENT_BUTTONS_COUNT; i > 0; i--)

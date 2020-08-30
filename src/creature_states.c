@@ -3226,7 +3226,7 @@ char new_slab_tunneller_check_for_breaches(struct Thing *creatng)
     {
         struct PlayerInfo* player = get_player(i);
         struct Dungeon* dgn = get_dungeon(i);
-        if (!player_exists(player) || (player->field_2C != 1))
+        if (!player_exists(player) || (player->is_active != 1))
             continue;
 
         if (!dgn->dnheart_idx)
@@ -4195,6 +4195,7 @@ short set_start_state_f(struct Thing *thing,const char *func_name)
 
 TbBool external_set_thing_state_f(struct Thing *thing, CrtrStateId state, const char *func_name)
 {
+    EVM_CREATURE_EVENT_WITH_TARGET("ext_state", thing->owner, thing, state);
     if (!can_change_from_state_to(thing, thing->active_state, state))
     {
         WARNDBG(4,"%s: State change %s to %s for %s not allowed",func_name,creature_state_code_name(thing->active_state),

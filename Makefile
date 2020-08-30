@@ -172,6 +172,7 @@ obj/engine_lenses.o \
 obj/engine_redraw.o \
 obj/engine_render.o \
 obj/engine_textures.o \
+obj/event_monitoring.o \
 obj/front_credits.o \
 obj/front_credits_data.o \
 obj/front_easter.o \
@@ -288,7 +289,7 @@ obj/main.o \
 $(RES)
 
 # include and library directories
-LINKLIB =  -L"sdl/lib" -mwindows obj/libkeeperfx.a -lwinmm -lmingw32 -limagehlp -lSDLmain -lSDL -lSDL_mixer -lSDL_net 
+LINKLIB =  -L"sdl/lib" -mwindows obj/libkeeperfx.a -lwinmm -lmingw32 -limagehlp -lSDL2main -lSDL2 -lSDL2_mixer -lSDL2_net 
 INCS =  -I"sdl/include"
 CXXINCS =  -I"sdl/include"
 
@@ -321,7 +322,7 @@ endif
 
 # logging level flags
 STLOGFLAGS = -DBFDEBUG_LEVEL=0 
-HVLOGFLAGS = -DBFDEBUG_LEVEL=10
+HVLOGFLAGS = -DBFDEBUG_LEVEL=10 -DAUTOTESTING=1
 # compiler warning generation flags
 WARNFLAGS = -Wall -W -Wshadow -Wno-sign-compare -Wno-unused-parameter -Wno-strict-aliasing -Wno-unknown-pragmas
 # disabled warnings: -Wextra -Wtype-limits

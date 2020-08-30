@@ -1794,7 +1794,7 @@ void process_pause_packet(long curr_pause, long new_pause)
   for (long i = 0; i < PLAYERS_COUNT; i++)
   {
     player = get_player(i);
-    if (player_exists(player) && (player->field_2C == 1))
+    if (player_exists(player) && (player->is_active == 1))
     {
         if ((player->allocflags & PlaF_CompCtrl) == 0)
         {
@@ -1994,7 +1994,7 @@ void process_quit_packet(struct PlayerInfo *player, short complete_quit)
                 swplyr = get_player(i);
                 if (player_exists(swplyr))
                 {
-                    if (swplyr->field_2C == 1)
+                    if (swplyr->is_active == 1)
                         if (swplyr->victory_state == VicS_Undecided)
                             swplyr->victory_state = VicS_WonLevel;
                 }
@@ -2128,10 +2128,16 @@ TbBool process_players_global_packet_action(PlayerNumber plyr_idx)
   case PckA_PlyrMsgEnd:
       player->allocflags &= ~PlaF_NewMPMessage;
       if (player->mp_message_text[0] == '!')
-        if (!cmd_exec(player->id_number, player->mp_message_text))
-          message_add(player->id_number, player->mp_message_text);
+      {
+          if (!cmd_exec(player->id_number, player->mp_message_text))
+              message_add(player->id_number, player->mp_message_text);
+      }
       else if (player->mp_message_text[0] != '\0')
-        message_add(player->id_number, player->mp_message_text);
+          message_add(player->id_number, player->mp_message_text);
+      LbMemorySet(player->mp_message_text, 0, PLAYER_MP_MESSAGE_LEN);
+      return 0;
+  case PckA_PlyrMsgClear:
+      player->allocflags &= ~PlaF_NewMPMessage;
       LbMemorySet(player->mp_message_text, 0, PLAYER_MP_MESSAGE_LEN);
       return 0;
   case PckA_ToggleLights:
