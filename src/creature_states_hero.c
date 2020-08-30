@@ -1107,7 +1107,8 @@ short tunneller_doing_nothing(struct Thing *creatng)
     if (plyr_idx == -1) {
       return 1;
     }
-    if ( (player_exists(plyr_idx)) && (player_has_heart(plyr_idx)) )
+    struct PlayerInfo* player = get_player(plyr_idx);
+    if ( (player_exists(player)) && (player_has_heart(plyr_idx)) )
     {
         struct Dungeon* dungeon = get_dungeon(plyr_idx);
         struct Coord3d pos;
