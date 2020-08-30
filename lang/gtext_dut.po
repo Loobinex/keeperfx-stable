@@ -6566,6 +6566,86 @@ msgctxt "Menu interface item"
 msgid "Lost Levels"
 msgstr "Verloren Levels"
 
+#: guitext:976 guitext:977 guitext:978 guitext:979 guitext:980
+msgctxt "Unused"
+msgid "Moo3"
+msgstr ""
+
+#: guitext:981
+msgctxt "Trap names"
+msgid "Special Trap"
+msgstr "Speciale val"
+
+#: guitext:982
+msgctxt "Trap names"
+msgid "Freeze Trap"
+msgstr "Diepvriesval"
+
+#: guitext:983
+msgctxt "Trap names"
+msgid "Fear Trap"
+msgstr "Angst-val"
+
+#: guitext:984
+msgctxt "Trap names"
+msgid "Sentry Trap"
+msgstr "Schildwacht-val"
+
+#: guitext:985
+msgctxt "Trap names"
+msgid "Mimic Trap"
+msgstr "Imitator-val"
+
+#: guitext:986
+msgctxt "Trap names"
+msgid "Spawn Trap"
+msgstr "Monsterval"
+
+#: guitext:987
+msgctxt "Trap names"
+msgid "Wind Trap"
+msgstr "Wind val"
+
+#: guitext:988
+msgctxt "Trap names"
+msgid "Spitfire Trap"
+msgstr "Stokebrand-val"
+
+#: guitext:989
+msgctxt "Trap names"
+msgid "Chicken Trap"
+msgstr "Kuiken-val"
+
+#: guitext:990
+msgctxt "Trap names"
+msgid "Disease Trap"
+msgstr "Ziekte-val"
+
+#: guitext:991
+msgctxt "Trap names"
+msgid "Power Trap"
+msgstr "Macht-val"
+
+#: guitext:992
+msgctxt "Trap names"
+msgid "Switch"
+msgstr "Schakelaar"
+
+#: guitext:993
+msgctxt "Trap names"
+msgid "Hidden Switch"
+msgstr "Verboren schakelaar"
+
+#: guitext:994
+msgctxt "Door name"
+msgid "Special Door"
+msgstr "Speciale deur"
+
+#: guitext:995
+msgctxt "Door name"
+msgid "Hidden Door"
+msgstr "Verboren deur"
+
 #~ msgctxt "In-game message"
 #~ msgid "Your manufacturers have crafted the Lava Trap."
 #~ msgstr "Er is een Lava-val gemaakt."
