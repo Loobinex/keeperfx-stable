@@ -406,16 +406,17 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
     int subRoomCheckCount = 5; // the number of sub-rooms to combine in to a final meta-room
     struct RoomMap bestRooms[subRoomCheckCount];
     int bestRoomsCount = 0;
-    struct RoomMap best_room;
-    struct RoomMap current_biggest_room;
     // Set default "room" - i.e. 1x1 slabs, centred on the cursor
-    current_biggest_room.slabCount = 1;
-    current_biggest_room.width = 1;
-    current_biggest_room.height = 1;
-    current_biggest_room.centreX = cursor_x;
-    current_biggest_room.centreY = cursor_y;
-    current_biggest_room.room_grid[0][0] = true;
-    best_room = current_biggest_room;
+    struct RoomMap current_biggest_room = { {{false}}, 1, true, 1, 1, cursor_x, cursor_y, cursor_x, cursor_y, cursor_x, cursor_y };
+    /*for (int y = 0; y <= MAX_ROOM_WIDTH; y++) // initialise entire room_grid 2D array
+    {
+        for (int x = 0; x <= MAX_ROOM_WIDTH; x++)
+        {
+            current_biggest_room.room_grid[x][y] = false; // set to false by default
+        }
+    }*/
+    //current_biggest_room.room_grid[0][0] = true;
+    struct RoomMap best_room = current_biggest_room;
 
     // Find the biggest room
     // =====================
@@ -474,6 +475,7 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
                                 current_biggest_room.right = rightExtent;
                                 current_biggest_room.top = topExtent;
                                 current_biggest_room.bottom = bottomExtent;
+                                current_biggest_room.isRoomABox = true;
                             }
                             break;
                         }
@@ -539,7 +541,12 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
         best_room.height = metaRoomHeight;
         best_room.centreX = minX + ((best_room.width - 1 - (best_room.width % 2 == 0)) / 2);
         best_room.centreY = minY + ((best_room.height - 1 - (best_room.height % 2 == 0)) / 2);
+        best_room.left = minX;
+        best_room.right = maxX;
+        best_room.top = minY;
+        best_room.bottom = maxY;
         best_room.slabCount = 0;
+        best_room.isRoomABox = true;
         // loop through all of the tiles within the extents of the meta room, and check if they are in any of the sub rooms
         for (int y = 0; y <= best_room.height; y++)
         {
@@ -558,6 +565,10 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
                     }
                 }
             }
+        }
+        if (best_room.slabCount != (best_room.width * best_room.height))
+        {
+            best_room.isRoomABox = false;
         }
     }
     else // not mode 32 (not new auto placement mode)

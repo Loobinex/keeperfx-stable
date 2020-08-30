@@ -104,6 +104,8 @@ struct SlabObj { // sizeof = 13
 
 struct RoomMap {
     TbBool room_grid[MAX_ROOM_WIDTH][MAX_ROOM_WIDTH];
+    int slabCount;
+    TbBool isRoomABox;
     int width;
     int height;
     MapSlabCoord left;
@@ -112,8 +114,6 @@ struct RoomMap {
     MapSlabCoord bottom;
     MapSlabCoord centreX;
     MapSlabCoord centreY;
-    int slabCount;
-    TbBool isRoomABox;
 };
 
 #pragma pack()

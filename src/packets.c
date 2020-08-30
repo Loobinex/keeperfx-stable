@@ -691,10 +691,6 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         height = best_room.height;
         slb_x = best_room.centreX;
         slb_y = best_room.centreY;
-        if (best_room.slabCount != (width * height))
-        {
-            best_room.isRoomABox = false;
-        }
     }
     //render_room = best_room;
     player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, 0); //number of slabs to build, corrected for blocked tiles
