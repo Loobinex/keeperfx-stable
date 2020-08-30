@@ -403,7 +403,8 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
     int maxRoomWidth = ((maxRoomRadius * 2) - 1);
     int minRoomWidth = 2; // Don't look for rooms smaller than 2x2
     int min_width = minRoomWidth, min_height = minRoomWidth;
-    struct RoomMap bestRooms[3];
+    int subRoomCheckCount = 5; // the number of sub-rooms to combine in to a final meta-room
+    struct RoomMap bestRooms[subRoomCheckCount];
     int bestRoomsCount = 0;
     struct RoomMap best_room;
     struct RoomMap current_biggest_room;
@@ -492,21 +493,22 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
             // if no room was found, this info describes the previously found biggest room (so no empty values)
             // if no room is ever found, current_biggest_room is the the default defined above (a single slab)
             bestRooms[bestRoomsCount] = current_biggest_room;
-            if (bestRoomsCount == 0) // check for wider rooms
-            {
-                min_width = min(maxRoomWidth,max(bestRooms[0].width + 1, minRoomWidth));
-                min_height = 2;
-            }
-            else if (bestRoomsCount == 1) // check for taller rooms
-            {
-                min_width = 2;
-                min_height = min(maxRoomWidth,max(bestRooms[0].height + 1, minRoomWidth));
-            }
             bestRoomsCount++;
+            int correct_index = ((bestRoomsCount > 2) ? bestRoomsCount - 2 : 0); // we want to compare to the previously stored widest/tallest room
+            if (bestRoomsCount % 2 != 0) // check for wider rooms
+            {
+                min_width = min(maxRoomWidth,max(bestRooms[correct_index].width + 1, minRoomWidth));
+                min_height = minRoomWidth;
+            }
+            else // check for taller rooms
+            {
+                min_width = minRoomWidth;
+                min_height = min(maxRoomWidth,max(bestRooms[correct_index].height + 1, minRoomWidth));
+            }
             current_biggest_room.slabCount = 1; // reset biggest recorded room to a single slab
         }
     }
-    while(((mode & 32) == 32) && (bestRoomsCount < 3)); // loop again, if in mode 32, for the 2 extra room checks
+    while(((mode & 32) == 32) && (bestRoomsCount < subRoomCheckCount)); // loop again, if in mode 32, for the extra room checks
 
     // Return the best_room to the calling function
     // ============================================
