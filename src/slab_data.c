@@ -443,6 +443,7 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
                         if (((mode & 32) == 32))
                         {
                             minimumRatio = 0.0; //accept any ratio in mode 32
+                            if (bestRoomsCount == 0) { minimumRatio = 1.0; } //except on the first pass, where it must be square
                         }
                         if (((min(w,h) * 1.0) / (max(w,h) * 1.0)) < minimumRatio) 
                         {
