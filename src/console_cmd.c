@@ -20,6 +20,9 @@
 #include "globals.h"
 
 #include "bflib_datetm.h"
+#include "creature_instances.h"
+#include "creature_states.h"
+#include "creature_states_hero.h"
 #include "dungeon_data.h"
 #include "frontend.h"
 #include "frontmenu_ingame_tabs.h"
@@ -29,6 +32,7 @@
 #include "gui_msgs.h"
 #include "keeperfx.hpp"
 #include "player_computer.h"
+#include "player_utils.h"
 #include "slab_data.h"
 
 #ifdef __cplusplus
@@ -232,6 +236,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     SYNCDBG(2,"Command %d: %s",(int)plyr_idx, msg);
     const char * parstr = msg + 1;
     const char * pr2str = cmd_strtok(msg + 1);
+    const char * pr3str = (pr2str != NULL) ? cmd_strtok(pr2str + 1) : NULL;
+    struct PlayerInfo* player;
+    struct Thing* thing;
+    struct Dungeon* dungeon;
     if (strcmp(parstr, "stats") == 0)
     {
       message_add_fmt(plyr_idx, "Now time is %d, last loop time was %d",LbTimerClock(),last_loop_time);
@@ -305,21 +313,21 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             return true;
         } else if (strcmp(parstr, "reveal") == 0)
         {
-            struct PlayerInfo* player = get_my_player();
+            player = get_my_player();
             reveal_whole_map(player);
             return true;
-        } else if (strcmp(parstr, "comp.kill") == 0)
+        } else if ( (strcmp(parstr, "comp.kill") == 0) || (strcmp(parstr, "player.kill") == 0) )
         {
             if (pr2str == NULL)
                 return false;
             int id = atoi(pr2str);
             if (id < 0 || id > PLAYERS_COUNT)
                 return false;
-            struct Thing* thing = get_player_soul_container(id);
+            thing = get_player_soul_container(id);
             thing->health = 0;
         } else if (strcmp(parstr, "comp.me") == 0)
         {
-            struct PlayerInfo* player = get_player(plyr_idx);
+            player = get_player(plyr_idx);
             if (pr2str == NULL)
                 return false;
             if (!setup_a_computer_player(plyr_idx, atoi(pr2str))) {
@@ -345,6 +353,191 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             update_trap_tab_to_config();
             message_add(plyr_idx, "done!");
             return true;
+        }
+        else if (strcmp(parstr, "player.heart.health") == 0)
+        {
+            PlayerNumber id = atoi(pr2str);
+            thing = get_player_soul_container(id);
+            if (thing_is_dungeon_heart(thing))
+            {
+                    if (pr3str == NULL)
+                    {
+                        message_add_fmt(plyr_idx, "Player %ld heart health: %ld", id, thing->health);
+                        return true;
+                    }
+                    else
+                    {
+                        short Health = atoi(pr3str);
+                        thing->health = Health;
+                        return true;
+                    }
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "creature.show.partytarget") == 0)
+        {
+            player = get_my_player();
+            thing = thing_get(player->influenced_thing_idx);
+            if (thing_is_creature(thing))
+            {
+                struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
+                message_add_fmt(plyr_idx, "Target player: %ld", cctrl->party.target_plyr_idx);
+                return true;
+            }
+            return false;
+        }
+        else if ( (strcmp(parstr, "creature.addhealth") == 0) || (strcmp(parstr, "creature.health.add") == 0) )
+        {
+            player = get_my_player();
+            thing = thing_get(player->influenced_thing_idx);
+            if (thing_is_creature(thing))
+            {
+                thing->health += atoi(pr2str);
+                return true;
+            }
+            return false;
+        }
+        else if ( (strcmp(parstr, "creature.subhealth") == 0) || (strcmp(parstr, "creature.health.sub") == 0) )
+        {
+            player = get_my_player();
+            thing = thing_get(player->influenced_thing_idx);
+            if (thing_is_creature(thing))
+            {
+                thing->health -= atoi(pr2str);
+                return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "digger.sendto") == 0)
+        {
+            PlayerNumber id = atoi(pr2str);
+            player = get_my_player();
+            thing = thing_get(player->influenced_thing_idx);
+            if (thing_is_creature(thing))
+            {
+                if (thing->model == get_players_special_digger_model(thing->owner))
+                {
+                    player = get_player(id);
+                    if (player_exists(player))
+                    {
+                        struct Coord3d pos;
+                        get_random_position_in_dungeon_for_creature(id, CrWaS_WithinDungeon, thing, &pos);
+                        return send_tunneller_to_point_in_dungeon(thing, id, &pos);
+                    }
+                }
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "digger.pretty") == 0)
+        {
+            player = get_my_player();
+            thing = thing_get(player->influenced_thing_idx);
+            if (thing_is_creature(thing))
+            {
+                if (thing->model == get_players_special_digger_model(thing->owner))
+                {
+                    set_creature_instance(thing, CrInst_PRETTY_PATH, 0, 0, 0);
+                    return true;
+                }
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "player.gold") == 0)
+        {
+            PlayerNumber id = atoi(pr2str);
+            player = get_player(id);
+            if (player_exists(player))
+            {
+                dungeon = get_dungeon(id);
+                message_add_fmt(plyr_idx, "Player %ld gold: %ld", id, dungeon->total_money_owned);
+                return true;
+            }
+            return false;
+        }
+        else if ( (strcmp(parstr, "player.addgold") == 0) || (strcmp(parstr, "player.gold.add") == 0) )
+        {
+            PlayerNumber id = atoi(pr2str);
+            player = get_player(id);
+            if (player_exists(player))
+            {
+                dungeon = get_dungeon(id);
+                if (pr3str == NULL)
+                {
+                    return false;
+                }
+                else
+                {
+                    dungeon->total_money_owned += atoi(pr3str);
+                    return true;
+                }
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "thing.model") == 0)
+        {
+            player = get_my_player();
+            thing = thing_get(player->influenced_thing_idx);
+            if (!thing_is_invalid(thing))
+            {
+                message_add_fmt(plyr_idx, "Thing model: %ld", thing->model);
+                return true;
+            }
+            return false;
+        }
+        else if ( (strcmp(parstr, "creature.pool") == 0) || (strcmp(parstr, "creature.inby") == 0) )
+        {
+            message_add_fmt(plyr_idx, "%d in pool", game.pool.crtr_kind[atoi(pr2str)]);
+            return true;
+        }
+        else if (strcmp(parstr, "creature.pool.add") == 0)
+        {
+            if (pr3str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                game.pool.crtr_kind[atoi(pr2str)] += atoi(pr3str);
+                return true;
+            }
+        }
+        else if (strcmp(parstr, "creature.pool.sub") == 0)
+        {
+            if (pr3str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                game.pool.crtr_kind[atoi(pr2str)] -= atoi(pr3str);
+                return true;
+            }
+        }
+        else if (strcmp(parstr, "creature.create") == 0)
+        {
+            if (pr3str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                ThingModel crmodel = atoi(pr2str);
+                if ( (crmodel > 0) && (crmodel <= 31) )
+                {
+                    player = get_my_player();
+                    thing = get_player_soul_container(player->id_number);
+                    if (thing_is_dungeon_heart(thing))
+                    {
+                        struct Thing* creatng = create_creature(&thing->mappos, crmodel, player->id_number);
+                        if (thing_is_creature(creatng))
+                        {
+                            set_creature_level(creatng, (atoi(pr3str) - 1));
+                            return true;
+                        }
+                    }
+                }
+            }
+            return false;
         }
     }
     return false;
