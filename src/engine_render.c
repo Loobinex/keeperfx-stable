@@ -140,6 +140,7 @@ unsigned char const height_masks[] = {
   8, 8, 8, 8, 8, 8, 8, 8,
 };
 
+struct RoomMap render_room = { {{false}}, 1, true, 1, 1, 0, 0, 0, 0, 0, 0 };
 static int water_wibble_angle = 0;
 //static unsigned char temp_cluedo_mode;
 static unsigned long render_problems;
@@ -2102,6 +2103,185 @@ void create_map_volume_box(long x, long y, long z)
     create_line_const_yz(box_ys, box_ze, box_xs, box_xe);
     create_line_const_xz(box_xs, box_ze, box_ys, box_ye);
     create_line_const_xz(box_xe, box_ze, box_ys, box_ye);
+}
+
+void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, long z)
+{
+    long box_xs;
+    long box_xe;
+    long box_ys;
+    long box_ye;
+    long box_zs;
+    long box_ze;
+    long i;
+    int oldColor = map_volume_box.color;
+    map_volume_box.color = 1;
+
+    box_xs = map_volume_box.beg_x - x;
+    box_ys = y - map_volume_box.beg_y; // Y is backwards/upside down - fix later
+    box_ye = y - map_volume_box.end_y;
+    box_xe = map_volume_box.end_x - x;
+
+    if ( temp_cluedo_mode )
+        box_ze = 2*COORD_PER_STL - z;
+    else
+        box_ze = 5*COORD_PER_STL - z;
+
+    box_zs = (map_volume_box.field_13 << 8) - z;
+    if ( box_zs >= box_ze )
+      box_zs = box_ze;
+
+    if ( box_xe < box_xs )
+    {
+        i = map_volume_box.beg_x;
+        box_xs = map_volume_box.end_x - x;
+        box_xe = map_volume_box.beg_x - x;
+        map_volume_box.beg_x = map_volume_box.end_x;
+        map_volume_box.end_x = i;
+    }
+
+    if ( box_ye > box_ys )
+    {
+        i = map_volume_box.beg_y;
+        box_ys = y - map_volume_box.end_y;
+        box_ye = y - map_volume_box.beg_y;
+        map_volume_box.beg_y = map_volume_box.end_y;
+        map_volume_box.end_y = i;
+    }
+
+    for (int roomY = 0; roomY <= room_map.height; roomY++)
+    {
+        for (int roomX = 0; roomX <= room_map.width; roomX++)
+        {
+            TbBool partOfRoom = room_map.room_grid[roomX][roomY];
+            int boxXs = box_xs + (roomX * 3 * COORD_PER_STL);
+            int boxYs = box_ys - (roomY * 3 * COORD_PER_STL);
+            int boxXe = box_xs + ((roomX + 1) * 3 * COORD_PER_STL);
+            int boxYe = box_ys - ((roomY + 1) * 3 * COORD_PER_STL);
+            if (partOfRoom)
+            {
+                TbBool airLeft = (roomX == 0) ? true : (room_map.room_grid[roomX-1][roomY] == false);
+                TbBool airRight = (roomX == room_map.width) ? true : (room_map.room_grid[roomX+1][roomY] == false);
+                TbBool airAbove = (roomY == 0) ? true : (room_map.room_grid[roomX][roomY-1] == false);
+                TbBool airBelow = (roomY == room_map.height) ? true : (room_map.room_grid[roomX][roomY+1] == false);
+
+                if (airLeft)
+                {
+                    // Draw top rectangle
+                    //create_line_const_yz(boxYe, box_zs, boxXs, boxXe);
+                    //create_line_const_yz(boxYs, box_zs, boxXs, boxXe);
+                    create_line_const_xz(boxXs, box_zs, boxYe, boxYs);
+                    //create_line_const_xz(boxXe, box_zs, boxYs, boxYe);
+                    // Vertical lines which connect the rectangles
+                    if (airAbove) create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
+                    //create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
+                    //create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
+                    if (airBelow) create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                    // Bottom rectangle
+                    //create_line_const_yz(boxYs, box_zs, boxXs, boxXe);
+                    //create_line_const_yz(boxYs, box_ze, boxXs, boxXe);
+                    create_line_const_xz(boxXs, box_ze, boxYe, boxYs);
+                    //create_line_const_xz(boxXe, box_ze, boxYs, boxYe);
+                    //create_line_const_xz(boxXs, box_zs, boxYe, boxYs);
+                }
+                if (airRight)
+                {
+                    // Draw top rectangle
+                    //create_line_const_yz(boxYe, box_zs, boxXs, boxXe);
+                    //create_line_const_yz(boxYs, box_zs, boxXs, boxXe);
+                    //create_line_const_xz(boxXs, box_zs, boxYs, boxYe);
+                    create_line_const_xz(boxXe, box_zs, boxYe, boxYs);
+                    // Vertical lines which connect the rectangles
+                    //create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
+                    if (airAbove) create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
+                    if (airBelow) create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
+                    //create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                    // Bottom rectangle
+                    //create_line_const_yz(boxYe, box_ze, boxXs, boxXe);
+                    //create_line_const_yz(boxYs, box_ze, boxXs, boxXe);
+                    //create_line_const_xz(boxXs, box_ze, boxYs, boxYe);
+                    create_line_const_xz(boxXe, box_ze, boxYe, boxYs);
+                }
+                if (airAbove)
+                {
+                    // Draw top rectangle
+                    //create_line_const_yz(boxYe, box_zs, boxXs, boxXe);
+                    create_line_const_yz(boxYs, box_zs, boxXs, boxXe);
+                    //create_line_const_xz(boxXs, box_zs, boxYs, boxYe);
+                    //create_line_const_xz(boxXe, box_zs, boxYs, boxYe);
+                    // Vertical lines which connect the rectangles
+                    if (airLeft) create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
+                    if (airRight) create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
+                    //create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
+                    //create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                    // Bottom rectangle
+                    //create_line_const_yz(boxYe, box_ze, boxXs, boxXe);
+                    create_line_const_yz(boxYs, box_ze, boxXs, boxXe);
+                    //create_line_const_xz(boxXs, box_ze, boxYs, boxYe);
+                    //create_line_const_xz(boxXe, box_ze, boxYs, boxYe);
+                }
+                if (airBelow)
+                {
+                    // Draw top rectangle
+                    create_line_const_yz(boxYe, box_zs, boxXs, boxXe);
+                    //create_line_const_yz(boxYs, box_zs, boxXs, boxXe);
+                    //create_line_const_xz(boxXs, box_zs, boxYs, boxYe);
+                    //create_line_const_xz(boxXe, box_zs, boxYs, boxYe);
+                    // Vertical lines which connect the rectangles
+                    //create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
+                    //create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
+                    if (airRight) create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
+                    if (airLeft) create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                    // Bottom rectangle
+                    create_line_const_yz(boxYe, box_ze, boxXs, boxXe);
+                    //create_line_const_yz(boxYs, box_ze, boxXs, boxXe);
+                    //create_line_const_xz(boxXs, box_ze, boxYs, boxYe);
+                    //create_line_const_xz(boxXe, box_ze, boxYs, boxYe);
+                }
+            }
+            else if (!partOfRoom) //this handles "inside corners"
+            {
+                TbBool roomLeft = (roomX == 0) ? false : room_map.room_grid[roomX-1][roomY];
+                TbBool roomRight = (roomX == room_map.width) ? false : room_map.room_grid[roomX+1][roomY];
+                TbBool roomAbove = (roomY == 0) ? false : room_map.room_grid[roomX][roomY-1];
+                TbBool roomBelow = (roomY == room_map.height) ? false : room_map.room_grid[roomX][roomY+1];
+
+                if (roomLeft)
+                {
+                    // Vertical lines which connect the rectangles
+                    if (roomAbove) create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
+                    //create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
+                    //create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
+                    if (roomBelow) create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                }
+                if (roomRight)
+                {
+                    // Vertical lines which connect the rectangles
+                    //create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
+                    if (roomAbove) create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
+                    if (roomBelow) create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
+                    //create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                }
+                if (roomAbove)
+                {
+                    // Vertical lines which connect the rectangles
+                    if (roomLeft) create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
+                    if (roomRight) create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
+                    //create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
+                    //create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                }
+                if (roomBelow)
+                {
+                    // Vertical lines which connect the rectangles
+                    //create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
+                    //create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
+                    if (roomRight) create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
+                    if (roomLeft) create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                }
+            }
+        }
+    }
+    map_volume_box.color = oldColor;
 }
 
 static void do_a_trig_gourad_tr(struct EngineCoord *ep1, struct EngineCoord *ep2, struct EngineCoord *ep3, short a4, long a5)
@@ -4488,7 +4668,11 @@ void draw_view(struct Camera *cam, unsigned char a2)
     draw_view_map_plane(aposc, bposc, xcell, ycell);
     if (map_volume_box.visible) {
         poly_pool_end_reserve(0);
-        create_map_volume_box(x, y, z);
+        if (render_room.isRoomABox) {
+            create_map_volume_box(x, y, z);
+        } else {
+            create_accurate_map_volume_box(render_room, x, y, z);
+        }
     }
     cam->zoom = zoom_mem;//TODO [zoom] remove when all cam->zoom will be changed to camera_zoom
     display_drawlist();
