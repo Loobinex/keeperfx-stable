@@ -6477,7 +6477,7 @@ msgstr ""
 #: guitext:981
 msgctxt "Trap names"
 msgid "Special Trap"
-msgstr "特殊の罠"
+msgstr "不思議の罠"
 
 #: guitext:982
 msgctxt "Trap names"
@@ -6542,7 +6542,7 @@ msgstr "隠されたスイッチ"
 #: guitext:994
 msgctxt "Door name"
 msgid "Special Door"
-msgstr "特殊のドア"
+msgstr "不思議のドア"
 
 #: guitext:995
 msgctxt "Door name"
