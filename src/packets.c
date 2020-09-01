@@ -676,11 +676,11 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room (strict)
     {
-        mode = (1 | paintMode | 0);
+        mode = (0 | paintMode | 0 | 32);
     }
     else if (is_key_pressed(KC_LALT, KMod_DONTCARE)) // Find biggest possible room (loose)
     {
-        mode = (2 | paintMode | 8);
+        mode = (1 | paintMode | 0 | 32);
     }
 
     struct RoomMap best_room;
