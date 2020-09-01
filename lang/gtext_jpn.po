@@ -6507,7 +6507,7 @@ msgstr "突風の罠"
 #: guitext:988
 msgctxt "Trap names"
 msgid "Spitfire Trap"
-msgstr ""
+msgstr "大砲の罠"
 
 #: guitext:989
 msgctxt "Trap names"
@@ -6522,7 +6522,7 @@ msgstr "疫病の罠"
 #: guitext:991
 msgctxt "Trap names"
 msgid "Power Trap"
-msgstr ""
+msgstr "パワーの罠"
 
 #: guitext:992
 msgctxt "Trap names"
