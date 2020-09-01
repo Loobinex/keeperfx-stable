@@ -403,6 +403,7 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
     int maxRoomWidth = ((maxRoomRadius * 2) - 1);
     int minRoomWidth = 2; // Don't look for rooms smaller than 2x2
     int min_width = minRoomWidth, min_height = minRoomWidth;
+    int max_width = maxRoomWidth;
     int subRoomCheckCount = 6; // the number of sub-rooms to combine in to a final meta-room
     struct RoomMap bestRooms[subRoomCheckCount];
     int bestRoomsCount = 0;
@@ -419,6 +420,8 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
     struct RoomMap best_room = current_biggest_room;
     int leniency = (((mode & 16) == 16)) ? 1 : 0; // mode=16 :- (setting to 1 would allow e.g. 1 dirt block in the room)
     float minimumRatio = (2.0 / 5.0);
+    TbBool corridor = false;
+    TbBool isCorridor = false;
 
     // Find the biggest room
     // =====================
@@ -432,21 +435,16 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
             for (int c = cursor_x - maxRoomRadius; c <= cursor_x + maxRoomRadius; c++)
             {
                 // for each tile within the search radius, taken as the centre of a "room" :- loop through the room sizes, from biggest width/height to smallest width/height
-                for (int w = maxRoomWidth; w >= min_width; w--)
+                for (int w = max_width; w >= min_width; w--)
                 {
-                    if ((w * maxRoomWidth) < current_biggest_room.slabCount) { break; } // sanity check, to stop pointless iterations of the loop
+                    if ((w * max_width) < current_biggest_room.slabCount) { break; } // sanity check, to stop pointless iterations of the loop
 
-                    for (int h = maxRoomWidth; h >= min_height; h--)
+                    for (int h = max_width; h >= min_height; h--)
                     {
                          // sanity check, to stop pointless iterations of the loop
                         if ((w * h) < current_biggest_room.slabCount) 
                         {
                             break;
-                        }
-                        // check aspect ratio of the new room
-                        if (((min(w,h) * 1.0) / (max(w,h) * 1.0)) < minimumRatio) 
-                        {
-                            continue; //don't make super long rooms (avoids detecting corridors)
                         }
                         // get the extents of the current room
                         int leftExtent = c - ((w - 1 - (w % 2 == 0)) / 2);
@@ -465,6 +463,25 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
                         {
                             if (roomarea > current_biggest_room.slabCount)
                             {
+                                // check aspect ratio of the new room
+                                if (((min(w,h) * 1.0) / (max(w,h) * 1.0)) < minimumRatio) 
+                                {
+                                    if (bestRoomsCount > 0)
+                                    {
+                                        continue;
+                                    }
+                                    else
+                                    {
+                                        if (((min(w,h) * 1.0) / (max(w,h) * 1.0)) < (1.0 / 3.0))
+                                        {
+                                            corridor = true;
+                                        }
+                                        else
+                                        {
+                                            continue;
+                                        }
+                                    }
+                                }
                                 current_biggest_room.slabCount = roomarea;
                                 current_biggest_room.centreX = c;
                                 current_biggest_room.centreY = r;
@@ -485,7 +502,22 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
         }
         // end loop of search area
 
-        if (((mode & 32) == 32)) // new auto placement mode
+        if (corridor)
+        {
+            if (bestRoomsCount == 0)
+            {
+                max_width = min(current_biggest_room.width, current_biggest_room.height);
+                current_biggest_room.slabCount = 1;
+                isCorridor = true;
+                bestRoomsCount++;
+            }
+            else
+            {
+                corridor = false;
+                bestRoomsCount = subRoomCheckCount; //get out of the do while loop
+            }
+        }
+        else if (((mode & 32) == 32)) // new auto placement mode
         {
             // new auto placement mode - it scans for the biggest room, then the biggest room that is wider, then the biggest room that is taller...
             // ...then combines these in to one meta room (which is stored in a 2D array of booleans [1BPP array])
@@ -526,12 +558,12 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
             current_biggest_room.slabCount = 1; // reset biggest recorded room to a single slab
         }
     }
-    while(((mode & 32) == 32) && (bestRoomsCount < subRoomCheckCount)); // loop again, if in mode 32, for the extra room checks
+    while((((mode & 32) == 32) && (bestRoomsCount < subRoomCheckCount)) || corridor); // loop again, if in mode 32, for the extra room checks
 
     // Return the best_room to the calling function
     // ============================================
 
-    if ((mode & 32) == 32) // new auto placement mode
+    if ((mode & 32) == 32 && !isCorridor) // new auto placement mode
     {  
         // find the extents of the new meta room
         int minX = bestRooms[0].left;
