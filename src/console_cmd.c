@@ -21,6 +21,7 @@
 
 #include "bflib_datetm.h"
 #include "creature_instances.h"
+#include "creature_jobs.h"
 #include "creature_states.h"
 #include "creature_states_hero.h"
 #include "dungeon_data.h"
@@ -30,8 +31,12 @@
 #include "game_merge.h"
 #include "gui_boxmenu.h"
 #include "gui_msgs.h"
+#include "gui_soundmsgs.h"
 #include "keeperfx.hpp"
+#include "music_player.h"
+#include "packets.h"
 #include "player_computer.h"
+#include "player_instances.h"
 #include "player_utils.h"
 #include "slab_data.h"
 
@@ -237,6 +242,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     const char * parstr = msg + 1;
     const char * pr2str = cmd_strtok(msg + 1);
     const char * pr3str = (pr2str != NULL) ? cmd_strtok(pr2str + 1) : NULL;
+    const char * pr4str = (pr3str != NULL) ? cmd_strtok(pr3str + 1) : NULL;
     struct PlayerInfo* player;
     struct Thing* thing;
     struct Dungeon* dungeon;
@@ -254,7 +260,49 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     {
         message_add_fmt(plyr_idx, "turn %ld", game.play_gameturn);
         return true;
-    } else if ((game.flags_font & FFlg_AlexCheat) != 0)
+    }
+    else if (strcmp(parstr, "game.save") == 0)
+    {
+        long slot_num = atoi(pr2str);
+        player = get_player(plyr_idx);
+        set_flag_byte(&game.operation_flags,GOF_Paused,true); // games are saved in a paused state
+        TbBool result = save_game(slot_num);
+        if (result)
+        {
+            output_message(SMsg_GameSaved, 0, true);
+        }
+        else
+        {
+          ERRORLOG("Error in save!");
+          // create_error_box(GUIStr_ErrorSaving);
+          message_add_fmt(plyr_idx, "Unable to save to slot $d", slot_num);
+        }
+        set_flag_byte(&game.operation_flags,GOF_Paused,false); // unpause after save attempt
+        return result;
+    }
+    else if (strcmp(parstr, "game.load") == 0)
+    {
+        long slot_num = atoi(pr2str);
+        if (is_save_game_loadable(slot_num))
+        {
+            if (load_game(slot_num))
+            {
+                player = get_player(plyr_idx);
+                set_flag_byte(&game.operation_flags,GOF_Paused,false); // unpause, because games are saved whilst puased
+                return true;
+            }
+            else
+            {
+                message_add_fmt(plyr_idx, "Unable to load game %d", slot_num);
+            }
+        }
+        else
+        {
+            message_add_fmt(plyr_idx, "Unable to load game %d", slot_num);
+        }
+        return false;
+    }        
+    else if ((game.flags_font & FFlg_AlexCheat) != 0)
     {
         if (strcmp(parstr, "compuchat") == 0)
         {
@@ -335,7 +383,22 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             } else
                 message_add_fmt(plyr_idx, "computer assistant is %d", atoi(pr2str));
             return true;
-        } else if (strcmp(parstr, "give.trap") == 0)
+        }
+        else if ( (strcmp(parstr, "comp.ai") == 0) || (strcmp(parstr, "player.ai") == 0) )
+        {
+            player = get_player(atoi(pr2str));
+            if (player_exists(player))
+            {
+                struct Computer2* comp = get_computer_player(player->id_number);               
+                    if (!computer_player_invalid(comp))
+                    {
+                        message_add_fmt(plyr_idx, "Player %ld AI type: %ld", player->id_number, comp->model);
+                    }
+                    return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "give.trap") == 0)
         {
             int id = atoi(pr2str);
             if (id <= 0 || id > trapdoor_conf.trap_types_count)
@@ -428,16 +491,56 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
-        else if (strcmp(parstr, "digger.pretty") == 0)
+        else if (strcmp(parstr, "creature.instance.set") == 0)
         {
             player = get_my_player();
             thing = thing_get(player->influenced_thing_idx);
+            unsigned char inst = atoi(pr2str);
             if (thing_is_creature(thing))
             {
-                if (thing->model == get_players_special_digger_model(thing->owner))
+                if (inst >= 0)
                 {
-                    set_creature_instance(thing, CrInst_PRETTY_PATH, 0, 0, 0);
+                    set_creature_instance(thing, inst, 0, 0, 0);
                     return true;
+                }
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "creature.state.set") == 0)
+        {
+            player = get_my_player();
+            thing = thing_get(player->influenced_thing_idx);
+            unsigned char state = atoi(pr2str);
+            if (thing_is_creature(thing))
+            {
+                if (state >= 0)
+                {
+                    if (can_change_from_state_to(thing, thing->active_state, state))
+                    {
+                        return internal_set_thing_state(thing, state);
+                    }
+                }
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "creature.job.set") == 0)
+        {
+            player = get_my_player();
+            thing = thing_get(player->influenced_thing_idx);
+            unsigned char new_job = atoi(pr2str);
+            if (thing_is_creature(thing))
+            {
+                if (new_job >= 0)
+                {
+                    if (creature_can_do_job_for_player(thing, thing->owner, 1LL<<new_job, JobChk_None))
+                    {
+                        return send_creature_to_job_for_player(thing, thing->owner, 1LL<<new_job);
+                    }
+                    else
+                    {
+                        message_add_fmt(plyr_idx, "Cannot do job %ld.", new_job);
+                        return true;
+                    }
                 }
             }
             return false;
@@ -501,7 +604,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 return true;
             }
         }
-        else if (strcmp(parstr, "creature.pool.sub") == 0)
+        else if ( (strcmp(parstr, "creature.pool.sub") == 0) || (strcmp(parstr, "creature.pool.remove") == 0) )
         {
             if (pr3str == NULL)
             {
@@ -524,21 +627,69 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 ThingModel crmodel = atoi(pr2str);
                 if ( (crmodel > 0) && (crmodel <= 31) )
                 {
-                    player = get_my_player();
-                    thing = get_player_soul_container(player->id_number);
+                    thing = get_player_soul_container(plyr_idx);
                     if (thing_is_dungeon_heart(thing))
                     {
-                        struct Thing* creatng = create_creature(&thing->mappos, crmodel, player->id_number);
-                        if (thing_is_creature(creatng))
-                        {
-                            set_creature_level(creatng, (atoi(pr3str) - 1));
-                            return true;
+                        unsigned int count = (pr4str != NULL) ? atoi(pr4str) : 1;
+                        unsigned int i;
+                        for (i = 0; i < count; i++)
+                        {                            
+                            struct Thing* creatng = create_creature(&thing->mappos, crmodel, plyr_idx);
+                            if (thing_is_creature(creatng))
+                            {
+                                set_creature_level(creatng, (atoi(pr3str) - 1));
+                            }
                         }
+                        return true;
                     }
                 }
             }
             return false;
         }
+        else if (strcmp(parstr, "floating.spirit") == 0)
+        {
+            level_lost_go_first_person(plyr_idx);
+            return true;
+        }
+        else if (strcmp(parstr, "music") == 0)
+        {
+            message_add_fmt(plyr_idx, "Current music track: %d", game.audiotrack);
+            return true;
+        }
+        else if (strcmp(parstr, "music.set") == 0)
+        {
+            int track = atoi(pr2str);
+            if (track >= FIRST_TRACK && track <= max_track)
+            {
+                StopMusicPlayer();
+                game.audiotrack = track;
+                PlayMusicPlayer(track);
+                return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "zoomto") == 0)
+        {
+            if ( (pr2str != NULL) && (pr3str != NULL) )
+            {
+                MapSubtlCoord stl_x = atoi(pr2str);
+                MapSubtlCoord stl_y = atoi(pr3str);
+                if ( (stl_x >= 0) && (stl_x <= 255) && (stl_y >= 0) && (stl_y <= 255) )
+                {
+                    player = get_player(plyr_idx);
+                    player->zoom_to_pos_x = subtile_coord_center(stl_x);
+                    player->zoom_to_pos_y = subtile_coord_center(stl_y);
+                    set_player_instance(player, PI_ZoomToPos, 0);
+                    return true;
+                }
+                else
+                {
+                    message_add_fmt(plyr_idx, "Co-ordinates specified are out of range (0-255)");
+                    return true;
+                }
+            }
+            return false;
+        }            
     }
     return false;
 }
