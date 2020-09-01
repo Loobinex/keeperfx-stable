@@ -403,7 +403,7 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
     int maxRoomWidth = ((maxRoomRadius * 2) - 1);
     int minRoomWidth = 2; // Don't look for rooms smaller than 2x2
     int min_width = minRoomWidth, min_height = minRoomWidth;
-    int subRoomCheckCount = 5; // the number of sub-rooms to combine in to a final meta-room
+    int subRoomCheckCount = 6; // the number of sub-rooms to combine in to a final meta-room
     struct RoomMap bestRooms[subRoomCheckCount];
     int bestRoomsCount = 0;
     // Set default "room" - i.e. 1x1 slabs, centred on the cursor
@@ -417,6 +417,8 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
     }*/
     //current_biggest_room.room_grid[0][0] = true;
     struct RoomMap best_room = current_biggest_room;
+    int leniency = (((mode & 16) == 16)) ? 1 : 0; // mode=16 :- (setting to 1 would allow e.g. 1 dirt block in the room)
+    float minimumRatio = (2.0 / 5.0);
 
     // Find the biggest room
     // =====================
@@ -436,15 +438,12 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
 
                     for (int h = maxRoomWidth; h >= min_height; h--)
                     {
-                        if ((w * h) < current_biggest_room.slabCount) { break; } // sanity check, to stop pointless iterations of the loop
-
-                        // check aspect ratio of the new room
-                        float minimumRatio = (2.0 / 5.0);
-                        if (((mode & 32) == 32))
+                         // sanity check, to stop pointless iterations of the loop
+                        if ((w * h) < current_biggest_room.slabCount) 
                         {
-                            minimumRatio = 0.0; //accept any ratio in mode 32
-                            if (bestRoomsCount == 0) { minimumRatio = 1.0; } //except on the first pass, where it must be square
+                            break;
                         }
+                        // check aspect ratio of the new room
                         if (((min(w,h) * 1.0) / (max(w,h) * 1.0)) < minimumRatio) 
                         {
                             continue; //don't make super long rooms (avoids detecting corridors)
@@ -461,7 +460,6 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
                         }
                         // check to see if the room collides with any walls (etc)
                         int slabs = w * h;
-                        int leniency = (((mode & 16) == 16) && bestRoomsCount == 0) ? 1 : 0; // mode=16 :- (setting to 1 would allow e.g. 1 dirt block in the room)
                         int roomarea = can_build_room_of_dimensions(plyr_idx, rkind, c, r, w, h, mode);
                         if (((roomarea) >= slabs - leniency) && ((roomarea * slabCost) <= totalMoney))
                         {
@@ -495,18 +493,35 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
             // get the information on the biggest room just found
             // if no room was found, this info describes the previously found biggest room (so no empty values)
             // if no room is ever found, current_biggest_room is the the default defined above (a single slab)
+            if ((mode & 16) == 16 && current_biggest_room.slabCount > 1) // make sure we found a subroom, and then adjust leniency allowance as needed
+            {
+                int usedLeniency = (current_biggest_room.width * current_biggest_room.height) - current_biggest_room.slabCount;
+                if (usedLeniency > 0)
+                {
+                    leniency -= usedLeniency;
+                }
+            }
             bestRooms[bestRoomsCount] = current_biggest_room;
             bestRoomsCount++;
-            int correct_index = ((bestRoomsCount > 2) ? bestRoomsCount - 2 : 0); // we want to compare to the previously stored widest/tallest room
-            if (bestRoomsCount % 2 != 0) // check for wider rooms
+            int correct_index = ((bestRoomsCount > 3) ? bestRoomsCount - 3 : 0); // we want to compare to the previously stored widest/tallest room
+            if (bestRoomsCount % 3 == 1) // check for wider rooms
             {
                 min_width = min(maxRoomWidth,max(bestRooms[correct_index].width + 1, minRoomWidth));
                 min_height = minRoomWidth;
+                minimumRatio = (1.0 / 4.0);
             }
-            else // check for taller rooms
+            else if (bestRoomsCount % 3 == 2)  // check for taller rooms
             {
                 min_width = minRoomWidth;
                 min_height = min(maxRoomWidth,max(bestRooms[correct_index].height + 1, minRoomWidth));
+                minimumRatio = (1.0 / 4.0);
+            }
+            
+            else //check for square room (only worth running once)
+            {
+                min_width = minRoomWidth;
+                min_height = minRoomWidth;
+                minimumRatio = 1.0;
             }
             current_biggest_room.slabCount = 1; // reset biggest recorded room to a single slab
         }
