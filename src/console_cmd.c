@@ -398,21 +398,23 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
-        else if (strcmp(parstr, "give.trap") == 0)
+        else if ( (strcmp(parstr, "give.trap") == 0) || (strcmp(parstr, "trap.give") == 0) )
         {
             int id = atoi(pr2str);
             if (id <= 0 || id > trapdoor_conf.trap_types_count)
                 return false;
-            command_add_value(Cmd_TRAP_AVAILABLE, plyr_idx, id, 1, 1);
+            unsigned char num = (pr3str != NULL) ? atoi(pr3str) : 1;
+            command_add_value(Cmd_TRAP_AVAILABLE, plyr_idx, id, 1, num);
             update_trap_tab_to_config();
             message_add(plyr_idx, "done!");
             return true;
-        } else if (strcmp(parstr, "give.door") == 0)
+        } else if ( (strcmp(parstr, "give.door") == 0) || (strcmp(parstr, "door.give") == 0) )
         {
             int id = atoi(pr2str);
             if (id <= 0 || id > trapdoor_conf.door_types_count)
                 return false;
-            script_process_value(Cmd_DOOR_AVAILABLE, plyr_idx, id, 1, 1);
+            unsigned char num = (pr3str != NULL) ? atoi(pr3str) : 1;
+            script_process_value(Cmd_DOOR_AVAILABLE, plyr_idx, id, 1, num);
             update_trap_tab_to_config();
             message_add(plyr_idx, "done!");
             return true;
