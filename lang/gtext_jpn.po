@@ -6464,11 +6464,6 @@ msgctxt "Menu interface item"
 msgid "Lost Levels"
 msgstr "失われたレベル"
 
-#: guitext:968
-msgctxt "Menu interface item"
-msgid "Return to Free Play levels"
-msgstr "自由遊びのレベルに戻る"
-
 #: guitext:976 guitext:977 guitext:978 guitext:979 guitext:980
 msgctxt "Unused"
 msgid "Moo3"
