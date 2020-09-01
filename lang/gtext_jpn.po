@@ -6487,7 +6487,7 @@ msgstr "フィアーの罠"
 #: guitext:984
 msgctxt "Trap names"
 msgid "Sentry Trap"
-msgstr ""
+msgstr "砲塔"
 
 #: guitext:985
 msgctxt "Trap names"
