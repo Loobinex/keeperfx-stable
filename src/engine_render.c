@@ -2066,7 +2066,7 @@ void create_map_volume_box(long x, long y, long z)
     else
         box_ze = 5*COORD_PER_STL - z;
 
-    box_zs = (map_volume_box.field_13 << 8) - z;
+    box_zs = (map_volume_box.field_13 << 8) - z;  // is field13 isSlabLiquid ??
     if ( box_zs >= box_ze )
       box_zs = box_ze;
 
@@ -2127,7 +2127,7 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
     else
         box_ze = 5*COORD_PER_STL - z;
 
-    box_zs = (map_volume_box.field_13 << 8) - z;
+    box_zs = 256 - z;
     if ( box_zs >= box_ze )
       box_zs = box_ze;
 
