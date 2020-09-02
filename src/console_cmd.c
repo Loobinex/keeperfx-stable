@@ -20,6 +20,8 @@
 #include "globals.h"
 
 #include "bflib_datetm.h"
+#include "config.h"
+#include "config_rules.h"
 #include "creature_instances.h"
 #include "creature_jobs.h"
 #include "creature_states.h"
@@ -251,12 +253,28 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     struct Dungeon* dungeon;
     struct Room* room;
     struct Packet* pckt;
+    struct SlabMap *slb;
     if (strcmp(parstr, "stats") == 0)
     {
       message_add_fmt(plyr_idx, "Now time is %d, last loop time was %d",LbTimerClock(),last_loop_time);
       message_add_fmt(plyr_idx, "clock is %d, requested fps is %d",clock(),game.num_fps);
       return true;
-    } else if (strcmp(parstr, "quit") == 0)
+    }
+    else if (strcmp(parstr, "fps") == 0)
+    {
+        if (pr2str == NULL)
+        {
+            message_add_fmt(plyr_idx, "Framerate is %d fps", game.num_fps);
+            return true;
+        }
+        else
+        {
+            game.num_fps = atoi(pr2str);
+            return true;
+        }
+        return false;
+    }
+    else if (strcmp(parstr, "quit") == 0)
     {
         quit_game = 1;
         exit_keeper = 1;
@@ -264,6 +282,11 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     } else if (strcmp(parstr, "turn") == 0)
     {
         message_add_fmt(plyr_idx, "turn %ld", game.play_gameturn);
+        return true;
+    }
+    else if (strcmp(parstr, "game.kind") == 0)
+    {
+        message_add_fmt(plyr_idx, "Game kind: %d", game.game_kind);
         return true;
     }
     else if (strcmp(parstr, "game.save") == 0)
@@ -730,6 +753,42 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
+        else if (strcmp(parstr, "slab.kind") == 0)
+        {
+            player = get_player(plyr_idx);
+            pckt = get_packet_direct(player->packet_num);
+            MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+            MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+            slb = get_slabmap_for_subtile(stl_x, stl_y);
+            if (!slabmap_block_invalid(slb))
+            {
+                message_add_fmt(plyr_idx, "Slab kind: %d", slb->kind);
+                return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "slab.health") == 0)
+        {
+            player = get_player(plyr_idx);
+            pckt = get_packet_direct(player->packet_num);
+            MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+            MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+            slb = get_slabmap_for_subtile(stl_x, stl_y);
+            if (!slabmap_block_invalid(slb))
+            {
+                if (pr2str == NULL)
+                {                    
+                    message_add_fmt(plyr_idx, "Slab health: %d", slb->health);
+                    return true;
+                }
+                else
+                {
+                    slb->health = atoi(pr2str);
+                    return true;
+                }
+            }
+            return false;
+        }
         else if ( (strcmp(parstr, "creature.pool") == 0) || (strcmp(parstr, "creature.inby") == 0) )
         {
             message_add_fmt(plyr_idx, "%d in pool", game.pool.crtr_kind[atoi(pr2str)]);
@@ -830,6 +889,22 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     message_add_fmt(plyr_idx, "Co-ordinates specified are out of range (0-255)");
                     return true;
                 }
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "bug.toggle") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                unsigned char bug = atoi(pr2str);
+                unsigned long flg = (bug > 2) ? (1 << (bug - 1)) : bug; 
+                toggle_flag_dword(&gameadd.classic_bugs_flags, flg);
+                message_add_fmt(plyr_idx, "%s %s", get_conf_parameter_text(rules_game_classicbugs_commands, bug), ((gameadd.classic_bugs_flags & flg) != 0) ? "enabled" : "disabled");
+                return true;
             }
             return false;
         }            
