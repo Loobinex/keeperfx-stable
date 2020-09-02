@@ -33,12 +33,15 @@
 #include "gui_msgs.h"
 #include "gui_soundmsgs.h"
 #include "keeperfx.hpp"
+#include "math.h"
 #include "music_player.h"
 #include "packets.h"
 #include "player_computer.h"
 #include "player_instances.h"
 #include "player_utils.h"
+#include "room_data.h"
 #include "slab_data.h"
+#include "thing_list.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -246,6 +249,8 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     struct PlayerInfo* player;
     struct Thing* thing;
     struct Dungeon* dungeon;
+    struct Room* room;
+    struct Packet* pckt;
     if (strcmp(parstr, "stats") == 0)
     {
       message_add_fmt(plyr_idx, "Now time is %d, last loop time was %d",LbTimerClock(),last_loop_time);
@@ -427,7 +432,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             {
                     if (pr3str == NULL)
                     {
-                        message_add_fmt(plyr_idx, "Player %ld heart health: %ld", id, thing->health);
+                        message_add_fmt(plyr_idx, "Player %d heart health: %ld", id, thing->health);
                         return true;
                     }
                     else
@@ -439,6 +444,25 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
+        else if (strcmp(parstr, "player.heart.get") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                thing = get_player_soul_container(atoi(pr2str));
+                if (thing_is_dungeon_heart(thing))
+                {
+                    message_add_fmt(plyr_idx, "Got thing ID %d", thing->index);
+                    player = get_player(plyr_idx);
+                    player->influenced_thing_idx = thing->index;
+                    return true;
+                }
+            }
+            return false;
+        }
         else if (strcmp(parstr, "creature.show.partytarget") == 0)
         {
             player = get_my_player();
@@ -446,7 +470,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             if (thing_is_creature(thing))
             {
                 struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
-                message_add_fmt(plyr_idx, "Target player: %ld", cctrl->party.target_plyr_idx);
+                message_add_fmt(plyr_idx, "Target player: %d", cctrl->party.target_plyr_idx);
                 return true;
             }
             return false;
@@ -540,7 +564,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     }
                     else
                     {
-                        message_add_fmt(plyr_idx, "Cannot do job %ld.", new_job);
+                        message_add_fmt(plyr_idx, "Cannot do job %d.", new_job);
                         return true;
                     }
                 }
@@ -554,7 +578,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             if (player_exists(player))
             {
                 dungeon = get_dungeon(id);
-                message_add_fmt(plyr_idx, "Player %ld gold: %ld", id, dungeon->total_money_owned);
+                message_add_fmt(plyr_idx, "Player %d gold: %ld", id, dungeon->total_money_owned);
                 return true;
             }
             return false;
@@ -578,13 +602,130 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
+        else if (strcmp(parstr, "thing.get") == 0)
+        {
+            player = get_player(plyr_idx);
+            pckt = get_packet_direct(player->packet_num);
+            MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+            MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+            thing = (pr2str != NULL) ? thing_get(atoi(pr2str)) : get_nearest_object_at_position(stl_x, stl_y);
+            if (!thing_is_invalid(thing))
+            {
+                message_add_fmt(plyr_idx, "Got thing ID %d", thing->index);
+                player->influenced_thing_idx = thing->index;
+                return true;
+            }
+            return false;
+        }
         else if (strcmp(parstr, "thing.model") == 0)
         {
-            player = get_my_player();
+            player = get_player(plyr_idx);
             thing = thing_get(player->influenced_thing_idx);
             if (!thing_is_invalid(thing))
             {
-                message_add_fmt(plyr_idx, "Thing model: %ld", thing->model);
+                message_add_fmt(plyr_idx, "Thing model: %d", thing->model);
+                return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "thing.health") == 0)
+        {
+            player = get_player(plyr_idx);
+            thing = thing_get(player->influenced_thing_idx);
+            if (!thing_is_invalid(thing))
+            {
+                if (pr2str != NULL)
+                {
+                    thing->health = atoi(pr2str);
+                }
+                else
+                {
+                    message_add_fmt(plyr_idx, "Thing ID: %d health: %d", thing->index, thing->health);
+                }
+                return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "thing.pos") == 0)
+        {
+            player = get_player(plyr_idx);
+            thing = thing_get(player->influenced_thing_idx);
+            if (!thing_is_invalid(thing))
+            {
+                message_add_fmt(plyr_idx, "Thing ID %d X: %d Y: %d", thing->index, thing->mappos.x.stl.num, thing->mappos.y.stl.num);
+                return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "thing.class") == 0 )
+        {
+            player = get_player(plyr_idx);
+            thing = thing_get(player->influenced_thing_idx);
+            if (!thing_is_invalid(thing))
+            {
+                message_add_fmt(plyr_idx, "Thing ID %d class: %d", thing->index, thing->class_id);
+                return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "thing.count") == 0 )
+        {
+            message_add_fmt(plyr_idx, "Things count: %d", game.free_things_start_index);
+            return true;
+        }
+        else if (strcmp(parstr, "room.get") == 0 )
+        {
+            player = get_player(plyr_idx);
+            pckt = get_packet_direct(player->packet_num);
+            MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+            MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+            room = (pr2str != NULL) ? room_get(atoi(pr2str)) : subtile_room_get(stl_x, stl_y);
+            if (room_exists(room))
+            {
+                message_add_fmt(plyr_idx, "Got room ID %d", room->index);
+                player->influenced_thing_idx = room->index;
+                return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "room.efficiency") == 0)
+        {
+            player = get_player(plyr_idx);
+            room = room_get(player->influenced_thing_idx);
+            if (!room_is_invalid(room))
+            {
+                float percent = ((float)room->efficiency / (float)ROOM_EFFICIENCY_MAX) * 100;
+                message_add_fmt(plyr_idx, "Room ID %d efficiency: %d (%d per cent)", room->index, room->efficiency, (unsigned int)round(percent));
+                return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "room.health") == 0)
+        {
+            player = get_player(plyr_idx);
+            room = room_get(player->influenced_thing_idx);
+            if (!room_is_invalid(room))
+            {
+                if (pr2str == NULL)
+                {
+                    message_add_fmt(plyr_idx, "Room ID %d health: %d", room->index, room->health);
+                    return true;
+                }
+                else
+                {
+                    room-> health = atoi(pr2str);
+                    return true;
+                }
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "room.pos") == 0 )
+        {
+            player = get_player(plyr_idx);
+            room = room_get(player->influenced_thing_idx);
+            if (!room_is_invalid(room))
+            {
+                message_add_fmt(plyr_idx, "Room ID %d X: %d Y: %d", room->index, room->central_stl_x, room->central_stl_y);
                 return true;
             }
             return false;
