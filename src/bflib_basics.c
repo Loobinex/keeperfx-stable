@@ -98,7 +98,7 @@ void toggle_flag_byte(unsigned char *flags,unsigned char mask)
  * @param flags Pointer to the flags byte.
  * @param mask Bitmask for the flag.
  */
-void toggle_flag_word(unsigned long *flags,unsigned short mask)
+void toggle_flag_word(unsigned short *flags,unsigned short mask)
 {
   if ((*flags & mask) == 0)
     *flags |= mask;
