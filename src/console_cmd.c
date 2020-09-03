@@ -901,8 +901,8 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             else
             {
                 unsigned char bug = atoi(pr2str);
-                unsigned long flg = (bug > 2) ? (1 << (bug - 1)) : bug; 
-                toggle_flag_dword(&gameadd.classic_bugs_flags, flg);
+                unsigned short flg = (bug > 2) ? (1 << (bug - 1)) : bug; 
+                toggle_flag_word(&gameadd.classic_bugs_flags, flg);
                 message_add_fmt(plyr_idx, "%s %s", get_conf_parameter_text(rules_game_classicbugs_commands, bug), ((gameadd.classic_bugs_flags & flg) != 0) ? "enabled" : "disabled");
                 return true;
             }
