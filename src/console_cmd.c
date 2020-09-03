@@ -44,6 +44,7 @@
 #include "room_data.h"
 #include "slab_data.h"
 #include "thing_list.h"
+#include "version.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -329,7 +330,17 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             message_add_fmt(plyr_idx, "Unable to load game %d", slot_num);
         }
         return false;
-    }        
+    }
+    else if (strcmp(parstr, "cls") == 0)
+    {
+        zero_messages();
+        return true;
+    }
+    else if (strcmp(parstr, "ver") == 0)
+    {
+        message_add_fmt(plyr_idx, "%s", PRODUCT_VERSION);
+        return true;
+    }     
     else if ((game.flags_font & FFlg_AlexCheat) != 0)
     {
         if (strcmp(parstr, "compuchat") == 0)
