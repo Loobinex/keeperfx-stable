@@ -140,7 +140,7 @@ unsigned char const height_masks[] = {
   8, 8, 8, 8, 8, 8, 8, 8,
 };
 
-struct RoomMap render_room = { {{false}}, 1, true, 1, 1, 0, 0, 0, 0, 0, 0 };
+struct RoomMap render_room = { {{false}}, 1, true, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
 static int water_wibble_angle = 0;
 //static unsigned char temp_cluedo_mode;
 static unsigned long render_problems;

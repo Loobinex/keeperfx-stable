@@ -680,7 +680,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     else if (is_key_pressed(KC_LALT, KMod_DONTCARE)) // Find biggest possible room (loose)
     {
-        mode = (1 | paintMode | 0 | 32);
+        mode = (2 | paintMode | 0 | 32);
     }
 
     struct RoomMap best_room;
@@ -696,7 +696,14 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         slb_y = best_room.centreY;
     }
     render_room = best_room;
-    player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, 0); //number of slabs to build, corrected for blocked tiles
+    if (mode == -1)
+    {
+        player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height); //number of slabs to build, corrected for blocked tiles
+    }
+    else
+    {
+        player->boxsize = best_room.slabCount; //number of slabs to build, using 2D array to check
+    }
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
     
     if (paintMode == 0) // allows the user to hold the left mouse to use "paint mode"

@@ -114,6 +114,36 @@ struct RoomMap {
     MapSlabCoord bottom;
     MapSlabCoord centreX;
     MapSlabCoord centreY;
+    int totalRoomCost;
+    int invalidBlocksCount;
+};
+
+struct RoomQuery {
+    short slabCost;
+    int totalMoney;
+    int mode;
+    int maxRoomRadius;
+    int maxRoomWidth;
+    int minRoomWidth;
+    int minRoomHeight;
+    int subRoomCheckCount;
+    int bestRoomsCount;
+    struct RoomMap best_room;
+    struct RoomMap best_corridor;
+    MapSlabCoord cursor_x;
+    MapSlabCoord cursor_y;
+    MapSlabCoord centre_x;
+    MapSlabCoord centre_y;
+    PlayerNumber plyr_idx;
+    RoomKind rkind;
+    float minimumRatio;
+    float minimumComparisonRatio;
+    TbBool isCorridor;
+    TbBool isCompoundRoom;
+    int leniency;
+    int moneyLeft;
+    int InvalidBlocksIgnored;
+    TbBool findCorridors;
 };
 
 #pragma pack()
@@ -159,7 +189,7 @@ int can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
 int calc_distance_from_centre(int totalDistance, TbBool offset);
 
 int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height, int mode);
+    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height);
 
 struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
     MapSlabCoord cursor_x, MapSlabCoord cursor_y, short slabCost, int totalMoney, int mode);
