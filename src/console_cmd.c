@@ -19,6 +19,7 @@
 #include "console_cmd.h"
 #include "globals.h"
 
+#include "actionpt.h"
 #include "bflib_datetm.h"
 #include "config.h"
 #include "config_rules.h"
@@ -44,6 +45,7 @@
 #include "room_data.h"
 #include "slab_data.h"
 #include "thing_list.h"
+#include "thing_objects.h"
 #include "version.h"
 
 #ifdef __cplusplus
@@ -918,7 +920,73 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 return true;
             }
             return false;
-        }            
+        }
+        else if (strcmp(parstr, "actionpoint.pos") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                unsigned char ap = atoi(pr2str);
+                if (action_point_exists_idx(ap))
+                {
+                    struct ActionPoint* actionpt = action_point_get(ap);
+                    message_add_fmt(plyr_idx, "Action Point %d X: %d Y: %d", ap, actionpt->mappos.x.stl.num, actionpt->mappos.y.stl.num);
+                    return true;
+                }
+            }
+            return false;            
+        }
+        else if (strcmp(parstr, "actionpoint.reset") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                unsigned char ap = atoi(pr2str);
+                if (action_point_exists_idx(ap))
+                {
+                    return action_point_reset_idx(ap);
+                }
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "actionpoint.count") == 0)
+        {
+            unsigned char count = 0;
+            unsigned long i;
+            for (i = 0; i <= ACTN_POINTS_COUNT; i++)
+            {
+                if (action_point_exists_idx(i))
+                {
+                    count++;
+                }
+            }
+            message_add_fmt(plyr_idx, "Action Point count: %d", count);
+            return true;
+        }
+        else if (strcmp(parstr, "herogate.pos") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                unsigned char hg = atoi(pr2str);
+                thing = find_hero_gate_of_number(hg);
+                if (object_is_hero_gate(thing))
+                {
+                    message_add_fmt(plyr_idx, "Hero Gate %d X: %d Y: %d", hg, thing->mappos.x.stl.num, thing->mappos.y.stl.num);
+                    return true;
+                }
+            }
+            return false;
+        }
     }
     return false;
 }
