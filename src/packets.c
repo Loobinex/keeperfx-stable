@@ -628,51 +628,45 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     player->field_4A4 = 1;
     if (is_my_player(player))
+    {
         gui_room_type_highlighted = player->chosen_room_kind;
-    if (is_key_pressed(KC_NUMPAD1, KMod_DONTCARE))
-    {
-        mode = (0 | paintMode | 0);
     }
-    if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
+    if  (player->chosen_room_kind == RoK_BRIDGE)
     {
-        //width = height = 2;
-        mode = (1 | paintMode | 0);
+        width = height = 1; // only place bridges one slab at a time
+    }
+    else if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
+    {
+        width = height = 2;
     }
     else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
     {
-        //width = height = 3;
-        mode = (2 | paintMode | 0);
+        width = height = 3;
     }
     else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
     {
-        //width = height = 4;
-        mode = (2 | paintMode | 8);
+        width = height = 4;
     }
     else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
     {
-        //width = height = 5;
-        mode = (1 | 0 | 32);
+        width = height = 5;
     }
     else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
     {
-        //width = height = 6;
-        mode = (2 | 0 | 32);
+        width = height = 6;
     }
     else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
     {
-        //width = height = 7;
-        mode = (2 | 0 | 16 | 32);
+        width = height = 7;
     }
     else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
     {
-        //width = height = 8;
-        mode = (0 | 0 | 32);
+        width = height = 8;
         
     }
     else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
     {
-        //width = height = 9;
-        mode = (0 | 16 | 32);
+        width = height = 9;
     }
     else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room (strict)
     {
@@ -694,16 +688,13 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         height = best_room.height;
         slb_x = best_room.centreX;
         slb_y = best_room.centreY;
-    }
-    render_room = best_room;
-    if (mode == -1)
-    {
-        player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height); //number of slabs to build, corrected for blocked tiles
+        player->boxsize = best_room.slabCount; // correct number of tiles always returned from get_biggest_room
     }
     else
     {
-        player->boxsize = best_room.slabCount; //number of slabs to build, using 2D array to check
+        player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height); //number of slabs to build, corrected for blocked tiles
     }
+    render_room = best_room; // amke sure we can render the correct boundbox to the user
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
     
     if (paintMode == 0) // allows the user to hold the left mouse to use "paint mode"

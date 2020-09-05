@@ -2115,7 +2115,7 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
     long box_ze;
     long i;
     int oldColor = map_volume_box.color;
-    map_volume_box.color = 1;
+    map_volume_box.color = 1; // green
 
     box_xs = map_volume_box.beg_x - x;
     box_ys = y - map_volume_box.beg_y; // Y is backwards/upside down - fix later
@@ -3495,7 +3495,6 @@ static void draw_engine_room_flag_top(struct RoomFlag *rflg)
         }
     }
 }
-
 static void draw_stripey_line(long a1, long a2, long a3, long a4, unsigned char a5)
 {
     _DK_draw_stripey_line(a1, a2, a3, a4, a5);
@@ -6231,8 +6230,8 @@ void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width
     orient = ((unsigned int)(cam->orient_a + LbFPMath_PI/4) >> 9) & 0x03;
     convert_world_coord_to_front_view_screen_coord(&pos, cam, &coord_x, &coord_y, &coord_z);
     depth = (5 - map_volume_box.field_13) * ((long)stl_width << 7) / 256;
-    box_width = ((short)(map_volume_box.end_x >> 8) - (short)(map_volume_box.beg_x >> 8)) / 3;
-    box_height = ((short)(map_volume_box.end_y >> 8) - (short)(map_volume_box.beg_y >> 8)) / 3;
+    box_width = max(1, ((short)(map_volume_box.end_x >> 8) - (short)(map_volume_box.beg_x >> 8)) / 3);
+    box_height = max(1, ((short)(map_volume_box.end_y >> 8) - (short)(map_volume_box.beg_y >> 8)) / 3);
     slb_width = (STL_PER_SLB * (long)stl_width) * box_width;
     slb_height = (STL_PER_SLB * (long)stl_width) * box_height;
     switch ( orient )
