@@ -21,6 +21,7 @@
 
 #include "actionpt.h"
 #include "bflib_datetm.h"
+#include "bflib_sound.h"
 #include "config.h"
 #include "config_rules.h"
 #include "creature_instances.h"
@@ -342,7 +343,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     {
         message_add_fmt(plyr_idx, "%s", PRODUCT_VERSION);
         return true;
-    }     
+    }
     else if ((game.flags_font & FFlg_AlexCheat) != 0)
     {
         if (strcmp(parstr, "compuchat") == 0)
@@ -986,6 +987,30 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 }
             }
             return false;
+        }
+        else if (strcmp(parstr, "sound.test") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                play_non_3d_sample(atoi(pr2str));
+                return true;
+            }
+        }
+        else if (strcmp(parstr, "speech.test") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                play_speech_sample(atoi(pr2str));
+                return true;
+            }
         }
     }
     return false;
