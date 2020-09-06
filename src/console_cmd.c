@@ -23,6 +23,7 @@
 #include "bflib_datetm.h"
 #include "bflib_sound.h"
 #include "config.h"
+#include "config_campaigns.h"
 #include "config_rules.h"
 #include "creature_instances.h"
 #include "creature_jobs.h"
@@ -1011,6 +1012,26 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 play_speech_sample(atoi(pr2str));
                 return true;
             }
+        }
+        else if (strcmp(parstr, "campaign.name") == 0)
+        {
+            message_add_fmt(plyr_idx, "%s", campaign.name);
+            return true;
+        }
+        else if (strcmp(parstr, "campaign.level.num") == 0)
+        {
+            message_add_fmt(plyr_idx, "%d", campaign.lvinfos->lvnum);
+            return true;
+        }
+        else if (strcmp(parstr, "game.level.num") == 0)
+        {
+            message_add_fmt(plyr_idx, "%d", game.loaded_level_number);
+            return true;    
+        }
+        else if (strcmp(parstr, "level.restart") == 0)
+        {
+            restart_current_level();
+            return true;
         }
     }
     return false;

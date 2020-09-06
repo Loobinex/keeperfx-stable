@@ -359,6 +359,14 @@ void startup_network_game(TbBool local);
 void startup_saved_packet_game(void);
 void faststartup_saved_packet_game(void);
 void reinit_level_after_load(void);
+void faststartup_network_game(void);
+void restart_current_level();
+
+void wait_at_frontend(void);
+
+extern TbBool restart_level;
+extern char cached_campaign_name[DISKPATH_SIZE];
+extern LevelNumber cached_level_number;
 
 #ifdef __cplusplus
 }
