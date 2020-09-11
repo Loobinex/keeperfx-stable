@@ -259,6 +259,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     struct Room* room;
     struct Packet* pckt;
     struct SlabMap *slb;
+    struct Coord3d pos;
     if (strcmp(parstr, "stats") == 0)
     {
       message_add_fmt(plyr_idx, "Now time is %d, last loop time was %d",LbTimerClock(),last_loop_time);
@@ -547,7 +548,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     player = get_player(id);
                     if (player_exists(player))
                     {
-                        struct Coord3d pos;
                         get_random_position_in_dungeon_for_creature(id, CrWaS_WithinDungeon, thing, &pos);
                         return send_tunneller_to_point_in_dungeon(thing, id, &pos);
                     }
@@ -710,6 +710,17 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             message_add_fmt(plyr_idx, "Things count: %d", game.free_things_start_index);
             return true;
+        }
+        else if (strcmp(parstr, "thing.destroy") == 0)
+        {
+            player = get_player(plyr_idx);
+            thing = thing_get(player->influenced_thing_idx);
+            if (!thing_is_invalid(thing))
+            {
+                destroy_object(thing);
+                return true;
+            }
+            return false;
         }
         else if (strcmp(parstr, "room.get") == 0 )
         {
@@ -1032,6 +1043,26 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             restart_current_level();
             return true;
+        }
+        else if (strcmp(parstr, "object.create") == 0)
+        {
+            if ( (pr2str == NULL) || (pr3str = NULL) )
+            {
+                return false;
+            }
+            else
+            {
+                player = get_player(plyr_idx);
+                pckt = get_packet_direct(player->packet_num);
+                pos.x.stl.num = coord_subtile(((unsigned short)pckt->pos_x));
+                pos.y.stl.num = coord_subtile(((unsigned short)pckt->pos_y));
+                thing = create_object(&pos, atoi(pr2str), atoi(pr3str), -1);
+                if (thing_is_object(thing))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
     }
     return false;
