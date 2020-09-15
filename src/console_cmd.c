@@ -38,6 +38,7 @@
 #include "gui_msgs.h"
 #include "gui_soundmsgs.h"
 #include "keeperfx.hpp"
+#include "map_blocks.h"
 #include "math.h"
 #include "music_player.h"
 #include "packets.h"
@@ -812,6 +813,32 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     slb->health = atoi(pr2str);
                     return true;
                 }
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "slab.place") == 0)
+        {
+            player = get_player(plyr_idx);
+            pckt = get_packet_direct(player->packet_num);
+            MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+            MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+            MapSlabCoord slb_x = subtile_slab(stl_x);
+            MapSlabCoord slb_y = subtile_slab(stl_y);
+            slb = get_slabmap_block(slb_x, slb_y);
+            if (!slabmap_block_invalid(slb))
+            {
+                PlayerNumber id = (pr3str == NULL) ? slabmap_owner(slb) : atoi(pr3str);
+                short slbkind = atoi(pr2str);
+                if (slab_kind_is_animated(slbkind))
+                {
+                    place_animating_slab_type_on_map(slbkind, 0, stl_x, stl_y, id);  
+                }
+                else
+                {
+                    place_slab_type_on_map(slbkind, stl_x, stl_y, id, 0);
+                }
+                do_slab_efficiency_alteration(slb_x, slb_y);
+                return true;
             }
             return false;
         }
