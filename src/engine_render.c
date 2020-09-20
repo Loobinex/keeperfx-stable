@@ -2114,8 +2114,6 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
     long box_zs;
     long box_ze;
     long i;
-    int oldColor = map_volume_box.color;
-    map_volume_box.color = 1; // green
 
     box_xs = map_volume_box.beg_x - x;
     box_ys = y - map_volume_box.beg_y; // Y is backwards/upside down - fix later
@@ -2149,9 +2147,9 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
         map_volume_box.end_y = i;
     }
 
-    for (int roomY = 0; roomY <= room_map.height; roomY++)
+    for (int roomY = 0; roomY < room_map.height; roomY++)
     {
-        for (int roomX = 0; roomX <= room_map.width; roomX++)
+        for (int roomX = 0; roomX < room_map.width; roomX++)
         {
             TbBool partOfRoom = room_map.room_grid[roomX][roomY];
             int boxXs = box_xs + (roomX * 3 * COORD_PER_STL);
@@ -2281,7 +2279,6 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
             }
         }
     }
-    map_volume_box.color = oldColor;
 }
 
 static void do_a_trig_gourad_tr(struct EngineCoord *ep1, struct EngineCoord *ep2, struct EngineCoord *ep3, short a4, long a5)

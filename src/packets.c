@@ -613,10 +613,6 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     int width = 1, height = 1;
     int paintMode = 0;
     int mode = -1; // (default) do not use room auto-detect mode
-    if ((is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) && ((pckt->control_flags & PCtr_LBtnHeld) == PCtr_LBtnHeld))
-    {
-        paintMode = 4;
-    }
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -633,7 +629,12 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     if  (player->chosen_room_kind == RoK_BRIDGE)
     {
+        room_slab_tolerance = 0;
         width = height = 1; // only place bridges one slab at a time
+        if ((is_key_pressed(KC_LSHIFT, KMod_DONTCARE) || is_key_pressed(KC_LCONTROL, KMod_DONTCARE))  && ((pckt->control_flags & PCtr_LBtnHeld) == PCtr_LBtnHeld)) // Enable "paint mode" if Ctrl or Shift are held
+        {
+            paintMode = 4;
+        }
     }
     else if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
     {
@@ -670,31 +671,59 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room (strict)
     {
-        mode = (0 | paintMode | 0 | 32);
+        mode = (0 | 16 | 32);
     }
-    else if (is_key_pressed(KC_LALT, KMod_DONTCARE)) // Find biggest possible room (loose)
+    else if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Find biggest possible room (loose)
     {
-        mode = (2 | paintMode | 0 | 32);
+        mode = (2 | 16 | 32);
+    }
+    else
+    {
+        room_slab_tolerance = 0;
     }
 
     struct RoomMap best_room;
     best_room.isRoomABox = true;
+    struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
     if (mode != -1) // room auto-detection mode
     {
-        struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
-        struct Dungeon* dungeon = get_players_dungeon(player);
-        best_room = get_biggest_room(plyr_idx, player->chosen_room_kind, slb_x, slb_y, rstat->cost, dungeon->total_money_owned, mode);
+        
+        if (wheel_scrolled_up)
+        {
+            if (room_slab_tolerance != 10)
+            {
+                room_slab_tolerance++;
+            }
+            show_onscreen_msg(game.num_fps, "Current Room Building slab tolerance is: %d", room_slab_tolerance);
+        }
+        if (wheel_scrolled_down)
+        {
+            if (room_slab_tolerance != 0)
+            {
+                room_slab_tolerance--;
+            }
+            show_onscreen_msg(game.num_fps, "Current Room Building slab tolerance is: %d", room_slab_tolerance);
+        }
+        
+        best_room = get_biggest_room(plyr_idx, player->chosen_room_kind, slb_x, slb_y, rstat->cost, 0, mode, room_slab_tolerance);
         width = best_room.width;
         height = best_room.height;
         slb_x = best_room.centreX;
         slb_y = best_room.centreY;
         player->boxsize = best_room.slabCount; // correct number of tiles always returned from get_biggest_room
     }
+    else if (width == 1 && height == 1)
+    {
+        player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, true); //number of slabs to build, corrected for blocked tiles
+    }
     else
     {
-        player->boxsize = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height); //number of slabs to build, corrected for blocked tiles
+        best_room = create_box_room(best_room, width, height, slb_x, slb_y);
+        best_room = check_slabs_in_room(best_room, plyr_idx, player->chosen_room_kind, rstat->cost);
+        player->boxsize = best_room.slabCount; // correct number of tiles always returned from get_biggest_room
+        
     }
-    render_room = best_room; // amke sure we can render the correct boundbox to the user
+    render_room = best_room; // make sure we can render the correct boundbox to the user
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
     
     if (paintMode == 0) // allows the user to hold the left mouse to use "paint mode"

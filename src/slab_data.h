@@ -144,6 +144,7 @@ struct RoomQuery {
     int moneyLeft;
     int InvalidBlocksIgnored;
     TbBool findCorridors;
+    TbBool foundRoom;
 };
 
 #pragma pack()
@@ -153,6 +154,7 @@ struct RoomQuery {
 extern const short around_slab[];
 #define SMALL_AROUND_SLAB_LENGTH 4
 extern const short small_around_slab[];
+extern int room_slab_tolerance;
 /******************************************************************************/
 SlabCodedCoords get_slab_number(MapSlabCoord slb_x, MapSlabCoord slb_y);
 MapSlabCoord slb_num_decode_x(SlabCodedCoords slb_num);
@@ -188,11 +190,17 @@ int can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
 
 int calc_distance_from_centre(int totalDistance, TbBool offset);
 
+struct RoomMap create_box_room(struct RoomMap room, int width, int height, int centre_x, int centre_y);
+
 int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height);
+    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height, TbBool full_check);
+    
+int can_build_fancy_room(PlayerNumber plyr_idx, RoomKind rkind, struct RoomMap room);
+
+struct RoomMap check_slabs_in_room(struct RoomMap room, PlayerNumber plyr_idx, RoomKind rkind, short slabCost);
 
 struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord cursor_x, MapSlabCoord cursor_y, short slabCost, int totalMoney, int mode);
+    MapSlabCoord cursor_x, MapSlabCoord cursor_y, short slabCost, int totalMoney, int mode, int tolerance);
 
 void clear_slabs(void);
 void reveal_whole_map(struct PlayerInfo *player);

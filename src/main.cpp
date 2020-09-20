@@ -3996,17 +3996,26 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     }
     TbBool allowed;
     allowed = false;
-    if (can_build_room_at_slab(plyr_idx, player->chosen_room_kind, slb_x, slb_y)) {
-        allowed = true;
-    } else {
-        SYNCDBG(7,"Cannot build %s on slab (%d,%d)",slab_code_name(slb->kind),room_code_name(player->chosen_room_kind),(int)slb_x,(int)slb_y);
-        allowed = true;
-    }
+    //if (can_build_room_at_slab(plyr_idx, player->chosen_room_kind, slb_x, slb_y)) {
+    //    allowed = true;
+    //} else {
+    //    SYNCDBG(7,"Cannot build %s on slab (%d,%d)",slab_code_name(slb->kind),room_code_name(player->chosen_room_kind),(int)slb_x,(int)slb_y);
+    //}
     int roomslabs = width * height;
-    int canbuild = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height);
+    int canbuild = 0;
+    if (render_room.isRoomABox)
+    {
+        canbuild = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, true);
+    }
+    else
+    {
+        canbuild = can_build_fancy_room(plyr_idx, player->chosen_room_kind, render_room);
+        roomslabs = render_room.slabCount;
+    }
     int color = 0;
     if (canbuild > 0)
     {
+        allowed = true;
         if(roomslabs == canbuild)
         {
             color = 1;
@@ -4019,6 +4028,10 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         {
             color = 4;
         }
+    }
+    else
+    {
+        SYNCDBG(7,"Cannot build %s on %d slabs centred at (%d,%d)",slab_code_name(slb->kind),room_code_name(player->chosen_room_kind),roomslabs,(int)slb_x,(int)slb_y);
     }
     if (is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && (game.small_map_state != 2))
     {
