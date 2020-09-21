@@ -919,7 +919,12 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
     }
     struct RoomQuery room_query = { slabCost, totalMoney, mode, 0, maxRoomWidth, minRoomWidth, minRoomWidth, subRoomCheckCount, bestRoomsCount, best_room, best_corridor, cursor_x, cursor_y, cursor_x, cursor_y, plyr_idx, rkind, minimumRatio, minimumComparisonRatio, false, false, leniency, totalMoney, 0, true, false };
     find_composite_room(&room_query);
-    return check_slabs_in_room(room_query.best_room, plyr_idx, rkind, slabCost);
+    room_query.best_room = check_slabs_in_room(room_query.best_room, plyr_idx, rkind, slabCost);
+    if (room_query.best_room.slabCount > 0)
+    {
+        return room_query.best_room;
+    }
+    return best_room;
 }
 
 /**
