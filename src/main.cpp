@@ -3851,21 +3851,10 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     // int v7 = slab_subtile(slb_y, 0);
     struct SlabMap *slb;
     slb = get_slabmap_block(slb_x, slb_y);
-    struct SlabAttr *slbattr;
-    slbattr = get_slab_attrs(slb);
-    signed int parl;
+    int floor_offset = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
     TbBool allowed = false;
     long dist = radius * 3;
-    if (!subtile_revealed(stl_x, stl_y, plyr_idx)
-        || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
-    {
-        parl = temp_cluedo_mode < 1u ? 5 : 2;
-    }
-    else if (slab_kind_is_liquid(slb->kind))
-    {
-        parl = 0;
-    }
-    else
+    if (floor_offset == 1)
     {
         if ( ( ((subtile_is_sellable_room(plyr_idx, stl_x, stl_y)) || ( (slabmap_owner(slb) == plyr_idx) && ( (slab_is_door(slb_x, slb_y))
             || (Subtile ? (subtile_has_trap_on(stl_x, stl_y)) : (slab_has_trap_on(slb_x, slb_y))) ) ) ) )
@@ -3873,14 +3862,13 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
         {
             allowed = true;
         }
-        parl = 1;
     }
     if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
     {
         map_volume_box.visible = 1;
         map_volume_box.beg_x = Subtile ? (subtile_coord(stl_x,0)) : (subtile_coord(slab_subtile(slb_x, 0) - dist,0));
         map_volume_box.beg_y = Subtile ? (subtile_coord(stl_y,0)) : (subtile_coord(slab_subtile(slb_y, 0) - dist,0));
-        map_volume_box.field_13 = parl;
+        map_volume_box.floor_offset = floor_offset;
         map_volume_box.end_x = Subtile ? (subtile_coord(stl_x+1,0)) : (subtile_coord(slab_subtile(slb_x, 3*a4) + (dist + (((char)even)*3)), 0));
         map_volume_box.color = allowed;
         map_volume_box.end_y = Subtile ? (subtile_coord(stl_y+1,0)) : (subtile_coord(slab_subtile(slb_y, 3*a4) + (dist + (((char)even)*3)), 0));
@@ -3912,21 +3900,11 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     MapSlabCoord slb_y = subtile_slab_fast(stl_y);
     struct SlabMap *slb;
     slb = get_slabmap_block(slb_x, slb_y);
-    struct SlabAttr *slbattr;
-    slbattr = get_slab_attrs(slb);
-    signed int parl;
     TbBool allowed = false;
     char Orientation;
     TbBool Check = false;
-    if (!subtile_revealed(stl_x, stl_y, plyr_idx) || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
-    {
-        parl = temp_cluedo_mode < 1u ? 5 : 2;
-    }
-    else if (slab_kind_is_liquid(slb->kind))
-    {
-        parl = 0;
-    }
-    else
+    int floor_offset = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
+    if (floor_offset == 1)
     {
         Orientation = find_door_angle(stl_x, stl_y, plyr_idx);
         if (gameadd.place_traps_on_subtiles)
@@ -3952,7 +3930,6 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         {
             allowed = true;
         }
-        parl = 1;
     }
     if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
     {
@@ -3961,7 +3938,7 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0), 0);
         map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3), 0);
         map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3), 0);
-        map_volume_box.field_13 = parl;
+        map_volume_box.floor_offset = floor_offset;
         map_volume_box.color = allowed;
     }
     return allowed;
@@ -3977,23 +3954,9 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     slb_y = subtile_slab_fast(stl_y);
     struct SlabMap *slb;
     slb = get_slabmap_block(slb_x, slb_y);
-    struct SlabAttr *slbattr;
-    slbattr = get_slab_attrs(slb);
     struct PlayerInfo *player;
     player = get_player(plyr_idx);
-    int par1;
-    if (!subtile_revealed(stl_x, stl_y, plyr_idx) ||
-       ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
-    {
-        par1 = temp_cluedo_mode < 1u ? 5 : 2;
-    } else
-    if (slab_kind_is_liquid(slb->kind))
-    {
-        par1 = 0;
-    } else
-    {
-        par1 = 1;
-    }
+    int floor_offset = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
     TbBool allowed;
     allowed = false;
     //if (can_build_room_at_slab(plyr_idx, player->chosen_room_kind, slb_x, slb_y)) {
@@ -4041,7 +4004,7 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0) - (calc_distance_from_centre(height, 0) * 3), 0);
         map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_centre(width, (width % 2 == 0)) * 3), 0);
         map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_centre(height,(height % 2 == 0)) * 3), 0);
-        map_volume_box.field_13 = par1;
+        map_volume_box.floor_offset = floor_offset;
         map_volume_box.field_17 = max(width, height);
     }
     return allowed;

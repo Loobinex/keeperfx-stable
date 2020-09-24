@@ -1863,9 +1863,28 @@ void fiddle_gamut(long pos_x, long pos_y)
     }
 }
 
+int floor_height_for_volume_box(PlayerNumber plyr_idx, MapSlabCoord slb_x, MapSlabCoord slb_y)
+{
+    struct SlabMap* slb = get_slabmap_block(slb_x, slb_y);
+    struct SlabAttr* slbattr = get_slab_attrs(slb);
+    if (!subtile_revealed(slab_subtile_center(slb_x), slab_subtile_center(slb_y), plyr_idx) || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
+    {
+        return temp_cluedo_mode < 1u ? 5 : 2;
+    }
+    if (slab_kind_is_liquid(slb->kind))
+    {
+        return 0;
+    }
+    return 1;
+}
+
 static void create_line_element(long a1, long a2, long a3, long a4, long bckt_idx, TbPixel color)
 {
     struct BasicUnk13 *poly;
+    if (!is_free_space_in_poly_pool(1))
+    {
+        return;
+    }
     if (bckt_idx >= BUCKETS_COUNT)
         bckt_idx = BUCKETS_COUNT-1;
     else
@@ -2066,7 +2085,7 @@ void create_map_volume_box(long x, long y, long z)
     else
         box_ze = 5*COORD_PER_STL - z;
 
-    box_zs = (map_volume_box.field_13 << 8) - z;  // is field13 isSlabLiquid ??
+    box_zs = (map_volume_box.floor_offset << 8) - z;
     if ( box_zs >= box_ze )
       box_zs = box_ze;
 
@@ -2162,79 +2181,51 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
                 TbBool airRight = (roomX == room_map.width) ? true : (room_map.room_grid[roomX+1][roomY] == false);
                 TbBool airAbove = (roomY == 0) ? true : (room_map.room_grid[roomX][roomY-1] == false);
                 TbBool airBelow = (roomY == room_map.height) ? true : (room_map.room_grid[roomX][roomY+1] == false);
-
                 if (airLeft)
                 {
                     // Draw top rectangle
-                    //create_line_const_yz(boxYe, box_zs, boxXs, boxXe);
-                    //create_line_const_yz(boxYs, box_zs, boxXs, boxXe);
                     create_line_const_xz(boxXs, box_zs, boxYe, boxYs);
-                    //create_line_const_xz(boxXe, box_zs, boxYs, boxYe);
-                    // Vertical lines which connect the rectangles
-                    if (airAbove) create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
-                    //create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
-                    //create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
-                    if (airBelow) create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
                     // Bottom rectangle
-                    //create_line_const_yz(boxYs, box_zs, boxXs, boxXe);
-                    //create_line_const_yz(boxYs, box_ze, boxXs, boxXe);
                     create_line_const_xz(boxXs, box_ze, boxYe, boxYs);
-                    //create_line_const_xz(boxXe, box_ze, boxYs, boxYe);
-                    //create_line_const_xz(boxXs, box_zs, boxYe, boxYs);
+                    // Vertical lines which connect the rectangles
+                    if (airAbove)
+                    {
+                        create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
+                    }
+                    if (airBelow)
+                    {
+                        create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                    }
                 }
                 if (airRight)
                 {
                     // Draw top rectangle
-                    //create_line_const_yz(boxYe, box_zs, boxXs, boxXe);
-                    //create_line_const_yz(boxYs, box_zs, boxXs, boxXe);
-                    //create_line_const_xz(boxXs, box_zs, boxYs, boxYe);
                     create_line_const_xz(boxXe, box_zs, boxYe, boxYs);
-                    // Vertical lines which connect the rectangles
-                    //create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
-                    if (airAbove) create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
-                    if (airBelow) create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
-                    //create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
                     // Bottom rectangle
-                    //create_line_const_yz(boxYe, box_ze, boxXs, boxXe);
-                    //create_line_const_yz(boxYs, box_ze, boxXs, boxXe);
-                    //create_line_const_xz(boxXs, box_ze, boxYs, boxYe);
                     create_line_const_xz(boxXe, box_ze, boxYe, boxYs);
+                    // Vertical lines which connect the rectangles
+                    if (airAbove)
+                    {
+                        create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
+                    }
+                    if (airBelow)
+                    {
+                        create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
+                    }
                 }
                 if (airAbove)
                 {
                     // Draw top rectangle
-                    //create_line_const_yz(boxYe, box_zs, boxXs, boxXe);
                     create_line_const_yz(boxYs, box_zs, boxXs, boxXe);
-                    //create_line_const_xz(boxXs, box_zs, boxYs, boxYe);
-                    //create_line_const_xz(boxXe, box_zs, boxYs, boxYe);
-                    // Vertical lines which connect the rectangles
-                    if (airLeft) create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
-                    if (airRight) create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
-                    //create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
-                    //create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
                     // Bottom rectangle
-                    //create_line_const_yz(boxYe, box_ze, boxXs, boxXe);
                     create_line_const_yz(boxYs, box_ze, boxXs, boxXe);
-                    //create_line_const_xz(boxXs, box_ze, boxYs, boxYe);
-                    //create_line_const_xz(boxXe, box_ze, boxYs, boxYe);
                 }
                 if (airBelow)
                 {
                     // Draw top rectangle
                     create_line_const_yz(boxYe, box_zs, boxXs, boxXe);
-                    //create_line_const_yz(boxYs, box_zs, boxXs, boxXe);
-                    //create_line_const_xz(boxXs, box_zs, boxYs, boxYe);
-                    //create_line_const_xz(boxXe, box_zs, boxYs, boxYe);
-                    // Vertical lines which connect the rectangles
-                    //create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
-                    //create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
-                    if (airRight) create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
-                    if (airLeft) create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
                     // Bottom rectangle
                     create_line_const_yz(boxYe, box_ze, boxXs, boxXe);
-                    //create_line_const_yz(boxYs, box_ze, boxXs, boxXe);
-                    //create_line_const_xz(boxXs, box_ze, boxYs, boxYe);
-                    //create_line_const_xz(boxXe, box_ze, boxYs, boxYe);
                 }
             }
             else if (!partOfRoom) //this handles "inside corners"
@@ -2243,38 +2234,29 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
                 TbBool roomRight = (roomX == room_map.width) ? false : room_map.room_grid[roomX+1][roomY];
                 TbBool roomAbove = (roomY == 0) ? false : room_map.room_grid[roomX][roomY-1];
                 TbBool roomBelow = (roomY == room_map.height) ? false : room_map.room_grid[roomX][roomY+1];
-
                 if (roomLeft)
                 {
                     // Vertical lines which connect the rectangles
-                    if (roomAbove) create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
-                    //create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
-                    //create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
-                    if (roomBelow) create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                    if (roomAbove)
+                    {
+                        create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
+                    }
+                    if (roomBelow)
+                    {
+                        create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                    }
                 }
                 if (roomRight)
                 {
                     // Vertical lines which connect the rectangles
-                    //create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
-                    if (roomAbove) create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
-                    if (roomBelow) create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
-                    //create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
-                }
-                if (roomAbove)
-                {
-                    // Vertical lines which connect the rectangles
-                    if (roomLeft) create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
-                    if (roomRight) create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
-                    //create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
-                    //create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
-                }
-                if (roomBelow)
-                {
-                    // Vertical lines which connect the rectangles
-                    //create_line_const_xy(boxXs, boxYs, box_zs, box_ze);
-                    //create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
-                    if (roomRight) create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
-                    if (roomLeft) create_line_const_xy(boxXs, boxYe, box_zs, box_ze);
+                    if (roomAbove)
+                    {
+                        create_line_const_xy(boxXe, boxYs, box_zs, box_ze);
+                    }
+                    if (roomBelow)
+                    {
+                        create_line_const_xy(boxXe, boxYe, box_zs, box_ze);
+                    }
                 }
             }
         }
@@ -3109,14 +3091,14 @@ void do_a_plane_of_engine_columns_isometric(long stl_x, long stl_y, long plane_s
     }
 }
 
-void draw_map_volume_box(long cor1_x, long cor1_y, long cor2_x, long cor2_y, long a5, unsigned char color)
+void draw_map_volume_box(long cor1_x, long cor1_y, long cor2_x, long cor2_y, long floor_offset, unsigned char color)
 {
     map_volume_box.visible = 1;
     map_volume_box.beg_x = cor1_x & 0xFFFF00;
     map_volume_box.beg_y = cor1_y & 0xFF00;
     map_volume_box.end_x = cor2_x & 0xFFFF00;
     map_volume_box.end_y = cor2_y & 0xFFFF00;
-    map_volume_box.field_13 = a5;
+    map_volume_box.floor_offset = floor_offset;
     map_volume_box.color = color;
 }
 
@@ -4618,14 +4600,19 @@ void draw_view(struct Camera *cam, unsigned char a2)
     getpoly = poly_pool;
     LbMemorySet(buckets, 0, sizeof(buckets));
     LbMemorySet(poly_pool, 0, sizeof(poly_pool));
-    if (map_volume_box.visible) {
+    if (map_volume_box.visible)
+    {
         poly_pool_end_reserve(14);
-    } else {
+    }
+    else
+    {
         poly_pool_end_reserve(4);
     }
     i = lens_mode;
     if ((i < 0) || (i >= PERS_ROUTINES_COUNT))
+    {
         i = 0;
+    }
     perspective = perspective_routines[i];
     rotpers = rotpers_routines[i];
     update_fade_limits(cells_away);
@@ -4648,7 +4635,8 @@ void draw_view(struct Camera *cam, unsigned char a2)
         update_fade_limits(cells_away);
         fade_range = (fade_max - fade_min) >> 8;
         setup_rotate_stuff(x, y, z, fade_max, fade_min, lens, cam_map_angle, map_roll);
-    } else
+    }
+    else
     {
         fade_min = 1000000;
         setup_rotate_stuff(x, y, z, fade_max, fade_min, camera_zoom/pixel_size, cam_map_angle, map_roll);
@@ -4662,11 +4650,15 @@ void draw_view(struct Camera *cam, unsigned char a2)
     find_gamut();
     fiddle_gamut(xcell, ycell + (cells_away+1));
     draw_view_map_plane(aposc, bposc, xcell, ycell);
-    if (map_volume_box.visible) {
+    if (map_volume_box.visible)
+    {
         poly_pool_end_reserve(0);
-        if (render_room.isRoomABox) {
+        if (render_room.isRoomABox)
+        {
             create_map_volume_box(x, y, z);
-        } else {
+        }
+        else
+        {
             create_accurate_map_volume_box(render_room, x, y, z);
         }
     }
@@ -6207,77 +6199,196 @@ static void update_frontview_pointed_block(unsigned long laaa, unsigned char qdr
     }
 }
 
-void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width)
+void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width, TbBool single_subtile)
 {
+    unsigned char orient = ((unsigned int)(cam->orient_a + LbFPMath_PI/4) >> 9) & 0x03;
+    // _breadth_ is equivilent to the width/height of a slab in 3D
+    // (it is usually the same as the depth (a single slab, but for single subtile selection, this will be the width/height of a subtile)
+    // _depth_ is "how far in to the screen" the box goes - it will be the width/height of a slab
+    // (it should be triple the size of stl_width if we are working with a single subtile (so that it is the height of a slab))
+    long breadth = ((5 - map_volume_box.floor_offset) * ((long)stl_width << 7) / 256);
+    long depth = breadth * (single_subtile == true ? STL_PER_SLB : 1);
     struct Coord3d pos;
     long coord_x;
     long coord_y;
     long coord_z;
-    unsigned char orient;
-    long i;
-    long slb_width, slb_height;
-    unsigned char box_width, box_height;
-    long depth;
-    long vstart;
-    long vend;
-    long delta[4];
+    long box_width, box_height;
+    pos.y.val = map_volume_box.end_y;
+    pos.x.val = map_volume_box.end_x;
+    pos.z.val = subtile_coord(5,0);
+    convert_world_coord_to_front_view_screen_coord(&pos, cam, &coord_x, &coord_y, &coord_z);
+    box_width = coord_x;
+    box_height = coord_y;
     pos.y.val = map_volume_box.beg_y;
     pos.x.val = map_volume_box.beg_x;
-    pos.z.val = subtile_coord(5,0);
-    orient = ((unsigned int)(cam->orient_a + LbFPMath_PI/4) >> 9) & 0x03;
     convert_world_coord_to_front_view_screen_coord(&pos, cam, &coord_x, &coord_y, &coord_z);
-    depth = (5 - map_volume_box.field_13) * ((long)stl_width << 7) / 256;
-    box_width = max(1, ((short)(map_volume_box.end_x >> 8) - (short)(map_volume_box.beg_x >> 8)) / 3);
-    box_height = max(1, ((short)(map_volume_box.end_y >> 8) - (short)(map_volume_box.beg_y >> 8)) / 3);
-    slb_width = (STL_PER_SLB * (long)stl_width) * box_width;
-    slb_height = (STL_PER_SLB * (long)stl_width) * box_height;
+    box_width -= coord_x;
+    box_height -= coord_y;
+    box_width = abs(box_width);
+    box_height = abs(box_height);
     switch ( orient )
     {
-    case 1:
-        coord_y -= slb_width;
-        coord_z += slb_width;
+    //case 0: // North
+    case 1: // East
+        coord_y -= box_height;
+        coord_z += box_height;
         break;
-    case 2:
-        coord_x -= slb_width;
-        coord_y -= slb_width;
-        coord_z += slb_width;
+    case 2: // South
+        coord_x -= box_width;
+        coord_y -= box_height;
+        coord_z += box_height;
         break;
-    case 3:
-        coord_x -= slb_width;
+    case 3: // West
+        coord_x -= box_width;
         break;
     }
-    vstart = 0;
     coord_z -= (stl_width >> 1);
-    vend = stl_width * box_width;
-    delta[0] = 0;
-    delta[1] = slb_height;
-    delta[2] = depth;
-    delta[3] = slb_height + depth;
-    // Draw a horizonal line element for every subtile
-    for (i=3; i > 0; i--)
+    // Draw 4 horizonal line elements
+    create_line_element(coord_x,             coord_y,                      coord_x + box_width, coord_y,                      coord_z,                          map_volume_box.color);
+    create_line_element(coord_x,             coord_y + box_height,         coord_x + box_width, coord_y + box_height,         coord_z - box_height,             map_volume_box.color);
+    create_line_element(coord_x,             coord_y + depth,              coord_x + box_width, coord_y + depth,              coord_z,                          map_volume_box.color);
+    create_line_element(coord_x,             coord_y + box_height + depth, coord_x + box_width, coord_y + box_height + depth, coord_z - box_height,             map_volume_box.color);
+    // Now the lines at left and right
+    create_line_element(coord_x,             coord_y,                      coord_x,             coord_y + box_height,         coord_z - box_height,             map_volume_box.color);
+    create_line_element(coord_x + box_width, coord_y,                      coord_x + box_width, coord_y + box_height,         coord_z - box_height,             map_volume_box.color);
+    create_line_element(coord_x,             coord_y + breadth,            coord_x,             coord_y + box_height + depth, coord_z - box_height + stl_width, map_volume_box.color);
+    create_line_element(coord_x + box_width, coord_y + breadth,            coord_x + box_width, coord_y + box_height + depth, coord_z - box_height + stl_width, map_volume_box.color);
+}
+void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Camera *cam, unsigned char stl_width)
+{
+    unsigned char orient = ((unsigned int)(cam->orient_a + LbFPMath_PI/4) >> 9) & 0x03;
+    long depth = ((5 - map_volume_box.floor_offset) * ((long)stl_width << 7) / 256);
+    struct Coord3d pos;
+    long coord_x;
+    long coord_y;
+    long coord_z;
+    long box_width, box_height;
+    pos.y.val = map_volume_box.end_y;
+    pos.x.val = map_volume_box.end_x;
+    pos.z.val = subtile_coord(5,0);
+    convert_world_coord_to_front_view_screen_coord(&pos, cam, &coord_x, &coord_y, &coord_z);
+    box_width = coord_x;
+    box_height = coord_y;
+    pos.y.val = map_volume_box.beg_y;
+    pos.x.val = map_volume_box.beg_x;
+    convert_world_coord_to_front_view_screen_coord(&pos, cam, &coord_x, &coord_y, &coord_z);
+    box_width -= coord_x;
+    box_height -= coord_y;
+    box_width = abs(box_width);
+    box_height = abs(box_height);
+    int room_slab_width = room_map.width;
+    int room_slab_height = room_map.height;
+    if (orient % 2 == 1)
     {
-      if (!is_free_space_in_poly_pool(4))
-        break;
-      create_line_element(coord_x + vstart,    coord_y + delta[0],  coord_x + (vend),      coord_y + delta[0], coord_z,             map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[1],  coord_x + (vend),      coord_y + delta[1], coord_z - slb_height, map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[2],  coord_x + (vend),      coord_y + delta[2], coord_z,             map_volume_box.color);
-      create_line_element(coord_x + vstart,    coord_y + delta[3],  coord_x + (vend),      coord_y + delta[3], coord_z - slb_height, map_volume_box.color);
-      vend += stl_width * box_width;
-      vstart += stl_width * box_width;
+        room_slab_width = room_map.height;
+        room_slab_height = room_map.width;
     }
-    // Now the rectangles at left and right
-    for (i=(3* box_height); i > 0; i--)
+    TbBool rotated_room[MAX_ROOM_WIDTH][MAX_ROOM_WIDTH];
+    memcpy(rotated_room,room_map.room_grid, sizeof(rotated_room));
+    int i, j;
+    switch ( orient )
     {
-      if (!is_free_space_in_poly_pool(4))
+    //case 0: // North
+    case 1: // East
+        coord_y -= box_height;
+        coord_z += box_height;
+        for (i = 0; i < room_map.width; i++)
+        {
+            for (j = 0; j < room_map.height; j++)
+            {
+                rotated_room[j][i] = room_map.room_grid[room_map.width - 1 - i][j];
+            }
+        }
         break;
-      create_line_element(coord_x,             coord_y + delta[0],  coord_x,             coord_y + delta[1], coord_z - delta[0], map_volume_box.color);
-      create_line_element(coord_x + slb_width, coord_y + delta[0],  coord_x + slb_width, coord_y + delta[1], coord_z - delta[0], map_volume_box.color);
-      create_line_element(coord_x,             coord_y + delta[2],  coord_x,             coord_y + delta[3], coord_z - delta[0], map_volume_box.color);
-      create_line_element(coord_x + slb_width, coord_y + delta[2],  coord_x + slb_width, coord_y + delta[3], coord_z - delta[0], map_volume_box.color);
-      delta[0] += stl_width;
-      delta[2] += stl_width;
-      delta[3] += stl_width;
-      delta[1] += stl_width;
+    case 2: // South
+        coord_x -= box_width;
+        coord_y -= box_height;
+        coord_z += box_height;
+        for (i = 0; i < room_map.width; i++)
+        {
+            for (j = 0; j < room_map.height; j++)
+            {
+                rotated_room[i][j]  = room_map.room_grid[room_map.width - 1 - i][room_map.height - 1 - j];
+            }
+        }
+        break;
+    case 3: // West
+        coord_x -= box_width;
+        for (i = 0; i < room_map.width; i++)
+        {
+            for (j = 0; j < room_map.height; j++)
+            {
+                rotated_room[j][i] = room_map.room_grid[i][room_map.height - 1 - j];
+            }
+        }
+        break;
+    }
+    coord_z -= (stl_width >> 1);
+    for (int roomY = 0; roomY < room_slab_height; roomY += 1)
+    {
+        int y_start = (box_height * roomY       / room_slab_height) + ((((box_height * roomY)       % room_slab_height) >= room_slab_height) ? 1 : 0);
+        int y_end =   (box_height * (roomY + 1) / room_slab_height) + ((((box_height * (roomY + 1)) % room_slab_height) >= room_slab_height) ? 1 : 0);
+        int bckt_idx = coord_z - y_end;
+        for (int roomX = 0; roomX < room_slab_width; roomX += 1)
+        {
+            int x_start = (box_width * roomX       / room_slab_width) + ((((box_width * roomX)       % room_slab_width) >= room_slab_width) ? 1 : 0);
+            int x_end =   (box_width * (roomX + 1) / room_slab_width) + ((((box_width * (roomX + 1)) % room_slab_width) >= room_slab_width) ? 1 : 0);
+            TbBool partOfRoom = rotated_room[roomX][roomY];
+            if (partOfRoom)
+            {
+                TbBool airLeft =  (roomX == 0)                    ? true : (rotated_room[roomX-1][roomY] == false);
+                TbBool airRight = (roomX == room_slab_width - 1)  ? true : (rotated_room[roomX+1][roomY] == false);
+                TbBool airAbove = (roomY == 0)                    ? true : (rotated_room[roomX][roomY-1] == false);
+                TbBool airBelow = (roomY == room_slab_height - 1) ? true : (rotated_room[roomX][roomY+1] == false);
+                if (airLeft)
+                {
+                    create_line_element(    coord_x + x_start, coord_y + y_start,         coord_x + x_start, coord_y + y_end,           bckt_idx,             map_volume_box.color);
+                    if (airBelow)
+                    {
+                        create_line_element(coord_x + x_start, coord_y + y_end,           coord_x + x_start, coord_y + y_end + depth,   bckt_idx + stl_width, map_volume_box.color);
+                    }
+                }
+                if (airRight)
+                {
+                    create_line_element(    coord_x + x_end,   coord_y + y_start,         coord_x + x_end,   coord_y + y_end,           bckt_idx,             map_volume_box.color);
+                    if (airBelow)
+                    {
+                        create_line_element(coord_x + x_end,   coord_y + y_end,           coord_x + x_end,   coord_y + y_end + depth,   bckt_idx + stl_width, map_volume_box.color);
+                    }
+                }
+                if (airAbove)
+                {
+                    create_line_element(    coord_x + x_start, coord_y + y_start,         coord_x + x_end,   coord_y + y_start,         bckt_idx,             map_volume_box.color);
+                    create_line_element(    coord_x + x_start, coord_y + y_start + depth, coord_x + x_end,   coord_y + y_start + depth, bckt_idx,             map_volume_box.color);
+                }
+                if (airBelow)
+                {
+                    create_line_element(    coord_x + x_start, coord_y + y_end,           coord_x + x_end,   coord_y + y_end,           bckt_idx,             map_volume_box.color);
+                    create_line_element(    coord_x + x_start, coord_y + y_end + depth,   coord_x + x_end,   coord_y + y_end + depth,   bckt_idx,             map_volume_box.color);
+                }
+            }
+            else if (!partOfRoom) //this handles "inside corners"
+            {
+                TbBool roomLeft =  (roomX == 0)                    ? false : rotated_room[roomX-1][roomY];
+                TbBool roomRight = (roomX == room_slab_width - 1)  ? false : rotated_room[roomX+1][roomY];
+                TbBool roomAbove = (roomY == 0)                    ? false : rotated_room[roomX][roomY-1];
+                TbBool roomBelow = (roomY == room_slab_height - 1) ? false : rotated_room[roomX][roomY+1];
+                if (roomLeft)
+                {
+                    if (roomBelow)
+                    {
+                        create_line_element(coord_x + x_start,  coord_y + y_end,          coord_x + x_start, coord_y + y_end + depth,   bckt_idx,             map_volume_box.color);
+                    }
+                }
+                if (roomRight)
+                {
+                    if (roomBelow)
+                    {
+                        create_line_element(coord_x + x_end,   coord_y + y_end,           coord_x + x_end,   coord_y + y_end + depth,   bckt_idx,             map_volume_box.color);
+                    }
+                }
+            }
+        }
     }
 }
 
@@ -6601,12 +6712,22 @@ void draw_frontview_engine(struct Camera *cam)
     update_frontview_pointed_block(zoom, qdrant, px, py, qx, qy);
     if (map_volume_box.visible)
     {
+        TbBool single_subtile_mode = false;
         BoxWidth = (zoom >> 8) & 0xFF;
-        if ( ( (gameadd.place_traps_on_subtiles) && ((player->work_state == PSt_PlaceTrap) && (player->chosen_trap_kind != TngTrp_Boulder)) ) || ((player->work_state == PSt_Sell) && (is_key_pressed(KC_LSHIFT, KMod_DONTCARE))) )
+        if (render_room.isRoomABox)
         {
-            BoxWidth /= 3;
+            if ( ( (gameadd.place_traps_on_subtiles) && ((player->work_state == PSt_PlaceTrap) && (player->chosen_trap_kind != TngTrp_Boulder)) ) || ((player->work_state == PSt_Sell) && (is_key_pressed(KC_LSHIFT, KMod_DONTCARE))) )
+            {
+                BoxWidth /= 3;
+                single_subtile_mode = true;
+            }
+            
+            create_frontview_map_volume_box(cam, BoxWidth, single_subtile_mode);
         }
-        create_frontview_map_volume_box(cam, BoxWidth);
+        else
+        {
+            create_accurate_frontview_map_volume_box(render_room, cam, BoxWidth);
+        }
     }
     map_volume_box.visible = 0;
 

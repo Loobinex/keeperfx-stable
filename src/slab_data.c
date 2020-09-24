@@ -820,7 +820,6 @@ void find_composite_room(struct RoomQuery *room_query)
                 
                 if (!(meta_room.best_room.slabCount == new_room_query.best_room.slabCount && meta_room.best_room.width == new_room_query.best_room.width && meta_room.best_room.height == new_room_query.best_room.height))
                 {
-                    int old_meta_room_size = meta_room.best_room.slabCount;
                     add_to_composite_room(&new_room_query, &meta_room);
                     meta_room.isCorridor = false;
                 }

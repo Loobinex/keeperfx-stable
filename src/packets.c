@@ -462,6 +462,10 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
         even = false;
     }
       if (!game_is_busy_doing_gui())
+        if (radius > 0)
+        {
+            render_room.isRoomABox = true; //temp fix whilst selling does not support auto-placement
+        }
         tag_cursor_blocks_sell_area(player->id_number, stl_x, stl_y, player->field_4A4, (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)), radius, even);
     }
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)

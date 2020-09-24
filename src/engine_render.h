@@ -347,7 +347,7 @@ struct MapVolumeBox { // sizeof = 24
   long beg_y;
   long end_x;
   long end_y;
-  long field_13;
+  long floor_offset;
   unsigned char field_17;
 };
 
@@ -510,9 +510,11 @@ void do_a_plane_of_engine_columns_cluedo(long a1, long a2, long a3, long a4);
 void do_a_plane_of_engine_columns_isometric(long a1, long a2, long a3, long a4);
 void find_gamut(void);
 void fiddle_gamut(long a1, long a2);
+int floor_height_for_volume_box(PlayerNumber plyr_idx, MapSlabCoord slb_x, MapSlabCoord slb_y);
 void create_map_volume_box(long a1, long a2, long a3);
 void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, long z);
-void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width);
+void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width, TbBool single_subtile);
+void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Camera *cam, unsigned char stl_width);
 void rotpers_parallel_3(struct EngineCoord *epos, struct M33 *matx, long zoom);
 void rotate_base_axis(struct M33 *matx, short a2, unsigned char a3);
 void fill_in_points_perspective(long a1, long a2, struct MinMax *mm);
@@ -528,7 +530,7 @@ void draw_status_sprites(long a1, long a2, struct Thing *thing, long a4);
 void draw_keepsprite_unscaled_in_buffer(unsigned short a1, short a2, unsigned char a3, unsigned char *a4);
 void draw_mapwho_ariadne_path(struct Thing *thing);
 void draw_jonty_mapwho(struct JontySpr *jspr);
-void draw_map_volume_box(long cor1_x, long cor1_y, long cor2_x, long cor2_y, long a5, unsigned char color);
+void draw_map_volume_box(long cor1_x, long cor1_y, long cor2_x, long cor2_y, long floor_offset, unsigned char color);
 unsigned short choose_health_sprite(struct Thing *thing);
 
 void update_engine_settings(struct PlayerInfo *player);
