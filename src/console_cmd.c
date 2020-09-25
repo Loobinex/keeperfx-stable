@@ -256,6 +256,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     const char * pr2str = cmd_strtok(msg + 1);
     const char * pr3str = (pr2str != NULL) ? cmd_strtok(pr2str + 1) : NULL;
     const char * pr4str = (pr3str != NULL) ? cmd_strtok(pr3str + 1) : NULL;
+    const char * pr5str = (pr4str != NULL) ? cmd_strtok(pr4str + 1) : NULL;
     struct PlayerInfo* player;
     struct Thing* thing;
     struct Dungeon* dungeon;
@@ -941,21 +942,48 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 ThingModel crmodel = atoi(pr2str);
                 if ( (crmodel > 0) && (crmodel <= 31) )
                 {
-                    thing = get_player_soul_container(plyr_idx);
-                    if (thing_is_dungeon_heart(thing))
+                    player = get_player(plyr_idx);
+                    pckt = get_packet_direct(player->packet_num);
+                    MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+                    MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+                    MapSlabCoord slb_x = subtile_slab(stl_x);
+                    MapSlabCoord slb_y = subtile_slab(stl_y);
+                    PlayerNumber id = (pr5str == NULL) ? plyr_idx : atoi(pr5str);
+                    if ( (slab_is_wall(slb_x, slb_y)) || (slab_coords_invalid(slb_x, slb_y)) )
                     {
-                        unsigned int count = (pr4str != NULL) ? atoi(pr4str) : 1;
-                        unsigned int i;
-                        for (i = 0; i < count; i++)
-                        {                            
-                            struct Thing* creatng = create_creature(&thing->mappos, crmodel, plyr_idx);
-                            if (thing_is_creature(creatng))
-                            {
-                                set_creature_level(creatng, (atoi(pr3str) - 1));
-                            }
+                        thing = get_player_soul_container(plyr_idx);
+                        if (thing_is_dungeon_heart(thing))
+                        {
+                            pos = thing->mappos;
                         }
-                        return true;
+                        else
+                        {
+                            return false;
+                        }
                     }
+                    else
+                    {
+                        if (!subtile_coords_invalid(stl_x, stl_y))
+                        {
+                            pos.x.stl.num = stl_x;
+                            pos.y.stl.num = stl_y;
+                        }
+                        else
+                        {
+                            return false;
+                        }
+                    }                        
+                    unsigned int count = (pr4str != NULL) ? atoi(pr4str) : 1;
+                    unsigned int i;
+                    for (i = 0; i < count; i++)
+                    {                            
+                        struct Thing* creatng = create_creature(&pos, crmodel, id);
+                        if (thing_is_creature(creatng))
+                        {
+                            set_creature_level(creatng, (atoi(pr3str) - 1));
+                        }
+                    }
+                    return true;
                 }
             }
             return false;
@@ -988,7 +1016,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             {
                 MapSubtlCoord stl_x = atoi(pr2str);
                 MapSubtlCoord stl_y = atoi(pr3str);
-                if ( (stl_x >= 0) && (stl_x <= 255) && (stl_y >= 0) && (stl_y <= 255) )
+                if (!subtile_coords_invalid(stl_x, stl_y))
                 {
                     player = get_player(plyr_idx);
                     player->zoom_to_pos_x = subtile_coord_center(stl_x);
@@ -998,7 +1026,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 }
                 else
                 {
-                    message_add_fmt(plyr_idx, "Co-ordinates specified are out of range (0-255)");
+                    message_add_fmt(plyr_idx, "Co-ordinates specified are invalid");
                     return true;
                 }
             }
