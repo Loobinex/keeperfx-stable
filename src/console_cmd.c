@@ -933,7 +933,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcmp(parstr, "creature.create") == 0)
         {
-            if (pr3str == NULL)
+            if (pr2str == NULL)
             {
                 return false;
             }
@@ -980,7 +980,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                         struct Thing* creatng = create_creature(&pos, crmodel, id);
                         if (thing_is_creature(creatng))
                         {
-                            set_creature_level(creatng, (atoi(pr3str) - 1));
+                            set_creature_level(creatng, (atoi(pr3str) - (unsigned char)(pr3str != NULL)));
                         }
                     }
                     return true;
