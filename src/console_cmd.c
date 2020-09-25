@@ -1160,7 +1160,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcmp(parstr, "object.create") == 0)
         {
-            if ( (pr2str == NULL) || (pr3str == NULL) )
+            if (pr2str == NULL)
             {
                 return false;
             }
@@ -1170,7 +1170,8 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 pckt = get_packet_direct(player->packet_num);
                 pos.x.stl.num = coord_subtile(((unsigned short)pckt->pos_x));
                 pos.y.stl.num = coord_subtile(((unsigned short)pckt->pos_y));
-                thing = create_object(&pos, atoi(pr2str), atoi(pr3str), -1);
+                PlayerNumber id = (pr3str == NULL) ? plyr_idx : atoi(pr3str);
+                thing = create_object(&pos, atoi(pr2str), id, -1);
                 if (thing_is_object(thing))
                 {
                     return true;
