@@ -47,8 +47,10 @@
 #include "player_utils.h"
 #include "room_data.h"
 #include "slab_data.h"
+#include "thing_factory.h"
 #include "thing_list.h"
 #include "thing_objects.h"
+#include "thing_navigate.h"
 #include "version.h"
 
 #ifdef __cplusplus
@@ -610,6 +612,29 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
+        else if (strcmp(parstr, "creature.attackheart") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                player = get_player(plyr_idx);
+                thing = thing_get(player->influenced_thing_idx);
+                if (thing_is_creature(thing))
+                {
+                    struct Thing* heartng = get_player_soul_container(atoi(pr2str));
+                    if (thing_is_dungeon_heart(heartng))
+                    {
+                        TRACE_THING(heartng);
+                        set_creature_object_combat(thing, heartng);
+                        return true;
+                    }
+                }
+            }
+            return false;
+        }
         else if (strcmp(parstr, "player.gold") == 0)
         {
             PlayerNumber id = atoi(pr2str);
@@ -707,6 +732,17 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
+        else if (strcmp(parstr, "thing.owner") == 0 )
+        {
+            player = get_player(plyr_idx);
+            thing = thing_get(player->influenced_thing_idx);
+            if (!thing_is_invalid(thing))
+            {
+                message_add_fmt(plyr_idx, "Thing ID %d owner: %d", thing->index, thing->owner);
+                return true;
+            }
+            return false;
+        }
         else if (strcmp(parstr, "thing.count") == 0 )
         {
             message_add_fmt(plyr_idx, "Things count: %d", game.free_things_start_index);
@@ -720,6 +756,29 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             {
                 destroy_object(thing);
                 return true;
+            }
+            return false;
+        }
+        else if (strcmp(parstr, "thing.create") == 0)
+        {
+            if ( (pr2str == NULL) || (pr3str == NULL) )
+            {
+                return false;
+            }
+            else
+            {
+                player = get_player(plyr_idx);
+                pckt = get_packet_direct(player->packet_num);
+                pos.x.stl.num = coord_subtile(((unsigned short)pckt->pos_x));
+                pos.y.stl.num = coord_subtile(((unsigned short)pckt->pos_y));
+                unsigned short tngclass = atoi(pr2str);
+                unsigned short tngmodel = atoi(pr3str);
+                PlayerNumber id = (pr4str == NULL) ? plyr_idx : atoi(pr4str);
+                thing = create_thing(&pos, tngclass, tngmodel, id, -1);
+                if (!thing_is_invalid(thing))
+                {
+                    return true;
+                }
             }
             return false;
         }
@@ -1073,7 +1132,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcmp(parstr, "object.create") == 0)
         {
-            if ( (pr2str == NULL) || (pr3str = NULL) )
+            if ( (pr2str == NULL) || (pr3str == NULL) )
             {
                 return false;
             }
