@@ -6287,7 +6287,6 @@ void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Ca
     TbBool rotated_room[MAX_ROOM_WIDTH][MAX_ROOM_WIDTH];
     memcpy(rotated_room,room_map.room_grid, sizeof(rotated_room));
     int i, j;
-    show_onscreen_msg(game.num_fps, "Room: %d", coord_z);
     switch ( orient )
     {
     //case 0: // North
