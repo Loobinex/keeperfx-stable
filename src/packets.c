@@ -97,6 +97,10 @@ extern "C" {
 /******************************************************************************/
 #define PACKET_TURN_SIZE (NET_PLAYERS_COUNT*sizeof(struct Packet) + sizeof(TbBigChecksum))
 struct Packet bad_packet;
+#define MAX_USER_ROOM_WIDTH 9
+#define MIN_USER_ROOM_WIDTH 1
+#define DEFAULT_USER_ROOM_WIDTH 5
+int user_defined_room_width = DEFAULT_USER_ROOM_WIDTH;
 /******************************************************************************/
 #ifdef __cplusplus
 }
@@ -604,6 +608,12 @@ TbBool process_dungeon_power_hand_state(long plyr_idx)
     return true;
 }
 
+void reset_dungeon_build_room_ui_variables()
+{
+    room_slab_tolerance = 0;
+    user_defined_room_width = DEFAULT_USER_ROOM_WIDTH;
+}
+
 TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
 {
     struct PlayerInfo* player = get_player(plyr_idx);
@@ -633,57 +643,72 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     if  (player->chosen_room_kind == RoK_BRIDGE)
     {
-        room_slab_tolerance = 0;
+        reset_dungeon_build_room_ui_variables();
         width = height = 1; // only place bridges one slab at a time
         if ((is_key_pressed(KC_LSHIFT, KMod_DONTCARE) || is_key_pressed(KC_LCONTROL, KMod_DONTCARE))  && ((pckt->control_flags & PCtr_LBtnHeld) == PCtr_LBtnHeld)) // Enable "paint mode" if Ctrl or Shift are held
         {
             paintMode = 4;
         }
     }
-    else if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
-    {
-        width = height = 2;
-    }
-    else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
-    {
-        width = height = 3;
-    }
-    else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
-    {
-        width = height = 4;
-    }
-    else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
-    {
-        width = height = 5;
-    }
-    else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
-    {
-        width = height = 6;
-    }
-    else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
-    {
-        width = height = 7;
-    }
-    else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
-    {
-        width = height = 8;
-        
-    }
-    else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
-    {
-        width = height = 9;
-    }
-    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find biggest possible room (strict)
+    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find "best" room
     {
         mode = (0 | 16 | 32);
     }
-    else if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Find biggest possible room (loose)
+    else if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Define square room (mouse scroll-wheel changes size - default is 5x5)
     {
-        mode = (2 | 16 | 32);
+        //mode = (2 | 16 | 32);
+        if (wheel_scrolled_down)
+        {
+            if (user_defined_room_width != MAX_USER_ROOM_WIDTH)
+            {
+                user_defined_room_width++;
+            }
+        }
+        if (wheel_scrolled_up)
+        {
+            if (user_defined_room_width != MIN_USER_ROOM_WIDTH)
+            {
+                user_defined_room_width--;
+            }
+        }
+        width = height = user_defined_room_width;
     }
     else
     {
-        room_slab_tolerance = 0;
+        reset_dungeon_build_room_ui_variables();
+        if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
+        {
+            width = height = 2;
+        }
+        else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
+        {
+            width = height = 3;
+        }
+        else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
+        {
+            width = height = 4;
+        }
+        else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
+        {
+            width = height = 5;
+        }
+        else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
+        {
+            width = height = 6;
+        }
+        else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
+        {
+            width = height = 7;
+        }
+        else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
+        {
+            width = height = 8;
+            
+        }
+        else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
+        {
+            width = height = 9;
+        }
     }
 
     struct RoomMap best_room;
@@ -692,7 +717,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     if (mode != -1) // room auto-detection mode
     {
         
-        if (wheel_scrolled_up)
+        if (wheel_scrolled_down)
         {
             if (room_slab_tolerance != 10)
             {
@@ -700,7 +725,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
             }
             show_onscreen_msg(game.num_fps, "Current Room Building slab tolerance is: %d", room_slab_tolerance);
         }
-        if (wheel_scrolled_down)
+        if (wheel_scrolled_up)
         {
             if (room_slab_tolerance != 0)
             {
