@@ -2135,7 +2135,7 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
     long i;
 
     box_xs = map_volume_box.beg_x - x;
-    box_ys = y - map_volume_box.beg_y; // Y is backwards/upside down - fix later
+    box_ys = y - map_volume_box.beg_y;
     box_ye = y - map_volume_box.end_y;
     box_xe = map_volume_box.end_x - x;
 
@@ -6257,7 +6257,8 @@ void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width
 void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Camera *cam, unsigned char stl_width)
 {
     unsigned char orient = ((unsigned int)(cam->orient_a + LbFPMath_PI/4) >> 9) & 0x03;
-    long depth = ((5 - map_volume_box.floor_offset) * ((long)stl_width << 7) / 256);
+    int floor_offset = (map_volume_box.floor_offset == 0) ? 1 : map_volume_box.floor_offset; // ignore "liquid height", and force it to "floor height". All fancy rooms are on the ground, and this ensures the boundboxes are drawn correctly. A different solutino will be required if this function is used to draw fancy rooms over "liquid".
+    long depth = ((5 - floor_offset) * ((long)stl_width << 7) / 256);
     struct Coord3d pos;
     long coord_x;
     long coord_y;
@@ -6286,6 +6287,7 @@ void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Ca
     TbBool rotated_room[MAX_ROOM_WIDTH][MAX_ROOM_WIDTH];
     memcpy(rotated_room,room_map.room_grid, sizeof(rotated_room));
     int i, j;
+    show_onscreen_msg(game.num_fps, "Room: %d", coord_z);
     switch ( orient )
     {
     //case 0: // North
