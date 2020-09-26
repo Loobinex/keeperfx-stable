@@ -101,6 +101,8 @@ struct Packet bad_packet;
 #define MIN_USER_ROOM_WIDTH 1
 #define DEFAULT_USER_ROOM_WIDTH 5
 int user_defined_room_width = DEFAULT_USER_ROOM_WIDTH;
+#define DEFAULT_USER_ROOM_DETECTION_LOOSENESS 0
+int room_slab_tolerance = DEFAULT_USER_ROOM_DETECTION_LOOSENESS;
 /******************************************************************************/
 #ifdef __cplusplus
 }
@@ -610,7 +612,7 @@ TbBool process_dungeon_power_hand_state(long plyr_idx)
 
 void reset_dungeon_build_room_ui_variables()
 {
-    room_slab_tolerance = 0;
+    room_slab_tolerance = DEFAULT_USER_ROOM_DETECTION_LOOSENESS;
     user_defined_room_width = DEFAULT_USER_ROOM_WIDTH;
 }
 
@@ -652,7 +654,40 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find "best" room
     {
-        mode = (0 | 16 | 32);
+        // room_slab_tolerance is now an "extra modes" flag variable - this enables extra "layers" of things to ignore
+        if (wheel_scrolled_down)
+        {
+            if (room_slab_tolerance < 6 && room_slab_tolerance >=0)
+            {
+                room_slab_tolerance = 6;
+            }
+            else if (room_slab_tolerance != 9)
+            {
+                room_slab_tolerance = 9;
+            }
+            /*if (room_slab_tolerance != 9)
+            {
+                room_slab_tolerance++;
+            }
+            show_onscreen_msg(game.num_fps, "Current Room Building slab tolerance is: %d", room_slab_tolerance);*/
+        }
+        if (wheel_scrolled_up)
+        {
+            if (room_slab_tolerance == 9)
+            {
+                room_slab_tolerance = 6;
+            }
+            else if (room_slab_tolerance != 0)
+            {
+                room_slab_tolerance = 0;
+            }
+            /*if (room_slab_tolerance != 0)
+            {
+                room_slab_tolerance--;
+            }
+            show_onscreen_msg(game.num_fps, "Current Room Building slab tolerance is: %d", room_slab_tolerance);*/
+        }
+        mode = (0 | 0 | 32);
     }
     else if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Define square room (mouse scroll-wheel changes size - default is 5x5)
     {
@@ -716,24 +751,6 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
     if (mode != -1) // room auto-detection mode
     {
-        
-        if (wheel_scrolled_down)
-        {
-            if (room_slab_tolerance != 10)
-            {
-                room_slab_tolerance++;
-            }
-            show_onscreen_msg(game.num_fps, "Current Room Building slab tolerance is: %d", room_slab_tolerance);
-        }
-        if (wheel_scrolled_up)
-        {
-            if (room_slab_tolerance != 0)
-            {
-                room_slab_tolerance--;
-            }
-            show_onscreen_msg(game.num_fps, "Current Room Building slab tolerance is: %d", room_slab_tolerance);
-        }
-        
         best_room = get_biggest_room(plyr_idx, player->chosen_room_kind, slb_x, slb_y, rstat->cost, 0, mode, room_slab_tolerance);
         width = best_room.width;
         height = best_room.height;
@@ -747,10 +764,20 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     else
     {
-        best_room = create_box_room(best_room, width, height, slb_x, slb_y);
-        best_room = check_slabs_in_room(best_room, plyr_idx, player->chosen_room_kind, rstat->cost);
-        player->boxsize = best_room.slabCount; // correct number of tiles always returned from get_biggest_room
-        
+        struct RoomMap temp_best_room = create_box_room(best_room, width, height, slb_x, slb_y);
+        temp_best_room = check_slabs_in_room(temp_best_room, plyr_idx, player->chosen_room_kind, rstat->cost);
+        if (temp_best_room.slabCount > 0)
+        {
+            best_room = temp_best_room;
+        }
+        else
+        {
+            // if the room is empty, then return a single slab cursor/boundbox like normal
+            width = height = 1;
+            best_room.slabCount = 1;
+        }
+        show_onscreen_msg(game.num_fps, "Current Room: %d", room_corresponding_slab(player->chosen_room_kind));
+        player->boxsize = best_room.slabCount; // correct number of tiles returned from check_slabs_in_room
     }
     render_room = best_room; // make sure we can render the correct boundbox to the user
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);

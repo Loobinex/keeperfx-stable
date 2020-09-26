@@ -41,7 +41,6 @@ struct SlabMap bad_slabmap_block;
 //struct RoomQuery room_query;
 struct RoomQuery new_room_query;
 //struct RoomQuery meta_room;
-int room_slab_tolerance = 0;
 /******************************************************************************/
 /******************************************************************************/
 /**
@@ -306,12 +305,37 @@ TbBool can_build_room_at_slab_fast(PlayerNumber plyr_idx, RoomKind rkind, MapSla
     return false;
 }
 
-int check_room_at_slab_loose(PlayerNumber plyr_idx, RoomKind rkind, MapSlabCoord slb_x, MapSlabCoord slb_y)
+/**
+ * Match a value from enum RoomKinds with enum SlabTypes.
+**/
+TbBool match_room_kind_to_slab_type(RoomKind room_kind, int slab_type)
 {
+    if (room_corresponding_slab(room_kind) == slab_type)
+    {
+        return true;
+    }
+    return false;
+}
+
+int check_room_at_slab_loose(PlayerNumber plyr_idx, RoomKind rkind, MapSlabCoord slb_x, MapSlabCoord slb_y, int looseness)
+{
+    // looseness:
+    // don't allow tile = 0
+    // valid tile to place room = 1 (i.e. tile owned by current player, and is claimed path)
+    // allow same room type = 2
+    // allow other room types = 3
+    // allow gems = 4
+    // allow gold = 5
+    // allow liquid = 6
+    // allow rock = 7
+    // allow path = 8
+    // allow path claimed by others = 9
+
     struct SlabMap* slb = get_slabmap_block(slb_x, slb_y);
+    int result = 0;
     if (rkind == RoK_BRIDGE)
     {
-        return (slab_kind_is_liquid(slb->kind) && slab_by_players_land(plyr_idx, slb_x, slb_y));
+        result = (slab_kind_is_liquid(slb->kind) && slab_by_players_land(plyr_idx, slb_x, slb_y)); // 0 or 1
     }
     else
     {
@@ -319,34 +343,61 @@ int check_room_at_slab_loose(PlayerNumber plyr_idx, RoomKind rkind, MapSlabCoord
         {
             if (slabmap_owner(slb) == plyr_idx)
             {
-                return 1; // valid tile
+                result = 1; // valid tile
             }
             else
             {
-                return 2; // claimed dirt owned by other player
+                result = 9; // claimed dirt owned by other player
             }
         }
         else
         {
-            
-            if (slab_is_wall(slb_x, slb_y) )
+            if (slab_is_wall(slb_x, slb_y))
             {
-                if (slb->kind == SlbT_GEMS || slb->kind == SlbT_GOLD)
+                if (slb->kind == SlbT_GEMS)
                 {
-                    return 2; // allowable wall: gems or gold
+                    result = 4;
+                }
+                else if (slb->kind == SlbT_GOLD)
+                {
+                    result = 5;
+                }
+                else if (slb->kind == SlbT_ROCK)
+                {
+                    result = 7; // is unbreakable rock
                 }
             }
             else if (slab_kind_is_liquid(slb->kind))
             {
-                return 3; // is water or lava
+                result = 6; // is water or lava
             }
-            else if ((slb->kind != SlbT_PATH) && !slab_kind_is_door(slb->kind))
+            else if (slb->kind == SlbT_PATH)
             {
-                return 2; // not a wall or path or door
+                result = 8; //unclaimed path
+            }
+            else if (slabmap_owner(slb) == plyr_idx)
+            {
+                int slab_type_from_room_kind = room_corresponding_slab(rkind);
+                
+                if (slab_type_from_room_kind == slb->kind)
+                {
+                    result = 3; // same room type
+                }
+                else if (slab_type_from_room_kind > 0)
+                {
+                    result = 2; // different room type
+                }
+                
             }
         }
     }
-    return 0; // completely invalid tile
+    if (result > looseness)
+    {
+        // adjusting the "looseness" that is passed to this function allows different slab types to be considered "valid" tiles to place a room, for the purposes of finding a room.
+        // A room is checked for valid/invalid tiles later in the process, before it is shown to the user with the bounding box.
+        result = 0;
+    }
+    return result;
 }
 
 int can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
@@ -382,7 +433,7 @@ int calc_distance_from_centre(int totalDistance, TbBool offset)
 }
 
 int can_build_room_of_dimensions_loose(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height, int *invalid_blocks)
+    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height, int *invalid_blocks, int room_discovery_looseness)
 {
     MapCoord buildx;
     MapCoord buildy;
@@ -397,7 +448,7 @@ int can_build_room_of_dimensions_loose(PlayerNumber plyr_idx, RoomKind rkind,
     {
         for (buildx = leftExtent; buildx <= rightExtent; buildx++)
         {
-            int room_check = check_room_at_slab_loose(plyr_idx, rkind, buildx, buildy);
+            int room_check = check_room_at_slab_loose(plyr_idx, rkind, buildx, buildy, room_discovery_looseness);
             if (room_check > 0)
             {
                 count++;
@@ -507,7 +558,7 @@ void test_rooms_from_biggest_to_smallest(struct RoomQuery *room_query)
     //don't check for rooms when they can't be found
     if ((room_query->mode & 2) == 2)
     {
-        if ((check_room_at_slab_loose(room_query->plyr_idx, room_query->rkind, centre_x, centre_y)  + room_query->leniency) <= 0)
+        if ((check_room_at_slab_loose(room_query->plyr_idx, room_query->rkind, centre_x, centre_y, room_query->room_discovery_looseness)  + room_query->leniency) <= 0)
         {
             return;
         }
@@ -554,7 +605,7 @@ void test_rooms_from_biggest_to_smallest(struct RoomQuery *room_query)
             int invalidBlocks = 0;
             if ((room_query->mode & 2) == 2)
             {
-                roomarea = can_build_room_of_dimensions_loose(room_query->plyr_idx, room_query->rkind, centre_x, centre_y, w, h, &invalidBlocks);
+                roomarea = can_build_room_of_dimensions_loose(room_query->plyr_idx, room_query->rkind, centre_x, centre_y, w, h, &invalidBlocks, room_query->room_discovery_looseness);
             }
             else
             {
@@ -890,7 +941,7 @@ void find_composite_room(struct RoomQuery *room_query)
 }
 
 struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord cursor_x, MapSlabCoord cursor_y, short slabCost, int totalMoney, int mode, int tolerance)
+    MapSlabCoord cursor_x, MapSlabCoord cursor_y, short slabCost, int totalMoney, int mode, int room_discovery_looseness)
 {
     int maxRoomWidth = 9; // 9x9 Room
     int minRoomWidth = 2; // Don't look for rooms smaller than 2x2
@@ -900,14 +951,18 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
     int bestRoomsCount = 0;
     // Set default "room" - i.e. 1x1 slabs, centred on the cursor
     struct RoomMap best_room = { {{false}}, 1, true, 1, 1, cursor_x, cursor_y, cursor_x, cursor_y, cursor_x, cursor_y, slabCost, 0 };
-    int leniency = (((mode & 16) == 16)) ? tolerance : 0; // mode=16 :- (setting to 1 would allow e.g. 1 dirt block in the room)
+    //int leniency = (((mode & 16) == 16)) ? tolerance : 0; // mode=16 :- (setting to 1 would allow e.g. 1 dirt block in the room)
+    int leniency = 0;
     struct RoomMap best_corridor = best_room;
-
+    if (room_discovery_looseness > 0)
+    {
+        mode |= 2;
+    }
     //don't check for rooms when they can't be found
     if ((mode & 2) == 2)
     {
-        int room_check = check_room_at_slab_loose(plyr_idx, rkind, cursor_x, cursor_y);
-        if (room_check == 0 || room_check == 3) //reject invalid and liquid slabs
+        int room_check = check_room_at_slab_loose(plyr_idx, rkind, cursor_x, cursor_y, room_discovery_looseness);
+        if (room_check == 0 || room_check == 6) //reject invalid and liquid slabs
         {
             return best_room;
         }
@@ -916,7 +971,7 @@ struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
     {
         return best_room;
     }
-    struct RoomQuery room_query = { slabCost, totalMoney, mode, 0, maxRoomWidth, minRoomWidth, minRoomWidth, subRoomCheckCount, bestRoomsCount, best_room, best_corridor, cursor_x, cursor_y, cursor_x, cursor_y, plyr_idx, rkind, minimumRatio, minimumComparisonRatio, false, false, leniency, totalMoney, 0, true, false };
+    struct RoomQuery room_query = { slabCost, totalMoney, mode, 0, maxRoomWidth, minRoomWidth, minRoomWidth, subRoomCheckCount, bestRoomsCount, best_room, best_corridor, cursor_x, cursor_y, cursor_x, cursor_y, plyr_idx, rkind, minimumRatio, minimumComparisonRatio, false, false, leniency, totalMoney, 0, true, false, room_discovery_looseness};
     find_composite_room(&room_query);
     room_query.best_room = check_slabs_in_room(room_query.best_room, plyr_idx, rkind, slabCost);
     if (room_query.best_room.slabCount > 0)

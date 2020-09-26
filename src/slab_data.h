@@ -21,6 +21,7 @@
 
 #include "globals.h"
 #include "bflib_basics.h"
+#include "config_terrain.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -145,6 +146,7 @@ struct RoomQuery {
     int InvalidBlocksIgnored;
     TbBool findCorridors;
     TbBool foundRoom;
+    int room_discovery_looseness;
 };
 
 #pragma pack()
@@ -154,7 +156,6 @@ struct RoomQuery {
 extern const short around_slab[];
 #define SMALL_AROUND_SLAB_LENGTH 4
 extern const short small_around_slab[];
-extern int room_slab_tolerance;
 /******************************************************************************/
 SlabCodedCoords get_slab_number(MapSlabCoord slb_x, MapSlabCoord slb_y);
 MapSlabCoord slb_num_decode_x(SlabCodedCoords slb_num);
@@ -200,7 +201,7 @@ int can_build_fancy_room(PlayerNumber plyr_idx, RoomKind rkind, struct RoomMap r
 struct RoomMap check_slabs_in_room(struct RoomMap room, PlayerNumber plyr_idx, RoomKind rkind, short slabCost);
 
 struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord cursor_x, MapSlabCoord cursor_y, short slabCost, int totalMoney, int mode, int tolerance);
+    MapSlabCoord cursor_x, MapSlabCoord cursor_y, short slabCost, int totalMoney, int mode, int room_discovery_looseness);
 
 void clear_slabs(void);
 void reveal_whole_map(struct PlayerInfo *player);
