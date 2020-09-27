@@ -30,7 +30,6 @@ extern "C" {
 /******************************************************************************/
 #define SLABSET_COUNT        1304
 #define SLABOBJS_COUNT        512
-#define MAX_ROOM_WIDTH         20
 
 enum SlabTypes {
     SlbT_ROCK               =   0,
@@ -103,6 +102,14 @@ struct SlabObj { // sizeof = 13
   unsigned char sofield_C;
 };
 
+#pragma pack()
+/******************************************************************************/
+// RoomMap describes a "room" - i.e. a collection of slabs that are a valid 
+// location from the currently selected room type (when placing rooms).
+// The 2D array of booleans, room_grid[][] describes each of the slabs within 
+// the room's extents. A value of 1 indicates a slab that is part of the "room", 
+// a value of 0 indicates a slab that is not part of the "room".
+#define MAX_ROOM_WIDTH         20
 struct RoomMap {
     TbBool room_grid[MAX_ROOM_WIDTH][MAX_ROOM_WIDTH];
     int slabCount;
@@ -118,38 +125,7 @@ struct RoomMap {
     int totalRoomCost;
     int invalidBlocksCount;
 };
-
-struct RoomQuery {
-    short slabCost;
-    int totalMoney;
-    int mode;
-    int maxRoomRadius;
-    int maxRoomWidth;
-    int minRoomWidth;
-    int minRoomHeight;
-    int subRoomCheckCount;
-    int bestRoomsCount;
-    struct RoomMap best_room;
-    struct RoomMap best_corridor;
-    MapSlabCoord cursor_x;
-    MapSlabCoord cursor_y;
-    MapSlabCoord centre_x;
-    MapSlabCoord centre_y;
-    PlayerNumber plyr_idx;
-    RoomKind rkind;
-    float minimumRatio;
-    float minimumComparisonRatio;
-    TbBool isCorridor;
-    TbBool isCompoundRoom;
-    int leniency;
-    int moneyLeft;
-    int InvalidBlocksIgnored;
-    TbBool findCorridors;
-    TbBool foundRoom;
-    int room_discovery_looseness;
-};
-
-#pragma pack()
+#include "slab_room_detection.h"
 /******************************************************************************/
 #define INVALID_SLABMAP_BLOCK (&bad_slabmap_block)
 #define AROUND_SLAB_LENGTH 9
@@ -199,9 +175,10 @@ int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
 int can_build_fancy_room(PlayerNumber plyr_idx, RoomKind rkind, struct RoomMap room);
 
 struct RoomMap check_slabs_in_room(struct RoomMap room, PlayerNumber plyr_idx, RoomKind rkind, short slabCost);
-
-struct RoomMap get_biggest_room(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord cursor_x, MapSlabCoord cursor_y, short slabCost, int totalMoney, int mode, int room_discovery_looseness);
+TbBool can_build_room_at_slab_fast(PlayerNumber plyr_idx, RoomKind rkind, MapSlabCoord slb_x, MapSlabCoord slb_y);
+int check_room_at_slab_loose(PlayerNumber plyr_idx, RoomKind rkind, MapSlabCoord slb_x, MapSlabCoord slb_y, int looseness);
+int can_build_room_of_dimensions_loose(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height, int *invalid_blocks, int room_discovery_looseness);
 
 void clear_slabs(void);
 void reveal_whole_map(struct PlayerInfo *player);
