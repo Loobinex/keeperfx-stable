@@ -39,6 +39,7 @@
 #include "gui_soundmsgs.h"
 #include "keeperfx.hpp"
 #include "map_blocks.h"
+#include "map_utils.h"
 #include "math.h"
 #include "music_player.h"
 #include "packets.h"
@@ -901,6 +902,29 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 return true;
             }
             return false;
+        }
+        else if (strcmp(parstr, "slab.isblocking") == 0)
+        {
+            player = get_player(plyr_idx);
+            pckt = get_packet_direct(player->packet_num);
+            MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+            MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+            if (subtile_coords_invalid(stl_x, stl_y))
+            {
+                return false;
+            }
+            else
+            {
+                if (subtile_is_blocking_wall_or_lava(stl_x, stl_y, plyr_idx))
+                {
+                    message_add_fmt(plyr_idx, "Slab is blocking");   
+                }
+                else
+                {
+                    message_add_fmt(plyr_idx, "Slab is not blocking");   
+                }
+                return true;
+            }                
         }
         else if ( (strcmp(parstr, "creature.pool") == 0) || (strcmp(parstr, "creature.inby") == 0) )
         {
