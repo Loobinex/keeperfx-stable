@@ -3841,23 +3841,20 @@ int can_thing_be_queried(struct Thing *thing, long a2)
   return _DK_can_thing_be_queried(thing, a2);
 }
 
-TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4, TbBool Subtile, char radius, TbBool even)
+TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, MapSubtlCoord stl_y, long a4, TbBool single_subtile, int width, int height)
 {
     SYNCDBG(7,"Starting");
     // _DK_tag_cursor_blocks_sell_area(plyr_idx, stl_x, stl_y, a4);
     MapSlabCoord slb_x = subtile_slab_fast(stl_x);
     MapSlabCoord slb_y = subtile_slab_fast(stl_y);
-    // int v6 = slab_subtile(slb_x, 0);
-    // int v7 = slab_subtile(slb_y, 0);
     struct SlabMap *slb;
     slb = get_slabmap_block(slb_x, slb_y);
     int floor_offset = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
     TbBool allowed = false;
-    long dist = radius * 3;
     if (floor_offset == 1)
     {
         if ( ( ((subtile_is_sellable_room(plyr_idx, stl_x, stl_y)) || ( (slabmap_owner(slb) == plyr_idx) && ( (slab_is_door(slb_x, slb_y))
-            || (Subtile ? (subtile_has_trap_on(stl_x, stl_y)) : (slab_has_trap_on(slb_x, slb_y))) ) ) ) )
+            || (single_subtile ? (subtile_has_trap_on(stl_x, stl_y)) : (slab_has_trap_on(slb_x, slb_y))) ) ) ) )
             && ( slb->kind != SlbT_ENTRANCE && slb->kind != SlbT_DUNGHEART ) )
         {
             allowed = true;
@@ -3866,13 +3863,13 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     if ( is_my_player_number(plyr_idx) && !game_is_busy_doing_gui() && game.small_map_state != 2 )
     {
         map_volume_box.visible = 1;
-        map_volume_box.beg_x = Subtile ? (subtile_coord(stl_x,0)) : (subtile_coord(slab_subtile(slb_x, 0) - dist,0));
-        map_volume_box.beg_y = Subtile ? (subtile_coord(stl_y,0)) : (subtile_coord(slab_subtile(slb_y, 0) - dist,0));
-        map_volume_box.floor_offset = floor_offset;
-        map_volume_box.end_x = Subtile ? (subtile_coord(stl_x+1,0)) : (subtile_coord(slab_subtile(slb_x, 3*a4) + (dist + (((char)even)*3)), 0));
         map_volume_box.color = allowed;
-        map_volume_box.end_y = Subtile ? (subtile_coord(stl_y+1,0)) : (subtile_coord(slab_subtile(slb_y, 3*a4) + (dist + (((char)even)*3)), 0));
-        map_volume_box.field_17 = 1+ (2 * radius) + even;
+        map_volume_box.beg_x = single_subtile ? (subtile_coord(stl_x,0)) : (subtile_coord(slab_subtile(slb_x, 0) - (calc_distance_from_centre(width, 0) * 3), 0));
+        map_volume_box.beg_y = single_subtile ? (subtile_coord(stl_y,0)) : (subtile_coord(slab_subtile(slb_y, 0) - (calc_distance_from_centre(height, 0) * 3), 0));
+        map_volume_box.end_x = single_subtile ? (subtile_coord(stl_x + 1,0)) : (subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_centre(width, (width % 2 == 0)) * 3), 0));
+        map_volume_box.end_y = single_subtile ? (subtile_coord(stl_y + 1,0)) : (subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_centre(height,(height % 2 == 0)) * 3), 0));
+        map_volume_box.floor_offset = floor_offset;
+        map_volume_box.field_17 = max(width, height);
     }
     return allowed;
 }

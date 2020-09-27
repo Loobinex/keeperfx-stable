@@ -402,8 +402,7 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
 {
     struct PlayerInfo* player = get_player(plyr_idx);
     struct Packet* pckt = get_packet_direct(player->packet_num);
-    unsigned char radius = 0;
-    TbBool even = false;
+    int width = 1, height = 1;
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -417,62 +416,50 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
     MapCoord y = ((unsigned short)pckt->pos_y);
     MapSubtlCoord stl_x = coord_subtile(x);
     MapSubtlCoord stl_y = coord_subtile(y);
+    MapSlabCoord slb_x = subtile_slab(stl_x);
+    MapSlabCoord slb_y = subtile_slab(stl_y);
     player->field_4A4 = 1;
     MapSubtlCoord sellx;
     MapSubtlCoord selly;
     if (is_my_player(player))
     {
-    if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
-    {
-        radius = 0;
-        even = true;
-    }
-    else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
-    {
-        radius = 1;
-        even = false;
-    }
-    else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
-    {
-        radius = 1;
-        even = true;
-    }
-    else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
-    {
-        radius = 2;
-        even = false;
-    }
-    else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
-    {
-        radius = 2;
-        even = true;
-    }
-    else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
-    {
-        radius = 3;
-        even = false;
-    }
-    else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
-    {
-        radius = 3;
-        even = true;
-    }
-    else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
-    {
-        radius = 4;
-        even = false;
-    }
-    else
-    {
-        radius = 0;
-        even = false;
-    }
-      if (!game_is_busy_doing_gui())
-        if (radius > 0)
+        if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
+        {
+            width = height = 2;
+        }
+        else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
+        {
+            width = height = 3;
+        }
+        else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
+        {
+            width = height = 4;
+        }
+        else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
+        {
+            width = height = 5;
+        }
+        else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
+        {
+            width = height = 6;
+        }
+        else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
+        {
+            width = height = 7;
+        }
+        else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
+        {
+            width = height = 8;
+        }
+        else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
+        {
+            width = height = 9;
+        }
+        if (!game_is_busy_doing_gui())
         {
             render_room.isRoomABox = true; //temp fix whilst selling does not support auto-placement
+            tag_cursor_blocks_sell_area(player->id_number, stl_x, stl_y, player->field_4A4, (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)), width, height);
         }
-        tag_cursor_blocks_sell_area(player->id_number, stl_x, stl_y, player->field_4A4, (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)), radius, even);
     }
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
     {
@@ -491,25 +478,23 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
         return false;
     }
     // Trying to sell room
-    int dist = radius * 3;
-    char evendist = even * 3;
     if (!is_key_pressed(KC_LSHIFT, KMod_DONTCARE))
     {
-        for (selly = stl_y - dist; selly <= stl_y + dist + evendist; selly += 3)
+        for (selly = slb_y - calc_distance_from_centre(height,0); selly <= slb_y + calc_distance_from_centre(height,(height % 2 == 0)); selly++)
         {
-            for (sellx = stl_x - dist; sellx <= stl_x + dist + evendist; sellx += 3)
+            for (sellx = slb_x - calc_distance_from_centre(width,0); sellx <= slb_x + calc_distance_from_centre(width,(width % 2 == 0)); sellx++)
             {
-                if (subtile_is_sellable_room(plyr_idx, sellx, selly))
+                if (subtile_is_sellable_room(plyr_idx, sellx * 3, selly * 3))
                 {
-                    player_sell_room_at_subtile(plyr_idx, sellx, selly);
+                    player_sell_room_at_subtile(plyr_idx, sellx * 3, selly * 3);
                 } else
                 // Trying to sell door
-                if (player_sell_door_at_subtile(plyr_idx, sellx, selly))
+                if (player_sell_door_at_subtile(plyr_idx, sellx * 3, selly * 3))
                 {
                 // Nothing to do here - door already sold
                 } else
                 // Trying to sell trap
-                if (player_sell_trap_at_subtile(plyr_idx, sellx, selly))
+                if (player_sell_trap_at_subtile(plyr_idx, sellx * 3, selly * 3))
                 {
                 // Nothing to do here - trap already sold
                 } else
