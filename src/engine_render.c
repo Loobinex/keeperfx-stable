@@ -1869,7 +1869,7 @@ int floor_height_for_volume_box(PlayerNumber plyr_idx, MapSlabCoord slb_x, MapSl
     struct SlabAttr* slbattr = get_slab_attrs(slb);
     if (!subtile_revealed(slab_subtile_center(slb_x), slab_subtile_center(slb_y), plyr_idx) || ((slbattr->block_flags & (SlbAtFlg_Filled|SlbAtFlg_Digable|SlbAtFlg_Valuable)) != 0))
     {
-        return temp_cluedo_mode < 1u ? 5 : 2;
+        return (temp_cluedo_mode == 0) ? 5 : 2; // return a height of 5 for a wall, or if cluedo mode (low walls mode) is enabled, return a wall height of 2.
     }
     if (slab_kind_is_liquid(slb->kind))
     {

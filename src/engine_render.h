@@ -437,7 +437,7 @@ DLLIMPORT int _DK_normal_shade_front;
 #define normal_shade_front _DK_normal_shade_front
 DLLIMPORT int _DK_normal_shade_back;
 #define normal_shade_back _DK_normal_shade_back
-DLLIMPORT unsigned char _DK_temp_cluedo_mode;
+DLLIMPORT unsigned char _DK_temp_cluedo_mode; // This is true(1) if the "short wall" have been enabled in the graphics options
 #define temp_cluedo_mode _DK_temp_cluedo_mode
 DLLIMPORT long _DK_me_distance;
 #define me_distance _DK_me_distance
