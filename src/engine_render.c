@@ -2081,13 +2081,19 @@ void create_map_volume_box(long x, long y, long z)
     box_xe = map_volume_box.end_x - x;
 
     if ( temp_cluedo_mode )
+    {
         box_ze = 2*COORD_PER_STL - z;
+    }
     else
+    {
         box_ze = 5*COORD_PER_STL - z;
+    }
 
     box_zs = (map_volume_box.floor_height_z << 8) - z;
     if ( box_zs >= box_ze )
+    {
       box_zs = box_ze;
+    }
 
     if ( box_xe < box_xs )
     {
@@ -2140,13 +2146,19 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
     box_xe = map_volume_box.end_x - x;
 
     if ( temp_cluedo_mode )
+    {
         box_ze = 2*COORD_PER_STL - z;
+    }
     else
+    {
         box_ze = 5*COORD_PER_STL - z;
+    }
 
     box_zs = 256 - z;
     if ( box_zs >= box_ze )
+    {
       box_zs = box_ze;
+    }
 
     if ( box_xe < box_xs )
     {
