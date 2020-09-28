@@ -1873,9 +1873,9 @@ int floor_height_for_volume_box(PlayerNumber plyr_idx, MapSlabCoord slb_x, MapSl
     }
     if (slab_kind_is_liquid(slb->kind))
     {
-        return 0;
+        return 0; // Water/Lava is at height 0
     }
-    return 1;
+    return 1; // Floor is at height 1
 }
 
 static void create_line_element(long a1, long a2, long a3, long a4, long bckt_idx, TbPixel color)
@@ -2085,7 +2085,7 @@ void create_map_volume_box(long x, long y, long z)
     else
         box_ze = 5*COORD_PER_STL - z;
 
-    box_zs = (map_volume_box.floor_offset << 8) - z;
+    box_zs = (map_volume_box.floor_height_z << 8) - z;
     if ( box_zs >= box_ze )
       box_zs = box_ze;
 
@@ -3091,14 +3091,14 @@ void do_a_plane_of_engine_columns_isometric(long stl_x, long stl_y, long plane_s
     }
 }
 
-void draw_map_volume_box(long cor1_x, long cor1_y, long cor2_x, long cor2_y, long floor_offset, unsigned char color)
+void draw_map_volume_box(long cor1_x, long cor1_y, long cor2_x, long cor2_y, long floor_height_z, unsigned char color)
 {
     map_volume_box.visible = 1;
     map_volume_box.beg_x = cor1_x & 0xFFFF00;
     map_volume_box.beg_y = cor1_y & 0xFF00;
     map_volume_box.end_x = cor2_x & 0xFFFF00;
     map_volume_box.end_y = cor2_y & 0xFFFF00;
-    map_volume_box.floor_offset = floor_offset;
+    map_volume_box.floor_height_z = floor_height_z;
     map_volume_box.color = color;
 }
 
@@ -6206,7 +6206,7 @@ void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width
     // (it is usually the same as the depth (a single slab, but for single subtile selection, this will be the width/height of a subtile)
     // _depth_ is "how far in to the screen" the box goes - it will be the width/height of a slab
     // (it should be triple the size of stl_width if we are working with a single subtile (so that it is the height of a slab))
-    long breadth = ((5 - map_volume_box.floor_offset) * ((long)stl_width << 7) / 256);
+    long breadth = ((5 - map_volume_box.floor_height_z) * ((long)stl_width << 7) / 256);
     long depth = breadth * (single_subtile == true ? STL_PER_SLB : 1);
     struct Coord3d pos;
     long coord_x;
@@ -6257,8 +6257,8 @@ void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width
 void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Camera *cam, unsigned char stl_width)
 {
     unsigned char orient = ((unsigned int)(cam->orient_a + LbFPMath_PI/4) >> 9) & 0x03;
-    int floor_offset = (map_volume_box.floor_offset == 0) ? 1 : map_volume_box.floor_offset; // ignore "liquid height", and force it to "floor height". All fancy rooms are on the ground, and this ensures the boundboxes are drawn correctly. A different solutino will be required if this function is used to draw fancy rooms over "liquid".
-    long depth = ((5 - floor_offset) * ((long)stl_width << 7) / 256);
+    int floor_height_z = (map_volume_box.floor_height_z == 0) ? 1 : map_volume_box.floor_height_z; // ignore "liquid height", and force it to "floor height". All fancy rooms are on the ground, and this ensures the boundboxes are drawn correctly. A different solutino will be required if this function is used to draw fancy rooms over "liquid".
+    long depth = ((5 - floor_height_z) * ((long)stl_width << 7) / 256);
     struct Coord3d pos;
     long coord_x;
     long coord_y;

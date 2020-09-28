@@ -3849,9 +3849,9 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     MapSlabCoord slb_y = subtile_slab_fast(stl_y);
     struct SlabMap *slb;
     slb = get_slabmap_block(slb_x, slb_y);
-    int floor_offset = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
+    int floor_height_z = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
     TbBool allowed = false;
-    if (floor_offset == 1)
+    if (floor_height_z == 1)
     {
         if ( ( ((subtile_is_sellable_room(plyr_idx, stl_x, stl_y)) || ( (slabmap_owner(slb) == plyr_idx) && ( (slab_is_door(slb_x, slb_y))
             || (single_subtile ? (subtile_has_trap_on(stl_x, stl_y)) : (slab_has_trap_on(slb_x, slb_y))) ) ) ) )
@@ -3868,7 +3868,7 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
         map_volume_box.beg_y = single_subtile ? (subtile_coord(stl_y,0)) : (subtile_coord(slab_subtile(slb_y, 0) - (calc_distance_from_centre(height, 0) * 3), 0));
         map_volume_box.end_x = single_subtile ? (subtile_coord(stl_x + 1,0)) : (subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_centre(width, (width % 2 == 0)) * 3), 0));
         map_volume_box.end_y = single_subtile ? (subtile_coord(stl_y + 1,0)) : (subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_centre(height,(height % 2 == 0)) * 3), 0));
-        map_volume_box.floor_offset = floor_offset;
+        map_volume_box.floor_height_z = floor_height_z;
         map_volume_box.field_17 = max(width, height);
     }
     return allowed;
@@ -3900,8 +3900,8 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     TbBool allowed = false;
     char Orientation;
     TbBool Check = false;
-    int floor_offset = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
-    if (floor_offset == 1)
+    int floor_height_z = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
+    if (floor_height_z == 1)
     {
         Orientation = find_door_angle(stl_x, stl_y, plyr_idx);
         if (gameadd.place_traps_on_subtiles)
@@ -3935,7 +3935,7 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0), 0);
         map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3), 0);
         map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3), 0);
-        map_volume_box.floor_offset = floor_offset;
+        map_volume_box.floor_height_z = floor_height_z;
         map_volume_box.color = allowed;
     }
     return allowed;
@@ -3953,7 +3953,7 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     slb = get_slabmap_block(slb_x, slb_y);
     struct PlayerInfo *player;
     player = get_player(plyr_idx);
-    int floor_offset = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
+    int floor_height_z = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
     TbBool allowed;
     allowed = false;
     //if (can_build_room_at_slab(plyr_idx, player->chosen_room_kind, slb_x, slb_y)) {
@@ -4001,7 +4001,7 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0) - (calc_distance_from_centre(height, 0) * 3), 0);
         map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_centre(width, (width % 2 == 0)) * 3), 0);
         map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_centre(height,(height % 2 == 0)) * 3), 0);
-        map_volume_box.floor_offset = floor_offset;
+        map_volume_box.floor_height_z = floor_height_z;
         map_volume_box.field_17 = max(width, height);
     }
     return allowed;
