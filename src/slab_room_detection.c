@@ -383,7 +383,7 @@ void find_composite_room(struct RoomQuery *room_query)
     if (new_room_query.isCorridor) //  if the "best room" is a corridor, then grab the best AxA room in the corridor.
     {
         new_room_query.moneyLeft = room_query->moneyLeft;
-        new_room_query.maxRoomWidth = min(new_room_query.best_corridor.width, new_room_query.best_corridor.height);
+        new_room_query.maxRoomWidth = min(room_query->maxRoomWidth, min(new_room_query.best_corridor.width, new_room_query.best_corridor.height)); // don't use a width/height > room_query->maxRoomWidth anything bigger will not be a valid room (i.e it will be another corridor, we want a room in the corridor)
         new_room_query.minRoomHeight = new_room_query.minRoomWidth = new_room_query.maxRoomWidth;
         new_room_query.minimumRatio = 1.0;
         new_room_query.isCorridor = false;
