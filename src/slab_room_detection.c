@@ -137,7 +137,7 @@ void test_rooms_from_biggest_to_smallest(struct RoomQuery *room_query)
                 else if (((min(w,h) * 1.0) / (max(w,h) * 1.0)) >= minimumRatio)
                 { 
                     TbBool isCorridorHorizontal = (best_corridor.width >= best_corridor.height);
-                    TbBool isInCorridor = isCorridorHorizontal ? (topExtent == best_corridor.top && bottomExtent == best_corridor.bottom) : (leftExtent == best_corridor.left && rightExtent == best_corridor.right);
+                    TbBool isInCorridor = isCorridorHorizontal ? (topExtent >= best_corridor.top && bottomExtent <= best_corridor.bottom) : (leftExtent >= best_corridor.left && rightExtent <= best_corridor.right);
                     if (!isInCorridor || !findCorridors)
                     {
                         // this is a room
@@ -336,7 +336,6 @@ void find_composite_room(struct RoomQuery *room_query)
             // add new subroom to meta room
             if (new_room_query.foundRoom)
             {
-                
                 if (!(meta_room.best_room.slabCount == new_room_query.best_room.slabCount && meta_room.best_room.width == new_room_query.best_room.width && meta_room.best_room.height == new_room_query.best_room.height))
                 {
                     add_to_composite_room(&new_room_query, &meta_room);
@@ -378,7 +377,6 @@ void find_composite_room(struct RoomQuery *room_query)
             }
         }
     } while(((mode & 32) == 32) && (bestRoomsCount < subRoomCheckCount)); // loop again, if in mode 32, for the extra room checks
-
     // if the "best room" is a corridor, then grab the best AxA room in the corridor.
     if (new_room_query.isCorridor) //  if the "best room" is a corridor, then grab the best AxA room in the corridor.
     {
