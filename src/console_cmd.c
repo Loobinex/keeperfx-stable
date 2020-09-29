@@ -926,6 +926,20 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 return true;
             }                
         }
+        else if (strcmp(parstr, "column.get") == 0)
+        {
+            player = get_player(plyr_idx);
+            pckt = get_packet_direct(player->packet_num);
+            MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+            MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+            struct Map *mapblk = get_map_block_at(stl_x, stl_y);
+            if (!map_block_invalid(mapblk))
+            {
+                message_add_fmt(plyr_idx, "Column index: %d", get_mapblk_column_index(mapblk));
+                return true;
+            }
+            return false;            
+        }
         else if ( (strcmp(parstr, "creature.pool") == 0) || (strcmp(parstr, "creature.inby") == 0) )
         {
             message_add_fmt(plyr_idx, "%d in pool", game.pool.crtr_kind[atoi(pr2str)]);
