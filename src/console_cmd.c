@@ -39,6 +39,7 @@
 #include "gui_soundmsgs.h"
 #include "keeperfx.hpp"
 #include "map_blocks.h"
+#include "map_columns.h"
 #include "map_utils.h"
 #include "math.h"
 #include "music_player.h"
@@ -939,6 +940,20 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 return true;
             }
             return false;            
+        }
+        else if (strcmp(parstr, "cube.get") == 0)
+        {
+            player = get_player(plyr_idx);
+            pckt = get_packet_direct(player->packet_num);
+            MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+            MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+            if (!subtile_coords_invalid(stl_x, stl_y))
+            {
+                long cube_id = get_top_cube_at(stl_x, stl_y, NULL);
+                message_add_fmt(plyr_idx, "Cube ID: %d", cube_id);
+                return true;
+            }
+            return false;
         }
         else if ( (strcmp(parstr, "creature.pool") == 0) || (strcmp(parstr, "creature.inby") == 0) )
         {
