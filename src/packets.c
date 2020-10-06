@@ -398,6 +398,56 @@ TbBool player_sell_room_at_subtile(long plyr_idx, long stl_x, long stl_y)
     return true;
 }
 
+int numpad_to_value(TbBool allow_zero)
+{
+    int value = 0;
+    if (!allow_zero)
+    {
+        value = 1;
+    }
+    if (is_key_pressed(KC_NUMPAD0, KMod_DONTCARE) && allow_zero)
+    {
+        value = 0;
+    }
+    else if (is_key_pressed(KC_NUMPAD1, KMod_DONTCARE))
+    {
+        value = 1;
+    }
+    else if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
+    {
+        value = 2;
+    }
+    else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
+    {
+        value = 3;
+    }
+    else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
+    {
+        value =4;
+    }
+    else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
+    {
+        value = 5;
+    }
+    else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
+    {
+        value = 6;
+    }
+    else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
+    {
+        value = 7;
+    }
+    else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
+    {
+        value = 8;
+    }
+    else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
+    {
+        value = 9;
+    }
+    return value;
+}
+
 TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
 {
     struct PlayerInfo* player = get_player(plyr_idx);
@@ -423,38 +473,7 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
     MapSubtlCoord selly;
     if (is_my_player(player))
     {
-        if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
-        {
-            width = height = 2;
-        }
-        else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
-        {
-            width = height = 3;
-        }
-        else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
-        {
-            width = height = 4;
-        }
-        else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
-        {
-            width = height = 5;
-        }
-        else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
-        {
-            width = height = 6;
-        }
-        else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
-        {
-            width = height = 7;
-        }
-        else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
-        {
-            width = height = 8;
-        }
-        else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
-        {
-            width = height = 9;
-        }
+        width = height = numpad_to_value(false);
         if (!game_is_busy_doing_gui())
         {
             render_room.isRoomABox = true; //temp fix whilst selling does not support auto-placement
@@ -611,9 +630,12 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapSubtlCoord stl_y = coord_subtile(y);
     MapSlabCoord slb_x = subtile_slab(stl_x);
     MapSlabCoord slb_y = subtile_slab(stl_y);
-    int width = 1, height = 1;
-    int paintMode = 0;
-    int mode = -1; // (default) do not use room auto-detect mode
+    int width = 1, height = 1; // 1x1 slabs
+    // Modes:
+    // 0 - fixed width/height
+    // 1 - fixed 1x1 room, can hold left click to paint
+    // 2 - find biggest/best room under cursor
+    int mode = 0;
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
       if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -631,10 +653,9 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     if  (player->chosen_room_kind == RoK_BRIDGE)
     {
         reset_dungeon_build_room_ui_variables();
-        width = height = 1; // only place bridges one slab at a time
         if ((is_key_pressed(KC_LSHIFT, KMod_DONTCARE) || is_key_pressed(KC_LCONTROL, KMod_DONTCARE))  && ((pckt->control_flags & PCtr_LBtnHeld) == PCtr_LBtnHeld)) // Enable "paint mode" if Ctrl or Shift are held
         {
-            paintMode = 4;
+            mode = 1;
         }
     }
     else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find "best" room
@@ -650,11 +671,6 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
             {
                 room_slab_tolerance = 9;
             }
-            /*if (room_slab_tolerance != 9)
-            {
-                room_slab_tolerance++;
-            }
-            show_onscreen_msg(game.num_fps, "Current Room Building slab tolerance is: %d", room_slab_tolerance);*/
         }
         if (wheel_scrolled_up)
         {
@@ -666,17 +682,11 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
             {
                 room_slab_tolerance = 0;
             }
-            /*if (room_slab_tolerance != 0)
-            {
-                room_slab_tolerance--;
-            }
-            show_onscreen_msg(game.num_fps, "Current Room Building slab tolerance is: %d", room_slab_tolerance);*/
         }
-        mode = (0 | 0 | 32);
+        mode = 2;
     }
     else if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Define square room (mouse scroll-wheel changes size - default is 5x5)
     {
-        //mode = (2 | 16 | 32);
         if (wheel_scrolled_down)
         {
             if (user_defined_room_width != MAX_USER_ROOM_WIDTH)
@@ -696,47 +706,15 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     else
     {
         reset_dungeon_build_room_ui_variables();
-        if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
-        {
-            width = height = 2;
-        }
-        else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
-        {
-            width = height = 3;
-        }
-        else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
-        {
-            width = height = 4;
-        }
-        else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
-        {
-            width = height = 5;
-        }
-        else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
-        {
-            width = height = 6;
-        }
-        else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
-        {
-            width = height = 7;
-        }
-        else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
-        {
-            width = height = 8;
-            
-        }
-        else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
-        {
-            width = height = 9;
-        }
+        width = height = numpad_to_value(false);
     }
 
     struct RoomMap best_room;
     best_room.isRoomABox = true;
     struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
-    if (mode != -1) // room auto-detection mode
+    if (mode == 2) // room auto-detection mode
     {
-        best_room = get_biggest_room(plyr_idx, player->chosen_room_kind, slb_x, slb_y, rstat->cost, 0, mode, room_slab_tolerance);
+        best_room = get_biggest_room(plyr_idx, player->chosen_room_kind, slb_x, slb_y, rstat->cost, 0, 32, room_slab_tolerance);
         width = best_room.width;
         height = best_room.height;
         slb_x = best_room.centreX;
@@ -761,13 +739,12 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
             width = height = 1;
             best_room.slabCount = 1;
         }
-        show_onscreen_msg(game.num_fps, "Current Room: %d", room_corresponding_slab(player->chosen_room_kind));
         player->boxsize = best_room.slabCount; // correct number of tiles returned from check_slabs_in_room
     }
     render_room = best_room; // make sure we can render the correct boundbox to the user
     long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
     
-    if (paintMode == 0) // allows the user to hold the left mouse to use "paint mode"
+    if (mode != 1) // allows the user to hold the left mouse to use "paint mode"
     {
         if ((pckt->control_flags & PCtr_LBtnClick) == 0)
         {

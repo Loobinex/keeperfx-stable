@@ -3956,11 +3956,6 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     int floor_height_z = floor_height_for_volume_box(plyr_idx, slb_x, slb_y);
     TbBool allowed;
     allowed = false;
-    //if (can_build_room_at_slab(plyr_idx, player->chosen_room_kind, slb_x, slb_y)) {
-    //    allowed = true;
-    //} else {
-    //    SYNCDBG(7,"Cannot build %s on slab (%d,%d)",slab_code_name(slb->kind),room_code_name(player->chosen_room_kind),(int)slb_x,(int)slb_y);
-    //}
     int roomslabs = width * height;
     int canbuild = 0;
     if (render_room.isRoomABox)
