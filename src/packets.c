@@ -663,9 +663,9 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         // room_slab_tolerance is now an "extra modes" flag variable - this enables extra "layers" of things to ignore
         if (wheel_scrolled_down)
         {
-            if (room_slab_tolerance < 6 && room_slab_tolerance >=0)
+            if (room_slab_tolerance < 5 && room_slab_tolerance >=0)
             {
-                room_slab_tolerance = 6;
+                room_slab_tolerance = 5;
             }
             else if (room_slab_tolerance != 9)
             {
@@ -676,7 +676,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
         {
             if (room_slab_tolerance == 9)
             {
-                room_slab_tolerance = 6;
+                room_slab_tolerance = 5;
             }
             else if (room_slab_tolerance != 0)
             {
