@@ -961,7 +961,6 @@ void init_keeper(void)
     game.field_14EA2A = 256;
     game.field_14EA2C = 256;
     game.field_14EA2E = 256;
-    map_volume_box.field_17 = 1;
     if (game.generate_speed <= 0)
       game.generate_speed = game.default_generate_speed;
     poly_pool_end = &poly_pool[sizeof(poly_pool)-128];
@@ -3869,7 +3868,6 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
         map_volume_box.end_x = single_subtile ? (subtile_coord(stl_x + 1,0)) : (subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_roomspace_centre(width, (width % 2 == 0)) * 3), 0));
         map_volume_box.end_y = single_subtile ? (subtile_coord(stl_y + 1,0)) : (subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_roomspace_centre(height,(height % 2 == 0)) * 3), 0));
         map_volume_box.floor_height_z = floor_height_z;
-        map_volume_box.field_17 = max(width, height);
     }
     return allowed;
 }
@@ -3997,7 +3995,6 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_roomspace_centre(width, (width % 2 == 0)) * 3), 0);
         map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_roomspace_centre(height,(height % 2 == 0)) * 3), 0);
         map_volume_box.floor_height_z = floor_height_z;
-        map_volume_box.field_17 = max(width, height);
     }
     return allowed;
 }

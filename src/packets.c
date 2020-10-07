@@ -1089,7 +1089,6 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
     } else
     if ((pckt->control_flags & PCtr_RBtnRelease) == 0)
     {
-      map_volume_box.field_17 = 1;
       player->boxsize = 1;
       player->field_4D6 = 0;
     }
