@@ -51,7 +51,6 @@
 #include "config_settings.h"
 #include "config_terrain.h"
 #include "config_creature.h"
-#include "game_legacy.h"
 #include "keeperfx.hpp"
 #include "player_states.h"
 
@@ -140,7 +139,6 @@ unsigned char const height_masks[] = {
   8, 8, 8, 8, 8, 8, 8, 8,
 };
 
-struct RoomMap render_room = { {{false}}, 1, true, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
 static int water_wibble_angle = 0;
 //static unsigned char temp_cluedo_mode;
 static unsigned long render_problems;
@@ -2130,7 +2128,7 @@ void create_map_volume_box(long x, long y, long z)
     create_line_const_xz(box_xe, box_ze, box_ys, box_ye);
 }
 
-void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, long z)
+void create_accurate_map_volume_box(struct RoomSpace roomspace, long x, long y, long z)
 {
     long box_xs;
     long box_xe;
@@ -2178,21 +2176,21 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
         map_volume_box.end_y = i;
     }
 
-    for (int roomY = 0; roomY < room_map.height; roomY++)
+    for (int roomY = 0; roomY < roomspace.height; roomY++)
     {
-        for (int roomX = 0; roomX < room_map.width; roomX++)
+        for (int roomX = 0; roomX < roomspace.width; roomX++)
         {
-            TbBool partOfRoom = room_map.room_grid[roomX][roomY];
+            TbBool partOfRoom = roomspace.slab_grid[roomX][roomY];
             int boxXs = box_xs + (roomX * 3 * COORD_PER_STL);
             int boxYs = box_ys - (roomY * 3 * COORD_PER_STL);
             int boxXe = box_xs + ((roomX + 1) * 3 * COORD_PER_STL);
             int boxYe = box_ys - ((roomY + 1) * 3 * COORD_PER_STL);
             if (partOfRoom)
             {
-                TbBool airLeft = (roomX == 0) ? true : (room_map.room_grid[roomX-1][roomY] == false);
-                TbBool airRight = (roomX == room_map.width) ? true : (room_map.room_grid[roomX+1][roomY] == false);
-                TbBool airAbove = (roomY == 0) ? true : (room_map.room_grid[roomX][roomY-1] == false);
-                TbBool airBelow = (roomY == room_map.height) ? true : (room_map.room_grid[roomX][roomY+1] == false);
+                TbBool airLeft = (roomX == 0) ? true : (roomspace.slab_grid[roomX-1][roomY] == false);
+                TbBool airRight = (roomX == roomspace.width) ? true : (roomspace.slab_grid[roomX+1][roomY] == false);
+                TbBool airAbove = (roomY == 0) ? true : (roomspace.slab_grid[roomX][roomY-1] == false);
+                TbBool airBelow = (roomY == roomspace.height) ? true : (roomspace.slab_grid[roomX][roomY+1] == false);
                 if (airLeft)
                 {
                     // Draw top rectangle
@@ -2242,10 +2240,10 @@ void create_accurate_map_volume_box(struct RoomMap room_map, long x, long y, lon
             }
             else if (!partOfRoom) //this handles "inside corners"
             {
-                TbBool roomLeft = (roomX == 0) ? false : room_map.room_grid[roomX-1][roomY];
-                TbBool roomRight = (roomX == room_map.width) ? false : room_map.room_grid[roomX+1][roomY];
-                TbBool roomAbove = (roomY == 0) ? false : room_map.room_grid[roomX][roomY-1];
-                TbBool roomBelow = (roomY == room_map.height) ? false : room_map.room_grid[roomX][roomY+1];
+                TbBool roomLeft = (roomX == 0) ? false : roomspace.slab_grid[roomX-1][roomY];
+                TbBool roomRight = (roomX == roomspace.width) ? false : roomspace.slab_grid[roomX+1][roomY];
+                TbBool roomAbove = (roomY == 0) ? false : roomspace.slab_grid[roomX][roomY-1];
+                TbBool roomBelow = (roomY == roomspace.height) ? false : roomspace.slab_grid[roomX][roomY+1];
                 if (roomLeft)
                 {
                     // Vertical lines which connect the rectangles
@@ -4665,13 +4663,13 @@ void draw_view(struct Camera *cam, unsigned char a2)
     if (map_volume_box.visible)
     {
         poly_pool_end_reserve(0);
-        if (render_room.isRoomABox)
+        if (render_roomspace.is_roomspace_a_box)
         {
             create_map_volume_box(x, y, z);
         }
         else
         {
-            create_accurate_map_volume_box(render_room, x, y, z);
+            create_accurate_map_volume_box(render_roomspace, x, y, z);
         }
     }
     cam->zoom = zoom_mem;//TODO [zoom] remove when all cam->zoom will be changed to camera_zoom
@@ -6266,7 +6264,7 @@ void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width
     create_line_element(coord_x,             coord_y + breadth,            coord_x,             coord_y + box_height + depth, coord_z - box_height + stl_width, map_volume_box.color);
     create_line_element(coord_x + box_width, coord_y + breadth,            coord_x + box_width, coord_y + box_height + depth, coord_z - box_height + stl_width, map_volume_box.color);
 }
-void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Camera *cam, unsigned char stl_width)
+void create_accurate_frontview_map_volume_box(struct RoomSpace roomspace, struct Camera *cam, unsigned char stl_width)
 {
     unsigned char orient = ((unsigned int)(cam->orient_a + LbFPMath_PI/4) >> 9) & 0x03;
     int floor_height_z = (map_volume_box.floor_height_z == 0) ? 1 : map_volume_box.floor_height_z; // ignore "liquid height", and force it to "floor height". All fancy rooms are on the ground, and this ensures the boundboxes are drawn correctly. A different solution will be required if this function is used to draw fancy rooms over "liquid".
@@ -6289,15 +6287,15 @@ void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Ca
     box_height -= coord_y;
     box_width = abs(box_width);
     box_height = abs(box_height);
-    int room_slab_width = room_map.width;
-    int room_slab_height = room_map.height;
+    int room_slab_width = roomspace.width;
+    int room_slab_height = roomspace.height;
     if (orient % 2 == 1)
     {
-        room_slab_width = room_map.height;
-        room_slab_height = room_map.width;
+        room_slab_width = roomspace.height;
+        room_slab_height = roomspace.width;
     }
-    TbBool rotated_room[MAX_ROOM_WIDTH][MAX_ROOM_WIDTH];
-    memcpy(rotated_room,room_map.room_grid, sizeof(rotated_room));
+    TbBool rotated_roomspace[MAX_ROOMSPACE_WIDTH][MAX_ROOMSPACE_WIDTH];
+    memcpy(rotated_roomspace,roomspace.slab_grid, sizeof(rotated_roomspace));
     int i, j;
     switch ( orient )
     {
@@ -6305,11 +6303,11 @@ void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Ca
     case 1: // East
         coord_y -= box_height;
         coord_z += box_height;
-        for (i = 0; i < room_map.width; i++)
+        for (i = 0; i < roomspace.width; i++)
         {
-            for (j = 0; j < room_map.height; j++)
+            for (j = 0; j < roomspace.height; j++)
             {
-                rotated_room[j][i] = room_map.room_grid[room_map.width - 1 - i][j];
+                rotated_roomspace[j][i] = roomspace.slab_grid[roomspace.width - 1 - i][j];
             }
         }
         break;
@@ -6317,21 +6315,21 @@ void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Ca
         coord_x -= box_width;
         coord_y -= box_height;
         coord_z += box_height;
-        for (i = 0; i < room_map.width; i++)
+        for (i = 0; i < roomspace.width; i++)
         {
-            for (j = 0; j < room_map.height; j++)
+            for (j = 0; j < roomspace.height; j++)
             {
-                rotated_room[i][j]  = room_map.room_grid[room_map.width - 1 - i][room_map.height - 1 - j];
+                rotated_roomspace[i][j]  = roomspace.slab_grid[roomspace.width - 1 - i][roomspace.height - 1 - j];
             }
         }
         break;
     case 3: // West
         coord_x -= box_width;
-        for (i = 0; i < room_map.width; i++)
+        for (i = 0; i < roomspace.width; i++)
         {
-            for (j = 0; j < room_map.height; j++)
+            for (j = 0; j < roomspace.height; j++)
             {
-                rotated_room[j][i] = room_map.room_grid[i][room_map.height - 1 - j];
+                rotated_roomspace[j][i] = roomspace.slab_grid[i][roomspace.height - 1 - j];
             }
         }
         break;
@@ -6346,13 +6344,13 @@ void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Ca
         {
             int x_start = (box_width * roomX       / room_slab_width) + ((((box_width * roomX)       % room_slab_width) >= room_slab_width) ? 1 : 0);
             int x_end =   (box_width * (roomX + 1) / room_slab_width) + ((((box_width * (roomX + 1)) % room_slab_width) >= room_slab_width) ? 1 : 0);
-            TbBool partOfRoom = rotated_room[roomX][roomY];
+            TbBool partOfRoom = rotated_roomspace[roomX][roomY];
             if (partOfRoom)
             {
-                TbBool airLeft =  (roomX == 0)                    ? true : (rotated_room[roomX-1][roomY] == false);
-                TbBool airRight = (roomX == room_slab_width - 1)  ? true : (rotated_room[roomX+1][roomY] == false);
-                TbBool airAbove = (roomY == 0)                    ? true : (rotated_room[roomX][roomY-1] == false);
-                TbBool airBelow = (roomY == room_slab_height - 1) ? true : (rotated_room[roomX][roomY+1] == false);
+                TbBool airLeft =  (roomX == 0)                    ? true : (rotated_roomspace[roomX-1][roomY] == false);
+                TbBool airRight = (roomX == room_slab_width - 1)  ? true : (rotated_roomspace[roomX+1][roomY] == false);
+                TbBool airAbove = (roomY == 0)                    ? true : (rotated_roomspace[roomX][roomY-1] == false);
+                TbBool airBelow = (roomY == room_slab_height - 1) ? true : (rotated_roomspace[roomX][roomY+1] == false);
                 if (airLeft)
                 {
                     create_line_element(    coord_x + x_start, coord_y + y_start,         coord_x + x_start, coord_y + y_end,           bckt_idx,             map_volume_box.color);
@@ -6382,10 +6380,10 @@ void create_accurate_frontview_map_volume_box(struct RoomMap room_map, struct Ca
             }
             else if (!partOfRoom) //this handles "inside corners"
             {
-                TbBool roomLeft =  (roomX == 0)                    ? false : rotated_room[roomX-1][roomY];
-                TbBool roomRight = (roomX == room_slab_width - 1)  ? false : rotated_room[roomX+1][roomY];
-                TbBool roomAbove = (roomY == 0)                    ? false : rotated_room[roomX][roomY-1];
-                TbBool roomBelow = (roomY == room_slab_height - 1) ? false : rotated_room[roomX][roomY+1];
+                TbBool roomLeft =  (roomX == 0)                    ? false : rotated_roomspace[roomX-1][roomY];
+                TbBool roomRight = (roomX == room_slab_width - 1)  ? false : rotated_roomspace[roomX+1][roomY];
+                TbBool roomAbove = (roomY == 0)                    ? false : rotated_roomspace[roomX][roomY-1];
+                TbBool roomBelow = (roomY == room_slab_height - 1) ? false : rotated_roomspace[roomX][roomY+1];
                 if (roomLeft)
                 {
                     if (roomBelow)
@@ -6727,7 +6725,7 @@ void draw_frontview_engine(struct Camera *cam)
     {
         TbBool single_subtile_mode = false;
         BoxWidth = (zoom >> 8) & 0xFF;
-        if (render_room.isRoomABox)
+        if (render_roomspace.is_roomspace_a_box)
         {
             if ( ( (gameadd.place_traps_on_subtiles) && ((player->work_state == PSt_PlaceTrap) && (player->chosen_trap_kind != TngTrp_Boulder)) ) || ((player->work_state == PSt_Sell) && (is_key_pressed(KC_LSHIFT, KMod_DONTCARE))) )
             {
@@ -6739,7 +6737,7 @@ void draw_frontview_engine(struct Camera *cam)
         }
         else
         {
-            create_accurate_frontview_map_volume_box(render_room, cam, BoxWidth);
+            create_accurate_frontview_map_volume_box(render_roomspace, cam, BoxWidth);
         }
     }
     map_volume_box.visible = 0;

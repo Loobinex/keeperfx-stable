@@ -3864,10 +3864,10 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
     {
         map_volume_box.visible = 1;
         map_volume_box.color = allowed;
-        map_volume_box.beg_x = single_subtile ? (subtile_coord(stl_x,0)) : (subtile_coord(slab_subtile(slb_x, 0) - (calc_distance_from_centre(width, 0) * 3), 0));
-        map_volume_box.beg_y = single_subtile ? (subtile_coord(stl_y,0)) : (subtile_coord(slab_subtile(slb_y, 0) - (calc_distance_from_centre(height, 0) * 3), 0));
-        map_volume_box.end_x = single_subtile ? (subtile_coord(stl_x + 1,0)) : (subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_centre(width, (width % 2 == 0)) * 3), 0));
-        map_volume_box.end_y = single_subtile ? (subtile_coord(stl_y + 1,0)) : (subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_centre(height,(height % 2 == 0)) * 3), 0));
+        map_volume_box.beg_x = single_subtile ? (subtile_coord(stl_x,0)) : (subtile_coord(slab_subtile(slb_x, 0) - (calc_distance_from_roomspace_centre(width, 0) * 3), 0));
+        map_volume_box.beg_y = single_subtile ? (subtile_coord(stl_y,0)) : (subtile_coord(slab_subtile(slb_y, 0) - (calc_distance_from_roomspace_centre(height, 0) * 3), 0));
+        map_volume_box.end_x = single_subtile ? (subtile_coord(stl_x + 1,0)) : (subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_roomspace_centre(width, (width % 2 == 0)) * 3), 0));
+        map_volume_box.end_y = single_subtile ? (subtile_coord(stl_y + 1,0)) : (subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_roomspace_centre(height,(height % 2 == 0)) * 3), 0));
         map_volume_box.floor_height_z = floor_height_z;
         map_volume_box.field_17 = max(width, height);
     }
@@ -3958,14 +3958,14 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     allowed = false;
     int roomslabs = width * height;
     int canbuild = 0;
-    if (render_room.isRoomABox)
+    if (render_roomspace.is_roomspace_a_box)
     {
-        canbuild = can_build_room_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, true);
+        canbuild = can_build_roomspace_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, true);
     }
     else
     {
-        canbuild = can_build_fancy_room(plyr_idx, player->chosen_room_kind, render_room);
-        roomslabs = render_room.slabCount;
+        canbuild = can_build_fancy_roomspace(plyr_idx, player->chosen_room_kind, render_roomspace);
+        roomslabs = render_roomspace.slab_count;
     }
     int color = 0;
     if (canbuild > 0)
@@ -3992,10 +3992,10 @@ TbBool tag_cursor_blocks_place_room(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     {
         map_volume_box.visible = 1;
         map_volume_box.color = color;
-        map_volume_box.beg_x = subtile_coord(slab_subtile(slb_x, 0) - (calc_distance_from_centre(width, 0) * 3), 0);
-        map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0) - (calc_distance_from_centre(height, 0) * 3), 0);
-        map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_centre(width, (width % 2 == 0)) * 3), 0);
-        map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_centre(height,(height % 2 == 0)) * 3), 0);
+        map_volume_box.beg_x = subtile_coord(slab_subtile(slb_x, 0) - (calc_distance_from_roomspace_centre(width, 0) * 3), 0);
+        map_volume_box.beg_y = subtile_coord(slab_subtile(slb_y, 0) - (calc_distance_from_roomspace_centre(height, 0) * 3), 0);
+        map_volume_box.end_x = subtile_coord(slab_subtile(slb_x, 3*a4) + (calc_distance_from_roomspace_centre(width, (width % 2 == 0)) * 3), 0);
+        map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3*a4) + (calc_distance_from_roomspace_centre(height,(height % 2 == 0)) * 3), 0);
         map_volume_box.floor_height_z = floor_height_z;
         map_volume_box.field_17 = max(width, height);
     }

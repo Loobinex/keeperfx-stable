@@ -104,29 +104,6 @@ struct SlabObj { // sizeof = 13
 
 #pragma pack()
 /******************************************************************************/
-// RoomMap describes a "room" - i.e. a collection of slabs that are a valid 
-// location from the currently selected room type (when placing rooms).
-// The 2D array of booleans, room_grid[][] describes each of the slabs within 
-// the room's extents. A value of 1 indicates a slab that is part of the "room", 
-// a value of 0 indicates a slab that is not part of the "room".
-#define MAX_ROOM_WIDTH         20
-struct RoomMap {
-    TbBool room_grid[MAX_ROOM_WIDTH][MAX_ROOM_WIDTH];
-    int slabCount;
-    TbBool isRoomABox;
-    int width;
-    int height;
-    MapSlabCoord left;
-    MapSlabCoord top;
-    MapSlabCoord right;
-    MapSlabCoord bottom;
-    MapSlabCoord centreX;
-    MapSlabCoord centreY;
-    int totalRoomCost;
-    int invalidBlocksCount;
-};
-#include "slab_room_detection.h"
-/******************************************************************************/
 #define INVALID_SLABMAP_BLOCK (&bad_slabmap_block)
 #define AROUND_SLAB_LENGTH 9
 extern const short around_slab[];
@@ -162,23 +139,11 @@ TbBool slab_is_wall(MapSlabCoord slb_x, MapSlabCoord slb_y);
 TbBool can_build_room_at_slab(PlayerNumber plyr_idx, RoomKind rkind,
     MapSlabCoord slb_x, MapSlabCoord slb_y);
 
-int can_build_room_of_radius(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord slb_x, MapSlabCoord slb_y, int radius, TbBool even);
+TbBool can_build_room_at_slab_fast(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord slb_x, MapSlabCoord slb_y);
 
-int calc_distance_from_centre(int totalDistance, TbBool offset);
-
-struct RoomMap create_box_room(struct RoomMap room, int width, int height, int centre_x, int centre_y);
-
-int can_build_room_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height, TbBool full_check);
-    
-int can_build_fancy_room(PlayerNumber plyr_idx, RoomKind rkind, struct RoomMap room);
-
-struct RoomMap check_slabs_in_room(struct RoomMap room, PlayerNumber plyr_idx, RoomKind rkind, short slabCost);
-TbBool can_build_room_at_slab_fast(PlayerNumber plyr_idx, RoomKind rkind, MapSlabCoord slb_x, MapSlabCoord slb_y);
-int check_room_at_slab_loose(PlayerNumber plyr_idx, RoomKind rkind, MapSlabCoord slb_x, MapSlabCoord slb_y, int looseness);
-int can_build_room_of_dimensions_loose(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height, int *invalid_blocks, int room_discovery_looseness);
+int check_room_at_slab_loose(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSlabCoord slb_x, MapSlabCoord slb_y, int looseness);
 
 void clear_slabs(void);
 void reveal_whole_map(struct PlayerInfo *player);
@@ -189,6 +154,8 @@ void copy_block_with_cube_groups(short itm_idx, MapSubtlCoord stl_x, MapSubtlCoo
 void do_slab_efficiency_alteration(MapSlabCoord slb_x, MapSlabCoord slb_y);
 void do_unprettying(PlayerNumber plyr_idx, MapSlabCoord slb_x, MapSlabCoord slb_y);
 
+/******************************************************************************/
+#include "roomspace.h"
 /******************************************************************************/
 #ifdef __cplusplus
 }
