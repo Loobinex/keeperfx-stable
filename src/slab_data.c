@@ -30,7 +30,7 @@
 #include "game_legacy.h"
 #include "creature_states.h"
 #include "map_data.h"
-#include "gui_topmsg.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
