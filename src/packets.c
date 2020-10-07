@@ -83,7 +83,6 @@
 #include "net_sync.h"
 #include "game_legacy.h"
 #include "engine_redraw.h"
-#include "engine_render.h"
 #include "frontmenu_ingame_tabs.h"
 #include "vidfade.h"
 
