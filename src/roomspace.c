@@ -171,6 +171,21 @@ struct RoomSpace check_slabs_in_roomspace(struct RoomSpace roomspace, PlayerNumb
     }
     return roomspace;
 }
+
+int can_build_roomspace(PlayerNumber plyr_idx, RoomKind rkind, struct RoomSpace roomspace)
+{
+    int canbuild = 0;
+    if (roomspace.is_roomspace_a_box)
+    {
+        canbuild = can_build_roomspace_of_dimensions(plyr_idx, rkind, roomspace.centreX, roomspace.centreY, roomspace.width, roomspace.height, true);
+    }
+    else
+    {
+        canbuild = can_build_fancy_roomspace(plyr_idx, rkind, roomspace);
+    }
+    return canbuild;
+}
+
 /******************************************************************************/
 #ifdef __cplusplus
 }

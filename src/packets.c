@@ -470,8 +470,8 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
         width = height = numpad_to_value(false);
         if (!game_is_busy_doing_gui())
         {
-            render_roomspace.is_roomspace_a_box = true; //temp fix whilst selling does not support auto-placement
-            tag_cursor_blocks_sell_area(player->id_number, stl_x, stl_y, player->field_4A4, (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)), width, height);
+            render_roomspace = create_box_roomspace(render_roomspace, width, height, slb_x, slb_y);
+            tag_cursor_blocks_sell_area(player->id_number, stl_x, stl_y, player->field_4A4, (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)));
         }
     }
     if ((pckt->control_flags & PCtr_LBtnClick) == 0)
@@ -714,6 +714,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     else if (width == 1 && height == 1)
     {
         player->boxsize = can_build_roomspace_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, true); //number of slabs to build, corrected for blocked tiles
+        best_roomspace = create_box_roomspace(best_roomspace, width, height, slb_x, slb_y);
     }
     else
     {
@@ -733,7 +734,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     render_roomspace = best_roomspace; // make sure we can render the correct boundbox to the user
     // RoomSpace stuff ends
-    long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4, width, height);
+    long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4);
     
     if (mode != drag_placement_mode) // allows the user to hold the left mouse to use "paint mode"
     {

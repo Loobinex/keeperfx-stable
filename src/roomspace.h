@@ -97,6 +97,8 @@ struct RoomSpace check_slabs_in_roomspace(struct RoomSpace roomspace, PlayerNumb
 int can_build_roomspace_of_dimensions_loose(PlayerNumber plyr_idx, RoomKind rkind,
     MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height,
     int *invalid_blocks, int roomspace_discovery_looseness);
+
+int can_build_roomspace(PlayerNumber plyr_idx, RoomKind rkind, struct RoomSpace roomspace);
 /******************************************************************************/
 #include "roomspace_detection.h"
 /******************************************************************************/
