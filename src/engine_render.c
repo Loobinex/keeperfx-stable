@@ -6381,7 +6381,6 @@ void create_fancy_frontview_map_volume_box(struct RoomSpace roomspace, struct Ca
             {
                 TbBool room_left =  (roomspace_x == 0)                    ? false : rotated_roomspace[roomspace_x-1][roomspace_y];
                 TbBool room_right = (roomspace_x == room_slab_width - 1)  ? false : rotated_roomspace[roomspace_x+1][roomspace_y];
-                TbBool room_above = (roomspace_y == 0)                    ? false : rotated_roomspace[roomspace_x][roomspace_y-1];
                 TbBool room_below = (roomspace_y == room_slab_height - 1) ? false : rotated_roomspace[roomspace_x][roomspace_y+1];
                 if (room_left)
                 {
