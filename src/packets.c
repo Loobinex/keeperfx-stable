@@ -391,61 +391,10 @@ TbBool player_sell_room_at_subtile(long plyr_idx, long stl_x, long stl_y)
     return true;
 }
 
-int numpad_to_value(TbBool allow_zero)
-{
-    int value = 0;
-    if (!allow_zero)
-    {
-        value = 1;
-    }
-    if (is_key_pressed(KC_NUMPAD0, KMod_DONTCARE) && allow_zero)
-    {
-        value = 0;
-    }
-    else if (is_key_pressed(KC_NUMPAD1, KMod_DONTCARE))
-    {
-        value = 1;
-    }
-    else if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
-    {
-        value = 2;
-    }
-    else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
-    {
-        value = 3;
-    }
-    else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
-    {
-        value =4;
-    }
-    else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
-    {
-        value = 5;
-    }
-    else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
-    {
-        value = 6;
-    }
-    else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
-    {
-        value = 7;
-    }
-    else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
-    {
-        value = 8;
-    }
-    else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
-    {
-        value = 9;
-    }
-    return value;
-}
-
 TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
 {
     struct PlayerInfo* player = get_player(plyr_idx);
     struct Packet* pckt = get_packet_direct(player->packet_num);
-    int width = 1, height = 1;
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
         if (((pckt->control_flags & PCtr_LBtnRelease) != 0) && (player->field_4AF != 0))
@@ -459,17 +408,12 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
     MapCoord y = ((unsigned short)pckt->pos_y);
     MapSubtlCoord stl_x = coord_subtile(x);
     MapSubtlCoord stl_y = coord_subtile(y);
-    MapSlabCoord slb_x = subtile_slab(stl_x);
-    MapSlabCoord slb_y = subtile_slab(stl_y);
     player->field_4A4 = 1;
-    MapSubtlCoord sellx;
-    MapSubtlCoord selly;
     if (is_my_player(player))
     {
-        width = height = numpad_to_value(false);
         if (!game_is_busy_doing_gui())
         {
-            render_roomspace = create_box_roomspace(render_roomspace, width, height, slb_x, slb_y);
+            get_dungeon_sell_user_roomspace(stl_x, stl_y);
             tag_cursor_blocks_sell_area(player->id_number, stl_x, stl_y, player->field_4A4, (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)));
         }
     }
@@ -489,35 +433,38 @@ TbBool process_dungeon_control_packet_sell_operation(long plyr_idx)
         unset_packet_control(pckt, PCtr_LBtnClick);
         return false;
     }
-    // Trying to sell room
     if (!is_key_pressed(KC_LSHIFT, KMod_DONTCARE))
     {
-        for (selly = slb_y - calc_distance_from_roomspace_centre(height,0); selly <= slb_y + calc_distance_from_roomspace_centre(height,(height % 2 == 0)); selly++)
+        //Slab Mode
+        if (render_roomspace.slab_count > 1)
         {
-            for (sellx = slb_x - calc_distance_from_roomspace_centre(width,0); sellx <= slb_x + calc_distance_from_roomspace_centre(width,(width % 2 == 0)); sellx++)
+            keeper_sell_roomspace(render_roomspace);
+        }
+        else
+        {
+            // Trying to sell room
+            if (subtile_is_sellable_room(plyr_idx, stl_x, stl_y))
             {
-                if (subtile_is_sellable_room(plyr_idx, sellx * 3, selly * 3))
-                {
-                    player_sell_room_at_subtile(plyr_idx, sellx * 3, selly * 3);
-                } else
-                // Trying to sell door
-                if (player_sell_door_at_subtile(plyr_idx, sellx * 3, selly * 3))
-                {
-                // Nothing to do here - door already sold
-                } else
-                // Trying to sell trap
-                if (player_sell_trap_at_subtile(plyr_idx, sellx * 3, selly * 3))
-                {
-                // Nothing to do here - trap already sold
-                } else
-                {
-                    WARNLOG("Nothing to do for player %d request",(int)plyr_idx);
-                }
+                player_sell_room_at_subtile(plyr_idx, stl_x, stl_y);
+            } else
+            // Trying to sell door
+            if (player_sell_door_at_subtile(plyr_idx, stl_x, stl_y))
+            {
+            // Nothing to do here - door already sold
+            } else
+            // Trying to sell trap
+            if (player_sell_trap_at_subtile(plyr_idx, stl_x, stl_y))
+            {
+            // Nothing to do here - trap already sold
+            } else
+            {
+                WARNLOG("Nothing to do for player %d request",(int)plyr_idx);
             }
         }
     }
     else
     {
+        // Subtile Mode
         if (player_sell_trap_at_subtile(plyr_idx, stl_x, stl_y))
         {
             // Nothing to do here - trap already sold
@@ -607,12 +554,6 @@ TbBool process_dungeon_power_hand_state(long plyr_idx)
     return true;
 }
 
-void reset_dungeon_build_room_ui_variables()
-{
-    roomspace_detection_looseness = DEFAULT_USER_ROOMSPACE_DETECTION_LOOSENESS;
-    user_defined_roomspace_width = DEFAULT_USER_ROOMSPACE_WIDTH;
-}
-
 TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
 {
     struct PlayerInfo* player = get_player(plyr_idx);
@@ -621,9 +562,6 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     MapCoord y = ((unsigned short)pckt->pos_y);
     MapSubtlCoord stl_x = coord_subtile(x);
     MapSubtlCoord stl_y = coord_subtile(y);
-    MapSlabCoord slb_x = subtile_slab(stl_x);
-    MapSlabCoord slb_y = subtile_slab(stl_y);
-    int width = 1, height = 1; // 1x1 slabs
     int mode = box_placement_mode;
     if ((pckt->control_flags & PCtr_MapCoordsValid) == 0)
     {
@@ -639,101 +577,8 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     {
         gui_room_type_highlighted = player->chosen_room_kind;
     }
-    // RoomSpace stuff starts
-    if  (player->chosen_room_kind == RoK_BRIDGE)
-    {
-        reset_dungeon_build_room_ui_variables();
-        if ((is_key_pressed(KC_LSHIFT, KMod_DONTCARE) || is_key_pressed(KC_LCONTROL, KMod_DONTCARE))  && ((pckt->control_flags & PCtr_LBtnHeld) == PCtr_LBtnHeld)) // Enable "paint mode" if Ctrl or Shift are held
-        {
-            mode = drag_placement_mode;
-        }
-    }
-    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find "best" room
-    {
-        if (wheel_scrolled_down)
-        {
-            if (roomspace_detection_looseness < tolerate_gold && roomspace_detection_looseness >=disable_tolerance_layers)
-            {
-                roomspace_detection_looseness = tolerate_gold;
-            }
-            else if (roomspace_detection_looseness != tolerate_rock)
-            {
-                roomspace_detection_looseness = tolerate_rock;
-            }
-        }
-        if (wheel_scrolled_up)
-        {
-            if (roomspace_detection_looseness == tolerate_rock)
-            {
-                roomspace_detection_looseness = tolerate_gold;
-            }
-            else if (roomspace_detection_looseness != disable_tolerance_layers)
-            {
-                roomspace_detection_looseness = disable_tolerance_layers;
-            }
-        }
-        mode = roomspace_detection_mode;
-    }
-    else if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Define square room (mouse scroll-wheel changes size - default is 5x5)
-    {
-        if (wheel_scrolled_down)
-        {
-            if (user_defined_roomspace_width != MAX_USER_ROOMSPACE_WIDTH)
-            {
-                user_defined_roomspace_width++;
-            }
-        }
-        if (wheel_scrolled_up)
-        {
-            if (user_defined_roomspace_width != MIN_USER_ROOMSPACE_WIDTH)
-            {
-                user_defined_roomspace_width--;
-            }
-        }
-        width = height = user_defined_roomspace_width;
-    }
-    else
-    {
-        reset_dungeon_build_room_ui_variables();
-        width = height = numpad_to_value(false);
-    }
-
-    struct RoomSpace best_roomspace;
-    best_roomspace.is_roomspace_a_box = true;
-    struct RoomStats* rstat = room_stats_get_for_kind(player->chosen_room_kind);
-    if (mode == roomspace_detection_mode) // room auto-detection mode
-    {
-        best_roomspace = get_biggest_roomspace(plyr_idx, player->chosen_room_kind, slb_x, slb_y, rstat->cost, 0, 32, roomspace_detection_looseness);
-        width = best_roomspace.width;
-        height = best_roomspace.height;
-        slb_x = best_roomspace.centreX;
-        slb_y = best_roomspace.centreY;
-        player->boxsize = best_roomspace.slab_count; // correct number of tiles always returned from get_biggest_roomspace
-    }
-    else if (width == 1 && height == 1)
-    {
-        player->boxsize = can_build_roomspace_of_dimensions(plyr_idx, player->chosen_room_kind, slb_x, slb_y, width, height, true); //number of slabs to build, corrected for blocked tiles
-        best_roomspace = create_box_roomspace(best_roomspace, width, height, slb_x, slb_y);
-    }
-    else
-    {
-        struct RoomSpace temp_best_room = create_box_roomspace(best_roomspace, width, height, slb_x, slb_y);
-        temp_best_room = check_slabs_in_roomspace(temp_best_room, plyr_idx, player->chosen_room_kind, rstat->cost);
-        if (temp_best_room.slab_count > 0)
-        {
-            best_roomspace = temp_best_room;
-        }
-        else
-        {
-            // if the room is empty, then return a single slab cursor/boundbox like normal
-            width = height = 1;
-            best_roomspace.slab_count = 1;
-        }
-        player->boxsize = best_roomspace.slab_count; // correct number of tiles returned from check_slabs_in_roomspace
-    }
-    render_roomspace = best_roomspace; // make sure we can render the correct boundbox to the user
-    // RoomSpace stuff ends
-    long i = tag_cursor_blocks_place_room(player->id_number, (slb_x * 3), (slb_y * 3), player->field_4A4);
+    get_dungeon_build_user_roomspace(player->id_number, player->chosen_room_kind, stl_x, stl_y, &mode, (is_key_pressed(KC_LSHIFT, KMod_DONTCARE) || is_key_pressed(KC_LCONTROL, KMod_DONTCARE))  && ((pckt->control_flags & PCtr_LBtnHeld) == PCtr_LBtnHeld));
+    long i = tag_cursor_blocks_place_room(player->id_number, stl_x, stl_y, player->field_4A4);
     
     if (mode != drag_placement_mode) // allows the user to hold the left mouse to use "paint mode"
     {
@@ -765,29 +610,7 @@ TbBool process_dungeon_control_packet_dungeon_build_room(long plyr_idx)
     }
     if (player->boxsize > 0)
     {
-        //RoomSpace build room start
-        MapSlabCoord buildx;
-        MapSlabCoord buildy;
-        int room_x = 0, room_y = 0; // these store the coordinates of best_roomspace.slab_grid[][], rather than the in-game map coordinates
-        for (buildy = slb_y - calc_distance_from_roomspace_centre(height,0); buildy <= slb_y + calc_distance_from_roomspace_centre(height,(height % 2 == 0)); buildy++)
-        {
-            for (buildx = slb_x - calc_distance_from_roomspace_centre(width,0); buildx <= slb_x + calc_distance_from_roomspace_centre(width,(width % 2 == 0)); buildx++)
-            {
-                if (!best_roomspace.is_roomspace_a_box) // if the room shape is not a perfect square/rectangle...
-                {
-                    if (best_roomspace.slab_grid[room_x][room_y] == false) // check the slab is part of the room
-                    {
-                        room_x++;
-                        continue; // skip to the next tile if the current tile is not part of the room
-                    }
-                }
-                keeper_build_room((buildx * 3), (buildy * 3), plyr_idx, player->chosen_room_kind);
-                room_x++;
-            }
-            room_y++;
-            room_x = 0;
-        }
-        //RoomSpace build room end
+        keeper_build_roomspace(render_roomspace);
     }
     else
     {

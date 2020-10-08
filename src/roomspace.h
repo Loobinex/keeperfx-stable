@@ -73,6 +73,8 @@ struct RoomSpace {
     MapSlabCoord centreY;
     int total_roomspace_cost;
     int invalid_slabs_count;
+    PlayerNumber plyr_idx;
+    RoomKind rkind;
 };
 /******************************************************************************/
 extern int user_defined_roomspace_width;
@@ -81,8 +83,8 @@ extern struct RoomSpace render_roomspace;
 /******************************************************************************/
 int calc_distance_from_roomspace_centre(int total_distance, TbBool offset);
 
-struct RoomSpace create_box_roomspace(struct RoomSpace roomspace, int width, int height,
-    int centre_x, int centre_y);
+struct RoomSpace create_box_roomspace(struct RoomSpace roomspace, int width,
+int height, int centre_x, int centre_y);
 
 int can_build_roomspace_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
     MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height,
@@ -91,14 +93,24 @@ int can_build_roomspace_of_dimensions(PlayerNumber plyr_idx, RoomKind rkind,
 int can_build_fancy_roomspace(PlayerNumber plyr_idx, RoomKind rkind,
     struct RoomSpace roomspace);
 
-struct RoomSpace check_slabs_in_roomspace(struct RoomSpace roomspace, PlayerNumber plyr_idx,
-    RoomKind rkind, short rkind_cost);
+struct RoomSpace check_slabs_in_roomspace(struct RoomSpace roomspace,
+    PlayerNumber plyr_idx, RoomKind rkind, short rkind_cost);
 
-int can_build_roomspace_of_dimensions_loose(PlayerNumber plyr_idx, RoomKind rkind,
-    MapSlabCoord slb_x, MapSlabCoord slb_y, int width, int height,
-    int *invalid_blocks, int roomspace_discovery_looseness);
+int can_build_roomspace_of_dimensions_loose(PlayerNumber plyr_idx,
+    RoomKind rkind, MapSlabCoord slb_x, MapSlabCoord slb_y, int width,
+    int height, int *invalid_blocks, int roomspace_discovery_looseness);
 
-int can_build_roomspace(PlayerNumber plyr_idx, RoomKind rkind, struct RoomSpace roomspace);
+int can_build_roomspace(PlayerNumber plyr_idx, RoomKind rkind,
+    struct RoomSpace roomspace);
+
+void get_dungeon_sell_user_roomspace(MapSubtlCoord stl_x, MapSubtlCoord stl_y);
+
+void get_dungeon_build_user_roomspace(PlayerNumber plyr_idx, RoomKind rkind,
+    MapSubtlCoord stl_x, MapSubtlCoord stl_y, int *mode, TbBool drag_check);
+
+void keeper_sell_roomspace(struct RoomSpace roomspace);
+
+void keeper_build_roomspace(struct RoomSpace roomspace);
 /******************************************************************************/
 #include "roomspace_detection.h"
 /******************************************************************************/

@@ -21,6 +21,7 @@
  */
 /******************************************************************************/
 #include "game_legacy.h"
+#include "kjm_input.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -28,7 +29,7 @@ extern "C" {
 /******************************************************************************/
 int user_defined_roomspace_width = DEFAULT_USER_ROOMSPACE_WIDTH;
 int roomspace_detection_looseness = DEFAULT_USER_ROOMSPACE_DETECTION_LOOSENESS;
-struct RoomSpace render_roomspace = { {{false}}, 1, true, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0 };
+struct RoomSpace render_roomspace = { {{false}}, 1, true, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
 /******************************************************************************/
 TbBool can_afford_roomspace(PlayerNumber plyr_idx, RoomKind rkind, int slab_count)
 {
@@ -184,6 +185,210 @@ int can_build_roomspace(PlayerNumber plyr_idx, RoomKind rkind, struct RoomSpace 
         canbuild = can_build_fancy_roomspace(plyr_idx, rkind, roomspace);
     }
     return canbuild;
+}
+
+int numpad_to_value(TbBool allow_zero)
+{
+    int value = 0;
+    if (!allow_zero)
+    {
+        value = 1;
+    }
+    if (is_key_pressed(KC_NUMPAD0, KMod_DONTCARE) && allow_zero)
+    {
+        value = 0;
+    }
+    else if (is_key_pressed(KC_NUMPAD1, KMod_DONTCARE))
+    {
+        value = 1;
+    }
+    else if (is_key_pressed(KC_NUMPAD2, KMod_DONTCARE))
+    {
+        value = 2;
+    }
+    else if (is_key_pressed(KC_NUMPAD3, KMod_DONTCARE))
+    {
+        value = 3;
+    }
+    else if (is_key_pressed(KC_NUMPAD4, KMod_DONTCARE))
+    {
+        value =4;
+    }
+    else if (is_key_pressed(KC_NUMPAD5, KMod_DONTCARE))
+    {
+        value = 5;
+    }
+    else if (is_key_pressed(KC_NUMPAD6, KMod_DONTCARE))
+    {
+        value = 6;
+    }
+    else if (is_key_pressed(KC_NUMPAD7, KMod_DONTCARE))
+    {
+        value = 7;
+    }
+    else if (is_key_pressed(KC_NUMPAD8, KMod_DONTCARE))
+    {
+        value = 8;
+    }
+    else if (is_key_pressed(KC_NUMPAD9, KMod_DONTCARE))
+    {
+        value = 9;
+    }
+    return value;
+}
+
+void reset_dungeon_build_room_ui_variables()
+{
+    roomspace_detection_looseness = DEFAULT_USER_ROOMSPACE_DETECTION_LOOSENESS;
+    user_defined_roomspace_width = DEFAULT_USER_ROOMSPACE_WIDTH;
+}
+
+void get_dungeon_sell_user_roomspace(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
+{
+    int width = 1, height = 1;
+    MapSlabCoord slb_x = subtile_slab(stl_x);
+    MapSlabCoord slb_y = subtile_slab(stl_y);
+    width = height = numpad_to_value(false);
+    render_roomspace = create_box_roomspace(render_roomspace, width, height, slb_x, slb_y);
+}
+
+void get_dungeon_build_user_roomspace(PlayerNumber plyr_idx, RoomKind rkind, MapSubtlCoord stl_x, MapSubtlCoord stl_y, int *mode, TbBool drag_check)
+{
+    struct PlayerInfo* player = get_player(plyr_idx);
+    MapSlabCoord slb_x = subtile_slab_fast(stl_x);
+    MapSlabCoord slb_y = subtile_slab_fast(stl_y);
+    int width = 1, height = 1; // 1x1 slabs
+    if (rkind == RoK_BRIDGE)
+    {
+        reset_dungeon_build_room_ui_variables();
+        if (drag_check) // Enable "paint mode" if Ctrl or Shift are held
+        {
+            (*mode) = drag_placement_mode;
+        }
+    }
+    else if (is_key_pressed(KC_LSHIFT, KMod_DONTCARE)) // Find "best" room
+    {
+        if (wheel_scrolled_down)
+        {
+            if (roomspace_detection_looseness < tolerate_gold && roomspace_detection_looseness >=disable_tolerance_layers)
+            {
+                roomspace_detection_looseness = tolerate_gold;
+            }
+            else if (roomspace_detection_looseness != tolerate_rock)
+            {
+                roomspace_detection_looseness = tolerate_rock;
+            }
+        }
+        if (wheel_scrolled_up)
+        {
+            if (roomspace_detection_looseness == tolerate_rock)
+            {
+                roomspace_detection_looseness = tolerate_gold;
+            }
+            else if (roomspace_detection_looseness != disable_tolerance_layers)
+            {
+                roomspace_detection_looseness = disable_tolerance_layers;
+            }
+        }
+        (*mode) = roomspace_detection_mode;
+    }
+    else if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Define square room (mouse scroll-wheel changes size - default is 5x5)
+    {
+        if (wheel_scrolled_down)
+        {
+            if (user_defined_roomspace_width != MAX_USER_ROOMSPACE_WIDTH)
+            {
+                user_defined_roomspace_width++;
+            }
+        }
+        if (wheel_scrolled_up)
+        {
+            if (user_defined_roomspace_width != MIN_USER_ROOMSPACE_WIDTH)
+            {
+                user_defined_roomspace_width--;
+            }
+        }
+        width = height = user_defined_roomspace_width;
+    }
+    else
+    {
+        reset_dungeon_build_room_ui_variables();
+        width = height = numpad_to_value(false);
+    }
+
+    struct RoomSpace best_roomspace;
+    best_roomspace.is_roomspace_a_box = true;
+    struct RoomStats* rstat = room_stats_get_for_kind(rkind);
+    best_roomspace.plyr_idx = plyr_idx;
+    best_roomspace.rkind = rkind;
+    if ((*mode) == roomspace_detection_mode) // room auto-detection mode
+    {
+        best_roomspace = get_biggest_roomspace(plyr_idx, rkind, slb_x, slb_y, rstat->cost, 0, 32, roomspace_detection_looseness);
+        width = best_roomspace.width;
+        height = best_roomspace.height;
+        slb_x = best_roomspace.centreX;
+        slb_y = best_roomspace.centreY;
+        player->boxsize = best_roomspace.slab_count; // correct number of tiles always returned from get_biggest_roomspace
+    }
+    else if (width == 1 && height == 1)
+    {
+        player->boxsize = can_build_roomspace_of_dimensions(plyr_idx, rkind, slb_x, slb_y, width, height, true); //number of slabs to build, corrected for blocked tiles
+        best_roomspace = create_box_roomspace(best_roomspace, width, height, slb_x, slb_y);
+    }
+    else
+    {
+        struct RoomSpace temp_best_room = create_box_roomspace(best_roomspace, width, height, slb_x, slb_y);
+        temp_best_room = check_slabs_in_roomspace(temp_best_room, plyr_idx, rkind, rstat->cost);
+        if (temp_best_room.slab_count > 0)
+        {
+            best_roomspace = temp_best_room;
+        }
+        else
+        {
+            // if the room is empty, then return a single slab cursor/boundbox like normal
+            width = height = 1;
+            best_roomspace.slab_count = 1;
+        }
+        player->boxsize = best_roomspace.slab_count; // correct number of tiles returned from check_slabs_in_roomspace
+    }
+    render_roomspace = best_roomspace; // make sure we can render the correct boundbox to the user
+}
+
+void keeper_sell_roomspace(struct RoomSpace roomspace)
+{
+    for (MapSubtlCoord selly = roomspace.top; selly <= roomspace.bottom; selly++)
+    {
+        for (MapSubtlCoord sellx = roomspace.left; sellx <= roomspace.right; sellx++)
+        {
+            if (subtile_is_sellable_room(roomspace.plyr_idx, sellx * 3, selly * 3))
+            {
+                player_sell_room_at_subtile(roomspace.plyr_idx, sellx * 3, selly * 3);
+            }
+        }
+    }
+}
+
+void keeper_build_roomspace(struct RoomSpace roomspace)
+{
+    int room_x = 0, room_y = 0; // these store the coordinates of roomspace.slab_grid[][], rather than the in-game map coordinates
+    for (MapSlabCoord buildy = roomspace.top; buildy <= roomspace.bottom; buildy++)
+    {
+        for (MapSlabCoord buildx = roomspace.left; buildx <= roomspace.right; buildx++)
+        {
+            if (!roomspace.is_roomspace_a_box) // if the room shape is not a perfect square/rectangle...
+            {
+                if (roomspace.slab_grid[room_x][room_y] == false) // check the slab is part of the room
+                {
+                    room_x++;
+                    continue; // skip to the next tile if the current tile is not part of the room
+                }
+            }
+            keeper_build_room((buildx * STL_PER_SLB), (buildy * STL_PER_SLB), roomspace.plyr_idx, roomspace.rkind);
+            room_x++;
+        }
+        room_y++;
+        room_x = 0;
+    }
 }
 
 /******************************************************************************/
