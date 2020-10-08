@@ -6727,7 +6727,7 @@ void draw_frontview_engine(struct Camera *cam)
         BoxWidth = (zoom >> 8) & 0xFF;
         if (render_roomspace.is_roomspace_a_box)
         {
-            if ( ( (gameadd.place_traps_on_subtiles) && ((player->work_state == PSt_PlaceTrap) && (player->chosen_trap_kind != TngTrp_Boulder)) ) || ((player->work_state == PSt_Sell) && (is_key_pressed(KC_LSHIFT, KMod_DONTCARE))) )
+            if ( ( (gameadd.place_traps_on_subtiles) && ((player->work_state == PSt_PlaceTrap) && (player->chosen_trap_kind != TngTrp_Boulder)) ) || ((player->work_state == PSt_Sell) && (is_key_pressed(KC_LALT, KMod_DONTCARE))) )
             {
                 BoxWidth /= 3;
                 single_subtile_mode = true;
