@@ -22,6 +22,7 @@
 /******************************************************************************/
 #include "game_legacy.h"
 #include "kjm_input.h"
+#include "player_utils.h"
 
 #ifdef __cplusplus
 extern "C" {
@@ -382,9 +383,21 @@ void keeper_sell_roomspace(struct RoomSpace roomspace)
     {
         for (MapSubtlCoord sellx = roomspace.left; sellx <= roomspace.right; sellx++)
         {
-            if (subtile_is_sellable_room(roomspace.plyr_idx, sellx * 3, selly * 3))
+            if (subtile_is_sellable_room(roomspace.plyr_idx, sellx * 3, selly * 3))// Trying to sell room
             {
                 player_sell_room_at_subtile(roomspace.plyr_idx, sellx * 3, selly * 3);
+            }
+            else if (player_sell_door_at_subtile(roomspace.plyr_idx, sellx * 3, selly * 3)) // Trying to sell door
+            {
+                // Nothing to do here - door already sold
+            }
+            else if (player_sell_trap_at_subtile(roomspace.plyr_idx, sellx * 3, selly * 3)) // Trying to sell trap
+            {
+                // Nothing to do here - trap already sold
+            }
+            else
+            {
+                WARNLOG("Nothing to do for player %d request",(int)roomspace.plyr_idx);
             }
         }
     }
