@@ -248,7 +248,29 @@ void get_dungeon_sell_user_roomspace(MapSubtlCoord stl_x, MapSubtlCoord stl_y)
     int width = 1, height = 1;
     MapSlabCoord slb_x = subtile_slab(stl_x);
     MapSlabCoord slb_y = subtile_slab(stl_y);
-    width = height = numpad_to_value(false);
+    if (is_key_pressed(KC_LCONTROL, KMod_DONTCARE)) // Define square room (mouse scroll-wheel changes size - default is 5x5)
+    {
+        if (wheel_scrolled_down)
+        {
+            if (user_defined_roomspace_width != MAX_USER_ROOMSPACE_WIDTH)
+            {
+                user_defined_roomspace_width++;
+            }
+        }
+        if (wheel_scrolled_up)
+        {
+            if (user_defined_roomspace_width != MIN_USER_ROOMSPACE_WIDTH)
+            {
+                user_defined_roomspace_width--;
+            }
+        }
+        width = height = user_defined_roomspace_width;
+    }
+    else
+    {
+        reset_dungeon_build_room_ui_variables();
+        width = height = numpad_to_value(false);
+    }
     render_roomspace = create_box_roomspace(render_roomspace, width, height, slb_x, slb_y);
 }
 
