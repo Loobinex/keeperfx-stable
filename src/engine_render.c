@@ -6212,12 +6212,11 @@ static void update_frontview_pointed_block(unsigned long laaa, unsigned char qdr
 void create_frontview_map_volume_box(struct Camera *cam, unsigned char stl_width, TbBool single_subtile)
 {
     unsigned char orient = ((unsigned int)(cam->orient_a + LbFPMath_PI/4) >> 9) & 0x03;
-    // _breadth_ is equivilent to the width/height of a slab in 3D
-    // (it is usually the same as the depth (a single slab, but for single subtile selection, this will be the width/height of a subtile)
     // _depth_ is "how far in to the screen" the box goes - it will be the width/height of a slab
-    // (it should be triple the size of stl_width if we are working with a single subtile (so that it is the height of a slab))
-    long breadth = ((5 - map_volume_box.floor_height_z) * ((long)stl_width << 7) / 256);
-    long depth = breadth * (single_subtile == true ? STL_PER_SLB : 1);
+    // _breadth_ is usually the same as the depth (a single slab), but for single subtile selection, this will be the width/height of a subtile
+    // (if we are dealing with a single subtile, breadth will be a third of the depth.)
+    long depth = ((5 - map_volume_box.floor_height_z) * ((long)stl_width << 7) / 256);
+    long breadth = depth / (single_subtile ? STL_PER_SLB : 1);
     struct Coord3d pos;
     long coord_x;
     long coord_y;
@@ -6651,7 +6650,6 @@ void draw_frontview_engine(struct Camera *cam)
     long long zoom;
     long long lbbb;
     long i;
-    unsigned char BoxWidth;
     SYNCDBG(9,"Starting");
     player = get_my_player();
     if (cam->zoom > 65536)
@@ -6723,21 +6721,13 @@ void draw_frontview_engine(struct Camera *cam)
     update_frontview_pointed_block(zoom, qdrant, px, py, qx, qy);
     if (map_volume_box.visible)
     {
-        TbBool single_subtile_mode = false;
-        BoxWidth = (zoom >> 8) & 0xFF;
         if (render_roomspace.is_roomspace_a_box)
-        {
-            if ( ( (gameadd.place_traps_on_subtiles) && ((player->work_state == PSt_PlaceTrap) && (player->chosen_trap_kind != TngTrp_Boulder)) ) || ((player->work_state == PSt_Sell) && (is_key_pressed(KC_LALT, KMod_DONTCARE))) )
-            {
-                BoxWidth /= 3;
-                single_subtile_mode = true;
-            }
-            
-            create_frontview_map_volume_box(cam, BoxWidth, single_subtile_mode);
+        {            
+            create_frontview_map_volume_box(cam, ((zoom >> 8) & 0xFF), render_roomspace.is_roomspace_a_single_subtile);
         }
         else
         {
-            create_fancy_frontview_map_volume_box(render_roomspace, cam, BoxWidth);
+            create_fancy_frontview_map_volume_box(render_roomspace, cam, ((zoom >> 8) & 0xFF));
         }
     }
     map_volume_box.visible = 0;

@@ -3868,6 +3868,7 @@ TbBool tag_cursor_blocks_sell_area(PlayerNumber plyr_idx, MapSubtlCoord stl_x, M
         map_volume_box.end_x = single_subtile ? (subtile_coord(stl_x + 1,0)) : (subtile_coord((3*a4) + (render_roomspace.right * 3), 0));
         map_volume_box.end_y = single_subtile ? (subtile_coord(stl_y + 1,0)) : (subtile_coord((3*a4) + (render_roomspace.bottom * 3), 0));
         map_volume_box.floor_height_z = floor_height_z;
+        render_roomspace.is_roomspace_a_single_subtile = single_subtile;
     }
     return allowed;
 }
@@ -3935,6 +3936,8 @@ TbBool tag_cursor_blocks_place_door(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
         map_volume_box.end_y = subtile_coord(slab_subtile(slb_y, 3), 0);
         map_volume_box.floor_height_z = floor_height_z;
         map_volume_box.color = allowed;
+        render_roomspace.is_roomspace_a_box = true;
+        render_roomspace.is_roomspace_a_single_subtile = false;
     }
     return allowed;
 }

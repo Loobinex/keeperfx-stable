@@ -993,17 +993,20 @@ TbBool tag_cursor_blocks_place_trap(PlayerNumber plyr_idx, MapSubtlCoord stl_x, 
     {
         if (!game_is_busy_doing_gui() && (game.small_map_state != 2))
         {
+            render_roomspace.is_roomspace_a_box = true;
             if ((player->chosen_trap_kind == TngTrp_Boulder) || (!gameadd.place_traps_on_subtiles))
             {
                 // Move to first subtile on a slab
                 stl_x = slab_subtile(slb_x,0);
                 stl_y = slab_subtile(slb_y,0);
+                render_roomspace.is_roomspace_a_single_subtile = false;
                 draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0),
                 subtile_coord(stl_x+STL_PER_SLB,0), subtile_coord(stl_y+STL_PER_SLB,0), floor_height, can_place);
             }
             else
             {
-               draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0), subtile_coord(stl_x+1,0), subtile_coord(stl_y+1,0), floor_height, can_place);
+                render_roomspace.is_roomspace_a_single_subtile = true;
+                draw_map_volume_box(subtile_coord(stl_x,0), subtile_coord(stl_y,0), subtile_coord(stl_x+1,0), subtile_coord(stl_y+1,0), floor_height, can_place);
             }
         }
     }

@@ -75,6 +75,7 @@ struct RoomSpace {
     int invalid_slabs_count;
     PlayerNumber plyr_idx;
     RoomKind rkind;
+	TbBool is_roomspace_a_single_subtile;
 };
 /******************************************************************************/
 extern int user_defined_roomspace_width;

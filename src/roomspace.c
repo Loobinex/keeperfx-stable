@@ -30,7 +30,7 @@ extern "C" {
 /******************************************************************************/
 int user_defined_roomspace_width = DEFAULT_USER_ROOMSPACE_WIDTH;
 int roomspace_detection_looseness = DEFAULT_USER_ROOMSPACE_DETECTION_LOOSENESS;
-struct RoomSpace render_roomspace = { {{false}}, 1, true, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+struct RoomSpace render_roomspace = { {{false}}, 1, true, 1, 1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, false };
 /******************************************************************************/
 TbBool can_afford_roomspace(PlayerNumber plyr_idx, RoomKind rkind, int slab_count)
 {
@@ -88,6 +88,8 @@ struct RoomSpace create_box_roomspace(struct RoomSpace roomspace, int width, int
     roomspace.slab_count = roomspace.width * roomspace.height;
     roomspace.centreX = centre_x;
     roomspace.centreY = centre_y;
+    roomspace.is_roomspace_a_single_subtile = false;
+    roomspace.is_roomspace_a_box = true;
     return roomspace;
 }
 
