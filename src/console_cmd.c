@@ -25,6 +25,7 @@
 #include "config.h"
 #include "config_campaigns.h"
 #include "config_rules.h"
+#include "config_trapdoor.h"
 #include "creature_instances.h"
 #include "creature_jobs.h"
 #include "creature_states.h"
@@ -450,7 +451,22 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if ( (strcasecmp(parstr, "give.trap") == 0) || (strcasecmp(parstr, "trap.give") == 0) )
         {
-            int id = atoi(pr2str);
+            long id = get_rid(trap_desc, pr2str);
+            if (id <= 0)
+            {
+                if ( (strcasecmp(pr2str, "gas") == 0) || (strcasecmp(pr2str, "poison") == 0) || (strcasecmp(pr2str, "poisongas") == 0) )
+                {
+                    id = 3;
+                }
+                else if ( (strcasecmp(pr2str, "word") == 0) || (strcasecmp(pr2str, "wordofpower") == 0) )
+                {
+                    id = 5;
+                }
+                else
+                {
+                    id = atoi(pr2str);
+                }
+            }
             if (id <= 0 || id > trapdoor_conf.trap_types_count)
                 return false;
             unsigned char num = (pr3str != NULL) ? atoi(pr3str) : 1;
@@ -460,7 +476,26 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             return true;
         } else if ( (strcasecmp(parstr, "give.door") == 0) || (strcasecmp(parstr, "door.give") == 0) )
         {
-            int id = atoi(pr2str);
+            long id = get_rid(door_desc, pr2str);
+            if (id <= 0)
+            {
+                if (strcasecmp(pr2str, "wooden") == 0)
+                {
+                    id = 1;
+                }
+                else if (strcasecmp(pr2str, "iron") == 0)
+                {
+                    id = 3;
+                }
+                else if (strcasecmp(pr2str, "magical") == 0)
+                {
+                    id = 4;
+                }
+                else
+                {
+                    id = atoi(pr2str);
+                }
+            }
             if (id <= 0 || id > trapdoor_conf.door_types_count)
                 return false;
             unsigned char num = (pr3str != NULL) ? atoi(pr3str) : 1;
