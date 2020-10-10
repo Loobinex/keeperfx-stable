@@ -25,6 +25,7 @@
 #include "config.h"
 #include "config_campaigns.h"
 #include "config_rules.h"
+#include "config_terrain.h"
 #include "config_trapdoor.h"
 #include "creature_instances.h"
 #include "creature_jobs.h"
@@ -925,7 +926,30 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             if (!slabmap_block_invalid(slb))
             {
                 PlayerNumber id = (pr3str == NULL) ? slabmap_owner(slb) : atoi(pr3str);
-                short slbkind = atoi(pr2str);
+                short slbkind = get_rid(slab_desc, pr2str);
+                if (slbkind <= 0)
+                {
+                    if (strcasecmp(pr2str, "Earth") == 0)
+                    {
+                        slbkind = rand() % (4 - 2) + 2;
+                    }
+                    else if ( (strcasecmp(pr2str, "Reinforced") == 0) || (strcasecmp(pr2str, "Fortified") == 0) )
+                    {
+                        slbkind = rand() % (9 - 4) + 4;
+                    }
+                    else if (strcasecmp(pr2str, "Claimed") == 0)
+                    {
+                        slbkind = SlbT_CLAIMED;
+                    }
+                    else if ( (strcasecmp(pr2str, "Rock") == 0) || (strcasecmp(pr2str, "Impenetrable") == 0) )
+                    {
+                        slbkind = SlbT_ROCK;
+                    }
+                    else
+                    {
+                        slbkind = atoi(pr2str);
+                    }
+                }
                 if (slab_kind_is_animated(slbkind))
                 {
                     place_animating_slab_type_on_map(slbkind, 0, stl_x, stl_y, id);  
