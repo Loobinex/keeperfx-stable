@@ -929,25 +929,34 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 short slbkind = get_rid(slab_desc, pr2str);
                 if (slbkind <= 0)
                 {
-                    if (strcasecmp(pr2str, "Earth") == 0)
+                    long rid = get_rid(room_desc, pr2str);
+                    if (rid > 0)
                     {
-                        slbkind = rand() % (4 - 2) + 2;
-                    }
-                    else if ( (strcasecmp(pr2str, "Reinforced") == 0) || (strcasecmp(pr2str, "Fortified") == 0) )
-                    {
-                        slbkind = rand() % (9 - 4) + 4;
-                    }
-                    else if (strcasecmp(pr2str, "Claimed") == 0)
-                    {
-                        slbkind = SlbT_CLAIMED;
-                    }
-                    else if ( (strcasecmp(pr2str, "Rock") == 0) || (strcasecmp(pr2str, "Impenetrable") == 0) )
-                    {
-                        slbkind = SlbT_ROCK;
+                        struct RoomConfigStats *roomst = get_room_kind_stats(rid);
+                        slbkind = roomst->assigned_slab;
                     }
                     else
                     {
-                        slbkind = atoi(pr2str);
+                        if (strcasecmp(pr2str, "Earth") == 0)
+                        {
+                            slbkind = rand() % (4 - 2) + 2;
+                        }
+                        else if ( (strcasecmp(pr2str, "Reinforced") == 0) || (strcasecmp(pr2str, "Fortified") == 0) )
+                        {
+                            slbkind = rand() % (9 - 4) + 4;
+                        }
+                        else if (strcasecmp(pr2str, "Claimed") == 0)
+                        {
+                            slbkind = SlbT_CLAIMED;
+                        }
+                        else if ( (strcasecmp(pr2str, "Rock") == 0) || (strcasecmp(pr2str, "Impenetrable") == 0) )
+                        {
+                            slbkind = SlbT_ROCK;
+                        }
+                        else
+                        {
+                            slbkind = atoi(pr2str);
+                        }
                     }
                 }
                 if (slab_kind_is_animated(slbkind))
