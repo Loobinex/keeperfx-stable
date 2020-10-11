@@ -657,7 +657,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             long crmodel = get_creature_model_for_command(pr2str);
             unsigned char available = (pr3str == NULL) ? 1 : atoi(pr3str);
             PlayerNumber id = (pr4str == NULL) ? plyr_idx : atoi(pr4str);
-            script_process_value(Cmd_CREATURE_AVAILABLE, id, crmodel, (TbBool)available, NULL);
+            script_process_value(Cmd_CREATURE_AVAILABLE, id, crmodel, (TbBool)available, (TbBool)available);
             return true;
         }
         else if (strcasecmp(parstr, "creature.show.partytarget") == 0)
