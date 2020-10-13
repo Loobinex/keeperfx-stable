@@ -808,14 +808,15 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             player = get_player(id);
             if (player_exists(player))
             {
-                dungeon = get_dungeon(id);
+                // dungeon = get_dungeon(id);
                 if (pr3str == NULL)
                 {
                     return false;
                 }
                 else
                 {
-                    dungeon->total_money_owned += atoi(pr3str);
+                    // dungeon->total_money_owned += atoi(pr3str);
+                    script_process_value(Cmd_ADD_GOLD_TO_PLAYER, id, atoi(pr3str), 0, 0);
                     return true;
                 }
             }
