@@ -1152,7 +1152,15 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             {
                 crmodel = atoi(pr2str);
             }
-            message_add_fmt(plyr_idx, "%d in pool", game.pool.crtr_kind[crmodel]);
+            if (pr3str != NULL)
+            {
+                // game.pool.crtr_kind[crmodel] = atoi(pr3str);
+                    set_creature_pool(crmodel, atoi(pr3str));
+            }
+            else
+            {
+                message_add_fmt(plyr_idx, "%d in pool", game.pool.crtr_kind[crmodel]);    
+            }
             return true;
         }
         else if (strcasecmp(parstr, "creature.pool.add") == 0)
@@ -1368,6 +1376,24 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             message_add_fmt(plyr_idx, "Action Point count: %d", count);
             return true;
+        }
+        else if (strcasecmp(parstr, "actionpoint.activated") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                unsigned char ap = atoi(pr2str);
+                if (action_point_exists_idx(ap))
+                {
+                    struct ActionPoint* actionpt = action_point_get(ap);
+                    message_add_fmt(plyr_idx, "%d", actionpt->activated);
+                    return true;
+                }
+            }
+            return false;            
         }
         else if (strcasecmp(parstr, "herogate.pos") == 0)
         {
