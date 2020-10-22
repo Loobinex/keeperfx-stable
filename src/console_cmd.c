@@ -305,7 +305,13 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         minutes %= 60;
         message_add_fmt(plyr_idx, "Time taken: %d hour(s) %d minute(s) %d second(s)", hours, minutes, seconds);
         return true;
-    } else if ( (strcasecmp(parstr, "turn") == 0) || (strcasecmp(parstr, "game.turn") == 0) )
+    }
+    else if (strcasecmp(parstr, "timer.toggle") == 0)
+    {
+        game_flags2 ^= GF2_Timer;
+        return true;
+    }
+    else if ( (strcasecmp(parstr, "turn") == 0) || (strcasecmp(parstr, "game.turn") == 0) )
     {
         message_add_fmt(plyr_idx, "turn %ld", game.play_gameturn);
         return true;
