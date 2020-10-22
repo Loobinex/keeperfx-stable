@@ -295,7 +295,16 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         quit_game = 1;
         exit_keeper = 1;
         return true;
-    } else if (strcasecmp(parstr, "turn") == 0)
+    }
+    else if (strcasecmp(parstr, "time") == 0)
+    {
+        unsigned long seconds = game.play_gameturn / game.num_fps;
+        unsigned long minutes = seconds / 60;
+        unsigned long hours = minutes / 60;
+        seconds %= 60;
+        message_add_fmt(plyr_idx, "Time taken: %d hour(s) %d minute(s) %d second(s)", hours, minutes, seconds);
+        return true;
+    } else if ( (strcasecmp(parstr, "turn") == 0) || (strcasecmp(parstr, "game.turn") == 0) )
     {
         message_add_fmt(plyr_idx, "turn %ld", game.play_gameturn);
         return true;
