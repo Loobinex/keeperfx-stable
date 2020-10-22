@@ -302,6 +302,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         unsigned long minutes = seconds / 60;
         unsigned long hours = minutes / 60;
         seconds %= 60;
+        minutes %= 60;
         message_add_fmt(plyr_idx, "Time taken: %d hour(s) %d minute(s) %d second(s)", hours, minutes, seconds);
         return true;
     } else if ( (strcasecmp(parstr, "turn") == 0) || (strcasecmp(parstr, "game.turn") == 0) )
