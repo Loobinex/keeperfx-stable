@@ -4496,7 +4496,6 @@ void wait_at_frontend(void)
     }
     if (restart_level)
     {
-        restart_level = false;
         if (!change_campaign(cached_campaign_name)) // Load the cached campaign
         {
             WARNMSG("Unable to load cached campaign, can't restart the level.");
@@ -4536,9 +4535,18 @@ void wait_at_frontend(void)
     if ((game.operation_flags & GOF_SingleLevel) != 0)
     {
       faststartup_network_game();
+      if (restart_level)
+      {
+        restart_level = false;
+        set_flag_byte(&game.operation_flags,GOF_SingleLevel,false);        
+      }
       return;
     }
 
+    if (restart_level)
+    {
+        restart_level = false;
+    }
     if ( !setup_screen_mode_minimal(get_frontend_vidmode()) )
     {
       FatalError = 1;
