@@ -298,7 +298,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     }
     else if (strcasecmp(parstr, "time") == 0)
     {
-        show_time_taken(game.play_gameturn);
+        show_game_time_taken(game.play_gameturn);
         return true;
     }
     else if (strcasecmp(parstr, "timer.toggle") == 0)
