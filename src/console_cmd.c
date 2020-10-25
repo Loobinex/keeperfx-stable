@@ -306,6 +306,11 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         game_flags2 ^= GF2_Timer;
         return true;
     }
+    else if (strcasecmp(parstr, "timer.switch") == 0)
+    {
+        TimerGame ^= 1;
+        return true;
+    }
     else if ( (strcasecmp(parstr, "turn") == 0) || (strcasecmp(parstr, "game.turn") == 0) )
     {
         message_add_fmt(plyr_idx, "turn %ld", game.play_gameturn);
