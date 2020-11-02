@@ -34,6 +34,7 @@
 #include "creature_states_hero.h"
 #include "dungeon_data.h"
 #include "frontend.h"
+#include "frontmenu_ingame_evnt.h"
 #include "frontmenu_ingame_tabs.h"
 #include "game_legacy.h"
 #include "game_merge.h"
@@ -304,11 +305,23 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     else if (strcasecmp(parstr, "timer.toggle") == 0)
     {
         game_flags2 ^= GF2_Timer;
+        player = get_player(plyr_idx);
+        if ( (player->victory_state == VicS_WonLevel) && (game_flags2 & GF2_Timer != 0) && (TimerGame) )
+        {
+            dungeon = get_my_dungeon();
+            TimerTurns = dungeon->lvstats.hopes_dashed;
+        }
         return true;
     }
     else if (strcasecmp(parstr, "timer.switch") == 0)
     {
         TimerGame ^= 1;
+        player = get_player(plyr_idx);
+        if ( (player->victory_state == VicS_WonLevel) && (game_flags2 & GF2_Timer != 0) && (TimerGame) )
+        {
+            dungeon = get_my_dungeon();
+            TimerTurns = dungeon->lvstats.hopes_dashed;
+        }
         return true;
     }
     else if ( (strcasecmp(parstr, "turn") == 0) || (strcasecmp(parstr, "game.turn") == 0) )
