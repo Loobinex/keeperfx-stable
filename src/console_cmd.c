@@ -306,7 +306,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     {
         game_flags2 ^= GF2_Timer;
         player = get_player(plyr_idx);
-        if ( (player->victory_state == VicS_WonLevel) && (game_flags2 & GF2_Timer != 0) && (TimerGame) )
+        if ( (player->victory_state == VicS_WonLevel) && (timer_enabled) && (TimerGame) )
         {
             dungeon = get_my_dungeon();
             TimerTurns = dungeon->lvstats.hopes_dashed;
@@ -317,7 +317,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     {
         TimerGame ^= 1;
         player = get_player(plyr_idx);
-        if ( (player->victory_state == VicS_WonLevel) && (game_flags2 & GF2_Timer != 0) && (TimerGame) )
+        if ( (player->victory_state == VicS_WonLevel) && (timer_enabled) && (TimerGame) )
         {
             dungeon = get_my_dungeon();
             TimerTurns = dungeon->lvstats.hopes_dashed;
