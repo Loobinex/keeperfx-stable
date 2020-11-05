@@ -455,7 +455,11 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             if (id < 0 || id > PLAYERS_COUNT)
                 return false;
             thing = get_player_soul_container(id);
-            thing->health = 0;
+            if (thing_is_dungeon_heart(thing))
+            {
+                thing->health = 0;
+                return true;
+            }
         } else if (strcasecmp(parstr, "comp.me") == 0)
         {
             player = get_player(plyr_idx);
