@@ -460,6 +460,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 thing->health = 0;
                 return true;
             }
+            return false;
         } else if (strcasecmp(parstr, "comp.me") == 0)
         {
             player = get_player(plyr_idx);
