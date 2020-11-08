@@ -451,7 +451,8 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             if (pr2str == NULL)
                 return false;
-            int id = atoi(pr2str);
+            long rid = get_rid(cmpgn_human_player_options, pr2str);
+            int id = (rid > -1) ? rid: atoi(pr2str);
             if (id < 0 || id > PLAYERS_COUNT)
                 return false;
             thing = get_player_soul_container(id);
@@ -1252,7 +1253,30 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
                     MapSlabCoord slb_x = subtile_slab(stl_x);
                     MapSlabCoord slb_y = subtile_slab(stl_y);
-                    PlayerNumber id = (pr5str == NULL) ? plyr_idx : atoi(pr5str);
+                    PlayerNumber id;
+                    if (pr5str == NULL)
+                    {
+                        id = plyr_idx;
+                    }
+                    else
+                    {
+                        long rid = get_rid(cmpgn_human_player_options, pr5str);
+                        if (rid == -1)
+                        {
+                            if (strcasecmp(pr5str, "neutral") == 0)
+                            {
+                                id = game.neutral_player_num;
+                            }
+                            else
+                            {
+                                id = atoi(pr5str);
+                            }                            
+                        }
+                        else
+                        {
+                            id = rid;
+                        }
+                    }
                     if ( (slab_is_wall(slb_x, slb_y)) || (slab_coords_invalid(slb_x, slb_y)) )
                     {
                         thing = get_player_soul_container(plyr_idx);
