@@ -655,7 +655,8 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             {
                     if (pr3str == NULL)
                     {
-                        message_add_fmt(plyr_idx, "Player %d heart health: %ld", id, thing->health);
+                        float percent = ((float)thing->health / (float)game.dungeon_heart_health) * 100;
+                        message_add_fmt(plyr_idx, "Player %d heart health: %ld (%.2f per cent)", id, thing->health, percent);
                         return true;
                     }
                     else
@@ -996,7 +997,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             if (!room_is_invalid(room))
             {
                 float percent = ((float)room->efficiency / (float)ROOM_EFFICIENCY_MAX) * 100;
-                message_add_fmt(plyr_idx, "Room ID %d efficiency: %d (%d per cent)", room->index, room->efficiency, (unsigned int)round(percent));
+                message_add_fmt(plyr_idx, "Room ID %d efficiency: %d (%d per cent)", room->index, room->efficiency, (unsigned char)round(percent));
                 return true;
             }
             return false;
