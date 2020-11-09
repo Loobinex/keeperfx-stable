@@ -419,7 +419,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             if (pr2str == NULL)
                 return false;
-            int id = atoi(pr2str);
+            PlayerNumber id = get_player_number_for_command(pr2str);
             if (id < 0 || id > PLAYERS_COUNT)
                 return false;
             cmd_comp_procs(id);
@@ -428,7 +428,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             if (pr2str == NULL)
                 return false;
-            int id = atoi(pr2str);
+            PlayerNumber id = get_player_number_for_command(pr2str);
             if (id < 0 || id > PLAYERS_COUNT)
                 return false;
             cmd_comp_events(id);
@@ -437,7 +437,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             if (pr2str == NULL)
                 return false;
-            int id = atoi(pr2str);
+            PlayerNumber id = get_player_number_for_command(pr2str);
             if (id < 0 || id > PLAYERS_COUNT)
                 return false;
             cmd_comp_checks(id);
@@ -451,8 +451,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             if (pr2str == NULL)
                 return false;
-            long rid = get_rid(cmpgn_human_player_options, pr2str);
-            int id = (rid > -1) ? rid: atoi(pr2str);
+            PlayerNumber id = get_player_number_for_command(pr2str);
             if (id < 0 || id > PLAYERS_COUNT)
                 return false;
             thing = get_player_soul_container(id);
@@ -475,7 +474,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if ( (strcasecmp(parstr, "comp.ai") == 0) || (strcasecmp(parstr, "player.ai") == 0) )
         {
-            player = get_player(atoi(pr2str));
+            player = get_player(get_player_number_for_command(pr2str));
             if (player_exists(player))
             {
                 struct Computer2* comp = get_computer_player(player->id_number);               
@@ -561,7 +560,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 }
             }
             unsigned char available = (pr3str == NULL) ? 1 : atoi(pr3str);
-            PlayerNumber id = (pr4str == NULL) ? plyr_idx : atoi(pr4str);
+            PlayerNumber id = get_player_number_for_command(pr4str);
             script_process_value(Cmd_ROOM_AVAILABLE, id, room, (TbBool)available, (TbBool)available);
             update_room_tab_to_config();
             return true;
@@ -650,7 +649,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "player.heart.health") == 0)
         {
-            PlayerNumber id = atoi(pr2str);
+            PlayerNumber id = get_player_number_for_command(pr2str);
             thing = get_player_soul_container(id);
             if (thing_is_dungeon_heart(thing))
             {
@@ -676,7 +675,8 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             else
             {
-                thing = get_player_soul_container(atoi(pr2str));
+                PlayerNumber id = get_player_number_for_command(pr2str);
+                thing = get_player_soul_container(id);
                 if (thing_is_dungeon_heart(thing))
                 {
                     message_add_fmt(plyr_idx, "Got thing ID %d", thing->index);
@@ -691,7 +691,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             long crmodel = get_creature_model_for_command(pr2str);
             unsigned char available = (pr3str == NULL) ? 1 : atoi(pr3str);
-            PlayerNumber id = (pr4str == NULL) ? plyr_idx : atoi(pr4str);
+            PlayerNumber id = get_player_number_for_command(pr4str);
             script_process_value(Cmd_CREATURE_AVAILABLE, id, crmodel, (TbBool)available, (TbBool)available);
             return true;
         }
@@ -731,7 +731,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "digger.sendto") == 0)
         {
-            PlayerNumber id = atoi(pr2str);
+            PlayerNumber id = get_player_number_for_command(pr2str);
             player = get_my_player();
             thing = thing_get(player->influenced_thing_idx);
             if (thing_is_creature(thing))
@@ -814,7 +814,8 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 thing = thing_get(player->influenced_thing_idx);
                 if (thing_is_creature(thing))
                 {
-                    struct Thing* heartng = get_player_soul_container(atoi(pr2str));
+                    PlayerNumber id = get_player_number_for_command(pr2str);
+                    struct Thing* heartng = get_player_soul_container(id);
                     if (thing_is_dungeon_heart(heartng))
                     {
                         TRACE_THING(heartng);
@@ -827,7 +828,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "player.gold") == 0)
         {
-            PlayerNumber id = atoi(pr2str);
+            PlayerNumber id = get_player_number_for_command(pr2str);
             player = get_player(id);
             if (player_exists(player))
             {
@@ -839,7 +840,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if ( (strcasecmp(parstr, "player.addgold") == 0) || (strcasecmp(parstr, "player.gold.add") == 0) )
         {
-            PlayerNumber id = atoi(pr2str);
+            PlayerNumber id = get_player_number_for_command(pr2str);
             player = get_player(id);
             if (player_exists(player))
             {
@@ -964,7 +965,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 pos.y.stl.num = coord_subtile(((unsigned short)pckt->pos_y));
                 unsigned short tngclass = atoi(pr2str);
                 unsigned short tngmodel = atoi(pr3str);
-                PlayerNumber id = (pr4str == NULL) ? plyr_idx : atoi(pr4str);
+                PlayerNumber id = get_player_number_for_command(pr4str);
                 thing = create_thing(&pos, tngclass, tngmodel, id, -1);
                 if (!thing_is_invalid(thing))
                 {
@@ -1077,7 +1078,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             slb = get_slabmap_block(slb_x, slb_y);
             if (!slabmap_block_invalid(slb))
             {
-                PlayerNumber id = (pr3str == NULL) ? slabmap_owner(slb) : atoi(pr3str);
+                PlayerNumber id = (pr3str == NULL) ? slabmap_owner(slb) : get_player_number_for_command(pr3str);
                 short slbkind = get_rid(slab_desc, pr2str);
                 if (slbkind <= 0)
                 {
@@ -1190,7 +1191,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             if (pr3str != NULL)
             {
                 // game.pool.crtr_kind[crmodel] = atoi(pr3str);
-                    set_creature_pool(crmodel, atoi(pr3str));
+                set_creature_pool(crmodel, atoi(pr3str));
             }
             else
             {
@@ -1253,30 +1254,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
                     MapSlabCoord slb_x = subtile_slab(stl_x);
                     MapSlabCoord slb_y = subtile_slab(stl_y);
-                    PlayerNumber id;
-                    if (pr5str == NULL)
-                    {
-                        id = plyr_idx;
-                    }
-                    else
-                    {
-                        long rid = get_rid(cmpgn_human_player_options, pr5str);
-                        if (rid == -1)
-                        {
-                            if (strcasecmp(pr5str, "neutral") == 0)
-                            {
-                                id = game.neutral_player_num;
-                            }
-                            else
-                            {
-                                id = atoi(pr5str);
-                            }                            
-                        }
-                        else
-                        {
-                            id = rid;
-                        }
-                    }
+                    PlayerNumber id = get_player_number_for_command(pr5str);
                     if ( (slab_is_wall(slb_x, slb_y)) || (slab_coords_invalid(slb_x, slb_y)) )
                     {
                         thing = get_player_soul_container(plyr_idx);
@@ -1318,7 +1296,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "creatures.max") == 0)
         {
-            PlayerNumber id = (pr2str == NULL) ? plyr_idx : atoi(pr2str);
+            PlayerNumber id = get_player_number_for_command(pr2str);
             dungeon = get_dungeon(id);
             if (!dungeon_invalid(dungeon))
             {
@@ -1527,7 +1505,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 pckt = get_packet_direct(player->packet_num);
                 pos.x.stl.num = coord_subtile(((unsigned short)pckt->pos_x));
                 pos.y.stl.num = coord_subtile(((unsigned short)pckt->pos_y));
-                PlayerNumber id = (pr3str == NULL) ? plyr_idx : atoi(pr3str);
+                PlayerNumber id = get_player_number_for_command(pr3str);
                 thing = create_object(&pos, atoi(pr2str), id, -1);
                 if (thing_is_object(thing))
                 {
@@ -1590,6 +1568,23 @@ long get_creature_model_for_command(char *msg)
             return -1;
         }    
     }
+}
+
+PlayerNumber get_player_number_for_command(char *msg)
+{
+    PlayerNumber id = (msg == NULL) ? my_player_number : get_rid(cmpgn_human_player_options, msg);
+    if (id == -1)
+    {
+        if (strcasecmp(msg, "neutral") == 0)
+        {
+            id = game.neutral_player_num;
+        }
+        else
+        {
+            id = atoi(msg);
+        }                            
+    }
+    return id;
 }
 
 
