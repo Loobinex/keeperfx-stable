@@ -6582,18 +6582,18 @@ msgstr "部屋を縮む"
 #: guitext:1003
 msgctxt "Game controls"
 msgid "Precision Sell"
-msgstr ""
+msgstr "サブタイルを売る"
 
 #: guitext:1004
 msgctxt "Game controls"
 msgid "Snap Camera"
-msgstr ""
+msgstr "観点を90度間隔で又はに廻る"
 
 #: guitext:1005
 msgctxt "Dungeon special decription"
 msgid ""
 "Mysterious Box: There's no telling what this will do."
-msgstr ""
+msgstr "不思議な箱: 此れの作用は不明だ。"
 
 #~ msgctxt "In-game message"
 #~ msgid "Your manufacturers have crafted the Lava Trap."
