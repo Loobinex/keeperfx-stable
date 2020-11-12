@@ -6547,12 +6547,12 @@ msgstr "隠されたドア"
 #: guitext:996
 msgctxt "Mouse"
 msgid "Scroll Wheel Up"
-msgstr "マウスホイールを上向く廻る"
+msgstr "マウスホイールを上向きに廻る"
 
 #: guitext:997
 msgctxt "Mouse"
 msgid "Scroll Wheel Down"
-msgstr "マウスホイールを下向く廻る"
+msgstr "マウスホイールを下向きに廻る"
 
 #: guitext:998
 msgctxt "Mouse"
