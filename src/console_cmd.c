@@ -486,6 +486,15 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
+        else if (strcasecmp(parstr, "trap") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                message_add_fmt(plyr_idx, "%s", trap_code_name(atoi(pr2str)));
+                return true;                
+            }
+            return false;
+        }
         else if ( (strcasecmp(parstr, "give.trap") == 0) || (strcasecmp(parstr, "trap.give") == 0) )
         {
             long id = get_rid(trap_desc, pr2str);
@@ -511,7 +520,17 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             update_trap_tab_to_config();
             message_add(plyr_idx, "done!");
             return true;
-        } else if ( (strcasecmp(parstr, "give.door") == 0) || (strcasecmp(parstr, "door.give") == 0) )
+        } 
+        else if (strcasecmp(parstr, "door") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                message_add_fmt(plyr_idx, "%s", door_code_name(atoi(pr2str)));
+                return true;                
+            }
+            return false;
+        }
+        else if ( (strcasecmp(parstr, "give.door") == 0) || (strcasecmp(parstr, "door.give") == 0) )
         {
             long id = get_rid(door_desc, pr2str);
             if (id <= 0)
@@ -975,6 +994,15 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
+        else if (strcasecmp(parstr, "room") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                message_add_fmt(plyr_idx, "%s", room_code_name(atoi(pr2str)));
+                return true;                
+            }
+            return false;
+        }
         else if (strcasecmp(parstr, "room.get") == 0 )
         {
             player = get_player(plyr_idx);
@@ -1065,6 +1093,15 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     slb->health = atoi(pr2str);
                     return true;
                 }
+            }
+            return false;
+        }
+        else if (strcasecmp(parstr, "slab") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                message_add_fmt(plyr_idx, "%s", slab_code_name(atoi(pr2str)));
+                return true;                
             }
             return false;
         }
@@ -1179,6 +1216,15 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 long cube_id = get_top_cube_at(stl_x, stl_y, NULL);
                 message_add_fmt(plyr_idx, "Cube ID: %d", cube_id);
                 return true;
+            }
+            return false;
+        }
+        else if (strcasecmp(parstr, "creature") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                message_add_fmt(plyr_idx, "%s", creature_code_name(atoi(pr2str)));
+                return true;                
             }
             return false;
         }
@@ -1493,6 +1539,15 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             restart_current_level();
             return true;
+        }
+        else if (strcasecmp(parstr, "object") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                message_add_fmt(plyr_idx, "%s", object_code_name(atoi(pr2str)));
+                return true;                
+            }
+            return false;
         }
         else if (strcasecmp(parstr, "object.create") == 0)
         {
