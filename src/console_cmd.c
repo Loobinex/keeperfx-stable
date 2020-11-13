@@ -770,12 +770,16 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "creature.instance.set") == 0)
         {
-            player = get_my_player();
-            thing = thing_get(player->influenced_thing_idx);
-            unsigned char inst = atoi(pr2str);
-            if (thing_is_creature(thing))
+            if (pr2str == NULL)
             {
-                if (inst >= 0)
+                return false;
+            }
+            else
+            {
+                player = get_player(plyr_idx);
+                thing = thing_get(player->influenced_thing_idx);
+                unsigned char inst = atoi(pr2str);
+                if (thing_is_creature(thing))
                 {
                     set_creature_instance(thing, inst, 0, 0, 0);
                     return true;
@@ -785,30 +789,38 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "creature.state.set") == 0)
         {
-            player = get_my_player();
-            thing = thing_get(player->influenced_thing_idx);
-            unsigned char state = atoi(pr2str);
-            if (thing_is_creature(thing))
+            if (pr2str == NULL)
             {
-                if (state >= 0)
+                return false;
+            }
+            else
+            {
+                player = get_player(plyr_idx);
+                thing = thing_get(player->influenced_thing_idx);
+                if (thing_is_creature(thing))
                 {
-                    if (can_change_from_state_to(thing, thing->active_state, state))
-                    {
-                        return internal_set_thing_state(thing, state);
-                    }
+                        unsigned char state = atoi(pr2str);
+                        if (can_change_from_state_to(thing, thing->active_state, state))
+                        {
+                            return internal_set_thing_state(thing, state);
+                        }
                 }
             }
             return false;
         }
         else if (strcasecmp(parstr, "creature.job.set") == 0)
         {
-            player = get_my_player();
-            thing = thing_get(player->influenced_thing_idx);
-            unsigned char new_job = atoi(pr2str);
-            if (thing_is_creature(thing))
+            if (pr2str == NULL)
             {
-                if (new_job >= 0)
+                return false;
+            }
+            else
+            {
+                player = get_player(plyr_idx);
+                thing = thing_get(player->influenced_thing_idx);
+                if (thing_is_creature(thing))
                 {
+                    unsigned char new_job = atoi(pr2str);
                     if (creature_can_do_job_for_player(thing, thing->owner, 1LL<<new_job, JobChk_None))
                     {
                         return send_creature_to_job_for_player(thing, thing->owner, 1LL<<new_job);
