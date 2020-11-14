@@ -1353,6 +1353,24 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
+        else if (strcasecmp(parstr, "creature.level") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                player = get_player(plyr_idx);
+                thing = thing_get(player->influenced_thing_idx);
+                if (thing_is_creature(thing))
+                {
+                    set_creature_level(thing, (atoi(pr2str)-1));
+                    return true;
+                }
+            }
+            return false;
+        }
         else if (strcasecmp(parstr, "creatures.max") == 0)
         {
             PlayerNumber id = get_player_number_for_command(pr2str);
