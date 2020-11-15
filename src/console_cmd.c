@@ -461,7 +461,19 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 return true;
             }
             return false;
-        } else if (strcasecmp(parstr, "comp.me") == 0)
+        } 
+        else if (strcasecmp(parstr, "player.score") == 0)
+        {
+            PlayerNumber id = get_player_number_for_command(pr2str);
+            dungeon = get_dungeon(id);
+            if (!dungeon_invalid(dungeon))
+            {
+                message_add_fmt(plyr_idx, "Player %d score: %ld", id, dungeon->total_score);
+                return true;                
+            }
+            return false;
+        }
+        else if (strcasecmp(parstr, "comp.me") == 0)
         {
             player = get_player(plyr_idx);
             if (pr2str == NULL)
