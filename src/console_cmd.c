@@ -50,6 +50,7 @@
 #include "packets.h"
 #include "player_computer.h"
 #include "player_instances.h"
+#include "player_states.h"
 #include "player_utils.h"
 #include "room_data.h"
 #include "room_util.h"
@@ -1017,6 +1018,12 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 }
             }
             return false;
+        }
+        else if (strcasecmp(parstr, "things.query") == 0)
+        {
+            player = get_player(plyr_idx);
+            set_player_state(player, PSt_ThingQuery, 0);
+            return true;
         }
         else if (strcasecmp(parstr, "room") == 0)
         {
