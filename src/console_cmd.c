@@ -1401,6 +1401,42 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
+        else if (strcasecmp(parstr, "creature.spellflags") == 0)
+        {
+            player = get_player(plyr_idx);
+            thing = thing_get(player->influenced_thing_idx);
+            if (thing_is_creature(thing))
+            {
+                struct CreatureControl* cctrl = creature_control_get_from_thing(thing);
+                message_add_fmt(plyr_idx, "%x", cctrl->spell_flags);
+                return true;                
+            }
+            return false;
+        }
+        else if (strcasecmp(parstr, "creature.freeze") == 0)
+        {
+            player = get_player(plyr_idx);
+            thing = thing_get(player->influenced_thing_idx);
+            if (thing_is_creature(thing))
+            {
+                thing_play_sample(thing, 50, NORMAL_PITCH, 0, 3, 0, 4, FULL_LOUDNESS);
+                apply_spell_effect_to_thing(thing, SplK_Freeze, 8);
+                return true;
+            }
+            return false;
+        }
+        else if (strcasecmp(parstr, "creature.slow") == 0)
+        {
+            player = get_player(plyr_idx);
+            thing = thing_get(player->influenced_thing_idx);
+            if (thing_is_creature(thing))
+            {
+                thing_play_sample(thing, 50, NORMAL_PITCH, 0, 3, 0, 4, FULL_LOUDNESS);
+                apply_spell_effect_to_thing(thing, SplK_Slow, 8);
+                return true;
+            }
+            return false;
+        }
         else if (strcasecmp(parstr, "floating.spirit") == 0)
         {
             level_lost_go_first_person(plyr_idx);
@@ -1616,6 +1652,19 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 {
                     return true;
                 }
+            }
+            return false;
+        }
+        else if (strcasecmp(parstr, "quick.message") == 0)
+        {
+            if (pr2str == NULL)
+            {
+                return false;
+            }
+            else
+            {
+                message_add_fmt(plyr_idx, "%s", gameadd.quick_messages[atoi(pr2str)]);
+                return true;
             }
             return false;
         }
