@@ -260,11 +260,11 @@ static char *cmd_strtok(char *tail)
 TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
 {
     SYNCDBG(2,"Command %d: %s",(int)plyr_idx, msg);
-    const char * parstr = msg + 1;
-    const char * pr2str = cmd_strtok(msg + 1);
-    const char * pr3str = (pr2str != NULL) ? cmd_strtok(pr2str + 1) : NULL;
-    const char * pr4str = (pr3str != NULL) ? cmd_strtok(pr3str + 1) : NULL;
-    const char * pr5str = (pr4str != NULL) ? cmd_strtok(pr4str + 1) : NULL;
+    char * parstr = msg + 1;
+    char * pr2str = cmd_strtok(msg + 1);
+    char * pr3str = (pr2str != NULL) ? cmd_strtok(pr2str + 1) : NULL;
+    char * pr4str = (pr3str != NULL) ? cmd_strtok(pr3str + 1) : NULL;
+    char * pr5str = (pr4str != NULL) ? cmd_strtok(pr4str + 1) : NULL;
     struct PlayerInfo* player;
     struct Thing* thing;
     struct Dungeon* dungeon;
@@ -307,7 +307,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     {
         game_flags2 ^= GF2_Timer;
         player = get_player(plyr_idx);
-        if ( (player->victory_state == VicS_WonLevel) && (timer_enabled) && (TimerGame) )
+        if ( (player->victory_state == VicS_WonLevel) && (timer_enabled()) && (TimerGame) )
         {
             dungeon = get_my_dungeon();
             TimerTurns = dungeon->lvstats.hopes_dashed;
@@ -318,7 +318,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     {
         TimerGame ^= 1;
         player = get_player(plyr_idx);
-        if ( (player->victory_state == VicS_WonLevel) && (timer_enabled) && (TimerGame) )
+        if ( (player->victory_state == VicS_WonLevel) && (timer_enabled()) && (TimerGame) )
         {
             dungeon = get_my_dungeon();
             TimerTurns = dungeon->lvstats.hopes_dashed;
@@ -575,25 +575,25 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "room.available") == 0)
         {
-            long room = get_rid(room_desc, pr2str);
-            if (room <= 0)
+            long roomid = get_rid(room_desc, pr2str);
+            if (roomid <= 0)
             {
                 if (strcasecmp(pr2str, "Hatchery" ) == 0)
                 {
-                    room = RoK_GARDEN;
+                    roomid = RoK_GARDEN;
                 }
                 else if ( (strcasecmp(pr2str, "Guard" ) == 0) || (strcasecmp(pr2str, "GuardPost" ) == 0) )
                 {
-                    room = RoK_GUARDPOST;
+                    roomid = RoK_GUARDPOST;
                 }
                 else
                 {
-                    room = atoi(pr2str);
+                    roomid = atoi(pr2str);
                 }
             }
             unsigned char available = (pr3str == NULL) ? 1 : atoi(pr3str);
             PlayerNumber id = get_player_number_for_command(pr4str);
-            script_process_value(Cmd_ROOM_AVAILABLE, id, room, (TbBool)available, (TbBool)available);
+            script_process_value(Cmd_ROOM_AVAILABLE, id, roomid, (TbBool)available, (TbBool)available);
             update_room_tab_to_config();
             return true;
         }
