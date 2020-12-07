@@ -670,6 +670,15 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 {
                     power = PwrK_ARMAGEDDON;
                 }
+                else if (strcasecmp(pr2str, "all") == 0)
+                {
+                    for (PowerKind pw = PwrK_ARMAGEDDON; pw > PwrK_HAND; pw--)
+                    {
+                        script_process_value(Cmd_MAGIC_AVAILABLE, plyr_idx, pw, 1, 1);                     
+                    }
+                    update_powers_tab_to_config();
+                    return true; 
+                }
                 else
                 {
                     power = atoi(pr2str);
@@ -685,18 +694,18 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             thing = get_player_soul_container(id);
             if (thing_is_dungeon_heart(thing))
             {
-                    if (pr3str == NULL)
-                    {
-                        float percent = ((float)thing->health / (float)game.dungeon_heart_health) * 100;
-                        message_add_fmt(plyr_idx, "Player %d heart health: %ld (%.2f per cent)", id, thing->health, percent);
-                        return true;
-                    }
-                    else
-                    {
-                        short Health = atoi(pr3str);
-                        thing->health = Health;
-                        return true;
-                    }
+                if (pr3str == NULL)
+                {
+                    float percent = ((float)thing->health / (float)game.dungeon_heart_health) * 100;
+                    message_add_fmt(plyr_idx, "Player %d heart health: %ld (%.2f per cent)", id, thing->health, percent);
+                    return true;
+                }
+                else
+                {
+                    short Health = atoi(pr3str);
+                    thing->health = Health;
+                    return true;
+                }
             }
             return false;
         }
@@ -1657,13 +1666,25 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "quick.message") == 0)
         {
-            if (pr2str == NULL)
+            if (!pr2str == NULL)
             {
-                return false;
+                if (!(TbBool)atoi(pr3str))
+                {
+                    event_create_event(0, 0, EvKind_QuickInformation, plyr_idx, ~atoi(pr2str)+1);               
+                }
+                else
+                {
+                    message_add_fmt(plyr_idx, "%s", gameadd.quick_messages[atoi(pr2str)]);
+                }
+                return true;
             }
-            else
+            return false;
+        }
+        else if (strcasecmp(parstr, "information") == 0)
+        {
+            if (pr2str != NULL)
             {
-                message_add_fmt(plyr_idx, "%s", gameadd.quick_messages[atoi(pr2str)]);
+                event_create_event(0, 0, EvKind_Information, plyr_idx, atoi(pr2str));
                 return true;
             }
             return false;
