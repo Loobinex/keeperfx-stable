@@ -300,7 +300,9 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     }
     else if (strcasecmp(parstr, "time") == 0)
     {
-        show_game_time_taken(game.play_gameturn);
+        unsigned long turn = (pr2str != NULL) ? atoi(pr2str) : game.play_gameturn;
+        unsigned char frames = (pr3str != NULL) ? atoi(pr3str) : game.num_fps;
+        show_game_time_taken(frames, turn);
         return true;
     }
     else if (strcasecmp(parstr, "timer.toggle") == 0)
