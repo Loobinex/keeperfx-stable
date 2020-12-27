@@ -1030,10 +1030,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
-        else if (strcasecmp(parstr, "things.query") == 0)
+        else if (strcasecmp(parstr, "query") == 0)
         {
             player = get_player(plyr_idx);
-            set_player_state(player, PSt_ThingQuery, 0);
+            set_player_state(player, PSt_CreatrQueryAll, 0);
             return true;
         }
         else if (strcasecmp(parstr, "room") == 0)
