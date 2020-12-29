@@ -627,6 +627,12 @@ void create_error_box(TextStringId msg_idx)
     }
 }
 
+void create_message_box(const char *msg)
+{
+    strncpy(gui_error_text, msg, sizeof(gui_error_text)-1);
+    turn_on_menu(GMnu_ERROR_BOX);
+}
+
 short game_is_busy_doing_gui(void)
 {
     if (!busy_doing_gui)

@@ -1691,6 +1691,41 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             return false;
         }
+        else if (strcasecmp(parstr, "error") == 0)
+        {
+            char txt[255] = "";
+            if (!pr2str == NULL)
+            {
+                strcat(&txt, pr2str);
+                if (!pr3str == NULL)
+                {
+                    strcat(&txt, " ");
+                    strcat(&txt, pr3str);
+                    if (!pr4str == NULL)
+                    {
+                        strcat(&txt, " ");
+                        strcat(&txt, pr4str);
+                        if (!pr5str == NULL)
+                        {
+                            strcat(&txt, " ");
+                            strcat(&txt, pr5str);
+                        }
+                    }             
+                }
+                create_message_box(&txt);
+                return true;
+            }
+            return false;
+        }
+        else if (strcasecmp(parstr, "menu") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                turn_on_menu(atoi(pr2str));
+                return true;
+            }
+            return false;
+        }
     }
     return false;
 }
