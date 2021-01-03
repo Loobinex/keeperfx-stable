@@ -59,6 +59,7 @@
 #include "thing_list.h"
 #include "thing_objects.h"
 #include "thing_navigate.h"
+#include "thing_physics.h"
 #include "version.h"
 
 #ifdef __cplusplus
@@ -350,7 +351,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         else
         {
           ERRORLOG("Error in save!");
-          // create_error_box(GUIStr_ErrorSaving);
+          create_error_box(GUIStr_ErrorSaving);
           message_add_fmt(plyr_idx, "Unable to save to slot $d", slot_num);
         }
         set_flag_byte(&game.operation_flags,GOF_Paused,false); // unpause after save attempt
@@ -900,14 +901,12 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             player = get_player(id);
             if (player_exists(player))
             {
-                // dungeon = get_dungeon(id);
                 if (pr3str == NULL)
                 {
                     return false;
                 }
                 else
                 {
-                    // dungeon->total_money_owned += atoi(pr3str);
                     script_process_value(Cmd_ADD_GOLD_TO_PLAYER, id, atoi(pr3str), 0, 0);
                     return true;
                 }
@@ -962,9 +961,27 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             player = get_player(plyr_idx);
             thing = thing_get(player->influenced_thing_idx);
+            if (pr4str != NULL)
+            {
+                pos.x.stl.num = atoi(pr2str);
+                pos.y.stl.num = atoi(pr3str);
+                pos.z.stl.num = atoi(pr4str);
+                move_thing_in_map(thing, &pos);                
+            }
+            else if (!thing_is_invalid(thing))
+            {
+                message_add_fmt(plyr_idx, "Thing ID %d X: %d Y: %d Z: %d", thing->index, thing->mappos.x.stl.num, thing->mappos.y.stl.num, thing->mappos.z.stl.num);
+                return true;
+            }
+            return false;
+        }
+        else if (strcasecmp(parstr, "thing.pos.val") == 0)
+        {
+            player = get_player(plyr_idx);
+            thing = thing_get(player->influenced_thing_idx);
             if (!thing_is_invalid(thing))
             {
-                message_add_fmt(plyr_idx, "Thing ID %d X: %d Y: %d", thing->index, thing->mappos.x.stl.num, thing->mappos.y.stl.num);
+                message_add_fmt(plyr_idx, "Thing ID %d X: %d Y: %d Z: %d", thing->index, thing->mappos.x.val, thing->mappos.y.val, thing->mappos.z.val);
                 return true;
             }
             return false;
@@ -1279,7 +1296,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             }
             if (pr3str != NULL)
             {
-                // game.pool.crtr_kind[crmodel] = atoi(pr3str);
                 set_creature_pool(crmodel, atoi(pr3str));
             }
             else
@@ -1344,41 +1360,26 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     MapSlabCoord slb_x = subtile_slab(stl_x);
                     MapSlabCoord slb_y = subtile_slab(stl_y);
                     PlayerNumber id = get_player_number_for_command(pr5str);
-                    if ( (slab_is_wall(slb_x, slb_y)) || (slab_coords_invalid(slb_x, slb_y)) )
+                    if (!subtile_coords_invalid(stl_x, stl_y))
                     {
-                        thing = get_player_soul_container(plyr_idx);
-                        if (thing_is_dungeon_heart(thing))
-                        {
-                            pos = thing->mappos;
+                        pos.x.stl.num = stl_x;
+                        pos.y.stl.num = stl_y;                 
+                        unsigned int count = (pr4str != NULL) ? atoi(pr4str) : 1;
+                        unsigned int i;
+                        for (i = 0; i < count; i++)
+                        {                            
+                            struct Thing* creatng = create_creature(&pos, crmodel, id);
+                            if (thing_is_creature(creatng))
+                            {
+                                if (thing_in_wall_at(creatng, &creatng->mappos))
+                                {
+                                    move_creature_to_nearest_valid_position(creatng);
+                                }
+                                set_creature_level(creatng, (atoi(pr3str) - (unsigned char)(pr3str != NULL)));
+                            }
                         }
-                        else
-                        {
-                            return false;
-                        }
+                        return true;
                     }
-                    else
-                    {
-                        if (!subtile_coords_invalid(stl_x, stl_y))
-                        {
-                            pos.x.stl.num = stl_x;
-                            pos.y.stl.num = stl_y;
-                        }
-                        else
-                        {
-                            return false;
-                        }
-                    }                        
-                    unsigned int count = (pr4str != NULL) ? atoi(pr4str) : 1;
-                    unsigned int i;
-                    for (i = 0; i < count; i++)
-                    {                            
-                        struct Thing* creatng = create_creature(&pos, crmodel, id);
-                        if (thing_is_creature(creatng))
-                        {
-                            set_creature_level(creatng, (atoi(pr3str) - (unsigned char)(pr3str != NULL)));
-                        }
-                    }
-                    return true;
                 }
             }
             return false;
@@ -1657,11 +1658,18 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 pckt = get_packet_direct(player->packet_num);
                 pos.x.stl.num = coord_subtile(((unsigned short)pckt->pos_x));
                 pos.y.stl.num = coord_subtile(((unsigned short)pckt->pos_y));
-                PlayerNumber id = get_player_number_for_command(pr3str);
-                thing = create_object(&pos, atoi(pr2str), id, -1);
-                if (thing_is_object(thing))
+                if (!subtile_coords_invalid(pos.x.stl.num, pos.y.stl.num))
                 {
-                    return true;
+                    PlayerNumber id = get_player_number_for_command(pr3str);
+                    thing = create_object(&pos, atoi(pr2str), id, -1);
+                    if (thing_is_object(thing))
+                    {
+                        if (thing_in_wall_at(thing, &thing->mappos))
+                        {
+                            move_creature_to_nearest_valid_position(thing);
+                        }
+                        return true;
+                    }
                 }
             }
             return false;
@@ -1690,6 +1698,45 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 return true;
             }
             return false;
+        }
+        else if (strcasecmp(parstr, "menu") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                turn_on_menu(atoi(pr2str));
+                return true;
+            }
+            return false;
+        }
+        else if (strcasecmp(parstr, "gold.create") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                player = get_player(plyr_idx);
+                pckt = get_packet_direct(player->packet_num);
+                thing = create_gold_pot_at(pckt->pos_x, pckt->pos_y, plyr_idx);
+                if (!thing_is_invalid(thing))
+                {
+                    if (thing_in_wall_at(thing, &thing->mappos))
+                    {
+                        move_creature_to_nearest_valid_position(thing);
+                    }
+                    thing->valuable.gold_stored = atoi(pr2str);
+                    add_gold_to_pile(thing, 0);
+                    MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+                    MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+                    room = subtile_room_get(stl_x, stl_y);
+                    if (room_exists(room))
+                    {
+                        if (room->kind == RoK_TREASURE)
+                        {
+                            count_gold_hoardes_in_room(room);
+                        }
+                    }
+                    return true;
+                }
+            }
+            return false;            
         }
     }
     return false;
