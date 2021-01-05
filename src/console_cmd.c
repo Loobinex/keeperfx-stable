@@ -291,7 +291,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             game.num_fps = atoi(pr2str);
             return true;
         }
-        return false;
     }
     else if (strcasecmp(parstr, "quit") == 0)
     {
@@ -352,7 +351,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
           ERRORLOG("Error in save!");
           create_error_box(GUIStr_ErrorSaving);
-          message_add_fmt(plyr_idx, "Unable to save to slot $d", slot_num);
         }
         set_flag_byte(&game.operation_flags,GOF_Paused,false); // unpause after save attempt
         return result;
@@ -377,7 +375,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         {
             message_add_fmt(plyr_idx, "Unable to load game %d", slot_num);
         }
-        return false;
     }
     else if (strcasecmp(parstr, "cls") == 0)
     {
@@ -464,7 +461,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 thing->health = 0;
                 return true;
             }
-            return false;
         } 
         else if (strcasecmp(parstr, "player.score") == 0)
         {
@@ -475,7 +471,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Player %d score: %ld", id, dungeon->total_score);
                 return true;                
             }
-            return false;
         }
         else if (strcasecmp(parstr, "comp.me") == 0)
         {
@@ -500,7 +495,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     }
                     return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "trap") == 0)
         {
@@ -509,7 +503,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "%s", trap_code_name(atoi(pr2str)));
                 return true;                
             }
-            return false;
         }
         else if ( (strcasecmp(parstr, "give.trap") == 0) || (strcasecmp(parstr, "trap.give") == 0) )
         {
@@ -544,7 +537,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "%s", door_code_name(atoi(pr2str)));
                 return true;                
             }
-            return false;
         }
         else if ( (strcasecmp(parstr, "give.door") == 0) || (strcasecmp(parstr, "door.give") == 0) )
         {
@@ -710,15 +702,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     return true;
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "player.heart.get") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 PlayerNumber id = get_player_number_for_command(pr2str);
                 thing = get_player_soul_container(id);
@@ -730,7 +717,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     return true;
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creature.available") == 0)
         {
@@ -750,7 +736,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Target player: %d", cctrl->party.target_plyr_idx);
                 return true;
             }
-            return false;
         }
         else if ( (strcasecmp(parstr, "creature.addhealth") == 0) || (strcasecmp(parstr, "creature.health.add") == 0) )
         {
@@ -761,7 +746,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 thing->health += atoi(pr2str);
                 return true;
             }
-            return false;
         }
         else if ( (strcasecmp(parstr, "creature.subhealth") == 0) || (strcasecmp(parstr, "creature.health.sub") == 0) )
         {
@@ -772,7 +756,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 thing->health -= atoi(pr2str);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "digger.sendto") == 0)
         {
@@ -791,15 +774,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     }
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creature.instance.set") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 player = get_player(plyr_idx);
                 thing = thing_get(player->influenced_thing_idx);
@@ -810,15 +788,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     return true;
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creature.state.set") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 player = get_player(plyr_idx);
                 thing = thing_get(player->influenced_thing_idx);
@@ -831,15 +804,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                         }
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creature.job.set") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 player = get_player(plyr_idx);
                 thing = thing_get(player->influenced_thing_idx);
@@ -857,15 +825,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     }
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creature.attackheart") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 player = get_player(plyr_idx);
                 thing = thing_get(player->influenced_thing_idx);
@@ -881,7 +844,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     }
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "player.gold") == 0)
         {
@@ -893,7 +855,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Player %d gold: %ld", id, dungeon->total_money_owned);
                 return true;
             }
-            return false;
         }
         else if ( (strcasecmp(parstr, "player.addgold") == 0) || (strcasecmp(parstr, "player.gold.add") == 0) )
         {
@@ -911,7 +872,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     return true;
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "thing.get") == 0)
         {
@@ -926,7 +886,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 player->influenced_thing_idx = thing->index;
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "thing.model") == 0)
         {
@@ -937,7 +896,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Thing model: %d", thing->model);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "thing.health") == 0)
         {
@@ -955,7 +913,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 }
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "thing.pos") == 0)
         {
@@ -973,7 +930,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Thing ID %d X: %d Y: %d Z: %d", thing->index, thing->mappos.x.stl.num, thing->mappos.y.stl.num, thing->mappos.z.stl.num);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "thing.pos.val") == 0)
         {
@@ -984,7 +940,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Thing ID %d X: %d Y: %d Z: %d", thing->index, thing->mappos.x.val, thing->mappos.y.val, thing->mappos.z.val);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "thing.class") == 0 )
         {
@@ -995,7 +950,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Thing ID %d class: %d", thing->index, thing->class_id);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "thing.owner") == 0 )
         {
@@ -1006,7 +960,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Thing ID %d owner: %d", thing->index, thing->owner);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "thing.count") == 0 )
         {
@@ -1022,15 +975,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 destroy_object(thing);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "thing.create") == 0)
         {
-            if ( (pr2str == NULL) || (pr3str == NULL) )
-            {
-                return false;
-            }
-            else
+            if ( (pr2str != NULL) && (pr3str != NULL) )
             {
                 player = get_player(plyr_idx);
                 pckt = get_packet_direct(player->packet_num);
@@ -1040,12 +988,8 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 unsigned short tngmodel = atoi(pr3str);
                 PlayerNumber id = get_player_number_for_command(pr4str);
                 thing = create_thing(&pos, tngclass, tngmodel, id, -1);
-                if (!thing_is_invalid(thing))
-                {
-                    return true;
-                }
+                return (!thing_is_invalid(thing));
             }
-            return false;
         }
         else if (strcasecmp(parstr, "query") == 0)
         {
@@ -1060,7 +1004,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "%s", room_code_name(atoi(pr2str)));
                 return true;                
             }
-            return false;
         }
         else if (strcasecmp(parstr, "room.get") == 0 )
         {
@@ -1075,7 +1018,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 player->influenced_thing_idx = room->index;
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "room.efficiency") == 0)
         {
@@ -1087,7 +1029,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Room ID %d efficiency: %d (%d per cent)", room->index, room->efficiency, (unsigned char)round(percent));
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "room.health") == 0)
         {
@@ -1106,7 +1047,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     return true;
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "room.pos") == 0 )
         {
@@ -1117,7 +1057,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Room ID %d X: %d Y: %d", room->index, room->central_stl_x, room->central_stl_y);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "slab.kind") == 0)
         {
@@ -1131,7 +1070,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Slab kind: %d", slb->kind);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "slab.health") == 0)
         {
@@ -1153,7 +1091,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     return true;
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "slab") == 0)
         {
@@ -1162,70 +1099,71 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "%s", slab_code_name(atoi(pr2str)));
                 return true;                
             }
-            return false;
         }
         else if (strcasecmp(parstr, "slab.place") == 0)
         {
-            player = get_player(plyr_idx);
-            pckt = get_packet_direct(player->packet_num);
-            MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
-            MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
-            MapSlabCoord slb_x = subtile_slab(stl_x);
-            MapSlabCoord slb_y = subtile_slab(stl_y);
-            slb = get_slabmap_block(slb_x, slb_y);
-            if (!slabmap_block_invalid(slb))
+            if (pr2str != NULL)
             {
-                PlayerNumber id = (pr3str == NULL) ? slabmap_owner(slb) : get_player_number_for_command(pr3str);
-                short slbkind = get_rid(slab_desc, pr2str);
-                if (slbkind <= 0)
+                player = get_player(plyr_idx);
+                pckt = get_packet_direct(player->packet_num);
+                MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
+                MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
+                MapSlabCoord slb_x = subtile_slab(stl_x);
+                MapSlabCoord slb_y = subtile_slab(stl_y);
+                slb = get_slabmap_block(slb_x, slb_y);
+                if (!slabmap_block_invalid(slb))
                 {
-                    long rid = get_rid(room_desc, pr2str);
-                    if (rid > 0)
+                    PlayerNumber id = (pr3str == NULL) ? slabmap_owner(slb) : get_player_number_for_command(pr3str);
+                    short slbkind = get_rid(slab_desc, pr2str);
+                    if (slbkind <= 0)
                     {
-                        struct RoomConfigStats *roomst = get_room_kind_stats(rid);
-                        slbkind = roomst->assigned_slab;
-                    }
-                    else
-                    {
-                        if (strcasecmp(pr2str, "Earth") == 0)
+                        long rid = get_rid(room_desc, pr2str);
+                        if (rid > 0)
                         {
-                            slbkind = rand() % (4 - 2) + 2;
-                        }
-                        else if ( (strcasecmp(pr2str, "Reinforced") == 0) || (strcasecmp(pr2str, "Fortified") == 0) )
-                        {
-                            slbkind = rand() % (9 - 4) + 4;
-                        }
-                        else if (strcasecmp(pr2str, "Claimed") == 0)
-                        {
-                            slbkind = SlbT_CLAIMED;
-                        }
-                        else if ( (strcasecmp(pr2str, "Rock") == 0) || (strcasecmp(pr2str, "Impenetrable") == 0) )
-                        {
-                            slbkind = SlbT_ROCK;
+                            struct RoomConfigStats *roomst = get_room_kind_stats(rid);
+                            slbkind = roomst->assigned_slab;
                         }
                         else
                         {
-                            slbkind = atoi(pr2str);
+                            if (strcasecmp(pr2str, "Earth") == 0)
+                            {
+                                slbkind = rand() % (4 - 2) + 2;
+                            }
+                            else if ( (strcasecmp(pr2str, "Reinforced") == 0) || (strcasecmp(pr2str, "Fortified") == 0) )
+                            {
+                                slbkind = rand() % (9 - 4) + 4;
+                            }
+                            else if (strcasecmp(pr2str, "Claimed") == 0)
+                            {
+                                slbkind = SlbT_CLAIMED;
+                            }
+                            else if ( (strcasecmp(pr2str, "Rock") == 0) || (strcasecmp(pr2str, "Impenetrable") == 0) )
+                            {
+                                slbkind = SlbT_ROCK;
+                            }
+                            else
+                            {
+                                slbkind = atoi(pr2str);
+                            }
                         }
                     }
+                    if (subtile_is_room(stl_x, stl_y)) 
+                    {
+                        room = subtile_room_get(stl_x, stl_y);
+                        delete_room_slab(slb_x, slb_y, true);
+                    }
+                    if (slab_kind_is_animated(slbkind))
+                    {
+                        place_animating_slab_type_on_map(slbkind, 0, stl_x, stl_y, id);  
+                    }
+                    else
+                    {
+                        place_slab_type_on_map(slbkind, stl_x, stl_y, id, 0);
+                    }
+                    do_slab_efficiency_alteration(slb_x, slb_y);
+                    return true;
                 }
-                if (subtile_is_room(stl_x, stl_y)) 
-                {
-                    room = subtile_room_get(stl_x, stl_y);
-                    delete_room_slab(slb_x, slb_y, true);
-                }
-                if (slab_kind_is_animated(slbkind))
-                {
-                    place_animating_slab_type_on_map(slbkind, 0, stl_x, stl_y, id);  
-                }
-                else
-                {
-                    place_slab_type_on_map(slbkind, stl_x, stl_y, id, 0);
-                }
-                do_slab_efficiency_alteration(slb_x, slb_y);
-                return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "slab.isblocking") == 0)
         {
@@ -1261,8 +1199,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             {
                 message_add_fmt(plyr_idx, "Column index: %d", get_mapblk_column_index(mapblk));
                 return true;
-            }
-            return false;            
+            }           
         }
         else if (strcasecmp(parstr, "cube.get") == 0)
         {
@@ -1276,7 +1213,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Cube ID: %d", cube_id);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creature") == 0)
         {
@@ -1306,11 +1242,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "creature.pool.add") == 0)
         {
-            if (pr3str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr3str != NULL)
             {
                 long crmodel = get_creature_model_for_command(pr2str);
                 if (crmodel == -1)
@@ -1323,11 +1255,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if ( (strcasecmp(parstr, "creature.pool.sub") == 0) || (strcasecmp(parstr, "creature.pool.remove") == 0) )
         {
-            if (pr3str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr3str != NULL)
             {
                 long crmodel = get_creature_model_for_command(pr2str);
                 if (crmodel == -1)
@@ -1340,11 +1268,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "creature.create") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 long crmodel = get_creature_model_for_command(pr2str);
                 if (crmodel == -1)
@@ -1357,8 +1281,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     pckt = get_packet_direct(player->packet_num);
                     MapSubtlCoord stl_x = coord_subtile(((unsigned short)pckt->pos_x));
                     MapSubtlCoord stl_y = coord_subtile(((unsigned short)pckt->pos_y));
-                    MapSlabCoord slb_x = subtile_slab(stl_x);
-                    MapSlabCoord slb_y = subtile_slab(stl_y);
                     PlayerNumber id = get_player_number_for_command(pr5str);
                     if (!subtile_coords_invalid(stl_x, stl_y))
                     {
@@ -1382,15 +1304,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     }
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creature.level") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 player = get_player(plyr_idx);
                 thing = thing_get(player->influenced_thing_idx);
@@ -1400,7 +1317,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     return true;
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creatures.max") == 0)
         {
@@ -1411,7 +1327,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "Max creatures: %d", dungeon->max_creatures_attracted);
                 return true;    
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creature.spellflags") == 0)
         {
@@ -1423,7 +1338,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "%x", cctrl->spell_flags);
                 return true;                
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creature.freeze") == 0)
         {
@@ -1435,7 +1349,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 apply_spell_effect_to_thing(thing, SplK_Freeze, 8);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "creature.slow") == 0)
         {
@@ -1447,7 +1360,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 apply_spell_effect_to_thing(thing, SplK_Slow, 8);
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "floating.spirit") == 0)
         {
@@ -1461,15 +1373,17 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "music.set") == 0)
         {
-            int track = atoi(pr2str);
-            if (track >= FIRST_TRACK && track <= max_track)
+            if (pr2str != NULL)
             {
-                StopMusicPlayer();
-                game.audiotrack = track;
-                PlayMusicPlayer(track);
-                return true;
+                int track = atoi(pr2str);
+                if (track >= FIRST_TRACK && track <= max_track)
+                {
+                    StopMusicPlayer();
+                    game.audiotrack = track;
+                    PlayMusicPlayer(track);
+                    return true;
+                }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "zoomto") == 0)
         {
@@ -1491,15 +1405,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     return true;
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "bug.toggle") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 unsigned char bug = atoi(pr2str);
                 unsigned short flg = (bug > 2) ? (1 << (bug - 1)) : bug; 
@@ -1507,15 +1416,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "%s %s", get_conf_parameter_text(rules_game_classicbugs_commands, bug), ((gameadd.classic_bugs_flags & flg) != 0) ? "enabled" : "disabled");
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "actionpoint.pos") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 unsigned char ap = atoi(pr2str);
                 if (action_point_exists_idx(ap))
@@ -1524,16 +1428,11 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     message_add_fmt(plyr_idx, "Action Point %d X: %d Y: %d", ap, actionpt->mappos.x.stl.num, actionpt->mappos.y.stl.num);
                     return true;
                 }
-            }
-            return false;            
+            }            
         }
         else if (strcasecmp(parstr, "actionpoint.reset") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 unsigned char ap = atoi(pr2str);
                 if (action_point_exists_idx(ap))
@@ -1541,7 +1440,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     return action_point_reset_idx(ap);
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "actionpoint.count") == 0)
         {
@@ -1559,11 +1457,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "actionpoint.activated") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 unsigned char ap = atoi(pr2str);
                 if (action_point_exists_idx(ap))
@@ -1572,16 +1466,11 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     message_add_fmt(plyr_idx, "%d", actionpt->activated);
                     return true;
                 }
-            }
-            return false;            
+            }           
         }
         else if (strcasecmp(parstr, "herogate.pos") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 unsigned char hg = atoi(pr2str);
                 thing = find_hero_gate_of_number(hg);
@@ -1591,15 +1480,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     return true;
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "sound.test") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 play_non_3d_sample(atoi(pr2str));
                 return true;
@@ -1607,11 +1491,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
         }
         else if (strcasecmp(parstr, "speech.test") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 play_speech_sample(atoi(pr2str));
                 return true;
@@ -1644,15 +1524,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 message_add_fmt(plyr_idx, "%s", object_code_name(atoi(pr2str)));
                 return true;                
             }
-            return false;
         }
         else if (strcasecmp(parstr, "object.create") == 0)
         {
-            if (pr2str == NULL)
-            {
-                return false;
-            }
-            else
+            if (pr2str != NULL)
             {
                 player = get_player(plyr_idx);
                 pckt = get_packet_direct(player->packet_num);
@@ -1672,11 +1547,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     }
                 }
             }
-            return false;
         }
         else if (strcasecmp(parstr, "quick.message") == 0)
         {
-            if (!pr2str == NULL)
+            if (pr2str != NULL)
             {
                 if (!(TbBool)atoi(pr3str))
                 {
@@ -1688,7 +1562,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 }
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "information") == 0)
         {
@@ -1697,7 +1570,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 event_create_event(0, 0, EvKind_Information, plyr_idx, atoi(pr2str));
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "menu") == 0)
         {
@@ -1706,7 +1578,6 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 turn_on_menu(atoi(pr2str));
                 return true;
             }
-            return false;
         }
         else if (strcasecmp(parstr, "gold.create") == 0)
         {
@@ -1735,8 +1606,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                     }
                     return true;
                 }
-            }
-            return false;            
+            }           
         }
     }
     return false;
