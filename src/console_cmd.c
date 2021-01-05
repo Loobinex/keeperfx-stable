@@ -1430,6 +1430,22 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
                 }
             }            
         }
+        else if (strcasecmp(parstr, "actionpoint.zoomto") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                unsigned char ap = atoi(pr2str);
+                if (action_point_exists_idx(ap))
+                {
+                    struct ActionPoint* actionpt = action_point_get(ap);
+                    player = get_player(plyr_idx);
+                    player->zoom_to_pos_x = subtile_coord_center(actionpt->mappos.x.stl.num);
+                    player->zoom_to_pos_y = subtile_coord_center(actionpt->mappos.y.stl.num);
+                    set_player_instance(player, PI_ZoomToPos, 0);
+                    return true;
+                }
+            }
+        }
         else if (strcasecmp(parstr, "actionpoint.reset") == 0)
         {
             if (pr2str != NULL)
@@ -1474,9 +1490,25 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             {
                 unsigned char hg = atoi(pr2str);
                 thing = find_hero_gate_of_number(hg);
-                if (object_is_hero_gate(thing))
+                if ( (thing_is_object(thing)) && (object_is_hero_gate(thing)) )
                 {
                     message_add_fmt(plyr_idx, "Hero Gate %d X: %d Y: %d", hg, thing->mappos.x.stl.num, thing->mappos.y.stl.num);
+                    return true;
+                }
+            }
+        }
+        else if (strcasecmp(parstr, "herogate.zoomto") == 0)
+        {
+            if (pr2str != NULL)
+            {
+                unsigned char hg = atoi(pr2str);
+                thing = find_hero_gate_of_number(hg);
+                if ( (thing_is_object(thing)) && (object_is_hero_gate(thing)) )
+                {
+                    player = get_player(plyr_idx);
+                    player->zoom_to_pos_x = subtile_coord_center(thing->mappos.x.stl.num);
+                    player->zoom_to_pos_y = subtile_coord_center(thing->mappos.y.stl.num);
+                    set_player_instance(player, PI_ZoomToPos, 0);
                     return true;
                 }
             }
