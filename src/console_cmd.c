@@ -597,7 +597,7 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
             long power = get_rid(power_desc, pr2str);
             if (power <= 0)
             {
-                if ( (strcasecmp(pr2str, "Imp" ) == 0) || (strcasecmp(pr2str, "CresteImp" ) == 0) )
+                if ( (strcasecmp(pr2str, "Imp" ) == 0) || (strcasecmp(pr2str, "CreateImp" ) == 0) )
                 {
                     power = PwrK_MKDIGGER;
                 }
