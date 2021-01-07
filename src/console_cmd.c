@@ -340,6 +340,10 @@ TbBool cmd_exec(PlayerNumber plyr_idx, char *msg)
     else if (strcasecmp(parstr, "game.save") == 0)
     {
         long slot_num = atoi(pr2str);
+        if ( (pr3str != NULL) && (slot_num <= TOTAL_SAVE_SLOTS_COUNT) )
+        {
+            fill_game_catalogue_slot(slot_num, pr3str);
+        }
         player = get_player(plyr_idx);
         set_flag_byte(&game.operation_flags,GOF_Paused,true); // games are saved in a paused state
         TbBool result = save_game(slot_num);
