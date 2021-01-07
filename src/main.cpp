@@ -4542,11 +4542,7 @@ void wait_at_frontend(void)
       }
       return;
     }
-
-    if (restart_level)
-    {
-        restart_level = false;
-    }
+    restart_level = false;
     if ( !setup_screen_mode_minimal(get_frontend_vidmode()) )
     {
       FatalError = 1;
