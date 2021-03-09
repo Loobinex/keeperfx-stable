@@ -1,5 +1,9 @@
 # KeeperFX - Unofficial release
 
+As of 2020-08-24 this project will continue back at the original project. The unofficial branch has officially taken over from the original official branch as the new official branch so we officially drop the unofficial name from the formar unofficial branch and continue this unofficial branch as the new official branch at the location of the old official branch.
+
+---
+
 KeeperFX Unofficial is the continuation of the now abandoned [KeeperFX Project](https://github.com/dkfans/keeperfx/wiki).
 
 Download the latest full release [here](https://keeperklan.com/downloads.php?do=file&id=137). Or read more [here](https://keeperklan.com/threads/7104-KeeperFX-Unofficial-0-4-7).
