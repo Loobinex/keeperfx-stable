@@ -1098,6 +1098,13 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
             player->thing_under_hand = thing->index;
         if ((pckt->control_flags & PCtr_LBtnRelease) != 0)
         {
+          if (player->thing_under_hand > 0)
+          {
+            if (player->controlled_thing_idx != player->thing_under_hand)
+            {
+                player->influenced_thing_idx = player->thing_under_hand;
+            }
+          }
           if ((player->controlled_thing_idx > 0) && (player->controlled_thing_idx < THINGS_COUNT))
           {
             if ((pckt->control_flags & PCtr_MapCoordsValid) != 0)
@@ -1387,7 +1394,14 @@ TbBool process_dungeon_control_packet_clicks(long plyr_idx)
                             pos.x.val = subtile_coord_center(slab_subtile_center(subtile_slab(stl_x)));
                             pos.y.val = subtile_coord_center(slab_subtile_center(subtile_slab(stl_y))); 
                             pos.z.val = subtile_coord_center(1);
-                            play_non_3d_sample(76);
+                            if (i == game.hero_player_num)
+                            {
+                                play_non_3d_sample(944);    
+                            }
+                            else
+                            {
+                                play_non_3d_sample(76);
+                            }
                             create_effect(&pos, imp_spangle_effects[i], i);
                         }
                         else

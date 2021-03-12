@@ -173,6 +173,10 @@ DLLIMPORT unsigned long _DK_setup_move_out_of_cave_in(struct Thing *thing);
 // Now variables
 DLLIMPORT extern HINSTANCE _DK_hInstance;
 
+TbBool restart_level = false;
+char cached_campaign_name[DISKPATH_SIZE] = {0};
+LevelNumber cached_level_number = 0;
+
 TbPixel get_player_path_colour(unsigned short owner)
 {
   return player_path_colours[player_colors_map[owner % PLAYERS_EXT_COUNT]];
@@ -4423,6 +4427,18 @@ void faststartup_network_game(void)
     player->flgfield_6 &= ~PlaF6_PlyrHasQuit;
 }
 
+void restart_current_level()
+{
+    restart_level = true;
+    cached_level_number = get_loaded_level_number();
+    strcpy(cached_campaign_name,campaign.fname);
+    struct PlayerInfo *player;
+    player = get_my_player();
+    set_flag_byte(&game.operation_flags,GOF_SingleLevel,false); // needed to work with levels loaded by -level parameter, otherwise they just quit the program with the next line
+    set_players_packet_action(player, PckA_Unknown001, 0, 0, 0, 0);
+    quit_game = 1;
+}
+
 void wait_at_frontend(void)
 {
     struct PlayerInfo *player;
@@ -4449,21 +4465,27 @@ void wait_at_frontend(void)
     {
       WARNMSG("No valid mappack files found");
     }
-    //Set level number and campaign (for single level mode: GOF_SingleLevel)
-    if ((start_params.operation_flags & GOF_SingleLevel) != 0) {
-        TbBool result = false;
-        if (start_params.selected_campaign[0] != '\0') {
-            result = change_campaign(strcat(start_params.selected_campaign,".cfg"));
+    if (restart_level)
+    {
+        if (!change_campaign(cached_campaign_name)) // Load the cached campaign
+        {
+            WARNMSG("Unable to load cached campaign, can't restart the level.");
+            set_selected_level_number(first_singleplayer_level());
         }
-        if (!result) {
+        else
+        {
+            set_selected_level_number(cached_level_number); // Load the cached level
+            set_flag_byte(&game.operation_flags,GOF_SingleLevel,true); //This will load the game as if a level was specified with -level
+        }
+    }
+    //Set level number and campaign (for single level mode: GOF_SingleLevel)
+    else if ((start_params.operation_flags & GOF_SingleLevel) != 0) {
+        if (!change_campaign(strcat(start_params.selected_campaign,".cfg"))) {
             if (!change_campaign("")) {
-                WARNMSG("Unable to load default campaign for the specified level CMD Line parameter");
-            }
-            else if (start_params.selected_campaign[0] != '\0') { // only show this log message if the user actually specified a campaign
-                WARNMSG("Unable to load campaign associated with the specified level CMD Line parameter, default loaded.");
+                ERRORLOG("Unable to load default campaign for the specified level CMD Line parameter");
             }
             else {
-                JUSTLOG("No campaign specified. Default campaign loaded for selected level (%d).", start_params.selected_level_number);
+                ERRORLOG("Unable to load campaign associated with the specified level CMD Line parameter, default loaded.");
             }
         }
         set_selected_level_number(start_params.selected_level_number);
@@ -4484,9 +4506,14 @@ void wait_at_frontend(void)
     if ((game.operation_flags & GOF_SingleLevel) != 0)
     {
       faststartup_network_game();
+      if (restart_level)
+      {
+        restart_level = false;
+        set_flag_byte(&game.operation_flags,GOF_SingleLevel,false);        
+      }
       return;
     }
-
+    restart_level = false;
     if ( !setup_screen_mode_minimal(get_frontend_vidmode()) )
     {
       FatalError = 1;
